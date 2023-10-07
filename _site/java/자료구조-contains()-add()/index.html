@@ -1,0 +1,602 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.2 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>자료구조 contains(), add() -  kunsanglee’s</title>
+<meta name="description" content="isValidDuplicated 메서드는 친구관계를 나타내는 friends 리스트에서 [[”json”, “john”], [”john”, “json”]] 과 같이 중복되는 친구관계가 담겨있는지 확인하는 메서드이다.  ```java // 개선 전 // friend는 [[“json”, “john”], [“john”, “mike”]…] 이런 데이터가 담긴 List이다. private static boolean isValidDuplicated(List&lt;List&gt; friends) {     Set&lt;List&gt; uniqueFriends = new HashSet&lt;&gt;();     for (List friendPair : friends) {         if (uniqueFriends.contains(friendPair) || uniqueFriends.contains(reverseFriendPair(friendPair)) {             return true;         }         uniqueFriends.add(friendPair);     }     return false; }">
+
+
+  <meta name="author" content="이건상">
+  
+  <meta property="article:author" content="이건상">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content=" kunsanglee's">
+<meta property="og:title" content="자료구조 contains(), add()">
+<meta property="og:url" content="http://localhost:4000/java/%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-contains()-add()/">
+
+
+  <meta property="og:description" content="isValidDuplicated 메서드는 친구관계를 나타내는 friends 리스트에서 [[”json”, “john”], [”john”, “json”]] 과 같이 중복되는 친구관계가 담겨있는지 확인하는 메서드이다.  ```java // 개선 전 // friend는 [[“json”, “john”], [“john”, “mike”]…] 이런 데이터가 담긴 List이다. private static boolean isValidDuplicated(List&lt;List&gt; friends) {     Set&lt;List&gt; uniqueFriends = new HashSet&lt;&gt;();     for (List friendPair : friends) {         if (uniqueFriends.contains(friendPair) || uniqueFriends.contains(reverseFriendPair(friendPair)) {             return true;         }         uniqueFriends.add(friendPair);     }     return false; }">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-10-07T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/java/%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-contains()-add()/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Kunsang Lee",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title=" kunsanglee's Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+<meta name="naver-site-verification" content="d884164c2f43b5d7cfca36d514355ee3ab493511" />
+<meta name="NaverBot" content="All"/>
+<meta name="NaverBot" content="index,follow"/>
+<meta name="Yeti" content="All"/>
+<meta name="Yeti" content="index,follow"/>
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<!--<link rel="apple-touch-icon" sizes="180x180" href="/assets/logo.ico/apple-touch-icon.png">-->
+<!--<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.ico/favicon-32x32.png">-->
+<!--<link rel="icon" type="image/png" sizes="16x16" href="/assets/logo.ico/favicon-16x16.png">-->
+<!--<link rel="mask-icon" href="/assets/logo.ico/safari-pinned-tab.svg" color="#5bbad5">-->
+<!--<meta name="msapplication-TileColor" content="#da532c">-->
+<!--<meta name="theme-color" content="#ffffff">-->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+           kunsanglee's
+          <span class="site-subtitle">backend</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/">Year</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/image/profile/%EC%9D%B4%EA%B1%B4%EC%83%81.jpg" alt="이건상" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">이건상</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>basic is everything</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Republic of Korea</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="자료구조 contains(), add()">
+    <meta itemprop="description" content="isValidDuplicated 메서드는 친구관계를 나타내는 friends 리스트에서[[”json”, “john”], [”john”, “json”]] 과 같이 중복되는 친구관계가 담겨있는지 확인하는 메서드이다.```java// 개선 전// friend는 [[“json”, “john”], [“john”, “mike”]…] 이런 데이터가 담긴 List이다.private static boolean isValidDuplicated(List&lt;List&gt; friends) {    Set&lt;List&gt; uniqueFriends = new HashSet&lt;&gt;();    for (List friendPair : friends) {        if (uniqueFriends.contains(friendPair) || uniqueFriends.contains(reverseFriendPair(friendPair)) {            return true;        }        uniqueFriends.add(friendPair);    }    return false;}">
+    <meta itemprop="datePublished" content="2023-10-07T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">자료구조 contains(), add()
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p><code class="language-plaintext highlighter-rouge">isValidDuplicated</code> 메서드는 친구관계를 나타내는 <code class="language-plaintext highlighter-rouge">friends</code> 리스트에서
+[[”json”, “john”], [”john”, “json”]] 과 같이 중복되는 친구관계가 담겨있는지 확인하는 메서드이다.
+<br /></p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 개선 전</span>
+<span class="c1">// friend는 [["json", "john"], ["john", "mike"]...] 이런 데이터가 담긴 List이다.</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">isValidDuplicated</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">friends</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">uniqueFriends</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">friendPair</span> <span class="o">:</span> <span class="n">friends</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">uniqueFriends</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">friendPair</span><span class="o">)</span> <span class="o">||</span> <span class="n">uniqueFriends</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">reverseFriendPair</span><span class="o">(</span><span class="n">friendPair</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="n">uniqueFriends</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">friendPair</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">private</span> <span class="kd">static</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">reverseFriendPair</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">pair</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">reversedPair</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">pair</span><span class="o">);</span>
+    <span class="nc">Collections</span><span class="o">.</span><span class="na">reverse</span><span class="o">(</span><span class="n">reversedPair</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">reversedPair</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>처음에는 <code class="language-plaintext highlighter-rouge">friends</code>의 원소 <code class="language-plaintext highlighter-rouge">friendPair</code>를 순회하면서 <code class="language-plaintext highlighter-rouge">Set&lt;List&lt;String&gt;&gt; uniqueFriends</code>에 담아서 중복을 제거하고 <code class="language-plaintext highlighter-rouge">friendPair</code>와, <code class="language-plaintext highlighter-rouge">friendPair</code>의 정렬을 반대로 뒤집는 메서드인 <code class="language-plaintext highlighter-rouge">reversedFriendPair()</code>의 반환값이 이미 <code class="language-plaintext highlighter-rouge">uniqueFriend</code>에 포함되어있는지 확인한다.</p>
+
+<p>만약 포함되어있다면 중복되어있는 <code class="language-plaintext highlighter-rouge">List</code> 이므로 <code class="language-plaintext highlighter-rouge">true</code>를 반환하고, 없다면 <code class="language-plaintext highlighter-rouge">uniqueFriends</code>에 추가하여 순회를 마칠 때 까지 <code class="language-plaintext highlighter-rouge">true</code>를 반환하지 않으면 <code class="language-plaintext highlighter-rouge">false</code>를 반환한다.</p>
+
+<p>여기서 문제는 <code class="language-plaintext highlighter-rouge">contains()</code> 메서드를 사용하였기 때문에 <code class="language-plaintext highlighter-rouge">uniqueFriends</code>에 <code class="language-plaintext highlighter-rouge">friendPair</code>, <code class="language-plaintext highlighter-rouge">reversedFriendPair</code>가 포함되어있는지 내부적으로 두 번 <code class="language-plaintext highlighter-rouge">uniqueFriends</code>를 순회하면서 확인하기 때문에 <code class="language-plaintext highlighter-rouge">uniqueFriends</code> 시간복잡도 O(N^2)를 가지며, Set의 크기가 커질수록 성능이 떨어지는 문제가 발생한다.</p>
+
+<p>더 효율적으로 중복을 확인하기 위해서 한 번의 스캔으로 해결해야 하는데, 그래서 <code class="language-plaintext highlighter-rouge">contains()</code> 대신 <code class="language-plaintext highlighter-rouge">add()</code> 를 사용하였다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 개선 후</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">isValidDuplicated</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">friends</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">uniqueFriends</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">friendPair</span> <span class="o">:</span> <span class="n">friends</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">uniqueFriends</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">friendPair</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">uniqueFriends</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">reverseFriendPair</span><span class="o">(</span><span class="n">friendPair</span><span class="o">)))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">private</span> <span class="kd">static</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">reverseFriendPair</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">pair</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">reversedPair</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">pair</span><span class="o">);</span>
+    <span class="nc">Collections</span><span class="o">.</span><span class="na">reverse</span><span class="o">(</span><span class="n">reversedPair</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">reversedPair</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Java의 자료구에서<code class="language-plaintext highlighter-rouge">add()</code> 는 일반적으로 <code class="language-plaintext highlighter-rouge">boolean</code>을 반환한다. 컬렉션 인터페이스를 구현한 <code class="language-plaintext highlighter-rouge">List</code>, <code class="language-plaintext highlighter-rouge">Set</code> 의 경우 요소를 저장하는데 성공하면 <code class="language-plaintext highlighter-rouge">true</code> 를 반환한다. <code class="language-plaintext highlighter-rouge">List</code>의 경우 중복을 허용하기 때문에 언제나 <code class="language-plaintext highlighter-rouge">true</code>를 반환하지만, <code class="language-plaintext highlighter-rouge">Set</code>의 경우 중복을 허용하지 않기 때문에 저장하려는 요소가 내부에 존재하는 경우 <code class="language-plaintext highlighter-rouge">false</code>를 반환한다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">if (!uniqueFriends.add(friendPair) &amp;&amp; !uniqueFriends.add(reverseFriendPair(friendPair)))</code> 로 변경함으로써 <code class="language-plaintext highlighter-rouge">uniqueFriends</code>의 모든 요소들을 찾아보는 일과 중복이 없으면 <code class="language-plaintext highlighter-rouge">add</code>하는 두가지 일을 한 번에 처리하고, 두 번 순회하여 생긴 비효율도 개선할 수 있었다.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#data-structure" class="page__taxonomy-item" rel="tag">Data Structure</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#solution" class="page__taxonomy-item" rel="tag">Solution</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#java" class="page__taxonomy-item" rel="tag">Java</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2023-10-07T00:00:00+09:00">October 7, 2023</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0+contains%28%29%2C+add%28%29%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2F%25EC%259E%2590%25EB%25A3%258C%25EA%25B5%25AC%25EC%25A1%25B0-contains%28%29-add%28%29%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2F%25EC%259E%2590%25EB%25A3%258C%25EA%25B5%25AC%25EC%25A1%25B0-contains%28%29-add%28%29%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2F%25EC%259E%2590%25EB%25A3%258C%25EA%25B5%25AC%25EC%25A1%25B0-contains%28%29-add%28%29%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/java/Object.requireNonNull()-Map-getOrDefault()-compute()-computeIfAbsent()/" class="pagination--pager" title="Object.requireNonNull(), Map -  getOrDefault (), compute(), computeIfAbsent()
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">참고</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/Object.requireNonNull()-Map-getOrDefault()-compute()-computeIfAbsent()/" rel="permalink">Object.requireNonNull(), Map -  getOrDefault (), compute(), computeIfAbsent()
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">// 개선 전
+// friend는 [["json", "john"], ["john", "mike"]...] 이런 데이터가 담긴 List이다.
+private static Map&lt;String, List&lt;String&gt;&gt; makeFriendRelation(List&lt...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:eona1301@email.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://www.facebook.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>
+        
+      
+        
+          <li><a href="https://github.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://www.instagram.com/danghyeona/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Kunsang Lee. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/java/%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-contains()-add()/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/java/자료구조-contains()-add()"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kunsanglee-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

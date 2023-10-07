@@ -1,0 +1,708 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.2 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Object.requireNonNull(), Map -  getOrDefault (), compute(), computeIfAbsent() -  kunsanglee’s</title>
+<meta name="description" content="// 개선 전 // friend는 [[&quot;json&quot;, &quot;john&quot;], [&quot;john&quot;, &quot;mike&quot;]...] 이런 데이터가 담긴 List이다. private static Map&lt;String, List&lt;String&gt;&gt; makeFriendRelation(List&lt;List&lt;String&gt;&gt; friends) {     HashMap&lt;String, List&lt;String&gt;&gt;friendsRelation = new HashMap&lt;&gt;();     for (List&lt;String&gt; friendPair:friends) {         Objects.requireNonNull(friendsRelation.put(friendPair.get(FRIEND_A),new ArrayList&lt;&gt;()))         .add(friendPair.get(FRIEND_B));         Objects.requireNonNull(friendsRelation.put(friendPair.get(FRIEND_B),new ArrayList&lt;&gt;()))         .add(friendPair.get(FRIEND_A));     }     return friendsRelation; }">
+
+
+  <meta name="author" content="이건상">
+  
+  <meta property="article:author" content="이건상">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content=" kunsanglee's">
+<meta property="og:title" content="Object.requireNonNull(), Map -  getOrDefault (), compute(), computeIfAbsent()">
+<meta property="og:url" content="http://localhost:4000/java/Object.requireNonNull()-Map-getOrDefault()-compute()-computeIfAbsent()/">
+
+
+  <meta property="og:description" content="// 개선 전 // friend는 [[&quot;json&quot;, &quot;john&quot;], [&quot;john&quot;, &quot;mike&quot;]...] 이런 데이터가 담긴 List이다. private static Map&lt;String, List&lt;String&gt;&gt; makeFriendRelation(List&lt;List&lt;String&gt;&gt; friends) {     HashMap&lt;String, List&lt;String&gt;&gt;friendsRelation = new HashMap&lt;&gt;();     for (List&lt;String&gt; friendPair:friends) {         Objects.requireNonNull(friendsRelation.put(friendPair.get(FRIEND_A),new ArrayList&lt;&gt;()))         .add(friendPair.get(FRIEND_B));         Objects.requireNonNull(friendsRelation.put(friendPair.get(FRIEND_B),new ArrayList&lt;&gt;()))         .add(friendPair.get(FRIEND_A));     }     return friendsRelation; }">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-10-07T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/java/Object.requireNonNull()-Map-getOrDefault()-compute()-computeIfAbsent()/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Kunsang Lee",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title=" kunsanglee's Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+<meta name="naver-site-verification" content="d884164c2f43b5d7cfca36d514355ee3ab493511" />
+<meta name="NaverBot" content="All"/>
+<meta name="NaverBot" content="index,follow"/>
+<meta name="Yeti" content="All"/>
+<meta name="Yeti" content="index,follow"/>
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<!--<link rel="apple-touch-icon" sizes="180x180" href="/assets/logo.ico/apple-touch-icon.png">-->
+<!--<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.ico/favicon-32x32.png">-->
+<!--<link rel="icon" type="image/png" sizes="16x16" href="/assets/logo.ico/favicon-16x16.png">-->
+<!--<link rel="mask-icon" href="/assets/logo.ico/safari-pinned-tab.svg" color="#5bbad5">-->
+<!--<meta name="msapplication-TileColor" content="#da532c">-->
+<!--<meta name="theme-color" content="#ffffff">-->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+           kunsanglee's
+          <span class="site-subtitle">backend</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/">Year</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/image/profile/%EC%9D%B4%EA%B1%B4%EC%83%81.jpg" alt="이건상" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">이건상</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>basic is everything</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Republic of Korea</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Object.requireNonNull(), Map -  getOrDefault (), compute(), computeIfAbsent()">
+    <meta itemprop="description" content="// 개선 전// friend는 [[&quot;json&quot;, &quot;john&quot;], [&quot;john&quot;, &quot;mike&quot;]...] 이런 데이터가 담긴 List이다.private static Map&lt;String, List&lt;String&gt;&gt; makeFriendRelation(List&lt;List&lt;String&gt;&gt; friends) {    HashMap&lt;String, List&lt;String&gt;&gt;friendsRelation = new HashMap&lt;&gt;();    for (List&lt;String&gt; friendPair:friends) {        Objects.requireNonNull(friendsRelation.put(friendPair.get(FRIEND_A),new ArrayList&lt;&gt;()))        .add(friendPair.get(FRIEND_B));        Objects.requireNonNull(friendsRelation.put(friendPair.get(FRIEND_B),new ArrayList&lt;&gt;()))        .add(friendPair.get(FRIEND_A));    }    return friendsRelation;}">
+    <meta itemprop="datePublished" content="2023-10-07T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Object.requireNonNull(), Map -  getOrDefault (), compute(), computeIfAbsent()
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 개선 전</span>
+<span class="c1">// friend는 [["json", "john"], ["john", "mike"]...] 이런 데이터가 담긴 List이다.</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="nf">makeFriendRelation</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">friends</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span><span class="n">friendsRelation</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nl">friendPair:</span><span class="n">friends</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Objects</span><span class="o">.</span><span class="na">requireNonNull</span><span class="o">(</span><span class="n">friendsRelation</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">friendPair</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">FRIEND_A</span><span class="o">),</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;()))</span>
+        <span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">friendPair</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">FRIEND_B</span><span class="o">));</span>
+        <span class="nc">Objects</span><span class="o">.</span><span class="na">requireNonNull</span><span class="o">(</span><span class="n">friendsRelation</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">friendPair</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">FRIEND_B</span><span class="o">),</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;()))</span>
+        <span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">friendPair</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">FRIEND_A</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">friendsRelation</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">makeFriendRelation()</code> 메서드는 <code class="language-plaintext highlighter-rouge">friends</code> 리스트에 담긴 친구관계를 <code class="language-plaintext highlighter-rouge">Map&lt;String, List&lt;String&gt;&gt;</code> 타입으로 담아서 반환하려는 목적으로 만든 메서드이다. <code class="language-plaintext highlighter-rouge">friends</code>의
+요소 <code class="language-plaintext highlighter-rouge">friendPair</code>에서 두 친구를 꺼내어 <code class="language-plaintext highlighter-rouge">Map</code>에 양방향으로 저장하는 로직을 생각하고 <code class="language-plaintext highlighter-rouge">Objects.requireNonNull()</code>를 사용했는데 내가 생각한 동작과 전혀 다른 메서드였다.</p>
+
+<hr />
+
+<h3 id="objectsrequirenonnull">Objects.requireNonNull()</h3>
+
+<p>Java의 <code class="language-plaintext highlighter-rouge">Objects.requireNonNull</code> 메서드는 객체 참조가 null인지 확인하는데 사용된다. 이 메서드는 주어진 객체가 null이 아닌 경우 그대로 반환하며, 만약 null인 경우에는
+NullPointerException을 발생시킨다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Objects.requireNonNull(T obj)</code>: 이 형태의 메서드는 인자로 전달된 객체가 null인 경우 NullPointerException을 발생시킨다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Objects.requireNonNull(T obj, String message)</code>: 이 형태의 메서드는 인자로 전달된 객체가 null인 경우 지정된 에러 메시지와 함께 NullPointerException을
+발생시킨다.</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">Objects.requireNonNull</code>은 일반적으로 입력 인수를 검증하는데 사용되며, 이를 통해 개발자들은 런타임에 적절한 예외 처리를 할 수 있다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">name</span><span class="o">=</span><span class="nc">Objects</span><span class="o">.</span><span class="na">requireNonNull</span><span class="o">(</span><span class="n">name</span><span class="o">,</span><span class="s">"Name cannot be null"</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>위 코드에서 setName 함수는 name 매개변수가 null일 때 “Name cannot be null”라는 메세지와 함께 NullPointerException을 발생시킨다.</p>
+
+<p>다시 본론으로 돌아와서 내가 원한 동작은 <code class="language-plaintext highlighter-rouge">Map</code>인터페이스에서 제공하는 <code class="language-plaintext highlighter-rouge">getOrDefault()</code>를 사용하여 간단하게 구현할 수 있었다.</p>
+
+<hr />
+
+<h3 id="getordefault">getOrDefault()</h3>
+
+<p><code class="language-plaintext highlighter-rouge">friendsRelation</code>에서 <code class="language-plaintext highlighter-rouge">getOrDefault(Object key, V defaultValue)</code>를 사용하면 <code class="language-plaintext highlighter-rouge">key</code>로 해당 <code class="language-plaintext highlighter-rouge">Map</code>을 검색하여 <code class="language-plaintext highlighter-rouge">key</code>가 존재하지 않을
+경우 <code class="language-plaintext highlighter-rouge">defaultValue</code>를 반환한다. 만약 해당 <code class="language-plaintext highlighter-rouge">key</code>가 존재한다면 <code class="language-plaintext highlighter-rouge">key</code>의 <code class="language-plaintext highlighter-rouge">value</code>를 반환한다. 따라서 <code class="language-plaintext highlighter-rouge">getOrDefault()</code>를 사용하면 키가 없을 때 <code class="language-plaintext highlighter-rouge">null</code> 대신 원하는 기본값을
+받을 수 있어서 <code class="language-plaintext highlighter-rouge">NullPointerException</code>을 예방할 수 있다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">static</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="nf">makeFriendRelation</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">friends</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">friendsRelation</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">friendPair</span> <span class="o">:</span> <span class="n">friends</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">friendA</span><span class="o">=</span><span class="n">friendPair</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">FRIEND_A</span><span class="o">);</span>
+        <span class="nc">String</span> <span class="n">friendB</span><span class="o">=</span><span class="n">friendPair</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">FRIEND_B</span><span class="o">);</span>
+        <span class="c1">// friendsRelation에 friendA가 없다면 new ArrayList&lt;&gt;()를 반환.</span>
+        <span class="c1">// friendA가 있다면 해당 value를 반환.</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">listA</span><span class="o">=</span><span class="n">friendsRelation</span><span class="o">.</span><span class="na">getOrDefault</span><span class="o">(</span><span class="n">friendA</span><span class="o">,</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;());</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">listB</span><span class="o">=</span><span class="n">friendsRelation</span><span class="o">.</span><span class="na">getOrDefault</span><span class="o">(</span><span class="n">friendB</span><span class="o">,</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;());</span>
+        <span class="n">listA</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">friendB</span><span class="o">);</span>
+        <span class="n">listB</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">friendA</span><span class="o">);</span>
+        <span class="n">friendsRelation</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">friendA</span><span class="o">,</span><span class="n">listA</span><span class="o">);</span>
+        <span class="n">friendsRelation</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">friendB</span><span class="o">,</span><span class="n">listB</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">friendsRelation</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><em>주의할 점은 <code class="language-plaintext highlighter-rouge">getOrDefault()</code> 메서드의 <code class="language-plaintext highlighter-rouge">key</code>가 존재하지 않을 경우 해당 키에 <code class="language-plaintext highlighter-rouge">defaultValue</code>를 저장하는 건 아니라는 점이다.</em></p>
+
+<p><code class="language-plaintext highlighter-rouge">getOrDefault()</code>는 단순히 주어진 키에 대응하는 값을 찾거나 없다면 기본값을 반환할 뿐, 키가 없을 때 해당 키에 기본값을 저장할 수는 없었다. 하지만 <code class="language-plaintext highlighter-rouge">Map</code>
+인터페이스에 <code class="language-plaintext highlighter-rouge">compute()</code>, <code class="language-plaintext highlighter-rouge">computeIfAbsent()</code>는 <code class="language-plaintext highlighter-rouge">Map</code> 내의 특정 키에 대한 값을 계산하고 저장할 수 있다.</p>
+
+<hr />
+
+<h3 id="compute">compute()</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"Apple"</span><span class="o">,</span> <span class="mi">10</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">compute</span><span class="o">(</span><span class="s">"Apple"</span><span class="o">,</span> <span class="o">(</span><span class="n">k</span><span class="o">,</span> <span class="n">v</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">v</span> <span class="o">==</span> <span class="kc">null</span><span class="o">?</span><span class="mi">42</span><span class="o">:</span><span class="n">v</span><span class="o">+</span><span class="mi">5</span><span class="o">);</span>
+<span class="c1">// "Apple" 키의 현재 값은 10이므로 새로운 값은 15가 된다.</span>
+<span class="n">map</span><span class="o">.</span><span class="na">compute</span><span class="o">(</span><span class="s">"Banana"</span><span class="o">,</span> <span class="o">(</span><span class="n">k</span><span class="o">,</span> <span class="n">v</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">v</span> <span class="o">==</span> <span class="kc">null</span><span class="o">?</span><span class="mi">42</span><span class="o">:</span><span class="n">v</span><span class="o">+</span><span class="mi">5</span><span class="o">);</span>
+<span class="c1">// "Banana" 키는 현재 map에 없으므로 새로운 "Banana" 키에 42가 map에 저장된다.</span>
+<span class="n">map</span><span class="o">.</span><span class="na">compute</span><span class="o">(</span><span class="s">"Apple"</span><span class="o">,</span> <span class="o">(</span><span class="n">k</span><span class="o">,</span> <span class="n">v</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">?</span> <span class="n">v</span> <span class="o">:</span> <span class="kc">null</span><span class="o">);</span>
+<span class="c1">// "Apple" 키의 현재 값은 15이므로 15 &lt; 10 == false가 되고 </span>
+<span class="c1">// 3항 연산자 결과가 null이 되어 "Apple" 키와 그 value인 15 가 map에서 삭제된다.</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">compute(K key, BiFunction&lt;? super K,? super V,? extends V&gt; remappingFunction)</code></p>
+
+<p>이 메서드는 주어진 키와 현재 매핑된 값을 사용해 새로운 값을 계산하고 저장한다. 만약 <code class="language-plaintext highlighter-rouge">remappingFunction</code>이 <code class="language-plaintext highlighter-rouge">null</code>을 반환하면 해당 키-값 쌍은 <code class="language-plaintext highlighter-rouge">Map</code>에서 제거된다. 이 메서드 역시
+최종적으로 계산된 값을 반환한다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">computeScore</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">recommendFriends</span><span class="o">,</span> <span class="nc">String</span> <span class="n">target</span><span class="o">,</span> <span class="kt">int</span> <span class="n">x</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// compute()를 사용하여 recommendFriends 맵에서 target을 key로 찾는다.</span>
+    <span class="c1">// remappingFunction을 (key, value) -&gt; value == null ? x : value + x 로 하여</span>
+    <span class="c1">// key target의 value를 얻고 그 value가 null이라면 x를 저장,</span>
+    <span class="c1">// null이 아니라면 저장되어있던 value에 x를 더하여 저장한다.</span>
+    <span class="n">recommendFriends</span><span class="o">.</span><span class="na">compute</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">x</span> <span class="o">:</span> <span class="n">value</span> <span class="o">+</span> <span class="n">x</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">compute()</code>를 사용하여 <code class="language-plaintext highlighter-rouge">Map</code>에 키가 존재할 때 연산과, 존재하지 않을 때 기본값을 바로 저장할 수 있었다.</p>
+
+<hr />
+
+<h3 id="computeifabsent">computeIfAbsent()</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="nc">Integer</span> <span class="n">value</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">computeIfAbsent</span><span class="o">(</span><span class="s">"Apple"</span><span class="o">,</span> <span class="n">k</span> <span class="o">-&gt;</span> <span class="mi">10</span><span class="o">);</span>
+<span class="c1">// "Apple" 키가 없으므로 10을 계산하여 저장하고 반환합니다.</span>
+<span class="n">map</span><span class="o">.</span><span class="na">computeIfAbsent</span><span class="o">(</span><span class="s">"Apple"</span><span class="o">,</span> <span class="n">k</span> <span class="o">-&gt;</span> <span class="mi">20</span><span class="o">);</span>
+<span class="c1">// "Apple" 키가 10으로 저장되어있어서 null이 아니기 때문에 computeIfAbsent()가 수행되지 않는다.</span>
+<span class="c1">// 결과적으로 "Apple"의 키로 10이 저장되어있다.</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"Banana"</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span> <span class="c1">// "Banana" 키로 null값이 저장되었다.</span>
+<span class="n">map</span><span class="o">.</span><span class="na">computeIfAbsent</span><span class="o">(</span><span class="s">"Banana"</span><span class="o">,</span> <span class="n">k</span> <span class="o">-&gt;</span> <span class="mi">30</span><span class="o">);</span>
+<span class="c1">// "Banana" 키는 존재하지만, 값이 null인 상태이므로 computeIfAbsent() 메서드가 수행된다.</span>
+<span class="c1">// 결과적으로 "Banana" 키에 값이 30으로 저장된다.</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">computeIfAbsent(K key, Function&lt;? super K,? extends V&gt; mappingFunction)</code></p>
+
+<p>이 메서드는 주어진 키가 <code class="language-plaintext highlighter-rouge">Map</code>에 존재하지 않거나 그 값이 <code class="language-plaintext highlighter-rouge">null</code>인 경우에만 <code class="language-plaintext highlighter-rouge">mappingFunction</code>을 사용해 값을 계산하고 저장한다. 이미 값이 있는 경우에는 기존의 값을 그대로 반환한다. 이
+메서드는 계산된 값(또는 기존의 값)을 반환한다.</p>
+
+<p>이 메서드를 사용하여 위의 <code class="language-plaintext highlighter-rouge">getOrDefault()</code>를 사용하여 구현한 코드를 최적화했다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">static</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="nf">makeFriendRelation</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">friends</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">friendsRelation</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">friendPair</span> <span class="o">:</span> <span class="n">friends</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">friendA</span> <span class="o">=</span> <span class="n">friendPair</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">FRIEND_A</span><span class="o">);</span>
+        <span class="nc">String</span> <span class="n">friendB</span> <span class="o">=</span> <span class="n">friendPair</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">FRIEND_B</span><span class="o">);</span>
+        
+        <span class="c1">// friendsRelation에 friendA 키가 없으면 new ArrayList&lt;&gt;()를 반환하고</span>
+        <span class="c1">// add(friendB); 하여 빈 리스트에 friendB를 넣게된다.</span>
+        <span class="c1">// friendsRelation에 friendA가 있다면 computeIfAbsent()는 수행되지 않고,</span>
+        <span class="c1">// 기존 friendA 키에 들어있는 List에 .add(friendB);가 수행된다.</span>
+        <span class="n">friendsRelation</span><span class="o">.</span><span class="na">computeIfAbsent</span><span class="o">(</span><span class="n">friendA</span><span class="o">,</span> <span class="n">key</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;()).</span><span class="na">add</span><span class="o">(</span><span class="n">friendB</span><span class="o">);</span>
+        <span class="n">friendsRelation</span><span class="o">.</span><span class="na">computeIfAbsent</span><span class="o">(</span><span class="n">friendB</span><span class="o">,</span> <span class="n">key</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;()).</span><span class="na">add</span><span class="o">(</span><span class="n">friendA</span><span class="o">);</span>
+    
+        <span class="c1">// getOrDefault() 사용하여 구현했던 코드</span>
+        <span class="cm">/**
+         List&lt;String&gt; listA = friendsRelation.getOrDefault(friendA, new ArrayList&lt;&gt;());
+         List&lt;String&gt; listB = friendsRelation.getOrDefault(friendB, new ArrayList&lt;&gt;());
+         listA.add(friendB);
+         listB.add(friendA);
+         friendsRelation.put(friendA, listA);
+         friendsRelation.put(friendB, listB);
+         */</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">friendsRelation</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">getOrDefault()</code>를 사용하여 <code class="language-plaintext highlighter-rouge">friendA</code>의 값이 <code class="language-plaintext highlighter-rouge">null</code>이면 빈 리스트를 받아서 <code class="language-plaintext highlighter-rouge">friendB</code>를 저장하고, 그 리스트를 <code class="language-plaintext highlighter-rouge">firendsRelation</code>에 <code class="language-plaintext highlighter-rouge">put</code>하는
+과정을 <code class="language-plaintext highlighter-rouge">computeIfAbsent()</code>한 줄로 줄일 수 있었다.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#data-structure" class="page__taxonomy-item" rel="tag">Data Structure</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#solution" class="page__taxonomy-item" rel="tag">Solution</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#java" class="page__taxonomy-item" rel="tag">Java</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2023-10-07T00:00:00+09:00">October 7, 2023</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Object.requireNonNull%28%29%2C+Map+-++getOrDefault+%28%29%2C+compute%28%29%2C+computeIfAbsent%28%29%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2FObject.requireNonNull%28%29-Map-getOrDefault%28%29-compute%28%29-computeIfAbsent%28%29%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FObject.requireNonNull%28%29-Map-getOrDefault%28%29-compute%28%29-computeIfAbsent%28%29%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FObject.requireNonNull%28%29-Map-getOrDefault%28%29-compute%28%29-computeIfAbsent%28%29%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="#" class="pagination--pager disabled">이전</a>
+    
+    
+      <a href="/java/%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-contains()-add()/" class="pagination--pager" title="자료구조 contains(), add()
+">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">참고</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-contains()-add()/" rel="permalink">자료구조 contains(), add()
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">isValidDuplicated 메서드는 친구관계를 나타내는 friends 리스트에서
+[[”json”, “john”], [”john”, “json”]] 과 같이 중복되는 친구관계가 담겨있는지 확인하는 메서드이다.
+
+```java
+// 개선 전
+// friend는 [[“json”, ...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:eona1301@email.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://www.facebook.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>
+        
+      
+        
+          <li><a href="https://github.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://www.instagram.com/danghyeona/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Kunsang Lee. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/java/Object.requireNonNull()-Map-getOrDefault()-compute()-computeIfAbsent()/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/java/Object.requireNonNull()-Map-getOrDefault()-compute()-computeIfAbsent()"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://kunsanglee-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>
