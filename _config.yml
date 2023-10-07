@@ -94,7 +94,7 @@ analytics:
 # Site Author
 author:
   name             : "이건상"
-  avatar           : "image/profile/이건상.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  avatar           : "image/profile/욜이.png" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "basic is everything"
   location         : "Republic of Korea"
   email            : #"eona1301@gmail.com"
