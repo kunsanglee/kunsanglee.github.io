@@ -1,0 +1,993 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.2 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>[A to Z] SW Expert Academy Algorithms Solution - 정리가 재밌는 개발자 Blog</title>
+<meta name="description" content="💡 A to Z는 개별적으로 작성한 게시글을 한 번에 볼 수 있게 정리하였습니다. 문제의 상세한 풀이가 아닌 작성자가 푼 문제를 한눈에 볼 수 있도록 정리하였습니다. 상세한 설명과 관련 이야기(시행착오 및 로직 설명 등)는 개별 포스트에 있습니다.">
+
+
+  <meta name="author" content="Dang Hyeona">
+  
+  <meta property="article:author" content="Dang Hyeona">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="정리가 재밌는 개발자 Blog">
+<meta property="og:title" content="[A to Z] SW Expert Academy Algorithms Solution">
+<meta property="og:url" content="http://localhost:4000/a_to_z/SWEASolution/">
+
+
+  <meta property="og:description" content="💡 A to Z는 개별적으로 작성한 게시글을 한 번에 볼 수 있게 정리하였습니다. 문제의 상세한 풀이가 아닌 작성자가 푼 문제를 한눈에 볼 수 있도록 정리하였습니다. 상세한 설명과 관련 이야기(시행착오 및 로직 설명 등)는 개별 포스트에 있습니다.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-03-04T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/a_to_z/SWEASolution/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "당현아(Dang Hyeona)",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="정리가 재밌는 개발자 Blog Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+<meta name="naver-site-verification" content="d884164c2f43b5d7cfca36d514355ee3ab493511" />
+<meta name="NaverBot" content="All"/>
+<meta name="NaverBot" content="index,follow"/>
+<meta name="Yeti" content="All"/>
+<meta name="Yeti" content="index,follow"/>
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/logo.ico/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.ico/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/logo.ico/favicon-16x16.png">
+<link rel="mask-icon" href="/assets/logo.ico/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          정리가 재밌는 개발자
+          <span class="site-subtitle">version 1.0</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/">Year</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/image/profile/2020me.jpg" alt="Dang Hyeona" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Dang Hyeona</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p><strong>1.0 ver Blog 종료!</strong><br />2020.07.01~2021.07.08<br /><br />Velog로 이사했어요</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Republic of Korea</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:eona1301@email.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://www.facebook.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i><span class="label">Facebook</span></a></li>
+          
+        
+          
+            <li><a href="https://www.instagram.com/danghyeona/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i><span class="label">Instagram</span></a></li>
+          
+        
+          
+            <li><a href="https://velog.io/@eona1301" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">2.0 ver Blog</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="[A to Z] SW Expert Academy Algorithms Solution">
+    <meta itemprop="description" content="💡 A to Z는 개별적으로 작성한 게시글을 한 번에 볼 수 있게 정리하였습니다.문제의 상세한 풀이가 아닌 작성자가 푼 문제를 한눈에 볼 수 있도록 정리하였습니다.상세한 설명과 관련 이야기(시행착오 및 로직 설명 등)는 개별 포스트에 있습니다.">
+    <meta itemprop="datePublished" content="2021-03-04T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">[A to Z] SW Expert Academy Algorithms Solution
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-code"></i> SWEA</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#swea">SWEA?!</a></li>
+  <li><a href="#장점">장점</a>
+    <ul>
+      <li><a href="#알고리즘">알고리즘</a></li>
+      <li><a href="#learn">LEARN</a></li>
+    </ul>
+  </li>
+  <li><a href="#swea-주의사항">SWEA 주의사항</a></li>
+  <li><a href="#포스팅-안내">포스팅 안내</a></li>
+  <li><a href="#문제-풀이-리스트">문제 풀이 리스트</a></li>
+</ul>
+
+            </nav>
+          </aside>
+        
+        <p class="notice--warning">💡 <strong>A to Z</strong>는 개별적으로 작성한 게시글을 한 번에 볼 수 있게 정리하였습니다.<br />
+문제의 상세한 풀이가 아닌 작성자가 푼 문제를 한눈에 볼 수 있도록 정리하였습니다.<br />
+상세한 설명과 관련 이야기(시행착오 및 로직 설명 등)는 개별 포스트에 있습니다.<br /></p>
+
+<h1 id="swea">SWEA?!</h1>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/109965056-cc562800-7d31-11eb-97d6-5fdbc88c5930.png" alt="image" class="align-center" /></p>
+
+<p><span style="color:blue;font-weight:bold">삼성</span>에서 운영하고, 알고리즘을 비롯해 다양한 학습도 할 수 있는 사이트입니다.<br />
+사실 백준, 프로그래머스 등 낯익은 문제 사이트도 있었지만 SW Expert Academy (이하 SWEA)는 생소했습니다.<br />
+헌데 저만 생소할 뿐, 삼성과 관련한 입사 준비나 알고리즘을 넓게 풀어보신 분들께는 꽤나 낯익은 사이트더라구요!<br />
+<br />
+백준보다는 조금 더 친절한 사이트로 개인적으로는 테스크 케이스 체크를 많이 할 수 있는 사이트라 정말 좋아합니다.<br />
+<br />
+<br /></p>
+
+<h1 id="장점">장점</h1>
+
+<h2 id="알고리즘">알고리즘</h2>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/109968541-3244ae80-7d36-11eb-9d40-1622963c35ea.png" alt="image" class="align-center" /></p>
+
+<p>위 사진은 제가 실제 SWEA 문제를 푸는 화면입니다.<br />
+<br />
+원래 사용하던 백준 사이트와는 다르게 SWEA는 많은 테스트 케이스를 공개하고,<br />
+그 <strong>테스트 케이스를 input과 output으로 구별해서 txt 파일로 제공</strong>합니다.<br />
+<br />
+이 말인 즉 <strong>사이트에 제출하지 않아도, 다양한 테스트 케이스의 결과를 로컬에서 확인</strong>할 수 있습니다.<br />
+또한 사이트 내의 자체 디버깅 기능도 있어서 제출하기 전에 확인도 할 수 있습니다.<br />
+<br />
+<br /></p>
+
+<h2 id="learn">LEARN</h2>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/109973220-78e8d780-7d3b-11eb-94e1-34827e78e2ca.png" alt="image" class="align-center" /></p>
+
+<p>SWEA 가입 후에는 여기 있는 강의를 모두 들을 수 있습니다.<br />
+각 강의마다 실습도 있고, 이론도 있고 다양하게 있어서, 알고리즘을 시작하기 전에 언어 공부용으로도 좋습니다.<br />
+디테일하나 부분을 모두 캐치한다기 보다는 기초적이고 핵심적으로 꼭 다뤄야하는 내용들을 짚기에,<br />
+새로운 공부를 하고 싶다면 확인하는 것도 좋은 것같습니다 :)<br />
+<br />
+<br /></p>
+
+<h1 id="swea-주의사항">SWEA 주의사항</h1>
+
+<p>SWEA는 오직 Java로만 풀 예정입니다. (이러고 언제 마음이 바뀔지는 모르겠지만…)<br />
+따라서 Java 기준으로의 주의사항을 작성할 테니 유의해주세요!</p>
+
+<ol>
+  <li>package : default</li>
+  <li>Class name : Solution</li>
+  <li>FileInputStream 지우기</li>
+</ol>
+
+<p>특히 3번의 경우 SWEA의 장점인 input.txt가 있기 때문에, 편해서 쓰다가 안지우고 제출한 적도 많습니다.🤣<br />
+이렇게만 챙겨주시면 오히려 테스트 케이스도 많이 확인하시면서 더욱 다양한 사고를 하실 수 있을 껍니다!!<br />
+<br />
+<br /></p>
+
+<h1 id="포스팅-안내">포스팅 안내</h1>
+
+<p>해당 포스팅은 각 풀이할 문제를 찾기 쉽게 정리하고자 합니다.<br />
+A to Z에는 어떤 문제를 풀었는지를, 그리고 개별 포스터에 세부 풀이를 할 예정입니다.<br />
+1주일에 1회 식 수정/업데이트 할 예정입니다!<br />
+<br />
+이 포스팅의 길이가 길어지는 만큼 실력이 늘어나도록 노력해보겠습니다.<br />
+원하시는 문제를 찾으실 때는 <strong>Ctrl + F</strong>로 문제 번호를 검색해서 봐주시면 좋겠습니다!<br />
+<br />
+<br /></p>
+
+<h1 id="문제-풀이-리스트">문제 풀이 리스트</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">          문제 번호          </th>
+      <th style="text-align: center">                                       문제 이름                                        </th>
+      <th style="text-align: center">                       문제 레벨                       </th>
+      <th style="text-align: center">               풀이링크              </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1208</td>
+      <td style="text-align: center">[S/W 문제해결 기본] 1일차 - Flatten</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1209</td>
+      <td style="text-align: center">[S/W 문제해결 기본] 2일차 - Sum</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1210</td>
+      <td style="text-align: center">[S/W 문제해결 기본] 1일차 - Flatten</td>
+      <td style="text-align: center">D4</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1218</td>
+      <td style="text-align: center">[S/W 문제해결 기본] 4일차 - 괄호 짝짓기</td>
+      <td style="text-align: center">D4</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1220</td>
+      <td style="text-align: center">[S/W 문제해결 기본] 5일차 - Magnetic</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1223</td>
+      <td style="text-align: center">[S/W 문제해결 기본] 6일차 - 계산기2</td>
+      <td style="text-align: center">D4</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1224</td>
+      <td style="text-align: center">[S/W 문제해결 기본] 6일차 - 계산기3</td>
+      <td style="text-align: center">D4</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1225</td>
+      <td style="text-align: center">[S/W 문제해결 기본] 7일차 - 암호생성기</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1233</td>
+      <td style="text-align: center">[S/W 문제해결 기본] 9일차 - 사칙연산 유효성 검사</td>
+      <td style="text-align: center">D4</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1234</td>
+      <td style="text-align: center">[S/W 문제해결 기본] 10일차 - 비밀번호</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1247</td>
+      <td style="text-align: center">[S/W 문제해결 응용] 3일차 - 최적 경로</td>
+      <td style="text-align: center">D5</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1289</td>
+      <td style="text-align: center">원재의 메모리 복구하기</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1767</td>
+      <td style="text-align: center">[SW Test 샘플문제] 프로세서 연결하기</td>
+      <td style="text-align: center">SW Test 샘플문제</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1859</td>
+      <td style="text-align: center">백만 장자 프로젝트</td>
+      <td style="text-align: center">D2</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1861</td>
+      <td style="text-align: center">정사각형 방</td>
+      <td style="text-align: center">D4</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1873</td>
+      <td style="text-align: center">상호의 배틀필드</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1940</td>
+      <td style="text-align: center">가랏! RC카!</td>
+      <td style="text-align: center">D2</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1948</td>
+      <td style="text-align: center">날짜 계산기</td>
+      <td style="text-align: center">D2</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1954</td>
+      <td style="text-align: center">달팽이 숫자</td>
+      <td style="text-align: center">D2</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1974</td>
+      <td style="text-align: center">스도쿠 검증</td>
+      <td style="text-align: center">D2</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1996</td>
+      <td style="text-align: center">숫자를 정렬하자</td>
+      <td style="text-align: center">D2</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2001</td>
+      <td style="text-align: center">파리 퇴치</td>
+      <td style="text-align: center">D2</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2005</td>
+      <td style="text-align: center">파스칼의 삼각형</td>
+      <td style="text-align: center">D2</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2105</td>
+      <td style="text-align: center">[모의 SW 역량테스트] 디저트 카페</td>
+      <td style="text-align: center">모의 SW 역량테스트</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2805</td>
+      <td style="text-align: center">농작물 수확하기</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3234</td>
+      <td style="text-align: center">준환이의 양팔저울</td>
+      <td style="text-align: center">D4</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3499</td>
+      <td style="text-align: center">퍼펙트 셔플</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4012</td>
+      <td style="text-align: center">[모의 SW 역량테스트] 요리사</td>
+      <td style="text-align: center">모의 SW 역량테스트</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5215</td>
+      <td style="text-align: center">햄버거 다이어트</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5432</td>
+      <td style="text-align: center">쇠막대기 자르기</td>
+      <td style="text-align: center">D4</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5603</td>
+      <td style="text-align: center">[Professional] 건초더미</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">6808</td>
+      <td style="text-align: center">규영이와 인영이의 카드게임</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">9229</td>
+      <td style="text-align: center">한빈이와 Spot Mart</td>
+      <td style="text-align: center">D3</td>
+      <td style="text-align: center"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="notice--success">🔔 <strong>포스팅 공지</strong> <br /><br />
+현재 작성한 포스팅은 <strong>SW Expert Academy</strong>과 관련된 종합 내용입니다.<br />
+<br />
+A to Z 카테고리는 지금까지 진행할 포스팅을 확인하기 편하게 순서대로 정리한 글입니다.<br />
+각각의 포스터에서 조금 더 자세한 설명과 팁 등이 적혀있으니 참조해주세요.<br /></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#algorithm" class="page__taxonomy-item" rel="tag">algorithm</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#solution" class="page__taxonomy-item" rel="tag">solution</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#swea" class="page__taxonomy-item" rel="tag">SWEA</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#a-to-z" class="page__taxonomy-item" rel="tag">A_to_Z</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2021-03-04T00:00:00+09:00">March 4, 2021</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=%5BA+to+Z%5D+SW+Expert+Academy+Algorithms+Solution%20http%3A%2F%2Flocalhost%3A4000%2Fa_to_z%2FSWEASolution%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fa_to_z%2FSWEASolution%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fa_to_z%2FSWEASolution%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/beakjoon/1074/" class="pagination--pager" title="[Beakjoon] 1074번 Z
+">이전</a>
+    
+    
+      <a href="/beakjoon/2161/" class="pagination--pager" title="[Beakjoon] 2161번 카드1
+">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">참고</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/%EA%B3%B5%EC%A7%80/GoodBye/" rel="permalink">🕊블로그 이사했습니다.🕊
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          최대 1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Github io를 해보고싶어서 2020년 7월 1일에 첫 커밋을 남기면서 시작했네요.
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/beakjoon/16956/" rel="permalink">[Beakjoon] 16956번 늑대와 양
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">📣
+Beakjoon에서 PASS된 코드만 업데이트합니다.
+알고리즘을 먼저 풀이하는 언어(Java)가 정해져있어, 
+풀이 언어(Python, C++, Java)가 모두 업데이트될 때까지는 시간이 걸릴 수 있습니다.
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/github_blog/GithubBlog-Code/" rel="permalink">[Github Blog] MarkDown 프로그래밍 코드 작성하기
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">📌 작성자 개발 환경 
+OS : Windows 10
+Tool : Github Gist
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/beakjoon/2161/" rel="permalink">[Beakjoon] 2161번 카드1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">📣
+Beakjoon에서 PASS된 코드만 업데이트합니다.
+알고리즘을 먼저 풀이하는 언어(Java)가 정해져있어, 
+풀이 언어(Python, C++, Java)가 모두 업데이트될 때까지는 시간이 걸릴 수 있습니다.
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:eona1301@email.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://www.facebook.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>
+        
+      
+        
+          <li><a href="https://github.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://www.instagram.com/danghyeona/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 당현아(Dang Hyeona). Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/a_to_z/SWEASolution/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/a_to_z/SWEASolution"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://eona1301-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

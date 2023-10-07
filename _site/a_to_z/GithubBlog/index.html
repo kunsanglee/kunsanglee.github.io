@@ -1,0 +1,1458 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.2 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>[A to Z] Github Blog Jekyll minimal mistakes - 정리가 재밌는 개발자 Blog</title>
+<meta name="description" content="💡 A to Z는 개별적으로 작성한 게시글을 한 번에 볼 수 있게 정리하였습니다. 사용의 팁이나 고려하면 좋은 사항 등의 부가설명은 생략되고, 핵심 내용만 넣었습니다. 상세한 설명과 관련 이야기(시행착오 및 전처리 작업 등)는 개별 포스트에 있습니다.">
+
+
+  <meta name="author" content="Dang Hyeona">
+  
+  <meta property="article:author" content="Dang Hyeona">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="정리가 재밌는 개발자 Blog">
+<meta property="og:title" content="[A to Z] Github Blog Jekyll minimal mistakes">
+<meta property="og:url" content="http://localhost:4000/a_to_z/GithubBlog/">
+
+
+  <meta property="og:description" content="💡 A to Z는 개별적으로 작성한 게시글을 한 번에 볼 수 있게 정리하였습니다. 사용의 팁이나 고려하면 좋은 사항 등의 부가설명은 생략되고, 핵심 내용만 넣었습니다. 상세한 설명과 관련 이야기(시행착오 및 전처리 작업 등)는 개별 포스트에 있습니다.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-01-31T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/a_to_z/GithubBlog/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "당현아(Dang Hyeona)",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="정리가 재밌는 개발자 Blog Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+<meta name="naver-site-verification" content="d884164c2f43b5d7cfca36d514355ee3ab493511" />
+<meta name="NaverBot" content="All"/>
+<meta name="NaverBot" content="index,follow"/>
+<meta name="Yeti" content="All"/>
+<meta name="Yeti" content="index,follow"/>
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/logo.ico/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.ico/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/logo.ico/favicon-16x16.png">
+<link rel="mask-icon" href="/assets/logo.ico/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          정리가 재밌는 개발자
+          <span class="site-subtitle">version 1.0</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/">Year</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/image/profile/2020me.jpg" alt="Dang Hyeona" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Dang Hyeona</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p><strong>1.0 ver Blog 종료!</strong><br />2020.07.01~2021.07.08<br /><br />Velog로 이사했어요</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Republic of Korea</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:eona1301@email.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://www.facebook.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i><span class="label">Facebook</span></a></li>
+          
+        
+          
+            <li><a href="https://www.instagram.com/danghyeona/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i><span class="label">Instagram</span></a></li>
+          
+        
+          
+            <li><a href="https://velog.io/@eona1301" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">2.0 ver Blog</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="[A to Z] Github Blog Jekyll minimal mistakes">
+    <meta itemprop="description" content="💡 A to Z는 개별적으로 작성한 게시글을 한 번에 볼 수 있게 정리하였습니다.사용의 팁이나 고려하면 좋은 사항 등의 부가설명은 생략되고, 핵심 내용만 넣었습니다.상세한 설명과 관련 이야기(시행착오 및 전처리 작업 등)는 개별 포스트에 있습니다.">
+    <meta itemprop="datePublished" content="2021-01-31T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">[A to Z] Github Blog Jekyll minimal mistakes
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          10 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-bookmark"></i> GITHUB BLOG JEKYLL</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#00-github-blog-a-to-z">[00] Github Blog A to Z</a></li>
+  <li><a href="#01-기본-세팅">[01] 기본 세팅</a>
+    <ul>
+      <li><a href="#기본-환경">기본 환경</a>
+        <ul>
+          <li><a href="#ruby-세팅">Ruby 세팅</a></li>
+          <li><a href="#jekyll-세팅">Jekyll 세팅</a></li>
+        </ul>
+      </li>
+      <li><a href="#minimal-mistakes-테마">minimal-mistakes 테마</a></li>
+      <li><a href="#github-blog-repository-만들기">Github-Blog Repository 만들기</a></li>
+      <li><a href="#로컬-서버-실행">로컬 서버 실행</a></li>
+    </ul>
+  </li>
+  <li><a href="#02-기본-데이터-입력">[02] 기본 데이터 입력</a></li>
+  <li><a href="#03-카테고리-설정하기">[03] 카테고리 설정하기</a>
+    <ul>
+      <li><a href="#원하는-page-수정">원하는 page 수정</a>
+        <ul>
+          <li><a href="#permalink-찾기">permalink 찾기</a></li>
+          <li><a href="#toc-다루기">toc 다루기</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#04-본문-관련-설정하기">[04] 본문 관련 설정하기</a>
+    <ul>
+      <li><a href="#width-조절하기">WIDTH 조절하기</a></li>
+      <li><a href="#blog-font-조절하기">BLOG FONT 조절하기</a></li>
+      <li><a href="#하이퍼링크-밑줄-제거">하이퍼링크 밑줄 제거</a></li>
+    </ul>
+  </li>
+  <li><a href="#05-파비콘웹-아이콘-설정">[05] 파비콘(웹 아이콘) 설정</a></li>
+  <li><a href="#06-블로그-포스팅-해보기">[06] 블로그 포스팅 해보기</a>
+    <ul>
+      <li><a href="#폴더-생성하기">폴더 생성하기</a></li>
+      <li><a href="#포스터-양식-확인">포스터 양식 확인</a></li>
+      <li><a href="#포스터-내용-작성">포스터 내용 작성</a>
+        <ul>
+          <li><a href="#문자-정렬">문자 정렬</a></li>
+          <li><a href="#이미지-정렬">이미지 정렬</a></li>
+          <li><a href="#문자-박스">문자 박스</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#07-댓글-기능-추가하기">[07] 댓글 기능 추가하기</a></li>
+  <li><a href="#08-방문자-통계-보기">[08] 방문자 통계 보기</a></li>
+  <li><a href="#09-구글-검색-노출시키기">[09] 구글 검색 노출시키기</a>
+    <ul>
+      <li><a href="#html-파일-세팅">HTML 파일 세팅</a></li>
+      <li><a href="#sitemapxml-만들기">sitemap.xml 만들기</a></li>
+      <li><a href="#robotstxt-만들기">robots.txt 만들기</a></li>
+      <li><a href="#최종-sitemapxml-등록">최종 Sitemap.xml 등록</a></li>
+      <li><a href="#등록-결과-확인">등록 결과 확인</a></li>
+    </ul>
+  </li>
+  <li><a href="#10-깔끔한-코드블럭-작성하기">[10] 깔끔한 코드블럭 작성하기</a></li>
+</ul>
+
+            </nav>
+          </aside>
+        
+        <p class="notice--warning">💡 <strong>A to Z</strong>는 개별적으로 작성한 게시글을 한 번에 볼 수 있게 정리하였습니다.<br />
+사용의 팁이나 고려하면 좋은 사항 등의 부가설명은 생략되고, 핵심 내용만 넣었습니다.<br />
+상세한 설명과 관련 이야기(시행착오 및 전처리 작업 등)는 개별 포스트에 있습니다.<br /></p>
+
+<h1 id="00-github-blog-a-to-z">[00] Github Blog A to Z</h1>
+
+<ol>
+  <li><a href="https://eona1301.github.io/github_blog/GithubBlog-Start/">기본 세팅</a> : Ruby, Jekyll, minimal-mistakes 테마 적용, github repo 생성, 로컬 서버로 블로그 실행</li>
+  <li><a href="https://eona1301.github.io/github_blog/GithubBlog-config/">기본 데이터 입력</a> : 블로그 기본 정보(_config.yml), 프로필 설정, 출력 게시물 개수 조정, Default post/page 설정</li>
+  <li><a href="https://eona1301.github.io/github_blog/GithubBlog-Category/">카테고리 설정</a> : 카테고리(navigation.yml) 수정, 원하는 페이지 양식 찾는 방법, toc 여부, 고정방법, 이름 변경</li>
+  <li><a href="https://eona1301.github.io/github_blog/GithubBlog-Content-Width/">본문 영역 조절</a> : 본문 영역 넓히기, 사이드바 좁히기, 글자 조정하기, 하이퍼링크 밑줄 제거하기</li>
+  <li><a href="https://eona1301.github.io/github_blog/GithubBlog-Favicon/">파비콘 세팅</a> : 웹사이트 아이콘 선택, icon만들기, 깃헙 블로그 적용하기(custom.html 수정하기)</li>
+  <li><a href="https://eona1301.github.io/github_blog/GithubBlog-Posting/">블로그 포스팅해보기</a> : minimal-mistakes 포스팅 양식 확인하기, 자주 사용하는 포스터 내용 문법 확인하기</li>
+  <li><a href="https://eona1301.github.io/github_blog/GithubBlog-Comment/">댓글 기능 추가하기</a> : DISQUS 가입하기, Shortname 찾기, _config 반영하기, 시범 댓글 확인</li>
+  <li><a href="https://eona1301.github.io/github_blog/GithubBlog-Analytics/">방문자 통계하기</a> : Google Analytics 가입하기, tranking ID 찾기, _config 반영하기, 결과 확인하기</li>
+  <li><a href="https://eona1301.github.io/github_blog/GithubBlog-Search/">Google 검색 노출하기</a> : Google Search Console, sitemap, robots, 적용하기</li>
+  <li><a href="https://eona1301.github.io/github_blog/GithubBlog-Code/">깔끔한 코드블럭 작성하기</a> : MarkDown Code Block, Gist 사용방법
+<br /></li>
+</ol>
+
+<h1 id="01-기본-세팅">[01] 기본 세팅</h1>
+
+<h2 id="기본-환경">기본 환경</h2>
+
+<h3 id="ruby-세팅">Ruby 세팅</h3>
+<p><br /></p>
+
+<p><a href="https://rubyinstaller.org/downloads/">Ruby for Windows</a> 링크에 접속하여, 아래 화면과 같은 목록을 확인합니다.</p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/102007643-2fa56f00-3d6e-11eb-969c-74a5e722b2c8.png" alt="ruby_download" /></p>
+
+<p>여기서 가장 중요한 것은 <strong>Jekyll은 32bit</strong>이기에, 설치시 (x64)가 아닌 <strong>(x86)</strong>으로 진행해야합니다.<br />
+이는 초기 설정시 제일 빈번하게 발생하는 세팅 오류이기 때문에, 꼭 신경써서 설치해주셔야 합니다.
+<br />
+<br /></p>
+
+<h3 id="jekyll-세팅">Jekyll 세팅</h3>
+<p><br /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gem install jekyll
+</code></pre></div></div>
+<p>이와 같은 명령어를 명령 프롬프트(CMD) 창에서 입력해줍니다.<br />
+이러면 기본적인 세팅이 모두 완료되셨습니다!<br /></p>
+
+<p><code class="language-plaintext highlighter-rouge">ruby -v</code>과 <code class="language-plaintext highlighter-rouge">jekyll -v</code>로 정상적으로 설치되었는지 확인해주세요 :)</p>
+
+<p><br />
+<br /></p>
+
+<h2 id="minimal-mistakes-테마">minimal-mistakes 테마</h2>
+
+<ul>
+  <li><a href="https://mmistakes.github.io/minimal-mistakes/">minimal-mistakes theme 공식 홈페이지</a></li>
+  <li><a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/">minimal-mistakes 가이드</a></li>
+  <li><a href="https://github.com/mmistakes/minimal-mistakes">minimal-mistakes Github Link</a>
+<br /></li>
+</ul>
+
+<div align="right">(🔺많이 참고했던 공식 홈페이지입니다! 원문이라 낯설지만 왠만한건 다 적혀있습니다.)</div>
+<p><br /></p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/101988362-76e31f80-3cdc-11eb-9dee-8addd2f02882.png" alt="image" /></p>
+
+<p>우측 상단에 있는 녹색 버튼에서 code repo의 link를 복사하셔서, clone 받아주세요.<br />
+압축을 푸시면 다음과 같은 내용을 볼 수 있습니다.<br />
+(clone 받으실 수 있는 Repo는 minimal-mistakes Github Link라고 정리한 곳을 확인하면 보실 수 있습니다!)</p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/102005471-5a86c780-3d5c-11eb-8ad4-bc5fd466ed57.png" alt="image" /></p>
+
+<p>여기서 제일 중요한 건 이걸 다 쓸건 아니에요! ㅎㅎ<br />
+<span color="red">빨간색</span>은 그냥 지우셔도 되는 파일입니다!<br />
+<span color="green">초록색</span>은 따로 남겨두셨다가, 포스팅 양식 등을 확인할 수 있는 내용입니다!</p>
+
+<p>docs 내부의 _pages 폴더는 추후 상단의 카테고리를 선택할 수 있는 양식이라, 최상단으로 이동해주시면 좋습니다.
+<br />
+<br /></p>
+
+<h2 id="github-blog-repository-만들기">Github-Blog Repository 만들기</h2>
+
+<p>github에서 repository를 만드는 것은 지금까지 한 것보다 더 간단하겠죠! ㅎㅎ<br /></p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/102006140-1b5b7500-3d62-11eb-8e07-6b51fd1341fb.png" alt="image" /></p>
+
+<p>Github ID .github.io 의 형식으로 Repo를 만들어주신 후,<br />
+지금까지 정리한 모든 사항을 push 해주시면 되겠습니다!<br />
+이제 Github ID .github.io 의 링크에서 개발하신 minimal-mistakes 테마가 적용된 걸 확인하실 수 있습니다.<br />
+<br />
+<br /></p>
+
+<h2 id="로컬-서버-실행">로컬 서버 실행</h2>
+
+<p><br />
+<img src="https://user-images.githubusercontent.com/45550607/102006653-eb15d580-3d65-11eb-9030-e520e1eba53c.png" alt="image" /><br />
+<br />
+지금과 같은 형식은 이렇습니다. (_posts와 image 폴더는 추후에 다시 설명드릴 예정입니다!)<br />
+이 상태에서는 로컬 서버에서 확인하실 수가 없습니다.<br />
+<b>현재의 repo의 폴더에서 명령프롬프트(CMD)창을 여시면 됩니다!</b><br /><br /></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gem install bundler
+bundle exec jekyll serve
+</code></pre></div></div>
+<p>이를 순차적으로 입력하시면, <code class="language-plaintext highlighter-rouge">.jekyll-cache</code> 폴더와 <code class="language-plaintext highlighter-rouge">Gemfile.lock</code> 파일이 생깁니다.<br />
+이 두가지가 정상적으로 생기셔야만, 로컬 서버에 연결하실 수가 있습니다.<br />
+<br />
+<img src="https://user-images.githubusercontent.com/45550607/102006801-46949300-3d67-11eb-946a-ea4297b05723.png" alt="image" />
+<br />
+<br />
+<code class="language-plaintext highlighter-rouge">Server running... press ctrl-c to stop.</code>으로 된다면 정상적으로 열렸습니다.<br /></p>
+
+<p><a href="http://127.0.0.1:4000">http://127.0.0.1:4000</a> 으로 바로 확인해보세요.<br />
+확인하시는 중에는 CMD창을 종료하시면 안됩니다!<br />
+모든 Repo의 변동사항을 확인해서 Serve에서 바로 확인하실 수 있습니다.<br />
+<br />
+<br /></p>
+
+<h1 id="02-기본-데이터-입력">[02] 기본 데이터 입력</h1>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _config.yml
+<br /></li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/29e2f42d13e94559e5a0d63c51b8fce5.js"></script>
+
+<p><br />
+블로그 전반의 기본 사항들입니다. 순서와는 무관하게 설명을 잘 참고해주세요!<br />
+모두 다 수정하실 필요는 없습니다. 상세한 내용은 위의 코드를 확인해주세요.<br />
+주석아 아닌 부분은 실제로 제가 적용한 코드입니다. 참고하면서 적용해보세요!<br />
+구절을 적용해보시면서 로컬 서버에서 확인해보세요!<br /></p>
+
+<p><a href="http://127.0.0.1:4000">http://127.0.0.1:4000</a> 으로 확인하실 수 있습니다.
+<br />
+<br /></p>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _config.yml
+<br />
+<br /></li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/2164e69b3615da9804e51f5e3c3b3146.js"></script>
+
+<p><br />
+블로그 좌측에서 보여지는 프로필의 영역입니다.<br />
+바로 보여지다보니, 아무래도 많은 분들이 제일 먼저 신경쓰는 영역이 될 것 같습니다.<br />
+저의 경우는 프로필 사진을 보관할 곳은 image라고 따로 만들어서 진행하였습니다만,<br />
+원래 있는 assets의 폴더를 바로 활용해주셔도 괜찮습니다.<br />
+사진의 경로와 확장자명(.png, .jpg 등)까지 명확히 기재해주세요!<br />
+<br />
+또한, email 기재 시 이메일 주소를 누르면 이메일 기재를 할 수 있도록 mailto: 를 붙여주셔야해요!<br />
+<br />
+<br /></p>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _config.yml
+<br /></li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/2853e7022b37493053f98037ebae7505.js"></script>
+
+<p><br />
+프로필의 맨 하단에 있는 footer의 기재사항입니다.<br />
+좌측 프로필 영역과 동일한 데이터라 Ctrl C + Ctrl V만 하면 금방 만들어지는 영역입니다.<br />
+기본 양식처럼 있는 영역이 대다수인데 사실 안하는 SNS가 더 많아서 url을 주석처리하면 노출되지 않습니다.<br />
+<br />
+프로필 영역과 동일하게, email 기재 시 이메일 주소를 누르면 이메일 기재를 할 수 있도록 mailto: 를 붙여주셔야해요!<br />
+<br />
+<br /></p>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _config.yml
+<br /></li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/d189862ece5d5f954360c63a99e4469b.js"></script>
+
+<p>코드 상 두번째 줄에 위치한 값 painate의 속성이 보여질 개수입니다.<br />
+이걸 원하는 개수대로 고쳐주시면 되겠습니다.<br />
+<br /></p>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _config.yml
+<br /></li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/ce49543bed1499284c74e6457c813a66.js"></script>
+
+<p><br />
+앞서 참고하고자 하였던, Docs 폴더의 _config.yml를 모방했습니다!<br />
+포스터 글을 업데이트하는데, 폴더화를 시켜서 파일 정리하는게 좋을 것같아 확인했습니다.<br />
+필수 사항은 아니니 생략해주셔도 됩니다.<br />
+<br />
+<br /></p>
+
+<h1 id="03-카테고리-설정하기">[03] 카테고리 설정하기</h1>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _data 폴더 &gt; navigation.yml
+<br /></li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/760067e1c637892536fa9512fb11bbee.js"></script>
+
+<p>title은 화면에 보여지는 영역입니다. 여기에 기재하는 텍스트값대로 보여집니다.<br />
+url은 _pages내에 정해져있는 양식 혹은 특정 링크로 연결해줍니다.<br />
+<br />
+_pages내의 양식을 그대로 활용하기 위해서는 특정한 permalink 를 알아야합니다.<br />
+이 내용은 _pages 내의 상세한 내용에서 자세히 알려드리겠습니다!<br />
+<br />
+minimal mistakes의 대다수는 <code class="language-plaintext highlighter-rouge">/page name/</code> 으로 해소됩니다.<br />
+<br />
+<br /></p>
+
+<h2 id="원하는-page-수정">원하는 page 수정</h2>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _pages 폴더 &gt; 원하는 md 파일 (해당 예시는 about.md 입니다.)
+<br /></li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/99003302c105278c33a0f30fabe8712d.js"></script>
+
+<h3 id="permalink-찾기">permalink 찾기</h3>
+
+<p>상단에 permalink 로 되어있는 내용을 그대로 차용해주시면 됩니다.<br />
+title은 말그대로 제목입니다. 생략해주셔도 됩니다.<br />
+<br /></p>
+
+<h3 id="toc-다루기">toc 다루기</h3>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/102038539-dccdc500-3e0a-11eb-8620-d6d17092d2cf.png" alt="image" /><br /></p>
+
+<p>toc는 Table of Contents의 약칭으로 모든 포스터의 우측에 적힐 수 있는 내용입니다.<br />
+필수 사항은 아니라서 toc, toc_sticky, toc_label 모두 생략하셔도 됩니다.<br />
+<br />
+하지만 설명하는 내용이 길어질수록, 원하는 정보를 찾고자하는 사용자가 불편하겠죠?<br />
+저는 무조건 스크롤이 생기는 내용이라면 toc를 사용합니다.</p>
+
+<ul>
+  <li>toc : 목차 (클릭 시 화면 이동까지 가능)</li>
+  <li>toc_sticky : true로 만들어주면, 화면을 옮겨도(스크롤을 해도) 항상 우측 상단에 고정되어있습니다.</li>
+  <li>toc_label : toc의 제목입니다. 지정하지 않으면 MY PAGE과 같은 기본값으로 보입니다.
+<br />
+<br />
+<br /></li>
+</ul>
+
+<h1 id="04-본문-관련-설정하기">[04] 본문 관련 설정하기</h1>
+
+<h2 id="width-조절하기">WIDTH 조절하기</h2>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _sass 폴더 &gt; _minimal-mistakes 폴더 &gt; _variables.scss</li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/493a1a671316ae45c6ddc5831f802388.js"></script>
+
+<p>현재의 코드는 _variables.scss 중에서도 거의 최하단에 있습니다.<br />
+찾으실 때 무수한 코드를 다 내리지마시고, 제일 아래의 스크롤로 내리세요.<br />
+본문에 너비를 직접적으로 넓히는게 아니라, 양쪽에 sidebar를 조절하는 방식입니다.<br />
+각 기본 값은 200, 300, 400px이였지만 100, 200, 250px로 조절했습니다.<br />
+혹시라도 돌려놓고 싶을까봐 주석으로 남겨두었습니다!<br />
+<br />
+로컬 서버로 적용하는 범위를 확인해보시고, 원하시는 값으로 조정해보세요!
+<br />
+<br /></p>
+
+<h2 id="blog-font-조절하기">BLOG FONT 조절하기</h2>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _sass 폴더 &gt; _minimal-mistakes 폴더 &gt; _reset.scss
+<br /></li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/891391423d765b7169ba87b15fbfd298.js"></script>
+
+<p>원 코드의 상단부(7번줄)에 있는 코드이기에 금방 찾으실 수 있으실 껍니다.<br />
+전체적인 폰트의 기준은 없습니다!<br />
+로컬 서버에서 직접 등록해보시면서, 원하시는 크키로 조정하시면 됩니다.<br />
+<br />
+<br /></p>
+
+<h2 id="하이퍼링크-밑줄-제거">하이퍼링크 밑줄 제거</h2>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _sass 폴더 &gt; _minimal-mistakes 폴더 &gt; _base.scss
+<br /></li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/e7b36fcee4cfea32a7f3413b3cebef4f.js"></script>
+
+<p>base 파일의 중반부(127번줄)에 있습니다.<br />
+찾기 힘드실 때는 Ctrl + F를 통해 <code class="language-plaintext highlighter-rouge">a{</code> 를 검색하셔서 확인해보세요! <br />
+이후 하이퍼링크 처리와 관련된 decoration을 해지해야하니 이를 전체에 적용될 수 있도록 추가해주시면 되겠습니다!<br />
+<br />
+<br /></p>
+
+<h1 id="05-파비콘웹-아이콘-설정">[05] 파비콘(웹 아이콘) 설정</h1>
+
+<p><a href="https://realfavicongenerator.net/">realfavicongenerator</a>에 접속해서 원하는 사진을 넣어주세요.</p>
+
+<p class="text-center"><img src="https://user-images.githubusercontent.com/45550607/102049292-f2031d80-3e23-11eb-9b6a-ab656118915d.png" alt="image" /></p>
+
+<p>그럼 이 코드를 보실 수 있습니다.<br />
+이 코드를 활용해서 블로그에 적용해봅시다.<br />
+<br /></p>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _includes 폴더 &gt; _head 폴더 &gt; custom.html</li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/1503f596d7330d3d4600fcb1df8bde16.js"></script>
+
+<p>최종적으로 업데이트 된 코드는 이와 같습니다.<br />
+처음 받은 코드와 다른 내용은 href의 영역 즉 상세 링크입니다.<br />
+파일 이름 앞에 /assets/logo.ico 를 추가해주시면 됩니다.<br /></p>
+
+<p class="text-center"><img src="https://user-images.githubusercontent.com/45550607/102050451-35f72200-3e26-11eb-930f-c1427a2271b3.png" alt="image" /></p>
+
+<p>이렇게 최종적으로 적용된 모습을 확인하실 수 있습니다.
+<br />
+<br /></p>
+
+<h1 id="06-블로그-포스팅-해보기">[06] 블로그 포스팅 해보기</h1>
+
+<h2 id="폴더-생성하기">폴더 생성하기</h2>
+
+<ul>
+  <li>생성 파일 : github.io 폴더 &gt; _posts 폴더</li>
+</ul>
+
+<p class="text-center"><img src="https://user-images.githubusercontent.com/45550607/102193457-737bae00-3eff-11eb-9176-b97e0a487715.png" alt="image" /></p>
+
+<p>이전에 docs 파일을 참고하여, 포스팅 글을 정리할 폴더 _posts를 생성하였습니다.<br />
+여기까지만 하면, 포스팅은 충분히 등록할 수 있습니다.<br />
+<br />
+<br /></p>
+
+<h2 id="포스터-양식-확인">포스터 양식 확인</h2>
+
+<p>docs의 post를 참고하면서 확인해보도록 하겠습니다.<br /></p>
+
+<p class="text-center"><img src="https://user-images.githubusercontent.com/45550607/102197239-3239cd00-3f04-11eb-807a-b1cd7b720d87.png" alt="image" /></p>
+
+<p>예시 포스터 입니다. 자세히 보시면 —로 있는 구간이 있습니다.<br />
+이 안에서 상세 내용을 정리하시면 됩니다.<br />
+기본적인 양식을 설명해드리겠습니다.<br />
+<br /></p>
+<ul>
+  <li><b>파일명</b> : YEAR_MONTH_DAY-title.md</li>
+  <li><b>내부양식</b></li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">name</th>
+      <th style="text-align: left">mean</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">title</td>
+      <td style="text-align: left">실제 화면에 보이는 제목</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">categories</td>
+      <td style="text-align: left">포스터의 소속 카테고리</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">tags</td>
+      <td style="text-align: left">포스터 태그</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">toc</td>
+      <td style="text-align: left">table of content의 약칭, 우측 상단의 목차</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">toc_label</td>
+      <td style="text-align: left">toc의 이름</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">toc_icon</td>
+      <td style="text-align: left">toc의 아이콘</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">toc_sticky</td>
+      <td style="text-align: left">toc의 고정유무, 고정(true)시 스크롤에도 우측상단에 고정되게 보인다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">last_modified_at</td>
+      <td style="text-align: left">게시글 마지막 수정일, 포스터에는 년월일까지 보여집니다.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+<br />
+<br /></p>
+
+<h2 id="포스터-내용-작성">포스터 내용 작성</h2>
+
+<p class="text-center"><img src="https://user-images.githubusercontent.com/45550607/102203378-df641380-3f0b-11eb-811b-1ec83d95e420.png" alt="image" /></p>
+
+<p>현재 해당 포스터 작성 화면입니다.<br />
+좌측부터 Markdown 화면, Markdown 적용 화면, 로컬서버 적용 화면입니다.<br />
+제가 했던 github log도 보고, 서칭을 통해 추가적으로 들어가면 좋은 내용이 있을지 확인합니다.<br />
+<br />
+예상하신 것처럼, github blog의 포스터 글은 Markdown 문법사항을 갖고있습니다.<br />
+하지만 실제로 쓸 수 있는 문법 사항과 적용되는 것에 차이가 있기 때문에 2중으로 확인해보고 있습니다.<br />
+Markdown 문법도 다시 한번 정리할 것이지만, 블로그 포스팅을 할 때 자주 사용하는 내용을 정리해보도록 하겠습니다.
+<br />
+<br />
+이는 <a href="https://mmistakes.github.io/minimal-mistakes/docs/utility-classes/">공식 가이드</a>와 인터넷 서칭을 참고해 <strong>실제로 포스팅 시 많이 사용하는 내용</strong>을 기재하였습니다!
+<br />
+<br /></p>
+
+<h3 id="문자-정렬">문자 정렬</h3>
+
+<p class="text-left">왼쪽 정렬 (Default)</p>
+
+<div class="language-md highlighter-rouge"><div class="highlight"><pre class="highlight"><code>왼쪽 정렬 (Default).
+{: .text-left}
+</code></pre></div></div>
+
+<p class="text-center">중앙 정렬</p>
+
+<div class="language-md highlighter-rouge"><div class="highlight"><pre class="highlight"><code>중앙 정렬
+{: .text-center}
+</code></pre></div></div>
+
+<p class="text-right">오른쪽 정렬</p>
+
+<div class="language-md highlighter-rouge"><div class="highlight"><pre class="highlight"><code>오른쪽 정렬
+{: .text-right}
+</code></pre></div></div>
+
+<h3 id="이미지-정렬">이미지 정렬</h3>
+
+<p><br />
+<br /></p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/102208312-9b284180-3f12-11eb-8467-7b5ea1779ac7.png" alt="image" class="align-left" />
+왼쪽 정렬입니다. 원하는 이미지를 원하는 위치에서 표출할 수 있는 예시입니다. 해당 출처는 minimal mistakes의 공식 사이트에 나와있는 글을 참조했습니다. 그 중에서 제가 자주 사용하는 내용만 가져왔습니다.
+<br />
+<br />
+<br />
+<br /></p>
+
+<div class="language-md highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">![</span><span class="nv">image</span><span class="p">](</span><span class="sx">https://user-images.githubusercontent.com/45550607/102208312-9b284180-3f12-11eb-8467-7b5ea1779ac7.png</span><span class="p">)</span>
+{: .align-left}
+왼쪽 정렬입니다. 원하는 이미지를 원하는 위치에서 표출할 수 있는 예시입니다.
+해당 출처는 minimal mistakes의 공식 사이트에 나와있는 글을 참조했습니다. 
+그 중에서 제가 자주 사용하는 내용만 가져왔습니다.
+</code></pre></div></div>
+<p><br /></p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/102208312-9b284180-3f12-11eb-8467-7b5ea1779ac7.png" alt="image" class="align-center" /></p>
+
+<p>중앙 정렬입니다. 원하는 이미지를 원하는 위치에서 표출할 수 있는 예시입니다. 해당 출처는 minimal mistakes의 공식 사이트에 나와있는 글을 참조했습니다. 그 중에서 제가 자주 사용하는 내용만 가져왔습니다.
+<br />
+<br /></p>
+
+<div class="language-md highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">![</span><span class="nv">image</span><span class="p">](</span><span class="sx">https://user-images.githubusercontent.com/45550607/102208312-9b284180-3f12-11eb-8467-7b5ea1779ac7.png</span><span class="p">)</span>
+{: .align-center}
+중앙 정렬입니다. 원하는 이미지를 원하는 위치에서 표출할 수 있는 예시입니다.
+해당 출처는 minimal mistakes의 공식 사이트에 나와있는 글을 참조했습니다. 
+그 중에서 제가 자주 사용하는 내용만 가져왔습니다.
+</code></pre></div></div>
+<p><br /></p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/102208312-9b284180-3f12-11eb-8467-7b5ea1779ac7.png" alt="image" class="align-right" />
+오른쪽 정렬입니다. 원하는 이미지를 원하는 위치에서 표출할 수 있는 예시입니다. 해당 출처는 minimal mistakes의 공식 사이트에 나와있는 글을 참조했습니다. 그 중에서 제가 자주 사용하는 내용만 가져왔습니다.
+<br />
+<br />
+<br />
+<br /></p>
+
+<div class="language-md highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">![</span><span class="nv">image</span><span class="p">](</span><span class="sx">https://user-images.githubusercontent.com/45550607/102208312-9b284180-3f12-11eb-8467-7b5ea1779ac7.png</span><span class="p">)</span>
+{: .align-right}
+오른쪽 정렬입니다. 원하는 이미지를 원하는 위치에서 표출할 수 있는 예시입니다.
+해당 출처는 minimal mistakes의 공식 사이트에 나와있는 글을 참조했습니다. 
+그 중에서 제가 자주 사용하는 내용만 가져왔습니다.
+</code></pre></div></div>
+<p><br />
+<br />
+<br /></p>
+
+<h3 id="문자-박스">문자 박스</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Notice Type</th>
+      <th style="text-align: center">Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">Default</td>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">.notice</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Primary</td>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">.notice--primary</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Info</td>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">.notice--info</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Warning</td>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">.notice--warning</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Success</td>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">.notice--success</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Danger</td>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">.notice--danger</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="notice"><strong>Default 문자 박스입니다.</strong> 문자 박스는 색이 달라 원하는 정보를 블로그 방문자에게 보여주기 좋은 것 같습니다! Notice Type의 뜻에 접근하셔도 되고, 원하는 색상에 따라 사용해주셔도 될 것 같습니다.</p>
+
+<p class="notice--primary"><strong>Primary 문자 박스입니다.</strong> 문자 박스는 색이 달라 원하는 정보를 블로그 방문자에게 보여주기 좋은 것 같습니다! Notice Type의 뜻에 접근하셔도 되고, 원하는 색상에 따라 사용해주셔도 될 것 같습니다.</p>
+
+<p class="notice--info"><strong>Info 문자 박스입니다.</strong> 문자 박스는 색이 달라 원하는 정보를 블로그 방문자에게 보여주기 좋은 것 같습니다! Notice Type의 뜻에 접근하셔도 되고, 원하는 색상에 따라 사용해주셔도 될 것 같습니다.</p>
+
+<p class="notice--warning"><strong>Warning 문자 박스입니다.</strong> 문자 박스는 색이 달라 원하는 정보를 블로그 방문자에게 보여주기 좋은 것 같습니다! Notice Type의 뜻에 접근하셔도 되고, 원하는 색상에 따라 사용해주셔도 될 것 같습니다.</p>
+
+<p class="notice--success"><strong>Success 문자 박스입니다.</strong> 문자 박스는 색이 달라 원하는 정보를 블로그 방문자에게 보여주기 좋은 것 같습니다! Notice Type의 뜻에 접근하셔도 되고, 원하는 색상에 따라 사용해주셔도 될 것 같습니다.</p>
+
+<p class="notice--danger"><strong>Danger 문자 박스입니다.</strong> 문자 박스는 색이 달라 원하는 정보를 블로그 방문자에게 보여주기 좋은 것 같습니다! Notice Type의 뜻에 접근하셔도 되고, 원하는 색상에 따라 사용해주셔도 될 것 같습니다.</p>
+
+<p><br />
+<br /></p>
+
+<h1 id="07-댓글-기능-추가하기">[07] 댓글 기능 추가하기</h1>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _config.yml
+<br /></li>
+</ul>
+
+<script src="https://gist.github.com/eona1301/97484af7daac622ce9c905f6d521a2de.js"></script>
+
+<script src="https://gist.github.com/eona1301/126daa1811b8e0e9599221aba9b6708a.js"></script>
+
+<p>위의 코드를 모두 작성한 후 git push 해주세요!<br />
+여기서 중요한 점은 로컬 서버에서는 comment 처리부분이 보여지지 않습니다.<br />
+또, git push를 해주셔도 반영되는데에 딜레이가 걸리기 때문에 코드 수정 후 5~10분 정도 기다려주세요.<br />
+<br />
+<br />
+<br /></p>
+
+<h1 id="08-방문자-통계-보기">[08] 방문자 통계 보기</h1>
+
+<p><a href="https://analytics.google.com/analytics/web/">Google Analytics</a> 에 접속하시면 무료로 시작할 수 있습니다. <br />
+또 본인의 Github Blog를 등록하신 후 tracking_id를 찾아주세요.<br /></p>
+
+<ul>
+  <li>수정 파일 : github.io 폴더 &gt; _config.yml
+<br /></li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Analytics</span>
+<span class="na">analytics</span><span class="pi">:</span>
+  <span class="na">provider               </span><span class="pi">:</span> <span class="s2">"</span><span class="s">google-gtag"</span> 
+                          <span class="c1"># false (default), "google", "google-universal", "google-gtag", "custom"</span>
+  <span class="na">google</span><span class="pi">:</span>
+    <span class="na">tracking_id          </span><span class="pi">:</span> <span class="s2">"</span><span class="s">G-5HQPK7RHNC"</span>
+    <span class="na">anonymize_ip         </span><span class="pi">:</span> <span class="c1"># true, false (default)</span>
+</code></pre></div></div>
+<p>이를 git push해주세요. 댓글 기능보다는 더 빠르게 바로 반영됩니다.<br /><br /></p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/102707509-f7a6aa80-42de-11eb-9fd5-691b59ff143b.PNG" alt="04" class="align-center" />
+<br /></p>
+
+<p>이제 Google Analytics에서 방문자 수가 카운딩됩니다.<br />
+tracking_id를 연결한 후부터 카운딩하기 때문에, 첫 화면은 다를 수 있다는 점 유의해주세요.<br />
+<br />
+<br />
+<br /></p>
+
+<h1 id="09-구글-검색-노출시키기">[09] 구글 검색 노출시키기</h1>
+
+<p><a href="https://search.google.com/search-console/about">Google search Console</a>은 말그대로 google에서 검색을 하였을 때,<br />
+나의 사이트가 보여질 수 있도록 등록하는 Google의 서비스입니다. 당연히 Google 계정이 필요하겠죠?<br /></p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/106382936-319ebc80-6406-11eb-962e-cb3b7f110da5.png" alt="image" class="align-center" /></p>
+
+<p>이전의 댓글 기능처럼 코드 상으로 추가하실 건 없습니다!<br />
+<br /></p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/106383074-09fc2400-6407-11eb-8b2e-7be1507bef2f.png" alt="image" class="align-center" /></p>
+
+<p>유효한 URL인지 확인이 되면 소유권을 확인하기 위해서 다음과 같은 화면이 뜹니다.<br /></p>
+
+<ul>
+  <li><strong>HTML 파일 : 웹사이트에 HTML 파일 업로드 (권장)</strong></li>
+  <li>HTML 태그 : 사이트 홈페이지에 메타태그 추가</li>
+  <li>Google 애널리틱스 : Google 애널리틱스 계정 사용</li>
+  <li>Google 태그 관리자 : Google 태그 관리자 계정 사용</li>
+  <li>도메일 이름 공급업체 ; DNS 레코드와 Google 연결</li>
+</ul>
+
+<p>이렇게 엄청나게 다양한 방법이 존재하지만, 전 HTML 파일을 진행할 예정입니다.<br />
+우선 현재 HTML 파일을 다운받아줍시다.<br />
+<br />
+<br /></p>
+
+<h2 id="html-파일-세팅">HTML 파일 세팅</h2>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/106383234-25b3fa00-6408-11eb-948a-6fad99018610.png" alt="image" class="align-center" /></p>
+
+<p><br />
+이렇게 다운받은 HTML 파일은 <code class="language-plaintext highlighter-rouge">_config.xml</code>과 동일한 위치(Root 위치)에 넣어주시면 됩니다.<br />
+commit을 하기 전에 <code class="language-plaintext highlighter-rouge">http://127.0.0.1:4000/google_HTML_파일명.HTML</code> 으로 Local Test를 해주세요.<br />
+<br /></p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/106383381-e508b080-6408-11eb-905a-640a1e56f819.png" alt="image" class="align-center" /></p>
+
+<p>이렇게 파일의 명과 함께 정상적으로 보여진다면, 정확하게 등록을 하신겁니다.<br />
+아직 이는 현재의 사이트가 내 소유이다를 알려주는 것뿐, 검색의 url 정보를 크롤링은 할 수가 없습니다.<br />
+따라서 이러한 작업을 할 수 있도록, 추가적인 내용을 추가해줍시다!<br />
+<br /></p>
+
+<h2 id="sitemapxml-만들기">sitemap.xml 만들기</h2>
+
+<script src="https://gist.github.com/eona1301/0917f0d1fc12314ef3f73fd5fc3b50f9.js"></script>
+
+<p>현재 보이시는 sitemap.xml의 코드를 google HTML 파일과 동일한 위치(Root 위치)에 만들어주시면 됩니다.<br />
+<br />
+현재의 sitemap.xml을 이용해 Google 크롤러가 주기적으로 저의 url을 체크할 수 있게 되었습니다.<br />
+<br /></p>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/106384507-9b22c900-640e-11eb-8a57-68bd4e6ac560.png" alt="image" class="align-center" /></p>
+
+<p>실제로 <a href="http://127.0.0.1:4000/sitemap.xml">http://127.0.0.1:4000/sitemap.xml</a>로 접속하셔서 위와 같은 결과가 잘 보여지는지 확인해주세요. <br />
+<br />
+<br /></p>
+
+<h2 id="robotstxt-만들기">robots.txt 만들기</h2>
+
+<script src="https://gist.github.com/eona1301/c16bac3dde50d87d39c34754043cf93b.js"></script>
+
+<p>이제 접근하는 크롤러는 robots.txt를 보고 접근하고자 하는 sitemap의 위치를 확인하고,<br />
+제한을 확인하여 본래의 웹사이트로 가져가게 됩니다.<br />
+Allow에 본인이 원하시는 정보만 입력하거나 제한을 두고싶으신 내용을 입력하시면 크롤러가 확인해서 진행해줍니다.<br />
+<br />
+<br /></p>
+
+<h2 id="최종-sitemapxml-등록">최종 Sitemap.xml 등록</h2>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/106384572-e210be80-640e-11eb-9461-f784198136a3.png" alt="image" class="align-center" /></p>
+
+<p>google search console에서 sitemaps 페이지에서 본인의 sitemap.xml을 등록해줍니다.<br />
+처음 등록할 때는 바로 성공이라고 뜨지않고, 알수없음/실패 등의 다양한 내용으로 보여지게 됩니다.<br />
+코드에 문제가 있는게 아니니 걱정마시고! 이제 기다림의 미학입니다! 😪<br />
+<br />
+<br /></p>
+
+<h2 id="등록-결과-확인">등록 결과 확인</h2>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/106384617-27cd8700-640f-11eb-8b24-49124ff2c65d.png" alt="image" class="align-center" /></p>
+
+<p>2020년 12월 2n쯤 등록해서, 2021년 1월 2n쯤 노출이 되기 시작했습니다.<br />
+빠르신 분들은 3~5일로도 나온다고 하는데, 전 자그마치 1달이 걸렸네요 ㅠㅠ <br />
+초반에 sitemap의 코드가 잘못되었기도 하고, 가장 오래걸린 내용이였습니다.<br />
+이제 노출이 되기 시작했으니 더욱 열심히 해보겠습니다! ㅎㅎ<br />
+<br />
+<br /></p>
+
+<h1 id="10-깔끔한-코드블럭-작성하기">[10] 깔끔한 코드블럭 작성하기</h1>
+
+<p><img src="https://user-images.githubusercontent.com/45550607/110230979-2cc6ae80-7f58-11eb-97d5-6936e04df6d9.png" alt="image" class="image-center" /></p>
+
+<p><a href="https://gist.github.com/">Github Gist</a>에 접속하면 위와 같은 화면을 보실 수 있습니다.<br />
+이렇게 작성을 완료하면, 제가 빨간 사각형을 한 영역에서 해당 코드의 Embed 코드를 얻을 수 있습니다.<br />
+이 코드를 우측 버튼으로 Copy하여 원하는 posting 위치에 넣으면 됩니다.<br /></p>
+
+<p>이렇게 첫 A to Z 시리즈의 블로그 세팅글을 마치도록 하겠습니다.<br />
+모두 따라오시느라 수고많으셨습니다!<br />
+궁금하신 사항은 댓글 부탁드려요 :) <br />
+<br /></p>
+
+<p class="notice--success">🔔 <strong>포스팅 공지</strong> <br /><br />
+현재 작성한 포스팅은 <strong>깃 블로그 지킬 minimal mistakes</strong>과 관련된 종합 내용입니다.<br />
+<br />
+A to Z 카테고리는 지금까지 진행할 포스팅을 확인하기 편하게 순서대로 정리한 글입니다.<br />
+각각의 포스터에서 조금 더 자세한 설명과 팁 등이 적혀있으니 참조해주세요.<br /></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#blog" class="page__taxonomy-item" rel="tag">blog</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#disqus" class="page__taxonomy-item" rel="tag">disqus</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#favicon" class="page__taxonomy-item" rel="tag">favicon</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#google-analytics" class="page__taxonomy-item" rel="tag">google analytics</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#jekyll" class="page__taxonomy-item" rel="tag">jekyll</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#minimal-mistakes" class="page__taxonomy-item" rel="tag">minimal mistakes</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#a-to-z" class="page__taxonomy-item" rel="tag">A_to_Z</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2021-01-31T00:00:00+09:00">January 31, 2021</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=%5BA+to+Z%5D+Github+Blog+Jekyll+minimal+mistakes%20http%3A%2F%2Flocalhost%3A4000%2Fa_to_z%2FGithubBlog%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fa_to_z%2FGithubBlog%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fa_to_z%2FGithubBlog%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/github_blog/GithubBlog-Search/" class="pagination--pager" title="[Github Blog] minimal mistakes - 검색창 노출시키기
+">이전</a>
+    
+    
+      <a href="/beakjoon/1000/" class="pagination--pager" title="[Beakjoon] 1000번 A+B
+">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">참고</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/%EA%B3%B5%EC%A7%80/GoodBye/" rel="permalink">🕊블로그 이사했습니다.🕊
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          최대 1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Github io를 해보고싶어서 2020년 7월 1일에 첫 커밋을 남기면서 시작했네요.
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/beakjoon/16956/" rel="permalink">[Beakjoon] 16956번 늑대와 양
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">📣
+Beakjoon에서 PASS된 코드만 업데이트합니다.
+알고리즘을 먼저 풀이하는 언어(Java)가 정해져있어, 
+풀이 언어(Python, C++, Java)가 모두 업데이트될 때까지는 시간이 걸릴 수 있습니다.
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/github_blog/GithubBlog-Code/" rel="permalink">[Github Blog] MarkDown 프로그래밍 코드 작성하기
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">📌 작성자 개발 환경 
+OS : Windows 10
+Tool : Github Gist
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/beakjoon/2161/" rel="permalink">[Beakjoon] 2161번 카드1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">📣
+Beakjoon에서 PASS된 코드만 업데이트합니다.
+알고리즘을 먼저 풀이하는 언어(Java)가 정해져있어, 
+풀이 언어(Python, C++, Java)가 모두 업데이트될 때까지는 시간이 걸릴 수 있습니다.
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:eona1301@email.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://www.facebook.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>
+        
+      
+        
+          <li><a href="https://github.com/eona1301" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://www.instagram.com/danghyeona/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 당현아(Dang Hyeona). Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/a_to_z/GithubBlog/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/a_to_z/GithubBlog"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://eona1301-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>
