@@ -26,6 +26,7 @@ toc_icon: ""
 2. 불변성: 문자열 리터럴은 불변하여 수정할 수 없다. 문자열을 변하려고 하면 새로운 문자열을 생성한다.
 3. 메모리 절약: Constant Pool에 이미 저장되어있는 리터럴이 있다면 새로 생성하지 않고 기존의 문자열을 사용하여 메모리를 절약한다.
 
+
 ```java
 String str = "Hello, ";
 str += "world!"; // 새로운 문자열 생성.
@@ -34,6 +35,7 @@ String a = "A"; // Constant Pool에 "A" 추가.
 String b = "A"; // 이미 상수 풀에 저장된 "A" 문자열을 참조한다.
 System.out.println(a == b); // 같은 문자열을 참조하고 있기 때문에 true.
 ```
+
 <br>
 
 *Constant Pool에 저장되는 리터럴과 new 연산자를 사용한 String 객체는 차이가 있다*<br>
@@ -52,6 +54,7 @@ StringBuffer와 StringBuilder는 String과 달리 가변객체(Mutable)이므로
 - *StringBuffer → 동기화를 지원 O. multi-thread 환경에서 thread-safe.*
 - *StringBuilder → 동기화를 지원 X. Not thread-safe, single-thread 환경에서 성능이 StringBuffer보다 좋음.*
 - *StringBuffer, StringBuilder는 heap영역에 저장된다.*
+<br>
 ```java
 // StringBuffer
 StringBuffer buffer = new StringBuffer("Hello, ");
@@ -61,6 +64,7 @@ buffer.append("world!"); // 기존 객체를 수정
 StringBuilder builder = new StringBuilder("Hello, ");
 builder.append("world!"); // 기존 객체를 수정
 ```
+
 또한 StringBuffer와 StringBuilder는 `append()` 메서드는 StringBuffer, StringBuilder 자체를 반환하기 때문에
 여러 메서드 호출을 연쇄적으로 할 수 있고 문자열을 동적으로 생성하고 조작할 수 있다. 
 
