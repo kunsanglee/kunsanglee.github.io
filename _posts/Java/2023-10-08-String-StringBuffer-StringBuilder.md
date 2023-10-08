@@ -40,6 +40,7 @@ System.out.println(a == b); // 같은 문자열을 참조하고 있기 때문에
 
 *Constant Pool에 저장되는 리터럴과 new 연산자를 사용한 String 객체는 차이가 있다*<br>
 >리터럴은 상수 문자열(constant strings)로 취급되어 상수풀에 저장되지만, new 연산자를 사용하여 문자열 객체를 생성하면 리터럴이 아닌 새로운 문자열 객체를 생성하게 되어 Heap영역에 저장된다. 상수 풀을 사용하면 문자열의 비교 및 메모리 관리가 효율적으로 이루어지므로 문자열 리터럴을 많이 사용하는 경우 성능 및 메모리 효율성을 향상시킬 수 있다.
+
 ```java
 String str1 = "string"; // Constant Pool에 문자열 리터럴로 저장.
 String str2 = new String("string"); // heap 영역에 String 객체로 저장.
@@ -55,6 +56,7 @@ StringBuffer와 StringBuilder는 String과 달리 가변객체(Mutable)이므로
 - *StringBuilder → 동기화를 지원 X. Not thread-safe, single-thread 환경에서 성능이 StringBuffer보다 좋음.*
 - *StringBuffer, StringBuilder는 heap영역에 저장된다.*
 <br>
+
 ```java
 // StringBuffer
 StringBuffer buffer = new StringBuffer("Hello, ");

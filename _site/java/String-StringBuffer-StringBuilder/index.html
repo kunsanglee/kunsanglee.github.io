@@ -1,0 +1,680 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.2 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>String, StringBuffer, StringBuilder -  kunsanglee’s</title>
+<meta name="description" content="String">
+
+
+  <meta name="author" content="이건상">
+  
+  <meta property="article:author" content="이건상">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content=" kunsanglee's">
+<meta property="og:title" content="String, StringBuffer, StringBuilder">
+<meta property="og:url" content="http://localhost:4000/java/String-StringBuffer-StringBuilder/">
+
+
+  <meta property="og:description" content="String">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-10-08T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/java/String-StringBuffer-StringBuilder/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Kunsang Lee",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title=" kunsanglee's Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+<meta name="naver-site-verification" content="d884164c2f43b5d7cfca36d514355ee3ab493511" />
+<meta name="NaverBot" content="All"/>
+<meta name="NaverBot" content="index,follow"/>
+<meta name="Yeti" content="All"/>
+<meta name="Yeti" content="index,follow"/>
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<!--<link rel="apple-touch-icon" sizes="180x180" href="/assets/logo.ico/apple-touch-icon.png">-->
+<!--<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.ico/favicon-32x32.png">-->
+<!--<link rel="icon" type="image/png" sizes="16x16" href="/assets/logo.ico/favicon-16x16.png">-->
+<!--<link rel="mask-icon" href="/assets/logo.ico/safari-pinned-tab.svg" color="#5bbad5">-->
+<!--<meta name="msapplication-TileColor" content="#da532c">-->
+<!--<meta name="theme-color" content="#ffffff">-->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+           kunsanglee's
+          <span class="site-subtitle">backend</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/">Year</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/image/profile/%EC%9A%9C%EC%9D%B4.png" alt="이건상" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">이건상</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>basic is everything</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Republic of Korea</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="String, StringBuffer, StringBuilder">
+    <meta itemprop="description" content="String">
+    <meta itemprop="datePublished" content="2023-10-08T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">String, StringBuffer, StringBuilder
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h3 id="string">String</h3>
+
+<p><code class="language-plaintext highlighter-rouge">String</code> 클래스는 불변(Immutable)한 문자열을 나타낸다. 한 번 문자열 리터럴이 생성되면 수정할 수 없다. Java에서는 <em>String Constant Pool</em> 또는 상수풀(<em>Constant Pool</em>)이라고 하는 문자열 리터럴을 관리하는 특별한 메모리 영역으로, JVM 내부에 존재하며 문자열 리터럴을 저장하고 재사용하는 역할을 한다.</p>
+
+<blockquote>
+  <p><em>문자열 리터럴이란?</em><br />
+문자열 리터럴은 소스코드에서 문자열 값을 표현하는 고정된 문자열이다.</p>
+</blockquote>
+
+<p><img src="..%2F..%2Fimage%2FforPost%2FStringPool.png" alt="StringPool.png" /></p>
+
+<h3 id="constant-pool의-특징">Constant Pool의 특징</h3>
+<ol>
+  <li>문자열 리터럴의 재사용: Constant Pool은 리터럴을 중복하여 생성하지 않도록 하나의 인스턴스로 관리한다. 동일한 문자열을 참조하면 결국 같은 인스턴스를 참조하게 된다.</li>
+  <li>불변성: 문자열 리터럴은 불변하여 수정할 수 없다. 문자열을 변하려고 하면 새로운 문자열을 생성한다.</li>
+  <li>메모리 절약: Constant Pool에 이미 저장되어있는 리터럴이 있다면 새로 생성하지 않고 기존의 문자열을 사용하여 메모리를 절약한다.</li>
+</ol>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">str</span> <span class="o">=</span> <span class="s">"Hello, "</span><span class="o">;</span>
+<span class="n">str</span> <span class="o">+=</span> <span class="s">"world!"</span><span class="o">;</span> <span class="c1">// 새로운 문자열 생성.</span>
+<span class="c1">// 현재 Constant Pool에는 "Hello, "와 "Hello, world!" 두 리터럴이 저장되어있다.</span>
+<span class="nc">String</span> <span class="n">a</span> <span class="o">=</span> <span class="s">"A"</span><span class="o">;</span> <span class="c1">// Constant Pool에 "A" 추가.</span>
+<span class="nc">String</span> <span class="n">b</span> <span class="o">=</span> <span class="s">"A"</span><span class="o">;</span> <span class="c1">// 이미 상수 풀에 저장된 "A" 문자열을 참조한다.</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="o">);</span> <span class="c1">// 같은 문자열을 참조하고 있기 때문에 true.</span>
+</code></pre></div></div>
+
+<p><br /></p>
+
+<p><em>Constant Pool에 저장되는 리터럴과 new 연산자를 사용한 String 객체는 차이가 있다</em><br /></p>
+<blockquote>
+  <p>리터럴은 상수 문자열(constant strings)로 취급되어 상수풀에 저장되지만, new 연산자를 사용하여 문자열 객체를 생성하면 리터럴이 아닌 새로운 문자열 객체를 생성하게 되어 Heap영역에 저장된다. 상수 풀을 사용하면 문자열의 비교 및 메모리 관리가 효율적으로 이루어지므로 문자열 리터럴을 많이 사용하는 경우 성능 및 메모리 효율성을 향상시킬 수 있다.</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">str1</span> <span class="o">=</span> <span class="s">"string"</span><span class="o">;</span> <span class="c1">// Constant Pool에 문자열 리터럴로 저장.</span>
+<span class="nc">String</span> <span class="n">str2</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">String</span><span class="o">(</span><span class="s">"string"</span><span class="o">);</span> <span class="c1">// heap 영역에 String 객체로 저장.</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">str1</span> <span class="o">==</span> <span class="n">str2</span><span class="o">);</span> <span class="c1">// false, 둘은 참조가 다르다.</span>
+</code></pre></div></div>
+
+<h3 id="stringbuffer-stringbuilder">StringBuffer, StringBuilder</h3>
+
+<p>StringBuffer와 StringBuilder는 String과 달리 가변객체(Mutable)이므로 수정이 가능하다.
+또한 잦은 문자열 수정이 필요할 때 불변객체인 String을 사용하면 새로운 리터럴 문자열이 계속해서 Constant Pool에 생성되지만, 가변객체를 사용하여 문자열을 수정하면 새로 생성하지 않고 기존 객체가 수정되기 때문에 불변객체의 단점을 극복할 수 있다.</p>
+
+<ul>
+  <li><em>StringBuffer → 동기화를 지원 O. multi-thread 환경에서 thread-safe.</em></li>
+  <li><em>StringBuilder → 동기화를 지원 X. Not thread-safe, single-thread 환경에서 성능이 StringBuffer보다 좋음.</em></li>
+  <li><em>StringBuffer, StringBuilder는 heap영역에 저장된다.</em>
+<br /></li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// StringBuffer</span>
+<span class="nc">StringBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuffer</span><span class="o">(</span><span class="s">"Hello, "</span><span class="o">);</span>
+<span class="n">buffer</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"world!"</span><span class="o">);</span> <span class="c1">// 기존 객체를 수정</span>
+
+<span class="c1">// StringBuilder</span>
+<span class="nc">StringBuilder</span> <span class="n">builder</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">(</span><span class="s">"Hello, "</span><span class="o">);</span>
+<span class="n">builder</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"world!"</span><span class="o">);</span> <span class="c1">// 기존 객체를 수정</span>
+</code></pre></div></div>
+
+<p>또한 StringBuffer와 StringBuilder는 <code class="language-plaintext highlighter-rouge">append()</code> 메서드는 StringBuffer, StringBuilder 자체를 반환하기 때문에
+여러 메서드 호출을 연쇄적으로 할 수 있고 문자열을 동적으로 생성하고 조작할 수 있다.</p>
+
+<hr />
+
+<h3 id="불변immutable객체란">불변(Immutable)객체란?</h3>
+
+<p>객체 생성 이후에는 객체의 상태가 바뀌지 않는 객체.</p>
+
+<p><em>장점</em></p>
+<ol>
+  <li>이해하기 쉽고 안정적인 서비스 개발에 도움이 된다.</li>
+  <li>map, set, cache에 쓰기 적절.(객체의 중복제거)</li>
+  <li>(일반적으로) Thread-safe.</li>
+  <li>불변 객체를 필드로 쓰면 방어적 복사를 할 필요가 없다.</li>
+</ol>
+
+<p><em>어떤 클래스를 불변(immutable)으로 만들고 싶다면?</em></p>
+<ul>
+  <li>상태 변경 메서드 제거</li>
+  <li>모든 필드 private final 지정</li>
+  <li>클래스 상속 금지(class에 final)</li>
+  <li>Mutable 객체의 레퍼런스 공유 금지</li>
+</ul>
+
+<p>만약 불변 객체로 선언한 필드를 가변적으로 사용하려면 mutable객체의 레퍼런스를 공유해서 사용하지 않고
+방어적 복사를 활용해서 새로운 객체를 반환하면 가능.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#stringbuffer" class="page__taxonomy-item" rel="tag">StringBuffer</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#stringbuilder" class="page__taxonomy-item" rel="tag">StringBuilder</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#string" class="page__taxonomy-item" rel="tag">String</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#java" class="page__taxonomy-item" rel="tag">Java</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2023-10-08T00:00:00+09:00">October 8, 2023</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=String%2C+StringBuffer%2C+StringBuilder%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2FString-StringBuffer-StringBuilder%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FString-StringBuffer-StringBuilder%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FString-StringBuffer-StringBuilder%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/java/%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-contains()-add()/" class="pagination--pager" title="자료구조 contains(), add()
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">참고</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-contains()-add()/" rel="permalink">자료구조 contains(), add()
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">isValidDuplicated 메서드는 친구관계를 나타내는 friends 리스트에서
+[[”json”, “john”], [”john”, “json”]] 과 같이 중복되는 친구관계가 담겨있는지 확인하는 메서드이다.
+
+```java
+// 개선 전
+// friend는 [[“json”, ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/Object.requireNonNull()-Map-getOrDefault()-compute()-computeIfAbsent()/" rel="permalink">Object.requireNonNull(), Map -  getOrDefault (), compute(), computeIfAbsent()
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">// 개선 전
+// friend는 [["json", "john"], ["john", "mike"]...] 이런 데이터가 담긴 List이다.
+private static Map&lt;String, List&lt;String&gt;&gt; makeFriendRelation(List&lt...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Kunsang Lee. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/java/String-StringBuffer-StringBuilder/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/java/String-StringBuffer-StringBuilder"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://https-kunsanglee-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>
