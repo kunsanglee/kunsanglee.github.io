@@ -16,4 +16,10 @@ var store = [{
         "tags": ["String","StringBuffer","StringBuilder"],
         "url": "http://localhost:4000/java/String-StringBuffer-StringBuilder/",
         "teaser": null
+      },{
+        "title": "객체지향 변경에 유연한 코드 리팩토링",
+        "excerpt":"리팩토링 전 코드는 크게 두 가지 기능으로 영화관에서 관람객이 티켓을 구매하거나 초대권을 사용하여 입장, 카페에서 고객이 캐셔에게 음료 주문을 하여 바리스타가 주문을 바탕으로 음료를 만들어주는 기능을 하는 코드였다. 하지만 기능이 동작하는 것과 별개로 각 객체들이 너무 많은 범위의 책임을 가지고 있었고, 클래스 간의 관계가 강하게 결합되어있어 확장이 어렵고 코드를 읽는...","categories": ["Java"],
+        "tags": ["객체지향","SOLID","Refactor"],
+        "url": "http://localhost:4000/java/%EB%B3%80%EA%B2%BD%EC%97%90-%EC%9C%A0%EC%97%B0%ED%95%9C-%EC%BD%94%EB%93%9C-%EB%A6%AC%ED%8C%A9%ED%86%A0%EB%A7%81/",
+        "teaser": null
       }]

@@ -1,0 +1,1044 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.2 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>객체지향 변경에 유연한 코드 리팩토링 -  kunsanglee’s</title>
+<meta name="description" content="리팩토링 전 코드는 크게 두 가지 기능으로 영화관에서 관람객이 티켓을 구매하거나 초대권을 사용하여 입장, 카페에서 고객이 캐셔에게 음료 주문을 하여 바리스타가 주문을 바탕으로 음료를 만들어주는 기능을 하는 코드였다. 하지만 기능이 동작하는 것과 별개로 각 객체들이 너무 많은 범위의 책임을 가지고 있었고, 클래스 간의 관계가 강하게 결합되어있어 확장이 어렵고 코드를 읽는 사람이 객체의 상태와 행동을 예측할 수 없는 문제가 있었다.">
+
+
+  <meta name="author" content="이건상">
+  
+  <meta property="article:author" content="이건상">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content=" kunsanglee's">
+<meta property="og:title" content="객체지향 변경에 유연한 코드 리팩토링">
+<meta property="og:url" content="http://localhost:4000/java/%EB%B3%80%EA%B2%BD%EC%97%90-%EC%9C%A0%EC%97%B0%ED%95%9C-%EC%BD%94%EB%93%9C-%EB%A6%AC%ED%8C%A9%ED%86%A0%EB%A7%81/">
+
+
+  <meta property="og:description" content="리팩토링 전 코드는 크게 두 가지 기능으로 영화관에서 관람객이 티켓을 구매하거나 초대권을 사용하여 입장, 카페에서 고객이 캐셔에게 음료 주문을 하여 바리스타가 주문을 바탕으로 음료를 만들어주는 기능을 하는 코드였다. 하지만 기능이 동작하는 것과 별개로 각 객체들이 너무 많은 범위의 책임을 가지고 있었고, 클래스 간의 관계가 강하게 결합되어있어 확장이 어렵고 코드를 읽는 사람이 객체의 상태와 행동을 예측할 수 없는 문제가 있었다.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-10-09T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/java/%EB%B3%80%EA%B2%BD%EC%97%90-%EC%9C%A0%EC%97%B0%ED%95%9C-%EC%BD%94%EB%93%9C-%EB%A6%AC%ED%8C%A9%ED%86%A0%EB%A7%81/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Kunsang Lee",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title=" kunsanglee's Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+<meta name="naver-site-verification" content="d884164c2f43b5d7cfca36d514355ee3ab493511" />
+<meta name="NaverBot" content="All"/>
+<meta name="NaverBot" content="index,follow"/>
+<meta name="Yeti" content="All"/>
+<meta name="Yeti" content="index,follow"/>
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<!--<link rel="apple-touch-icon" sizes="180x180" href="/assets/logo.ico/apple-touch-icon.png">-->
+<!--<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.ico/favicon-32x32.png">-->
+<!--<link rel="icon" type="image/png" sizes="16x16" href="/assets/logo.ico/favicon-16x16.png">-->
+<!--<link rel="mask-icon" href="/assets/logo.ico/safari-pinned-tab.svg" color="#5bbad5">-->
+<!--<meta name="msapplication-TileColor" content="#da532c">-->
+<!--<meta name="theme-color" content="#ffffff">-->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+           kunsanglee's
+          <span class="site-subtitle">backend</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/">Year</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/image/profile/%EC%9A%9C%EC%9D%B4.png" alt="이건상" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">이건상</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>basic is everything</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Republic of Korea</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="객체지향 변경에 유연한 코드 리팩토링">
+    <meta itemprop="description" content="리팩토링 전 코드는 크게 두 가지 기능으로 영화관에서 관람객이 티켓을 구매하거나 초대권을 사용하여 입장, 카페에서 고객이 캐셔에게 음료 주문을 하여 바리스타가 주문을 바탕으로 음료를 만들어주는 기능을 하는 코드였다. 하지만 기능이 동작하는 것과 별개로 각 객체들이 너무 많은 범위의 책임을 가지고 있었고, 클래스 간의 관계가 강하게 결합되어있어 확장이 어렵고 코드를 읽는 사람이 객체의 상태와 행동을 예측할 수 없는 문제가 있었다.">
+    <meta itemprop="datePublished" content="2023-10-09T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">객체지향 변경에 유연한 코드 리팩토링
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          7 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>리팩토링 전 코드는 크게 두 가지 기능으로 영화관에서 관람객이 티켓을 구매하거나 초대권을 사용하여 입장, 카페에서 고객이 캐셔에게 음료 주문을 하여 바리스타가 주문을 바탕으로 음료를 만들어주는 기능을 하는 코드였다. 하지만 기능이 동작하는 것과 별개로 각 객체들이 너무 많은 범위의 책임을 가지고 있었고, 클래스 간의 관계가 강하게 결합되어있어 확장이 어렵고 코드를 읽는 사람이 객체의 상태와 행동을 예측할 수 없는 문제가 있었다.</p>
+
+<hr />
+
+<p><em>리팩토링 전 코드</em></p>
+
+<p><a href="https://www.notion.so/Theater-Domain-9b96f2b7c30246f885cb8694ee771361?pvs=21">Theater Domain</a></p>
+
+<h3 id="기존-코드의-문제점"><em>기존 코드의 문제점</em></h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="nd">@RequiredArgsConstructor</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Theater</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">enter</span><span class="o">(</span><span class="nc">Audience</span> <span class="n">audience</span><span class="o">,</span> <span class="nc">TicketSeller</span> <span class="n">ticketSeller</span><span class="o">){</span>
+        <span class="k">if</span><span class="o">(</span><span class="n">audience</span><span class="o">.</span><span class="na">getBag</span><span class="o">().</span><span class="na">hasInvitation</span><span class="o">()){</span>
+            <span class="nc">Ticket</span> <span class="n">ticket</span> <span class="o">=</span> <span class="n">ticketSeller</span><span class="o">.</span><span class="na">getTicketOffice</span><span class="o">().</span><span class="na">getTicket</span><span class="o">();</span>
+            <span class="n">audience</span><span class="o">.</span><span class="na">getBag</span><span class="o">().</span><span class="na">setTicket</span><span class="o">(</span><span class="n">ticket</span><span class="o">);</span>
+        <span class="o">}</span><span class="k">else</span> <span class="o">{</span>
+            <span class="nc">Ticket</span> <span class="n">ticket</span> <span class="o">=</span> <span class="n">ticketSeller</span><span class="o">.</span><span class="na">getTicketOffice</span><span class="o">().</span><span class="na">getTicket</span><span class="o">();</span>
+            <span class="n">audience</span><span class="o">.</span><span class="na">getBag</span><span class="o">().</span><span class="na">minusAmount</span><span class="o">(</span><span class="n">ticket</span><span class="o">.</span><span class="na">getFee</span><span class="o">());</span>
+            <span class="n">ticketSeller</span><span class="o">.</span><span class="na">getTicketOffice</span><span class="o">().</span><span class="na">plusAmount</span><span class="o">(</span><span class="n">ticket</span><span class="o">.</span><span class="na">getFee</span><span class="o">());</span>
+            <span class="n">audience</span><span class="o">.</span><span class="na">getBag</span><span class="o">().</span><span class="na">setTicket</span><span class="o">(</span><span class="n">ticket</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Theater(극장)은 현실 세계에서 절대적으로 혼자 생각하고 판단하고 행동하지 못한다. 인간이라는 행동주체가 있어야 극장의 문이 열리고 인간이 티켓을 확인 후, 극장의 입장을 허가 해준다. 하지만, 코드에서는 Theater가 TicketOffice 객체에 직접 접근하여 입장을 허가해주고 있다. 또한 Theater 클래스에서 입장을 할 때 <code class="language-plaintext highlighter-rouge">audience.getBag().hasInvitation()</code> 이렇게 관람객의 가방에서 초대권이 있는지 확인하고, <code class="language-plaintext highlighter-rouge">audience.getBag().setTicket(ticket);</code> 이렇게 관람객의 가방에 구매한 티켓을 저장하고 있다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Audience</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Bag</span> <span class="n">bag</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Audience</span><span class="o">(</span><span class="nc">Bag</span> <span class="n">bag</span><span class="o">){</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">bag</span> <span class="o">=</span> <span class="n">bag</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Bag</span> <span class="nf">getBag</span><span class="o">(){</span> <span class="k">return</span> <span class="n">bag</span><span class="o">;}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Audience</code> 클래스의 <code class="language-plaintext highlighter-rouge">Bag</code> 의 접근제어자는 분명 <code class="language-plaintext highlighter-rouge">private</code> 이다. 그러나 <code class="language-plaintext highlighter-rouge">Audience</code>가 자체적으로 내부의 메서드를 호출하여 가방에 티켓이 있는지 확인하거나 넣는 것이 아니고 외부에서 직접 <code class="language-plaintext highlighter-rouge">Audience</code>의 <code class="language-plaintext highlighter-rouge">Bag</code>에 접근하여 작업을 수행하고 있다.</p>
+
+<h3 id="해결-방법"><em>해결 방법</em></h3>
+
+<ul>
+  <li>내부와 외부를 구분 짓고 어떤 것을 외부에 노출하고 어떤 것을 내부로 숨길지 경계를 잘 결정한다.</li>
+  <li>캡슐화를 통한 세부적인 내부 구현 숨기고, 외부와의 협력은 Public 인터페이스를 통해서만 한다.</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RequiredArgsConstructor</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Theater</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">TicketOffice</span> <span class="n">ticketOffice</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">enter</span><span class="o">(</span><span class="nc">Audience</span> <span class="n">audience</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">handleEnter</span><span class="o">(</span><span class="n">audience</span><span class="o">);</span>
+        <span class="k">return</span> <span class="s">"Have a good time "</span> <span class="o">+</span> <span class="n">audience</span><span class="o">.</span><span class="na">getName</span><span class="o">()+</span> <span class="s">"."</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">refund</span><span class="o">(</span><span class="nc">Audience</span> <span class="n">audience</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">handleRefund</span><span class="o">(</span><span class="n">audience</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">audience</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">"'s refund success"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleEnter</span><span class="o">(</span><span class="nc">Audience</span> <span class="n">audience</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">audience</span><span class="o">.</span><span class="na">hasInvitation</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">handleInvitation</span><span class="o">(</span><span class="n">audience</span><span class="o">);</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">ticketOffice</span><span class="o">.</span><span class="na">sellTicketTo</span><span class="o">(</span><span class="n">audience</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleRefund</span><span class="o">(</span><span class="nc">Audience</span> <span class="n">audience</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">audience</span><span class="o">.</span><span class="na">hasInvitation</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">audience</span><span class="o">.</span><span class="na">isValidInvitation</span><span class="o">())</span> <span class="o">{</span>
+            <span class="nc">Ticket</span> <span class="n">refundTicket</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="na">refundTicket</span><span class="o">();</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">ticketOffice</span><span class="o">.</span><span class="na">setTicket</span><span class="o">(</span><span class="n">refundTicket</span><span class="o">);</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">ticketOffice</span><span class="o">.</span><span class="na">refundTicketTo</span><span class="o">(</span><span class="n">audience</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 관객이 초대권이 있다면, 초대권과 티켓을 교환하여 관객에게 지급.</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">handleInvitation</span><span class="o">(</span><span class="nc">Audience</span> <span class="n">audience</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Invitation</span> <span class="n">invitation</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="na">getInvitation</span><span class="o">();</span>
+        <span class="n">invitation</span><span class="o">.</span><span class="na">verifyInvitation</span><span class="o">();</span>
+
+        <span class="nc">Ticket</span> <span class="n">freeTicket</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">ticketOffice</span><span class="o">.</span><span class="na">getAvailableTicket</span><span class="o">();</span>
+        <span class="n">audience</span><span class="o">.</span><span class="na">takeTicket</span><span class="o">(</span><span class="n">freeTicket</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>리팩토링을 진행한 Theater 클래스에 public interface로 만들어진 메서드는 <code class="language-plaintext highlighter-rouge">enter()</code> 와 <code class="language-plaintext highlighter-rouge">refund()</code> 뿐이다. 그 이외에 private 메서드는 해당 public interface 메서드 내부에서 호출한다. 관람객은 영화관에 입장하거나, 환불을 요청할 뿐이고 관람객이 티켓을 소지하고 있는지? 티켓을 구매할 돈이 있는지? 등의 요청에 따른 비즈니스 로직은 각 객체의 역할과 책임의 범위에 따라 수행하도록 정의한다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RequiredArgsConstructor</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TicketOffice</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">TicketSeller</span><span class="o">&gt;</span> <span class="n">ticketSellers</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Ticket</span><span class="o">&gt;</span> <span class="n">tickets</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">long</span> <span class="n">amount</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">TicketOffice</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">TicketSeller</span><span class="o">&gt;</span> <span class="n">ticketSellers</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Ticket</span><span class="o">&gt;</span> <span class="n">tickets</span><span class="o">,</span> <span class="kt">long</span> <span class="n">amount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">ticketSellers</span> <span class="o">=</span> <span class="n">ticketSellers</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">tickets</span> <span class="o">=</span> <span class="n">tickets</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">amount</span> <span class="o">=</span> <span class="n">amount</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="o">...</span>
+
+    <span class="kd">protected</span> <span class="nc">TicketSeller</span> <span class="nf">findAvailableTicketSeller</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">ticketSellers</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">ticketSeller</span> <span class="o">-&gt;</span> <span class="n">ticketSeller</span><span class="o">.</span><span class="na">getStatus</span><span class="o">()</span> <span class="o">==</span> <span class="nc">Status</span><span class="o">.</span><span class="na">WAITING</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">findAny</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">orElseThrow</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">TheaterException</span><span class="o">(</span><span class="nc">TheaterErrorCode</span><span class="o">.</span><span class="na">ALL_TICKET_SELLER_IN_WORK</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 기존에 관람객이 Theater 클래스에서 바로 티켓을 구매했지만 TicketOffice에서 구매.</span>
+    <span class="c1">// TicketOffice는 업무 가능한 TicketSeller와 Ticket을 찾아주고</span>
+    <span class="c1">// TicketSeller에게 관람객에게 해당 티켓을 파는 업무를 하라고 명령한다.</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sellTicketTo</span><span class="o">(</span><span class="nc">Audience</span> <span class="n">audience</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">TicketSeller</span> <span class="n">ticketSeller</span> <span class="o">=</span> <span class="n">findAvailableTicketSeller</span><span class="o">();</span>
+        <span class="nc">Ticket</span> <span class="n">ticket</span> <span class="o">=</span> <span class="n">getAvailableTicket</span><span class="o">();</span>
+        <span class="n">ticketSeller</span><span class="o">.</span><span class="na">sellTicketTo</span><span class="o">(</span><span class="n">audience</span><span class="o">,</span> <span class="n">ticket</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 환불에 관한 메서드도 Theater에서 TicketOffice로 이동하였다.</span>
+    <span class="c1">// 환불 로직 또한 적절한 TicketSeller를 찾아서 관람객의 환불 업무를 하도록 명령한다.</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">refundTicketTo</span><span class="o">(</span><span class="nc">Audience</span> <span class="n">audience</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">TicketSeller</span> <span class="n">ticketSeller</span> <span class="o">=</span> <span class="n">findAvailableTicketSeller</span><span class="o">();</span>
+        <span class="n">ticketSeller</span><span class="o">.</span><span class="na">refundTicketTo</span><span class="o">(</span><span class="n">audience</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Getter</span>
+<span class="nd">@AllArgsConstructor</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TicketSeller</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="nc">TicketOffice</span> <span class="n">ticketOffice</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nc">Status</span> <span class="n">status</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">startWork</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">status</span> <span class="o">=</span> <span class="nc">Status</span><span class="o">.</span><span class="na">WORKING</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">finishWork</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">status</span> <span class="o">=</span> <span class="nc">Status</span><span class="o">.</span><span class="na">WAITING</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// TicketOffice에게서 티켓 판매 업무를 넘겨받아 수행한다.</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sellTicketTo</span><span class="o">(</span><span class="nc">Audience</span> <span class="n">audience</span><span class="o">,</span> <span class="nc">Ticket</span> <span class="n">ticket</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">startWork</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">audience</span><span class="o">.</span><span class="na">buyTicket</span><span class="o">(</span><span class="n">ticket</span><span class="o">);</span>
+            <span class="n">ticketOffice</span><span class="o">.</span><span class="na">plusAmount</span><span class="o">(</span><span class="n">ticket</span><span class="o">.</span><span class="na">getFee</span><span class="o">());</span>
+            <span class="n">ticketOffice</span><span class="o">.</span><span class="na">removedSoldTicket</span><span class="o">(</span><span class="n">ticket</span><span class="o">);</span>
+            <span class="n">audience</span><span class="o">.</span><span class="na">takeTicket</span><span class="o">(</span><span class="n">ticket</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">finishWork</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="c1">// TicketOffice에게서 티켓 환불 업무를 넘겨받아 수행한다.</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">refundTicketTo</span><span class="o">(</span><span class="nc">Audience</span> <span class="n">audience</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">startWork</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="nc">Ticket</span> <span class="n">refundTicket</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="na">refundTicket</span><span class="o">();</span>
+            <span class="nc">Long</span> <span class="n">ticketFee</span> <span class="o">=</span> <span class="n">refundTicket</span><span class="o">.</span><span class="na">getFee</span><span class="o">();</span>
+            <span class="n">ticketOffice</span><span class="o">.</span><span class="na">setTicket</span><span class="o">(</span><span class="n">refundTicket</span><span class="o">);</span>
+            <span class="n">ticketOffice</span><span class="o">.</span><span class="na">minusAmount</span><span class="o">(</span><span class="n">ticketFee</span><span class="o">);</span>
+            <span class="n">audience</span><span class="o">.</span><span class="na">takeRefundMoney</span><span class="o">(</span><span class="n">ticketFee</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">finishWork</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>이렇게 Theater 클래스에서 객체에 직접 접근하여 로직을 수행할 뿐더러 너무 많은 책임과 역할을 가지고 있던 코드에서 각 객체의 역할과 범위에 맞게 책임을 나눠가지게 분리하여 의존성을 낮추고 코드의 수정 전파 범위를 줄일 수 있었다.</p>
+
+<p><strong>핵심은 객체 내부의 상태를 캡슐화하고, 객체 간에 오직 메세지(public method)를 통해서만 상호작용하도록 만드는 것이다. 스스로 데이터를 처리하는 자율적인 객체로 만들면 결합도를 낮출 뿐만 아니라 응집도도 높아진다.</strong></p>
+
+<hr />
+
+<p><a href="https://www.notion.so/Cafe-Domain-6e98d98323bd43038a6b8854cca0f6b4?pvs=21">Cafe Domain</a></p>
+
+<h3 id="기존-코드의-문제점-1"><em>기존 코드의 문제점</em></h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Cashier</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Orderbook</span> <span class="n">orderbook</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">takeOrders</span><span class="o">(</span><span class="nc">String</span> <span class="n">menuName</span><span class="o">,</span> <span class="kt">int</span> <span class="n">quantity</span><span class="o">){</span>
+        <span class="nc">Coffee</span> <span class="n">makedCoffee</span> <span class="o">=</span> <span class="n">makeCoffee</span><span class="o">(</span><span class="n">menuName</span><span class="o">,</span> <span class="n">quantity</span><span class="o">);</span>
+        <span class="n">deliveryOrder</span><span class="o">(</span><span class="n">orderbook</span><span class="o">.</span><span class="na">getUserName</span><span class="o">(),</span> <span class="n">makedCoffee</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">long</span> <span class="nf">calculatePrice</span><span class="o">(</span><span class="nc">String</span> <span class="n">menuName</span><span class="o">,</span> <span class="kt">int</span> <span class="n">quantity</span><span class="o">){</span>
+    
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="nc">Coffee</span> <span class="nf">makeCoffee</span><span class="o">(</span><span class="nc">String</span> <span class="n">menuName</span><span class="o">,</span> <span class="kt">int</span> <span class="n">quantity</span><span class="o">){</span>
+    
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deliveryOrder</span><span class="o">(</span><span class="nc">Strint</span> <span class="n">toCustomer</span><span class="o">,</span> <span class="nc">Coffee</span> <span class="n">coffee</span><span class="o">){</span>
+    
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Caffe는 최초 설계 단계에서 주문 받기, 커피 제조하기, 준비된 커피 전달하기 라는 총 3개의 큰 기능이 필요하다고 판단했고, 이 모든 책임을 <code class="language-plaintext highlighter-rouge">Cashier</code>라는 객체에게 할당하는 설계로 만들어졌다.</p>
+
+<p>처음에는 문제가 없지만, 미래에 “메뉴 추가” 또는 “가격 계산방식 변경”이라는 변화가 발생한다면 Cashier 클래스는 변경되어야 한다. 즉, Cashier 클래스를 변경 시키는 요소를 2개 이상 가지고 있다는 의미이다. 이렇게 하나의 객체에 다수의 책임이 할당 되어 있는 상태에서 많은 시간이 흐르고 변화의 폭격을 맞은 코드에는 아래와 같은 문제점을 가지고 있게 된다.</p>
+
+<ol>
+  <li>각기 다른 책임의 기능들이 강하게 결합되고, 변화가 발생했을 때 변경 포인트가 전파된다.</li>
+  <li>적절한 관심사 분리가 되어 있지 않아서 코드의 가독성이 많이 떨어진다.</li>
+  <li>재사용성이 떨어진다.</li>
+</ol>
+
+<h3 id="리팩토링-후-코드"><em>리팩토링 후 코드</em></h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RequiredArgsConstructor</span>
+<span class="nd">@AllArgsConstructor</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Cashier</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Cafe</span> <span class="n">cafe</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Status</span> <span class="n">status</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">startWork</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">status</span> <span class="o">=</span> <span class="nc">Status</span><span class="o">.</span><span class="na">WORKING</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">finishWork</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">status</span> <span class="o">=</span> <span class="nc">Status</span><span class="o">.</span><span class="na">WAITING</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">protected</span> <span class="nc">Status</span> <span class="nf">getStatus</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">status</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">takeOrder</span><span class="o">(</span><span class="nc">Customer</span> <span class="n">customer</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">startWork</span><span class="o">();</span>
+        <span class="nc">Orders</span> <span class="n">orders</span> <span class="o">=</span> <span class="n">customer</span><span class="o">.</span><span class="na">submitOrders</span><span class="o">();</span>
+        <span class="kt">long</span> <span class="n">totalPrice</span> <span class="o">=</span> <span class="n">orders</span><span class="o">.</span><span class="na">calculateTotalPrice</span><span class="o">(</span><span class="n">customer</span><span class="o">.</span><span class="na">getPayment</span><span class="o">());</span>
+        <span class="nc">Long</span> <span class="n">discountedTotalPrice</span> <span class="o">=</span> <span class="n">customer</span><span class="o">.</span><span class="na">payPrice</span><span class="o">(</span><span class="n">totalPrice</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">cafe</span><span class="o">.</span><span class="na">plusSales</span><span class="o">(</span><span class="n">discountedTotalPrice</span><span class="o">);</span>
+        <span class="nc">Barista</span> <span class="n">availableBarista</span> <span class="o">=</span> <span class="n">cafe</span><span class="o">.</span><span class="na">findAvailableBarista</span><span class="o">();</span>
+        <span class="n">finishWork</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">availableBarista</span><span class="o">.</span><span class="na">makeCoffeeTo</span><span class="o">(</span><span class="n">orders</span><span class="o">)</span> <span class="o">+</span> <span class="s">", Discounted total price: "</span> <span class="o">+</span> <span class="n">discountedTotalPrice</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Cashier</code>는 고객의 주문을 받는 <code class="language-plaintext highlighter-rouge">takeOrder()</code> 메서드만 가지고 있다. 고객이 <code class="language-plaintext highlighter-rouge">submitOrders()</code> 메서드로 자신이 주문하려고 하는 음료가 담긴 Orders를 만들면 Orders 클래스에서 <code class="language-plaintext highlighter-rouge">calculateTotalPrice()</code> 메서드로 해당 주문에 대한 총 합을 반환한다. 그 후 고객이 총 가격만큼 돈을 지불하고, 카페의 매상을 올리고 커피 제조를 할 수 있는 상태의 바리스타를 찾아서 음료 제조 업무를 수행하게 한다. 이렇게 기존 코드를 리팩토링 함으로써 <code class="language-plaintext highlighter-rouge">Cashier</code> 클래스는 주문을 받는 책임의 변경이 일어날 때만 수정을 하도록 하였다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">record</span> <span class="nf">Orders</span><span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Menu</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">orderItems</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="nf">Orders</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">(</span><span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;());</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Orders</span> <span class="nf">addOrder</span><span class="o">(</span><span class="nc">Menu</span> <span class="n">menu</span><span class="o">,</span> <span class="kt">int</span> <span class="n">quantity</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Menu</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">newOrderItems</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;(</span><span class="n">orderItems</span><span class="o">);</span>
+        <span class="n">newOrderItems</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">menu</span><span class="o">,</span> <span class="n">quantity</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Orders</span><span class="o">(</span><span class="n">newOrderItems</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Menu</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="nf">getOrderItems</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">orderItems</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">long</span> <span class="nf">calculateTotalPrice</span><span class="o">(</span><span class="nc">Payment</span> <span class="n">payment</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">long</span> <span class="n">totalPrice</span> <span class="o">=</span> <span class="mi">0L</span><span class="o">;</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Menu</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">orderItems</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">getOrderItems</span><span class="o">();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="nc">Menu</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">:</span> <span class="n">orderItems</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+            <span class="nc">Menu</span> <span class="n">menu</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+            <span class="nc">Integer</span> <span class="n">quantity</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+            <span class="n">totalPrice</span> <span class="o">+=</span> <span class="o">(</span><span class="kt">long</span><span class="o">)</span> <span class="n">menu</span><span class="o">.</span><span class="na">getPrice</span><span class="o">()</span> <span class="o">*</span> <span class="n">quantity</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">payment</span><span class="o">.</span><span class="na">discount</span><span class="o">(</span><span class="n">totalPrice</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Orders</code> 는 고객이 주문한 음료의 가격을 계산하는 것 만 책임진다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">"/cafe"</span><span class="o">)</span>
+<span class="nd">@RequiredArgsConstructor</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CafeController</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">CafeService</span> <span class="n">cafeService</span><span class="o">;</span>
+
+    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/hello"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">Response</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">welcomeMessage</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">Response</span><span class="o">.</span><span class="na">success</span><span class="o">(</span><span class="s">"Welcome to The Wanted coding cafe!!"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@PostMapping</span><span class="o">(</span><span class="s">"/orders"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">Response</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">orderFromMenu</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">CustomerDto</span> <span class="n">customerDto</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Customer</span> <span class="n">customer</span> <span class="o">=</span> <span class="n">customerDto</span><span class="o">.</span><span class="na">toEntity</span><span class="o">();</span>
+        <span class="nc">DiscountPolicy</span> <span class="n">discountPolicy</span> <span class="o">=</span> <span class="nc">DiscountPolicyFactory</span><span class="o">.</span><span class="na">createDiscountPolicyBy</span><span class="o">(</span><span class="n">customerDto</span><span class="o">.</span><span class="na">payment</span><span class="o">());</span>
+        <span class="nc">Payment</span> <span class="n">payment</span> <span class="o">=</span> <span class="nc">PaymentFactory</span><span class="o">.</span><span class="na">createPayment</span><span class="o">(</span><span class="n">customerDto</span><span class="o">.</span><span class="na">payment</span><span class="o">(),</span> <span class="n">customerDto</span><span class="o">.</span><span class="na">balance</span><span class="o">(),</span> <span class="n">discountPolicy</span><span class="o">);</span>
+        <span class="n">customer</span><span class="o">.</span><span class="na">setPayment</span><span class="o">(</span><span class="n">payment</span><span class="o">);</span>
+
+        <span class="k">return</span> <span class="nc">Response</span><span class="o">.</span><span class="na">success</span><span class="o">(</span><span class="n">cafeService</span><span class="o">.</span><span class="na">orderFrom</span><span class="o">(</span><span class="n">customer</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DiscountPolicyFactory</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">DiscountPolicy</span> <span class="nf">createDiscountPolicyBy</span><span class="o">(</span><span class="nc">String</span> <span class="n">payment</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">switch</span> <span class="o">(</span><span class="n">payment</span><span class="o">.</span><span class="na">toLowerCase</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">case</span> <span class="s">"card"</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">CardDiscountPolicy</span><span class="o">();</span>
+            <span class="k">case</span> <span class="s">"cash"</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">CashDiscountPolicy</span><span class="o">();</span>
+            <span class="k">default</span> <span class="o">-&gt;</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PaymentFactory</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Payment</span> <span class="nf">createPayment</span><span class="o">(</span><span class="nc">String</span> <span class="n">payment</span><span class="o">,</span> <span class="kt">long</span> <span class="n">balance</span><span class="o">,</span> <span class="nc">DiscountPolicy</span> <span class="n">discountPolicy</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">switch</span> <span class="o">(</span><span class="n">payment</span><span class="o">.</span><span class="na">toLowerCase</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">case</span> <span class="s">"card"</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">Card</span><span class="o">(</span><span class="n">balance</span><span class="o">,</span> <span class="n">discountPolicy</span><span class="o">);</span>
+            <span class="k">case</span> <span class="s">"cash"</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">Cash</span><span class="o">(</span><span class="n">balance</span><span class="o">,</span> <span class="n">discountPolicy</span><span class="o">);</span>
+            <span class="k">default</span> <span class="o">-&gt;</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">CafeController</code> 에서는 <code class="language-plaintext highlighter-rouge">CustomerDto</code> 로 고객의 결제수단과 음료 주문을 <code class="language-plaintext highlighter-rouge">Customer</code> 클래스로 변환하여 <code class="language-plaintext highlighter-rouge">CafeService</code> 로 넘기는 역할을 한다. <code class="language-plaintext highlighter-rouge">Customer</code> 클래스로 변환할 때 <code class="language-plaintext highlighter-rouge">DiscountPolicyFactory</code> 와 <code class="language-plaintext highlighter-rouge">PaymentFactory</code> 클래스가 팩토리 메서드 패턴으로 고객의 결제수단과 그에 맞는 할인 정책을 생성하여 반환하고, <code class="language-plaintext highlighter-rouge">PaymentFactory</code> 클래스에 결제수단과 잔고, 할인정책을 매개변수로 넣어서 <code class="language-plaintext highlighter-rouge">Customer</code> 클래스에 넣어준다. 이렇게 팩토리 메서드 패턴을 사용함으로써 할인정책과 결제수단이 추가되거나 변경되어도 <code class="language-plaintext highlighter-rouge">CafeController</code> 에서는 변경에 의한 전파가 없고, 각 결제수단, 할인정책만 수정하면 된다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">DiscountPolicy</span> <span class="o">{</span>
+
+    <span class="nc">Long</span> <span class="nf">discount</span><span class="o">(</span><span class="kt">long</span> <span class="n">totalPrice</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CardDiscountPolicy</span> <span class="kd">implements</span> <span class="nc">DiscountPolicy</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">discount</span><span class="o">(</span><span class="kt">long</span> <span class="n">totalPrice</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Card Discount 10%"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">totalPrice</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">9</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CashDiscountPolicy</span> <span class="kd">implements</span> <span class="nc">DiscountPolicy</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">discount</span><span class="o">(</span><span class="kt">long</span> <span class="n">totalPrice</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Cash Discount 20%"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">totalPrice</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">8</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">DiscountPolicy</code> 인터페이스에는 <code class="language-plaintext highlighter-rouge">discount()</code> 메서드만 존재하고 결제수단에 따른 할인정책을 추가할 때는 <code class="language-plaintext highlighter-rouge">DiscountPolicy</code> 인터페이스를 구현하는 구체 클래스를 생성하여 관리하면 된다. 이렇게 인터페이스를 통해 OCP 원칙을 지켜 기존 코드를 수정하지 않고 새로운 기능을 추가할 수 있다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Payment</span> <span class="o">{</span>
+     <span class="kt">void</span> <span class="nf">pay</span><span class="o">(</span><span class="nc">Long</span> <span class="n">price</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Card</span> <span class="kd">implements</span> <span class="nc">Payment</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kt">long</span> <span class="n">balance</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">DiscountPolicy</span> <span class="n">discountPolicy</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Card</span><span class="o">(</span><span class="kt">long</span> <span class="n">balance</span><span class="o">,</span> <span class="nc">DiscountPolicy</span> <span class="n">discountPolicy</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">balance</span> <span class="o">=</span> <span class="n">balance</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">discountPolicy</span> <span class="o">=</span> <span class="n">discountPolicy</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">pay</span><span class="o">(</span><span class="nc">Long</span> <span class="n">price</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Long</span> <span class="n">discountedPrice</span> <span class="o">=</span> <span class="n">discountPolicy</span><span class="o">.</span><span class="na">discount</span><span class="o">(</span><span class="n">price</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">balance</span> <span class="o">&lt;</span> <span class="n">discountedPrice</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">CafeException</span><span class="o">(</span><span class="nc">CafeErrorCode</span><span class="o">.</span><span class="na">NOT_ENOUGH_MONEY</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">balance</span> <span class="o">-=</span> <span class="n">discountedPrice</span><span class="o">;</span>
+        <span class="k">return</span> <span class="n">discountedPrice</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Cash</span> <span class="kd">implements</span> <span class="nc">Payment</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">balance</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">DiscountPolicy</span> <span class="n">discountPolicy</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Cash</span><span class="o">(</span><span class="nc">Long</span> <span class="n">balance</span><span class="o">,</span> <span class="nc">DiscountPolicy</span> <span class="n">discountPolicy</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">balance</span> <span class="o">=</span> <span class="n">balance</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">discountPolicy</span> <span class="o">=</span> <span class="n">discountPolicy</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">Long</span> <span class="nf">pay</span><span class="o">(</span><span class="nc">Long</span> <span class="n">price</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Long</span> <span class="n">discountedPrice</span> <span class="o">=</span> <span class="n">discountPolicy</span><span class="o">.</span><span class="na">discount</span><span class="o">(</span><span class="n">price</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">balance</span> <span class="o">&lt;</span> <span class="n">discountedPrice</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">CafeException</span><span class="o">(</span><span class="nc">CafeErrorCode</span><span class="o">.</span><span class="na">NOT_ENOUGH_MONEY</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">balance</span> <span class="o">-=</span> <span class="n">discountedPrice</span><span class="o">;</span>
+        <span class="k">return</span> <span class="n">discountedPrice</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Payment</code> 인터페이스를 구현한 <code class="language-plaintext highlighter-rouge">Card</code> 와 <code class="language-plaintext highlighter-rouge">Cash</code> 클래스는 <code class="language-plaintext highlighter-rouge">pay()</code> 라는 주문금액 결제 메서드만을 가지고 <code class="language-plaintext highlighter-rouge">Orders</code> 클래스에서 계산한 총 금액을 <code class="language-plaintext highlighter-rouge">DiscountPolicy</code> 의 <code class="language-plaintext highlighter-rouge">discount()</code> 메서드를 호출하여 할인이 적용된 금액을 지불하게 한다. 이로써 단일책임 원칙을 지키며 변경에 유연한 코드가 되었다.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#refactor" class="page__taxonomy-item" rel="tag">Refactor</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#solid" class="page__taxonomy-item" rel="tag">SOLID</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5" class="page__taxonomy-item" rel="tag">객체지향</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#java" class="page__taxonomy-item" rel="tag">Java</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2023-10-09T00:00:00+09:00">October 9, 2023</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5+%EB%B3%80%EA%B2%BD%EC%97%90+%EC%9C%A0%EC%97%B0%ED%95%9C+%EC%BD%94%EB%93%9C+%EB%A6%AC%ED%8C%A9%ED%86%A0%EB%A7%81%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2F%25EB%25B3%2580%25EA%25B2%25BD%25EC%2597%2590-%25EC%259C%25A0%25EC%2597%25B0%25ED%2595%259C-%25EC%25BD%2594%25EB%2593%259C-%25EB%25A6%25AC%25ED%258C%25A9%25ED%2586%25A0%25EB%25A7%2581%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2F%25EB%25B3%2580%25EA%25B2%25BD%25EC%2597%2590-%25EC%259C%25A0%25EC%2597%25B0%25ED%2595%259C-%25EC%25BD%2594%25EB%2593%259C-%25EB%25A6%25AC%25ED%258C%25A9%25ED%2586%25A0%25EB%25A7%2581%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2F%25EB%25B3%2580%25EA%25B2%25BD%25EC%2597%2590-%25EC%259C%25A0%25EC%2597%25B0%25ED%2595%259C-%25EC%25BD%2594%25EB%2593%259C-%25EB%25A6%25AC%25ED%258C%25A9%25ED%2586%25A0%25EB%25A7%2581%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/java/String-StringBuffer-StringBuilder/" class="pagination--pager" title="String, StringBuffer, StringBuilder
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">참고</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/String-StringBuffer-StringBuilder/" rel="permalink">String, StringBuffer, StringBuilder
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">String
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-contains()-add()/" rel="permalink">자료구조 contains(), add()
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">isValidDuplicated 메서드는 친구관계를 나타내는 friends 리스트에서
+[[”json”, “john”], [”john”, “json”]] 과 같이 중복되는 친구관계가 담겨있는지 확인하는 메서드이다.
+
+```java
+// 개선 전
+// friend는 [[“json”, ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/Object.requireNonNull()-Map-getOrDefault()-compute()-computeIfAbsent()/" rel="permalink">Object.requireNonNull(), Map -  getOrDefault (), compute(), computeIfAbsent()
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">// 개선 전
+// friend는 [["json", "john"], ["john", "mike"]...] 이런 데이터가 담긴 List이다.
+private static Map&lt;String, List&lt;String&gt;&gt; makeFriendRelation(List&lt...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Kunsang Lee. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/java/%EB%B3%80%EA%B2%BD%EC%97%90-%EC%9C%A0%EC%97%B0%ED%95%9C-%EC%BD%94%EB%93%9C-%EB%A6%AC%ED%8C%A9%ED%86%A0%EB%A7%81/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/java/변경에-유연한-코드-리팩토링"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://https-kunsanglee-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>
