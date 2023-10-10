@@ -22,4 +22,10 @@ var store = [{
         "tags": ["객체지향","SOLID","Refactor"],
         "url": "http://localhost:4000/java/%EB%B3%80%EA%B2%BD%EC%97%90-%EC%9C%A0%EC%97%B0%ED%95%9C-%EC%BD%94%EB%93%9C-%EB%A6%AC%ED%8C%A9%ED%86%A0%EB%A7%81/",
         "teaser": null
+      },{
+        "title": "TDD 학점 계산기 만들기",
+        "excerpt":"학점을 구하는 방법 = (교과목 학점 + 평점)의 합 / 수강신청 총 학점 수. 객체지향 설계 및 구현 도메인을 구성하는 객체에는 어떤 것들이 있는지 고민. 객체들 간의 관계를 고민. 동적인 객체를 정적인 타입으로 추상화하여 도메인 모델링. 협력을 설계. 객체들을 포괄하는 타입에 적절한 책임을 할당. 구현. 1. 도메인을 구성하는 객체에는 어떤...","categories": ["Java"],
+        "tags": ["객체지향","일급 컬렉션","TDD","Refactor"],
+        "url": "http://localhost:4000/java/%ED%95%99%EC%A0%90-%EA%B3%84%EC%82%B0%EA%B8%B0-%EB%A7%8C%EB%93%A4%EA%B8%B0/",
+        "teaser": null
       }]
