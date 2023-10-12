@@ -326,6 +326,19 @@
 
       <section class="page__content" itemprop="text">
         
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#기존-코드의-문제점">기존 코드의 문제점</a></li>
+  <li><a href="#해결-방법">해결 방법</a></li>
+  <li><a href="#기존-코드의-문제점-1">기존 코드의 문제점</a></li>
+  <li><a href="#리팩토링-후-코드">리팩토링 후 코드</a></li>
+</ul>
+
+            </nav>
+          </aside>
+        
         <p>리팩토링 전 코드는 크게 두 가지 기능으로 영화관에서 관람객이 티켓을 구매하거나 초대권을 사용하여 입장, 카페에서 고객이 캐셔에게 음료 주문을 하여 바리스타가 주문을 바탕으로 음료를 만들어주는 기능을 하는 코드였다. 하지만 기능이 동작하는 것과 별개로 각 객체들이 너무 많은 범위의 책임을 가지고 있었고, 클래스 간의 관계가 강하게 결합되어있어 확장이 어렵고 코드를 읽는 사람이 객체의 상태와 행동을 예측할 수 없는 문제가 있었다.</p>
 
 <hr />
@@ -842,6 +855,46 @@
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
+        <a href="/java/JUnit5-@ParameterizedTest/" rel="permalink">JUnit 5 - @ParameterizedTest
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">@ParameterizedTest
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
         <a href="/java/%ED%95%99%EC%A0%90-%EA%B3%84%EC%82%B0%EA%B8%B0-%EB%A7%8C%EB%93%A4%EA%B8%B0/" rel="permalink">TDD 학점 계산기 만들기
 </a>
       
@@ -953,47 +1006,6 @@
 ```java
 // 개선 전
 // friend는 [[“json”, ...</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/java/Object.requireNonNull()-Map-getOrDefault()-compute()-computeIfAbsent()/" rel="permalink">Object.requireNonNull(), Map -  getOrDefault (), compute(), computeIfAbsent()
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          3 분 소요
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">// 개선 전
-// friend는 [["json", "john"], ["john", "mike"]...] 이런 데이터가 담긴 List이다.
-private static Map&lt;String, List&lt;String&gt;&gt; makeFriendRelation(List&lt...</p>
   </article>
 </div>
 

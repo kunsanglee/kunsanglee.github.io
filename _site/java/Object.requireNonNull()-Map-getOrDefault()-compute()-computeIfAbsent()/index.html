@@ -326,6 +326,19 @@
 
       <section class="page__content" itemprop="text">
         
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#objectsrequirenonnull">Objects.requireNonNull()</a></li>
+  <li><a href="#getordefault">getOrDefault()</a></li>
+  <li><a href="#compute">compute()</a></li>
+  <li><a href="#computeifabsent">computeIfAbsent()</a></li>
+</ul>
+
+            </nav>
+          </aside>
+        
         <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 개선 전</span>
 <span class="c1">// friend는 [["json", "john"], ["john", "mike"]...] 이런 데이터가 담긴 List이다.</span>
 <span class="kd">private</span> <span class="kd">static</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="nf">makeFriendRelation</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">friends</span><span class="o">)</span> <span class="o">{</span>
@@ -582,6 +595,46 @@ NullPointerException을 발생시킨다.</p>
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
+        <a href="/java/JUnit5-@ParameterizedTest/" rel="permalink">JUnit 5 - @ParameterizedTest
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">@ParameterizedTest
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
         <a href="/java/%ED%95%99%EC%A0%90-%EA%B3%84%EC%82%B0%EA%B8%B0-%EB%A7%8C%EB%93%A4%EA%B8%B0/" rel="permalink">TDD 학점 계산기 만들기
 </a>
       
@@ -688,50 +741,6 @@ NullPointerException을 발생시킨다.</p>
 
     <p class="archive__item-excerpt" itemprop="description">String
 </p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/java/%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-contains()-add()/" rel="permalink">자료구조 contains(), add()
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          1 분 소요
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">isValidDuplicated 메서드는 친구관계를 나타내는 friends 리스트에서
-[[”json”, “john”], [”john”, “json”]] 과 같이 중복되는 친구관계가 담겨있는지 확인하는 메서드이다.
-
-```java
-// 개선 전
-// friend는 [[“json”, ...</p>
   </article>
 </div>
 

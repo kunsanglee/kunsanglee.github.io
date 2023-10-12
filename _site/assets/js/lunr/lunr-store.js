@@ -28,4 +28,10 @@ var store = [{
         "tags": ["객체지향","일급 컬렉션","TDD","Refactor"],
         "url": "http://localhost:4000/java/%ED%95%99%EC%A0%90-%EA%B3%84%EC%82%B0%EA%B8%B0-%EB%A7%8C%EB%93%A4%EA%B8%B0/",
         "teaser": null
+      },{
+        "title": "JUnit 5 - @ParameterizedTest",
+        "excerpt":"@ParameterizedTest @ParameterizedTest 어노테이션은 매개변수화된 테스트를 정의하는 데 사용한다. 이 어노테이션을 사용하면 동일한 테스트 메소드를 여러 다른 입력 값으로 여러 번 실행할 수 있다. @ParameterizedTest와 함께 사용하는 어노테이션 @ParameterizedTest 어노테이션과 관련된 어노테이션들을 사용하여 여러 다양한 입력 값에 대한 테스트를 작성하고 코드 중복을 최소화할 수 있다. 1. @ValueSource @ValueSource 어노테이션은 기본 타입과...","categories": ["Java"],
+        "tags": ["JUnit 5","ParameterizedTest"],
+        "url": "http://localhost:4000/java/JUnit5-@ParameterizedTest/",
+        "teaser": null
       }]

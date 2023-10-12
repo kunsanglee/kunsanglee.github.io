@@ -5,7 +5,7 @@ categories:
 tags:
   - Data Structure
   - Solution
-toc: false
+toc: true
 toc_sticky: true
 toc_label: ""
 toc_icon: ""
