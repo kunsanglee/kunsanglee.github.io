@@ -1,0 +1,753 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.2 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Stream.collect() - Collectors -  kunsanglee’s</title>
+<meta name="description" content="private static List&lt;String&gt; WORDS = Arrays.asList(&quot;TONY&quot;, &quot;a&quot;, &quot;hULK&quot;, &quot;B&quot;, &quot;america&quot;, &quot;X&quot;, &quot;nebula&quot;, &quot;Korea&quot;);      // List에 저장된 단어들 중에서 단어의 길이가 2 이상인 경우에만, 모든 단어를 대문자로 변환하여 스페이스로 구분한 하나의 문자열로 합한 결과를 반환하여라.   // ex) [&quot;Hello&quot;, &quot;a&quot;, &quot;Island&quot;, &quot;b&quot;] -&gt; “H I”   public String quiz2() {       return WORDS.stream()               .filter(string -&gt; string.length() &gt; 1)               .map(string -&gt; string.toUpperCase().substring(0, 1))               .collect(Collectors.joining(&quot; &quot;));   }     List에 있는 길이가 2 이상인 경우를 먼저 찾기 위해 filter로 길이가 1보다 큰 것을 걸러낸다.   그리고 걸러낸 길이가 2 이상인 문자열을 대상으로 map하여 대문자로 만들고 앞에 1자리만 잘라낸다.   collect의 Collectors.joining을 사용하여 공백을 구분자로 하여 하나의 문자로 붙인다.">
+
+
+  <meta name="author" content="이건상">
+  
+  <meta property="article:author" content="이건상">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content=" kunsanglee's">
+<meta property="og:title" content="Stream.collect() - Collectors">
+<meta property="og:url" content="http://localhost:4000/java/Stream.collect()-Collectors/">
+
+
+  <meta property="og:description" content="private static List&lt;String&gt; WORDS = Arrays.asList(&quot;TONY&quot;, &quot;a&quot;, &quot;hULK&quot;, &quot;B&quot;, &quot;america&quot;, &quot;X&quot;, &quot;nebula&quot;, &quot;Korea&quot;);      // List에 저장된 단어들 중에서 단어의 길이가 2 이상인 경우에만, 모든 단어를 대문자로 변환하여 스페이스로 구분한 하나의 문자열로 합한 결과를 반환하여라.   // ex) [&quot;Hello&quot;, &quot;a&quot;, &quot;Island&quot;, &quot;b&quot;] -&gt; “H I”   public String quiz2() {       return WORDS.stream()               .filter(string -&gt; string.length() &gt; 1)               .map(string -&gt; string.toUpperCase().substring(0, 1))               .collect(Collectors.joining(&quot; &quot;));   }     List에 있는 길이가 2 이상인 경우를 먼저 찾기 위해 filter로 길이가 1보다 큰 것을 걸러낸다.   그리고 걸러낸 길이가 2 이상인 문자열을 대상으로 map하여 대문자로 만들고 앞에 1자리만 잘라낸다.   collect의 Collectors.joining을 사용하여 공백을 구분자로 하여 하나의 문자로 붙인다.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-10-14T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/java/Stream.collect()-Collectors/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Kunsang Lee",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title=" kunsanglee's Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+<meta name="naver-site-verification" content="d884164c2f43b5d7cfca36d514355ee3ab493511" />
+<meta name="NaverBot" content="All"/>
+<meta name="NaverBot" content="index,follow"/>
+<meta name="Yeti" content="All"/>
+<meta name="Yeti" content="index,follow"/>
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<!--<link rel="apple-touch-icon" sizes="180x180" href="/assets/logo.ico/apple-touch-icon.png">-->
+<!--<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.ico/favicon-32x32.png">-->
+<!--<link rel="icon" type="image/png" sizes="16x16" href="/assets/logo.ico/favicon-16x16.png">-->
+<!--<link rel="mask-icon" href="/assets/logo.ico/safari-pinned-tab.svg" color="#5bbad5">-->
+<!--<meta name="msapplication-TileColor" content="#da532c">-->
+<!--<meta name="theme-color" content="#ffffff">-->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+           kunsanglee's
+          <span class="site-subtitle">backend</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/">Year</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/image/profile/%EC%9A%9C%EC%9D%B4.png" alt="이건상" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">이건상</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>basic is everything</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Republic of Korea</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Stream.collect() - Collectors">
+    <meta itemprop="description" content="private static List&lt;String&gt; WORDS = Arrays.asList(&quot;TONY&quot;, &quot;a&quot;, &quot;hULK&quot;, &quot;B&quot;, &quot;america&quot;, &quot;X&quot;, &quot;nebula&quot;, &quot;Korea&quot;);    // List에 저장된 단어들 중에서 단어의 길이가 2 이상인 경우에만, 모든 단어를 대문자로 변환하여 스페이스로 구분한 하나의 문자열로 합한 결과를 반환하여라.  // ex) [&quot;Hello&quot;, &quot;a&quot;, &quot;Island&quot;, &quot;b&quot;] -&gt; “H I”  public String quiz2() {      return WORDS.stream()              .filter(string -&gt; string.length() &gt; 1)              .map(string -&gt; string.toUpperCase().substring(0, 1))              .collect(Collectors.joining(&quot; &quot;));  }  List에 있는 길이가 2 이상인 경우를 먼저 찾기 위해 filter로 길이가 1보다 큰 것을 걸러낸다.  그리고 걸러낸 길이가 2 이상인 문자열을 대상으로 map하여 대문자로 만들고 앞에 1자리만 잘라낸다.  collect의 Collectors.joining을 사용하여 공백을 구분자로 하여 하나의 문자로 붙인다.">
+    <meta itemprop="datePublished" content="2023-10-14T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Stream.collect() - Collectors
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#collect">collect</a></li>
+  <li><a href="#collectors의-메서드">Collectors의 메서드</a></li>
+</ul>
+
+            </nav>
+          </aside>
+        
+        <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">static</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="no">WORDS</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">"TONY"</span><span class="o">,</span> <span class="s">"a"</span><span class="o">,</span> <span class="s">"hULK"</span><span class="o">,</span> <span class="s">"B"</span><span class="o">,</span> <span class="s">"america"</span><span class="o">,</span> <span class="s">"X"</span><span class="o">,</span> <span class="s">"nebula"</span><span class="o">,</span> <span class="s">"Korea"</span><span class="o">);</span>  
+  
+<span class="c1">// List에 저장된 단어들 중에서 단어의 길이가 2 이상인 경우에만, 모든 단어를 대문자로 변환하여 스페이스로 구분한 하나의 문자열로 합한 결과를 반환하여라.  </span>
+<span class="c1">// ex) ["Hello", "a", "Island", "b"] -&gt; “H I”  </span>
+<span class="kd">public</span> <span class="nc">String</span> <span class="nf">quiz2</span><span class="o">()</span> <span class="o">{</span>  
+    <span class="k">return</span> <span class="no">WORDS</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>  
+            <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">string</span> <span class="o">-&gt;</span> <span class="n">string</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="o">)</span>  
+            <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">string</span> <span class="o">-&gt;</span> <span class="n">string</span><span class="o">.</span><span class="na">toUpperCase</span><span class="o">().</span><span class="na">substring</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">))</span>  
+            <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">joining</span><span class="o">(</span><span class="s">" "</span><span class="o">));</span>  
+<span class="o">}</span>
+</code></pre></div></div>
+<ol>
+  <li>List에 있는 길이가 2 이상인 경우를 먼저 찾기 위해 filter로 길이가 1보다 큰 것을 걸러낸다.</li>
+  <li>그리고 걸러낸 길이가 2 이상인 문자열을 대상으로 map하여 대문자로 만들고 앞에 1자리만 잘라낸다.</li>
+  <li>collect의 Collectors.joining을 사용하여 공백을 구분자로 하여 하나의 문자로 붙인다.</li>
+</ol>
+
+<p>지금보니 map 메서드에서 대문자로 만들기 전에 substring으로 잘라낸 후 toUpperCase() 하는 것이 조금이나마 더 효율적일 것 같다. 아무튼 오늘은 stream에서 사용하는 collect 메서드에 대해서 알아볼 것이다.</p>
+
+<h3 id="collect">collect</h3>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="no">R</span><span class="o">,</span> <span class="no">A</span><span class="o">&gt;</span> <span class="no">R</span> <span class="nf">collect</span><span class="o">(</span><span class="nc">Collector</span><span class="o">&lt;?</span> <span class="kd">super</span> <span class="no">T</span><span class="o">,</span> <span class="no">A</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">collector</span><span class="o">)</span>
+</code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">T</code>: 스트림의 요소 타입</li>
+  <li><code class="language-plaintext highlighter-rouge">A</code>: 중간 결과의 형식 (accumulator)</li>
+  <li><code class="language-plaintext highlighter-rouge">R</code>: 최종 결과의 형식 (result)</li>
+  <li><code class="language-plaintext highlighter-rouge">Collector&lt;? super T, A, R&gt;</code>: 요소를 수집하는 데 사용되는 컬렉터.</li>
+  <li><code class="language-plaintext highlighter-rouge">Collector</code> 인터페이스를 구현한 객체이며, 다양한 메서드를 사용하여 스트림 요소를 어떻게 collect할지 정의.
+Java Streams의 <code class="language-plaintext highlighter-rouge">collect</code> 메서드는 스트림의 요소를 모아서 collect하는 데 사용된다. 이 메서드를 사용하면 스트림에서 처리한 요소를 새로운 컬렉션으로 변환하거나, 특정한 연산을 수행할 수 있다.</li>
+</ul>
+
+<h3 id="collectors의-메서드">Collectors의 메서드</h3>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">toList()</code>: 스트림의 요소를 <code class="language-plaintext highlighter-rouge">List</code>로 수집.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">toSet()</code>: 스트림의 요소를 <code class="language-plaintext highlighter-rouge">Set</code>으로 수집.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Set</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toSet</span><span class="o">());</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">toMap(keyMapper, valueMapper)</code>: 요소를 특정한 키와 값 변환 함수를 사용하여 <code class="language-plaintext highlighter-rouge">Map</code>으로 수집.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toMap</span><span class="o">(</span><span class="n">keyMapper</span><span class="o">,</span> <span class="n">valueMapper</span><span class="o">));</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">joining()</code>: 요소를 하나의 문자열로 연결합니다. 구분자 및 접두사 및 접미사를 지정.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">result</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Object:</span><span class="o">:</span><span class="n">toString</span><span class="o">)</span>
+ <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">joining</span><span class="o">(</span><span class="s">", "</span><span class="o">,</span> <span class="s">"["</span><span class="o">,</span> <span class="s">"]"</span><span class="o">));</span> <span class="c1">// 하나만 쓸 시 구분자만 입력.</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">groupingBy(classifier)</code>: 요소를 분류 함수(classifier)를 기반으로 그룹화하여 <code class="language-plaintext highlighter-rouge">Map</code>으로 수집.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;&gt;</span> <span class="n">groups</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">groupingBy</span><span class="o">(</span><span class="n">classifier</span><span class="o">));</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">partitioningBy(predicate)</code>: 조건을 기반으로 요소를 <code class="language-plaintext highlighter-rouge">true</code> 및 <code class="language-plaintext highlighter-rouge">false</code> 그룹으로 분할하여 수집.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Boolean</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;&gt;</span> <span class="n">partitions</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">partitioningBy</span><span class="o">(</span><span class="n">predicate</span><span class="o">));</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">counting()</code>: 스트림 내 요소의 수를 계산.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">long</span> <span class="n">count</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">counting</span><span class="o">());</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">summingInt()/summingLong()/summingDouble()</code>: 스트림 요소의 합계를 계산.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">summingInt</span><span class="o">(</span><span class="nl">Integer:</span><span class="o">:</span><span class="n">intValue</span><span class="o">));</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">averagingInt()/averagingLong()/averagingDouble()</code>: 스트림 요소의 평균을 계산.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">double</span> <span class="n">average</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">averagingInt</span><span class="o">(</span><span class="nl">Integer:</span><span class="o">:</span><span class="n">intValue</span><span class="o">));</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">maxBy(comparator)</code> 및 <code class="language-plaintext highlighter-rouge">minBy(comparator)</code>: 제공된 비교자를 기반으로 스트림에서 최대 또는 최소 요소를 찾음.
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Optional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">max</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">maxBy</span><span class="o">(</span><span class="n">comparator</span><span class="o">));</span> 
+<span class="nc">Optional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">min</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">minBy</span><span class="o">(</span><span class="n">comparator</span><span class="o">));</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>이러한 Collectors 메서드를 사용하여 Java Streams를 활용하면 다양한 데이터 처리 작업을 간단하게 수행할 수 있다. 각 메서드는 특정 작업에 적합한 결과를 생성하며, collect 작업을 매우 효과적으로 수행할 수 있다.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#collectors" class="page__taxonomy-item" rel="tag">Collectors</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#stream" class="page__taxonomy-item" rel="tag">Stream</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#java" class="page__taxonomy-item" rel="tag">Java</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2023-10-14T00:00:00+09:00">October 14, 2023</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Stream.collect%28%29+-+Collectors%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2FStream.collect%28%29-Collectors%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FStream.collect%28%29-Collectors%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FStream.collect%28%29-Collectors%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/java/JUnit5-@ParameterizedTest/" class="pagination--pager" title="JUnit 5 - @ParameterizedTest
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">참고</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/JUnit5-@ParameterizedTest/" rel="permalink">JUnit 5 - @ParameterizedTest
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">@ParameterizedTest
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/%ED%95%99%EC%A0%90-%EA%B3%84%EC%82%B0%EA%B8%B0-%EB%A7%8C%EB%93%A4%EA%B8%B0/" rel="permalink">TDD 학점 계산기 만들기
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          7 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">학점을 구하는 방법 = (교과목 학점 + 평점)의 합 / 수강신청 총 학점 수.
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/%EB%B3%80%EA%B2%BD%EC%97%90-%EC%9C%A0%EC%97%B0%ED%95%9C-%EC%BD%94%EB%93%9C-%EB%A6%AC%ED%8C%A9%ED%86%A0%EB%A7%81/" rel="permalink">객체지향 변경에 유연한 코드 리팩토링
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          7 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">리팩토링 전 코드는 크게 두 가지 기능으로 영화관에서 관람객이 티켓을 구매하거나 초대권을 사용하여 입장, 카페에서 고객이 캐셔에게 음료 주문을 하여 바리스타가 주문을 바탕으로 음료를 만들어주는 기능을 하는 코드였다. 하지만 기능이 동작하는 것과 별개로 각 객체들이 너무 많은 범위의...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/String-StringBuffer-StringBuilder/" rel="permalink">String, StringBuffer, StringBuilder
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">String
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Kunsang Lee. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/java/Stream.collect()-Collectors/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/java/Stream.collect()-Collectors"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://https-kunsanglee-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

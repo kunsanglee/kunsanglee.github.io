@@ -34,4 +34,10 @@ var store = [{
         "tags": ["JUnit 5","ParameterizedTest"],
         "url": "http://localhost:4000/java/JUnit5-@ParameterizedTest/",
         "teaser": null
+      },{
+        "title": "Stream.collect() - Collectors",
+        "excerpt":"private static List&lt;String&gt; WORDS = Arrays.asList(\"TONY\", \"a\", \"hULK\", \"B\", \"america\", \"X\", \"nebula\", \"Korea\"); // List에 저장된 단어들 중에서 단어의 길이가 2 이상인 경우에만, 모든 단어를 대문자로 변환하여 스페이스로 구분한 하나의 문자열로 합한 결과를 반환하여라. // ex) [\"Hello\", \"a\", \"Island\", \"b\"] -&gt; “H I” public String quiz2() { return WORDS.stream() .filter(string...","categories": ["Java"],
+        "tags": ["Stream","Collectors"],
+        "url": "http://localhost:4000/java/Stream.collect()-Collectors/",
+        "teaser": null
       }]
