@@ -58,6 +58,7 @@ public class MyNumber {
 > 생성자는 해당 타입만 반환하지만, 팩터리 메서드는 다형성을 이용해 반환할 객체의 클래스를 자유롭게 선택할 수 있게 하는 유연성을 준다.
 > 이 유연성을 응용하면 구현 클래스를 공개하지 않고도 그 객체를 반환할 수 있다.
 > 클라이언트는 알 필요 없는 정보를 캡슐화할 수 있다.
+
  ```java
 public interface DiscountPolicy {
     Amount discount(Order order);
