@@ -1,0 +1,858 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.2 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>캡슐화를 깨뜨리지 않는 Getter 사용 -  kunsanglee’s</title>
+<meta name="description" content="```java public class Person {     private List favoriteFoods;">
+
+
+  <meta name="author" content="이건상">
+  
+  <meta property="article:author" content="이건상">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content=" kunsanglee's">
+<meta property="og:title" content="캡슐화를 깨뜨리지 않는 Getter 사용">
+<meta property="og:url" content="http://localhost:4000/java/%EC%BA%A1%EC%8A%90%ED%99%94%EB%A5%BC-%EA%B9%A8%EB%9C%A8%EB%A6%AC%EC%A7%80-%EC%95%8A%EB%8A%94-Getter/">
+
+
+  <meta property="og:description" content="```java public class Person {     private List favoriteFoods;">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-11-13T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/java/%EC%BA%A1%EC%8A%90%ED%99%94%EB%A5%BC-%EA%B9%A8%EB%9C%A8%EB%A6%AC%EC%A7%80-%EC%95%8A%EB%8A%94-Getter/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Kunsang Lee",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title=" kunsanglee's Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+<meta name="naver-site-verification" content="d884164c2f43b5d7cfca36d514355ee3ab493511" />
+<meta name="NaverBot" content="All"/>
+<meta name="NaverBot" content="index,follow"/>
+<meta name="Yeti" content="All"/>
+<meta name="Yeti" content="index,follow"/>
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<!--<link rel="apple-touch-icon" sizes="180x180" href="/assets/logo.ico/apple-touch-icon.png">-->
+<!--<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.ico/favicon-32x32.png">-->
+<!--<link rel="icon" type="image/png" sizes="16x16" href="/assets/logo.ico/favicon-16x16.png">-->
+<!--<link rel="mask-icon" href="/assets/logo.ico/safari-pinned-tab.svg" color="#5bbad5">-->
+<!--<meta name="msapplication-TileColor" content="#da532c">-->
+<!--<meta name="theme-color" content="#ffffff">-->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+           kunsanglee's
+          <span class="site-subtitle">backend</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/">Year</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/image/profile/%EC%9A%9C%EC%9D%B4.png" alt="이건상" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">이건상</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>basic is everything</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Republic of Korea</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="캡슐화를 깨뜨리지 않는 Getter 사용">
+    <meta itemprop="description" content="```javapublic class Person {    private List favoriteFoods;">
+    <meta itemprop="datePublished" content="2023-11-13T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">캡슐화를 깨뜨리지 않는 Getter 사용
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#불변-객체">불변 객체</a>
+    <ul>
+      <li><a href="#불변-객체가-되기-위한-조건">불변 객체가 되기 위한 조건</a></li>
+      <li><a href="#불변-클래스-예시">불변 클래스 예시</a></li>
+      <li><a href="#getter를-통해-반환하는-참조를-불변으로-만든다">getter를 통해 반환하는 참조를 불변으로 만든다</a></li>
+    </ul>
+  </li>
+</ul>
+
+            </nav>
+          </aside>
+        
+        <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Food</span><span class="o">&gt;</span> <span class="n">favoriteFoods</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Person</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Food</span><span class="o">&gt;</span> <span class="n">favoriteFoods</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">favoriteFoods</span> <span class="o">=</span> <span class="n">favoriteFoods</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Food</span><span class="o">&gt;</span> <span class="nf">getFavoriteFoods</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">favoriteFoods</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Food</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Food</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>위 코드에는 불변 클래스가 아닌 가변 클래스 Person과 Food가 있다.</p>
+
+<p>Person는 Food의 객체를 List로 가지고있다. 그리고 외부로 favoriteFoods의 정보를 반환하는 getFavoriteFoods()를 가지고있다.</p>
+
+<p>Food는 내부에 String타입의 인스턴스 변수 name을 가지고 있고, name 필드를 대상으로 값을 가져오고 수정하는 메서드인 getName(), setName()가 있다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Food</span> <span class="n">pizza</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Food</span><span class="o">(</span><span class="s">"Pizza"</span><span class="o">);</span>
+<span class="nc">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">pizza</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Food</span><span class="o">(</span><span class="s">"Pasta"</span><span class="o">)));</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Food</span><span class="o">&gt;</span> <span class="n">favoriteFoods</span> <span class="o">=</span> <span class="n">person</span><span class="o">.</span><span class="na">getFavoriteFoods</span><span class="o">();</span>
+
+<span class="c1">// 원본 객체의 상태를 변경</span>
+<span class="n">favoriteFoods</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="na">setName</span><span class="o">(</span><span class="s">"Burger"</span><span class="o">);</span>
+
+<span class="c1">// 원본 객체의 상태가 변경됨</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="na">getFavoriteFoods</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="na">getName</span><span class="o">());</span> <span class="c1">// "Burger"</span>
+</code></pre></div></div>
+
+<p>문제는 getFavoriteFoods() 메서드를 호출하여 반환된 리스트의 상태를 변경할 수 있다는 것이다.
+getter를 통해 반환 받은 참조와 Person 객체 내부에 있는 favoriteFoods의 참조가 동일하기 때문에 반환받은 favoriteFoods 리스트에서 원소에 직접 접근하여 0번째 원소인 “Pizza”를 “Burger”로 수정에 성공했다.</p>
+
+<p>객체지향 설계 원칙과 불변성을 지키기 위해서는 이와같은 클래스 외부에서 내부의 민감한 정보에 직접 접근하여 수정하는 문제를 막아야 한다.</p>
+
+<hr />
+
+<p>가장 첫 번째로 할 수 있는 조치는 getter 메서드를 호출시 방어적 복사를 하여 객체를 반환하는 것이 있다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Food</span><span class="o">&gt;</span> <span class="n">favoriteFoods</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Person</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Food</span><span class="o">&gt;</span> <span class="n">favoriteFoods</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">favoriteFoods</span> <span class="o">=</span> <span class="n">favoriteFoods</span><span class="o">;</span>
+    <span class="o">}</span>
+
+	<span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Food</span><span class="o">&gt;</span> <span class="nf">getFavoriteFoods</span><span class="o">()</span> <span class="o">{</span>
+		<span class="c1">// return favoriteFoods; 원본의 참조를 그대로 반환하는 기존 코드.</span>
+		<span class="k">return</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="k">this</span><span class="o">.</span><span class="na">favoriteFoods</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>수정된 getFavoriteFoods() 메서드를 호출하면 <strong>방어적 복사</strong>를 하여 원본의 참조와 다른 새로운 참조를 지닌 동등한 값을 지닌 객체를 반환한다. 이렇게 되면 외부에서 getter를 호출하여 얻은 객체를 수정해도 원본 객체의 무결성을 유지할 수 있다.</p>
+
+<p>또 다른 방법으로는 불변 객체를 만드는 방법이 있다.</p>
+
+<hr />
+
+<h2 id="불변-객체">불변 객체</h2>
+
+<ul>
+  <li>
+    <p>불변 객체는 생성 시점에 설정된 상태를 변경할 수 없는 객체를 의미한다.</p>
+  </li>
+  <li><strong>장점</strong> : 상태 변경이 없으므로 스레드 안전성이 보장되고, 방어적 복사가 필요 없다. 따라서 메모리 사용량과 CPU 시간을 절약할 수 있다. 또한, 불변 객체는 자유롭게 공유할 수 있어서 시스템 전반의 복잡성을 줄일 수 있다.</li>
+  <li><strong>단점</strong> : 상태를 변경하려면 항상 새로운 객체를 생성해야 한다. 따라서 상태 변경이 자주 발생하는 경우에는 적합하지 않다.</li>
+  <li><strong>적합한 사용 경우</strong> : 상태 변경이 거의 없는 클래스, 특히 가변 상태를 안전하게 공유해야 하는 경우에 사용.</li>
+</ul>
+
+<h3 id="불변-객체가-되기-위한-조건">불변 객체가 되기 위한 조건</h3>
+
+<ol>
+  <li>모든 필드에 <code class="language-plaintext highlighter-rouge">final</code> 키워드를 사용하여 한 번 할당된 값을 변경하지 못하게 한다.</li>
+  <li>setter 메서드가 없어야 한다. 즉, 필드의 상태를 변경할 수 있는 메소드는 없어야 한다.</li>
+  <li>변경을 요구하는 연산이 있을 때 새로운 객체를 반환하는 방식을 사용한다.</li>
+  <li>만약, 클래스가 가변 객체를 참조하고 있다면, 그 객체를 외부로 노출시키지 않거나 불변 뷰를 제공해야 한다.</li>
+  <li>생성자를 private 혹은 package-private으로 선언하고, 대신 정적 팩토리 메서드를 제공한다. 이 방식을 통해 클래스를 상속받아 변경할 수 없도록 만든다.</li>
+</ol>
+
+<p>5번 조건의 생성자 스코프를 private, package-private으로 선언하고 정적 팩토리 메서드를 제공하는 것은 선택 사항이다. 이는 불변 객체를 만드는 데 있어 추가적인 유연성을 제공할 뿐, 정적 팩토리 메서드가 없어도 객체는 여전히 불변성을 가진다.</p>
+
+<p>그리고 중요한 점은 final 키워드는 재할당만 막아줄 분 reference 타입 또는 collection 내부의 상태의 변화까지 막아주지는 못한다는 것이다.</p>
+
+<p><em>불변 객체를 만들 때 주의해야 할 점</em></p>
+<ol>
+  <li>primitive 타입의 필드는 final로 불변성 보장 가능.</li>
+  <li>reference 타입이나 collection을 필드로 가질 경우 방어적 복사를 통해 원본 참조를 끊어야 한다.</li>
+  <li>primitive 타입의 collection은 방어적 복사와 unmodifiable collection을 이용해 불변을 보장할 수 있지만, reference 타입의 collection은 collection 내의 요소들의 불변성도 보장되어야 한다.</li>
+</ol>
+
+<h3 id="불변-클래스-예시">불변 클래스 예시</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Lotto</span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">LottoNumber</span><span class="o">&gt;</span> <span class="n">lottoNumbers</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">Lotto</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">LottoNumber</span><span class="o">&gt;</span> <span class="n">lottoNumbers</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">lottoNumbers</span> <span class="o">=</span> <span class="n">lottoNumbers</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LottoNumber</span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">number</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">LottoNumber</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">number</span> <span class="o">=</span> <span class="n">number</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">int</span> <span class="nf">getNumber</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">number</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>LottoNumber 클래스는 1~45 사이의 로또 번호 하나를 가진다. Lotto 클래스는 각 로또 번호 6자리를 가진다. 로또가 가지는 6개의 로또 번호들이 중복이 없어야한다는 것이 요구사항일 때, Lotto 클래스는 6개의 LottoNumber 객체를 가지고 있지만 값을 모르기 때문에 비교를 위해서 LottoNumber의 값을 getter로 꺼내야 한다.</p>
+
+<p>이 경우의 getter 사용은 캡슐화를 해치지 않는다.</p>
+<ol>
+  <li>getter 메서드는 단순히 값을 반환할 뿐 객체의 상태를 변화시키는 로직이 없다.</li>
+  <li>반환하는 int 타입은 원시 타입이기 때문에 getter를 통해 얻은 후 값을 변경해도, 원본 LottoNumber 객체의 상태에는 영향을 미치지 않는다.</li>
+</ol>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Lotto</span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">LottoNumber</span><span class="o">&gt;</span> <span class="n">lottoNumbers</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">Lotto</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">LottoNumber</span><span class="o">&gt;</span> <span class="n">lottoNumbers</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">lottoNumbers</span> <span class="o">=</span> <span class="n">lottoNumbers</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">LottoNumber</span><span class="o">&gt;</span> <span class="nf">getLottoNumbers</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">lottoNumbers</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>이번에는 외부에서 Lotto가 가지고있는 6개의 로또 번호를 출력하기 위해서 값을 getter를 사용해서 꺼내야 한다. 하지만 LottoNumber 클래스 처럼 getter를 사용하여 lottoNumbers를 반환하면 어떻게 될까?</p>
+
+<p>getLottoNumbers()를 호출하여 얻은 LottoNumber 리스트의 참조가 Lotto 객체가 가진 참조와 동일하기 때문에 List에 직접 접근하는 것이 가능해진다. LottoNumber는 불변 객체이기 때문에 List에 들어있는 LottoNumber 원소의 값을 바꾸는 것은 불가능하지만, 외부에서 참조를 얻어 List 자체의 메서드로 추가, 수정, 삭제를 할 수 있게 된다. 이 문제를 해결하기 위해서는 어떻게 해야될까?</p>
+
+<h3 id="getter를-통해-반환하는-참조를-불변으로-만든다">getter를 통해 반환하는 참조를 불변으로 만든다</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Lotto</span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">LottoNumber</span><span class="o">&gt;</span> <span class="n">lottoNumbers</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">Lotto</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">LottoNumber</span><span class="o">&gt;</span> <span class="n">lottoNumbers</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">lottoNumbers</span> <span class="o">=</span> <span class="n">lottoNumbers</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">LottoNumber</span><span class="o">&gt;</span> <span class="nf">getNumbers</span><span class="o">()</span> <span class="o">{</span>  
+	    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">numbers</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toUnmodifiableList</span><span class="o">());</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>기존의 getter 메서드와는 달리 lottoNumbers 리스트를 Collectors.toUnmodifiableList() 메서드로 변경 불가능한 리스트로 만들어서 반환한다. 이렇게 불변 리스트를 반환하면 외부에서 리스트의 참조를 통해 리스트를 조작할 수 없게 된다. <strong>ImmutableCollections</strong>(불변 컬렉션)을 통해 반환받은 ImmutableList(불변 리스트), ImmutableSet(불변 셋), ImmutableMap(불변 맵)은 해당 컬렉션을 조작시 UnsupportedOperationException 에러를 반환한다. 결국 위에서 발생한 List의 조작을 막고 읽기 전용 컬렉션을 반환할 수 있게 된다.</p>
+
+<p>결국 getter를 무조건 사용하면 안된다는 것이 아니다. 무지성으로 getter를 사용해서 도메인 내부에서 캡슐화를 지키면서 처리할 수 있는 비즈니스 로직을 도메인 외부로 꺼내서 처리하지 말라는 것이다.</p>
+
+<p>도메인에서 자신이 책임지는 비즈니스 로직을 모두 처리하고, 불가피하게 외부로 도메인의 정보를 넘겨줄 필요가 있을 때 방어적 복사를 해서 넘기던가 해당 도메인을 불변 클래스로 만들어서 원본의 불변성과 무결성을 지키는 것이 중요하다는 것이다.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#getter" class="page__taxonomy-item" rel="tag">Getter</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#%EC%BA%A1%EC%8A%90%ED%99%94" class="page__taxonomy-item" rel="tag">캡슐화</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#java" class="page__taxonomy-item" rel="tag">Java</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2023-11-13T00:00:00+09:00">November 13, 2023</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=%EC%BA%A1%EC%8A%90%ED%99%94%EB%A5%BC+%EA%B9%A8%EB%9C%A8%EB%A6%AC%EC%A7%80+%EC%95%8A%EB%8A%94+Getter+%EC%82%AC%EC%9A%A9%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2F%25EC%25BA%25A1%25EC%258A%2590%25ED%2599%2594%25EB%25A5%25BC-%25EA%25B9%25A8%25EB%259C%25A8%25EB%25A6%25AC%25EC%25A7%2580-%25EC%2595%258A%25EB%258A%2594-Getter%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2F%25EC%25BA%25A1%25EC%258A%2590%25ED%2599%2594%25EB%25A5%25BC-%25EA%25B9%25A8%25EB%259C%25A8%25EB%25A6%25AC%25EC%25A7%2580-%25EC%2595%258A%25EB%258A%2594-Getter%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2F%25EC%25BA%25A1%25EC%258A%2590%25ED%2599%2594%25EB%25A5%25BC-%25EA%25B9%25A8%25EB%259C%25A8%25EB%25A6%25AC%25EC%25A7%2580-%25EC%2595%258A%25EB%258A%2594-Getter%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/java/%EB%B0%A9%EC%96%B4%EC%A0%81-%EB%B3%B5%EC%82%AC-%EB%8F%99%EC%9D%BC%EC%84%B1-%EB%8F%99%EB%93%B1%EC%84%B1/" class="pagination--pager" title="방어적 복사, 동일성, 동등성
+">이전</a>
+    
+    
+      <a href="/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-1-%EC%83%9D%EC%84%B1%EC%9E%90-%EB%8C%80%EC%8B%A0-%EC%A0%95%EC%A0%81-%ED%8C%A9%ED%84%B0%EB%A6%AC-%EB%A9%94%EC%84%9C%EB%93%9C%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/" class="pagination--pager" title="Effective Java - 아이템 1: 생성자 대신 정적 팩터리 메서드를 고려하라
+">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">참고</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-2-%EC%83%9D%EC%84%B1%EC%9E%90%EC%97%90-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98%EA%B0%80-%EB%A7%8E%EB%8B%A4%EB%A9%B4-%EB%B9%8C%EB%8D%94%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/" rel="permalink">Effective Java - 아이템 2: 생성자에 매개변수가 많다면 빌더를 고려하라
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">빌더패턴 이전에 사용하던 방식
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-1-%EC%83%9D%EC%84%B1%EC%9E%90-%EB%8C%80%EC%8B%A0-%EC%A0%95%EC%A0%81-%ED%8C%A9%ED%84%B0%EB%A6%AC-%EB%A9%94%EC%84%9C%EB%93%9C%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/" rel="permalink">Effective Java - 아이템 1: 생성자 대신 정적 팩터리 메서드를 고려하라
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">정적 팩터리 메서드
+new키워드로 생성하지 않고 객체 생성해서 반환하는 메서드다.
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/%EB%B0%A9%EC%96%B4%EC%A0%81-%EB%B3%B5%EC%82%AC-%EB%8F%99%EC%9D%BC%EC%84%B1-%EB%8F%99%EB%93%B1%EC%84%B1/" rel="permalink">방어적 복사, 동일성, 동등성
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">방어적 복사
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/Functional-Interface/" rel="permalink">Functional Interface API
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Functional Interface는 함수를 일급객체처럼 다룰 수 있게 해주는 단 하나의 추상 메서드를 가지는 인터페이스이다. final 상수나 default, static, private 메서드는 추상 메서드가 아니기 때문에, 이들 여러개가 인터페이스에 들어있어도 단 한 개의 ...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 Kunsang Lee. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/java/%EC%BA%A1%EC%8A%90%ED%99%94%EB%A5%BC-%EA%B9%A8%EB%9C%A8%EB%A6%AC%EC%A7%80-%EC%95%8A%EB%8A%94-Getter/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/java/캡슐화를-깨뜨리지-않는-Getter"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://https-kunsanglee-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

@@ -40,4 +40,46 @@ var store = [{
         "tags": ["Stream","Collectors"],
         "url": "http://localhost:4000/java/Stream.collect()-Collectors/",
         "teaser": null
+      },{
+        "title": "Java 표준 입출력 테스트",
+        "excerpt":"표준 입력과 출력을 테스트하는 방법은 여러 가지가 있지만, 이 코드에서는 System.setIn(InputStream)과 System.setOut(PrintStream)을 이용하여 표준 입력과 출력을 변경한다. 먼저 ByteArrayInputStream은 InputStream, ByteArrayOutputStream은 OutputStream 인터페이스를 구현한 클래스다. ByteArrayInputStream 이 클래스는 내부적으로 바이트 배열을 유지하며, 이 배열에서 데이터를 읽을 수 있는 기능을 제공한다. ByteArrayInputStream의 주요 메서드 read(): 이 메서드는 스트림에서 다음 바이트를 읽어서...","categories": ["Java"],
+        "tags": ["Test","표준 입출력"],
+        "url": "http://localhost:4000/java/Standard-Input-Output-Test/",
+        "teaser": null
+      },{
+        "title": "EnumMap",
+        "excerpt":"EnumMap은 Java에서 제공하는 Map 인터페이스 구현체 중 하나다. 주요 특징 Key로 Enum을 사용: EnumMap은 이름에서 알 수 있듯이, 키로 Enum 타입만을 사용할 수 있다. 키의 타입이 제한적이지만, 이를 통해 EnumMap은 효율적인 성능을 제공합니다. 순서 보장: EnumMap에서는 키가 선언된 순서에 따라 데이터가 저장되며 조회된다. 이는 정렬에 대한 추가적인 작업 없이도 순서를...","categories": ["Java"],
+        "tags": ["Map","EnumMap"],
+        "url": "http://localhost:4000/java/EnumMap/",
+        "teaser": null
+      },{
+        "title": "Functional Interface API",
+        "excerpt":"Functional Interface는 함수를 일급객체처럼 다룰 수 있게 해주는 단 하나의 추상 메서드를 가지는 인터페이스이다. final 상수나 default, static, private 메서드는 추상 메서드가 아니기 때문에, 이들 여러개가 인터페이스에 들어있어도 단 한 개의 추상 메서드를 가지면 함수형 인터페이스로 취급 된다. 자바 8부터 인터페이스에 default 메서드와 static 메서드를 추가할 수 있게 되면서 가능해졌다....","categories": ["Java"],
+        "tags": ["Functional Interface","함수형 메서드"],
+        "url": "http://localhost:4000/java/Functional-Interface/",
+        "teaser": null
+      },{
+        "title": "방어적 복사, 동일성, 동등성",
+        "excerpt":"방어적 복사 public class Person { private List&lt;Food&gt; favoriteFoods; public Person(List&lt;Food&gt; favoriteFoods) { this.favoriteFoods = favoriteFoods; } public List&lt;Food&gt; getFavoriteFoods() { // return favoriteFoods; 원본의 참조를 그대로 반환하는 기존 코드. return new ArrayList&lt;&gt;(this.favoriteFoods); // 방어적 복사로 새로운 객체 생성. } } 원본과 동등한 새로운 객체를 만들어 원본 데이터의 참조와 동일하지...","categories": ["Java"],
+        "tags": ["방어적 복사","동일성","동등성"],
+        "url": "http://localhost:4000/java/%EB%B0%A9%EC%96%B4%EC%A0%81-%EB%B3%B5%EC%82%AC-%EB%8F%99%EC%9D%BC%EC%84%B1-%EB%8F%99%EB%93%B1%EC%84%B1/",
+        "teaser": null
+      },{
+        "title": "캡슐화를 깨뜨리지 않는 Getter 사용",
+        "excerpt":"public class Person { private List&lt;Food&gt; favoriteFoods; public Person(List&lt;Food&gt; favoriteFoods) { this.favoriteFoods = favoriteFoods; } public List&lt;Food&gt; getFavoriteFoods() { return favoriteFoods; } } public class Food { private String name; public Food(String name) { this.name = name; } public String getName() { return name; } public void setName(String name) {...","categories": ["Java"],
+        "tags": ["캡슐화","Getter"],
+        "url": "http://localhost:4000/java/%EC%BA%A1%EC%8A%90%ED%99%94%EB%A5%BC-%EA%B9%A8%EB%9C%A8%EB%A6%AC%EC%A7%80-%EC%95%8A%EB%8A%94-Getter/",
+        "teaser": null
+      },{
+        "title": "Effective Java - 아이템 1: 생성자 대신 정적 팩터리 메서드를 고려하라",
+        "excerpt":"정적 팩터리 메서드 new키워드로 생성하지 않고 객체 생성해서 반환하는 메서드다. // 필드가 private final이고 필드의 값을 수정하는 방법이 없기 때문에 불변 클래스다. public class MyNumber { public static final int ZERO = new MyNumber(0); // 여러 곳에서 사용하는 값을 캐싱. private final int number; // 생성자의 접근자를 private로 하여 외부에서...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-1-%EC%83%9D%EC%84%B1%EC%9E%90-%EB%8C%80%EC%8B%A0-%EC%A0%95%EC%A0%81-%ED%8C%A9%ED%84%B0%EB%A6%AC-%EB%A9%94%EC%84%9C%EB%93%9C%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/",
+        "teaser": null
+      },{
+        "title": "Effective Java - 아이템 2: 생성자에 매개변수가 많다면 빌더를 고려하라",
+        "excerpt":"빌더패턴 이전에 사용하던 방식 점층적 생성자 패턴 정적 팩터리와 생성자에는 선택적 매개변수가 많을 때 적절히 대응하기 어렵다는 제약이 있다. // 점층적 생성자 패턴을 사용하는 클래스(선택적 매개변수가 많아서 생성자 또한 많다) public class NutritionFacts { private final int servingSize; // 필수 private final int servings; // 필수 private final int calories;...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-2-%EC%83%9D%EC%84%B1%EC%9E%90%EC%97%90-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98%EA%B0%80-%EB%A7%8E%EB%8B%A4%EB%A9%B4-%EB%B9%8C%EB%8D%94%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/",
+        "teaser": null
       }]
