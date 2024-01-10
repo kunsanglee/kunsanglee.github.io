@@ -5,9 +5,115 @@
     <description></description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 09 Jan 2024 19:56:56 +0900</pubDate>
-    <lastBuildDate>Tue, 09 Jan 2024 19:56:56 +0900</lastBuildDate>
+    <pubDate>Wed, 10 Jan 2024 18:02:23 +0900</pubDate>
+    <lastBuildDate>Wed, 10 Jan 2024 18:02:23 +0900</lastBuildDate>
     <generator>Jekyll v4.3.2</generator>
+    
+      <item>
+        <title>Effective Java - 아이템 7: 다 쓴 객체 참조를 해제하라</title>
+        <description>&lt;p&gt;메모리 누수가 있는 프로그램을 오래 실행하다 보면 점차 가비지 컬렉션 활동과 메모리 사용량이 늘어나 결국 성능이 저하된다.&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 메모리 누수가 일어나는 코드&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Stack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;DEFAULT_INITIAL_CAPACITY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Stack&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;DEFAULT_INITIAL_CAPACITY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ensureCapacity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;pop&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;EmptyStackeException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[--&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;cm&quot;&gt;/**
+     * 원소를 위한 공간을 적어도 하나 이상 확보한다.
+     * 배열 크리글 늘려야 할 때마다 대략 두 배씩 늘린다.
+     */&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ensureCapacity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Arrays&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;copyOf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이 코드에서는 스택이 커졌다가 줄어들었을 때 스택에서 꺼내진 객체들(더 이상 사용하지 않는 객체들)을 가비지 컬렉터가 회수하지 않는다.
+이 스택이 그 객체들의 &lt;strong&gt;다 쓴 참조(obsolete reference) 즉, 다시 쓰지 않을 참조&lt;/strong&gt;를 여전히 가지고 있기 때문이다.&lt;br /&gt;
+이 코드에서 다 쓴 참조는 elements 배열의 활성영역(인덱스가 size보다 작은 원소들) 밖의 참조들이 해당한다.&lt;br /&gt;
+객체 참조 하나를 살려두면 가비지 컬렉터는 &lt;strong&gt;그 객체뿐 아니라 이 객체가 참조하는 다른 객체&lt;/strong&gt; 또한 회수해가지 못한다.&lt;/p&gt;
+
+&lt;h3 id=&quot;해결-방법&quot;&gt;해결 방법&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;해당 참조를 다 썼을 때 null 처리(참조 해제)하면 된다.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 제대로 구현한 pop 메서드&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;pop&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;EmptyStackException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;Object&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[--&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 다 쓴 참조 해제&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;다 쓴 참조를 null 처리하면 메모리 누수 이외에 다른 이점도 따라오는데,&lt;br /&gt; 
+null 처리한 참조를 실수로 사용하려 하면&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NullPointerException&lt;/code&gt;을 던지며 종료된다.&lt;br /&gt; 
+미리 null 처리를 하지 않았다면 아무 내색 없이 무언가 잘못된 일을 수행할 것이다.&lt;br /&gt;
+&lt;strong&gt;객체 참조를 null 처리하는 일은 예외적인 경우여야 한다.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;다-쓴-참조를-해제하는-가장-좋은-방법&quot;&gt;다 쓴 참조를 해제하는 가장 좋은 방법&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;그 참조를 담은 변수를 유효 범위(scope) 밖으로 밀어내는 것이다.&lt;/strong&gt;
+변수의 범위를 최소가 되게 정의했다면 자연스럽게 이뤄진다.&lt;/p&gt;
+
+&lt;h3 id=&quot;null-처리참조해제는-언제-해야-할까&quot;&gt;null 처리(참조해제)는 언제 해야 할까?&lt;/h3&gt;
+&lt;p&gt;비활성 영역의 객체가 더 이상 쓸모없다는 건 프로그래머만 아는 사실이기 때문에 비활성 영역이 되는 순간 null 처리해서
+해당 객체를 더는 쓰지 않을 것임을 가비지 컬렉터에 알려야 한다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;일반적으로 자기 메모리를 직접 관리하는 클래스라면 프로그래머는 항시 메모리 누수에 주의해야 한다.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;캐시cache-또한-메모리-누수를-일으키는-주범이다&quot;&gt;캐시(cache) 또한 메모리 누수를 일으키는 주범이다&lt;/h3&gt;
+&lt;p&gt;객체 참조를 캐시에 넣고, 그 객체를 다 쓴 뒤로도 한참 놔두는 일이 자주 생긴다.&lt;br /&gt;
+캐시 외부에서 키를 참조하는 동안만 엔트리가 살아있는 캐시가 필요한 상황이라면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WeakHashMap&lt;/code&gt;을 사용해 캐시를 만들어라.&lt;br /&gt; 
+다 쓴 엔트리는 그 즉시 자동으로 제거될 것이다.&lt;br /&gt; 
+단, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WeakHashMap&lt;/code&gt;은 이런 상황에서만 유용하다.&lt;/p&gt;
+
+&lt;h3 id=&quot;리스너listener-혹은-콜백callback-또한-메모리-누수의-주범이다&quot;&gt;리스너(listener) 혹은 콜백(callback) 또한 메모리 누수의 주범이다&lt;/h3&gt;
+&lt;p&gt;클라이언트가 콜백을 등록만 하고 명확히 해지하지 않는다면, 계속 쌓인다.&lt;br /&gt; 
+이럴 때 콜백을 약한 참조(weak reference)로 저장하면 가비지 컬렉터가 즉시 수거해간다.&lt;/p&gt;
+
+&lt;h3 id=&quot;reference-우선순위&quot;&gt;Reference 우선순위&lt;/h3&gt;
+&lt;ol&gt;
+  &lt;li&gt;Strong - 절대 못건드림&lt;/li&gt;
+  &lt;li&gt;Soft&lt;/li&gt;
+  &lt;li&gt;Weak - 제일 먼저 없어짐&lt;/li&gt;
+  &lt;li&gt;Phantom&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;핵심-정리&quot;&gt;핵심 정리&lt;/h3&gt;
+&lt;p&gt;자기 메모리를 직접 관리하는 클래스라면 항시 메모리 누수에 주의해야 한다.&lt;br /&gt;
+다 쓴 참조를 해제하는 가장 좋은 방법은 변수의 범위를 최소가 되게 정의하여,&lt;br /&gt;
+그 참조를 담은 변수를 유효 범위 밖으로 밀어내는 것이다.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 10 Jan 2024 00:00:00 +0900</pubDate>
+        <link>http://localhost:4000/java/Effective-Java-%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%90%E1%85%A6%E1%86%B7-7-%E1%84%83%E1%85%A1-%E1%84%8A%E1%85%B3%E1%86%AB-%E1%84%80%E1%85%A2%E1%86%A8%E1%84%8E%E1%85%A6-%E1%84%8E%E1%85%A1%E1%86%B7%E1%84%8C%E1%85%A9%E1%84%85%E1%85%B3%E1%86%AF-%E1%84%92%E1%85%A2%E1%84%8C%E1%85%A6%E1%84%92%E1%85%A1%E1%84%85%E1%85%A1/</link>
+        <guid isPermaLink="true">http://localhost:4000/java/Effective-Java-%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%90%E1%85%A6%E1%86%B7-7-%E1%84%83%E1%85%A1-%E1%84%8A%E1%85%B3%E1%86%AB-%E1%84%80%E1%85%A2%E1%86%A8%E1%84%8E%E1%85%A6-%E1%84%8E%E1%85%A1%E1%86%B7%E1%84%8C%E1%85%A9%E1%84%85%E1%85%B3%E1%86%AF-%E1%84%92%E1%85%A2%E1%84%8C%E1%85%A6%E1%84%92%E1%85%A1%E1%84%85%E1%85%A1/</guid>
+        
+        <category>Effective Java</category>
+        
+        
+        <category>Java</category>
+        
+      </item>
     
       <item>
         <title>Effective Java - 아이템 6: 불필요한 객체 생성을 피하라</title>

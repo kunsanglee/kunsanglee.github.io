@@ -106,4 +106,10 @@ var store = [{
         "tags": ["Effective Java"],
         "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-6-%EB%B6%88%ED%95%84%EC%9A%94%ED%95%9C-%EA%B0%9D%EC%B2%B4-%EC%83%9D%EC%84%B1%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/",
         "teaser": null
+      },{
+        "title": "Effective Java - 아이템 7: 다 쓴 객체 참조를 해제하라",
+        "excerpt":"메모리 누수가 있는 프로그램을 오래 실행하다 보면 점차 가비지 컬렉션 활동과 메모리 사용량이 늘어나 결국 성능이 저하된다. // 메모리 누수가 일어나는 코드 public class Stack { private Object[] elements; private int size = 0; private static final int DEFAULT_INITIAL_CAPACITY = 16; public Stack() { elements = new Object[DEFAULT_INITIAL_CAPACITY]; } public...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-7-%EB%8B%A4-%EC%93%B4-%EA%B0%9D%EC%B2%B4-%EC%B0%B8%EC%A1%B0%EB%A5%BC-%ED%95%B4%EC%A0%9C%ED%95%98%EB%9D%BC/",
+        "teaser": null
       }]
