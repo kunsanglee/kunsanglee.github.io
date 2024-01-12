@@ -124,4 +124,10 @@ var store = [{
         "tags": ["Effective Java"],
         "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-9-try-finally-try-with-resources/",
         "teaser": null
+      },{
+        "title": "Effective Java - 아이템 10: equals는 일반 규약을 지켜 재정의하라",
+        "excerpt":"equals를 재정의하지 않는 것이 좋은 상황 각 인스턴스가 본질적으로 고유하다. 값을 표현하는게 아니라 동작하는 개체를 표현하는 클래스. Thread가 좋은 예 인스턴스의 ‘논리적 동치성(logical equality)’을 검사할 일이 없다. 상위 클래스에서 재정의한 equals가 하위 클래스에도 딱 들어맞는다. 상위 클래스의 equals를 쓰면 되는데 굳이 하위 클래스에서 오버라이딩 하지 마라. 클래스가 private이거나 package-private이고 eqauls...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-10-equals/",
+        "teaser": null
       }]
