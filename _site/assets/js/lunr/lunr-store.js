@@ -130,4 +130,16 @@ var store = [{
         "tags": ["Effective Java"],
         "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-10-equals/",
         "teaser": null
+      },{
+        "title": "Effective Java - 아이템 11: equals를 재정의하려거든 hashCode도 재정의하라",
+        "excerpt":"equals를 재정의한 클래스 모두에서 hashCode도 재정의해야 한다 재정의하지 않으면 일반 규약을 어기게 되어 HashMap, HashSet 같은 컬렉션의 원소로 사용할 때 문제를 일으킬 것이다. Object 명세 equals 비교에 사용되는 정보가 변경되지 않았다면, 애플리케이션이 실행되는 동안 그 객체의 hashCode 메서드는 몇 번을 호출해도 일관되게 항상 같은 값을 반환해야 한다. 단, 애플리케이션을 다시...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-Item-11-equals&hashCode/",
+        "teaser": null
+      },{
+        "title": "Effective Java - 아이템 12: toString을 항상 재정의하라",
+        "excerpt":"Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 {클래스이름}@{16진수}로 표시한 해시코드를 반환할 뿐이다. toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다. toString의 규약 모든 하위 클래스에서 이 메서드를 재정의하라 toString을 잘 구현한 클래스와 시스템은 디버깅하기 쉽다. toString을 제대로 재정의하지 않는다면 쓸모없는 메시지만 로그에 남을 것이다. 실전에서 toString은...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-Item-12-toString/",
+        "teaser": null
       }]

@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Effective Java - 아이템 8: finalizer와 cleaner 사용을 피하라 -  kunsanglee’s</title>
-<meta name="description" content="자바는 두 가지 객체 소멸자를 제공한다.  finalizer는 예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요하다. 그래서 기본적으로 쓰지 말아야 한다. finalizer의 대안으로 나온cleaner는 finalizer보다는 덜 위험하지만, 여전히 예측할 수 없고, 느리고, 일반적으로 불필요하다.">
+<!-- begin _includes/seo.html --><title>Effective Java - 아이템 12: toString을 항상 재정의하라 -  kunsanglee’s</title>
+<meta name="description" content="Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 {클래스이름}@{16진수}로 표시한 해시코드를 반환할 뿐이다. toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다.">
 
 
   <meta name="author" content="이건상">
@@ -22,30 +22,30 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content=" kunsanglee's">
-<meta property="og:title" content="Effective Java - 아이템 8: finalizer와 cleaner 사용을 피하라">
-<meta property="og:url" content="http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-8-finalizer%EC%99%80-cleaner-%EC%82%AC%EC%9A%A9%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/">
+<meta property="og:title" content="Effective Java - 아이템 12: toString을 항상 재정의하라">
+<meta property="og:url" content="http://localhost:4000/java/Effective-Java-Item-12-toString/">
 
 
-  <meta property="og:description" content="자바는 두 가지 객체 소멸자를 제공한다.  finalizer는 예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요하다. 그래서 기본적으로 쓰지 말아야 한다. finalizer의 대안으로 나온cleaner는 finalizer보다는 덜 위험하지만, 여전히 예측할 수 없고, 느리고, 일반적으로 불필요하다.">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2024-01-10T00:00:00+09:00">
+  <meta property="og:description" content="Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 {클래스이름}@{16진수}로 표시한 해시코드를 반환할 뿐이다. toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다.">
 
 
 
 
 
-  
+
+
+  <meta property="article:published_time" content="2024-01-13T00:00:00+09:00">
+
+
+
+
 
   
 
+  
 
-<link rel="canonical" href="http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-8-finalizer%EC%99%80-cleaner-%EC%82%AC%EC%9A%A9%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/">
+
+<link rel="canonical" href="http://localhost:4000/java/Effective-Java-Item-12-toString/">
 
 
 
@@ -290,15 +290,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Effective Java - 아이템 8: finalizer와 cleaner 사용을 피하라">
-    <meta itemprop="description" content="자바는 두 가지 객체 소멸자를 제공한다. finalizer는 예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요하다. 그래서 기본적으로 쓰지 말아야 한다.finalizer의 대안으로 나온cleaner는 finalizer보다는 덜 위험하지만, 여전히 예측할 수 없고, 느리고, 일반적으로 불필요하다.">
-    <meta itemprop="datePublished" content="2024-01-10T00:00:00+09:00">
+    <meta itemprop="headline" content="Effective Java - 아이템 12: toString을 항상 재정의하라">
+    <meta itemprop="description" content="Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 {클래스이름}@{16진수}로 표시한 해시코드를 반환할 뿐이다.toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다.">
+    <meta itemprop="datePublished" content="2024-01-13T00:00:00+09:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Effective Java - 아이템 8: finalizer와 cleaner 사용을 피하라
+          <h1 id="page-title" class="page__title" itemprop="headline">Effective Java - 아이템 12: toString을 항상 재정의하라
 </h1>
           
 
@@ -314,7 +314,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          1 분 소요
+          최대 1 분 소요
         
       </span>
     
@@ -330,67 +330,38 @@
             <nav class="toc">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
               <ul class="toc__menu">
-  <li><a href="#finallizer와-cleaner-사용을-피해야-하는-이유">finallizer와 cleaner 사용을 피해야 하는 이유</a></li>
-  <li><a href="#finalizer-cleaner를-대신해줄-묘안">finalizer, cleaner를 대신해줄 묘안</a></li>
-  <li><a href="#cleaner와-finalizer의-쓰임새">cleaner와 finalizer의 쓰임새</a></li>
+  <li><a href="#tostring의-규약">toString의 규약</a></li>
+  <li><a href="#포맷">포맷</a></li>
   <li><a href="#핵심-정리">핵심 정리</a></li>
 </ul>
 
             </nav>
           </aside>
         
-        <p>자바는 두 가지 객체 소멸자를 제공한다. 
-<code class="language-plaintext highlighter-rouge">finalizer</code>는 예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요하다. 그래서 기본적으로 쓰지 말아야 한다.
-<code class="language-plaintext highlighter-rouge">finalizer</code>의 대안으로 나온<code class="language-plaintext highlighter-rouge">cleaner</code>는 <code class="language-plaintext highlighter-rouge">finalizer</code>보다는 덜 위험하지만, 여전히 예측할 수 없고, 느리고, 일반적으로 불필요하다.</p>
+        <p>Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 <code class="language-plaintext highlighter-rouge">{클래스이름}@{16진수}</code>로 표시한 해시코드를 반환할 뿐이다.<br />
+toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다.</p>
 
-<p>자바의 <code class="language-plaintext highlighter-rouge">finalizer</code>, <code class="language-plaintext highlighter-rouge">cleaner</code>는 C++의 파괴자(destructor)와 다른 개념이다.
-C++에서 파괴자(생성자의 꼭 필요한 대척점)는 특정 객체와 관련된 자원을 회수하는 보편적인 방법이다.
-자바에서는 접근할 수 없게 된 객체를 회수하는 역할을 가비지 컬렉터가 담당한다.
-또한 자바에서는 <code class="language-plaintext highlighter-rouge">try-with-resources</code>와 <code class="language-plaintext highlighter-rouge">try-finally</code>를 사용해 자원을 회수한다.</p>
+<h3 id="tostring의-규약">toString의 규약</h3>
+<p><strong>모든 하위 클래스에서 이 메서드를 재정의하라</strong><br />
+toString을 잘 구현한 클래스와 시스템은 디버깅하기 쉽다.<br />
+toString을 제대로 재정의하지 않는다면 쓸모없는 메시지만 로그에 남을 것이다.<br />
+실전에서 toString은 그 객체가 가진 주요 정보를 모두 반환하는 게 좋다.</p>
 
-<h3 id="finallizer와-cleaner-사용을-피해야-하는-이유">finallizer와 cleaner 사용을 피해야 하는 이유</h3>
-<ol>
-  <li>즉시 수행된다는 보장이 없다.
-    <ul>
-      <li>finalizer와 cleaner는 제때 실행되어야 하는 작업은 절대 할 수 없다.</li>
-    </ul>
-  </li>
-  <li>수행 시점뿐 아니라 수행 여부조차 보장하지 않는다.
-    <ul>
-      <li>프로그램 생에주기와 상관없는, 상태를 영구적으로 수정하는 작업에서는 절대 finalizer와 cleaner에 의존해서는 안된다.</li>
-      <li>데이터베이스 같은 공유 자원의 영구 락(lock) 해제를 finalizer나 cleaner에 맡겨 놓으면 분산 시스템 전체가 서서히 멈출 것이다.</li>
-    </ul>
-  </li>
-  <li>finalizer 동작 중 발생한 예외는 무시되며, 처리할 작업이 남았더라도 그 순간 종료된다.
-    <ul>
-      <li>cleaner를 사용하는 라이브러리는 자신의 스레드를 통제하기 때문에 이러한 문제가 발생하지 않는다.</li>
-    </ul>
-  </li>
-  <li>심각한 성능 문제를 동반한다.
-    <ul>
-      <li>finalizer가 가비지 컬렉터의 효율을 떨어뜨린다.</li>
-    </ul>
-  </li>
-  <li>finalizer를 사용한 클래스는 finalizer 공격에 노출되어 심각한 보안 문제를 일으킬 수 있다.
-    <ul>
-      <li>객체 생성을 막으려면 생성자에서 예외를 던지는 것마능로 충분하지만, finalizer가 있다면 그렇지도 않다.</li>
-      <li>final이 아닌 클래스를 finalizer 공격으로부터 방어하려면 아무 일도 하지 않는 finalize 메서드를 만들고 final로 선언하자.</li>
-    </ul>
-  </li>
-</ol>
+<h3 id="포맷">포맷</h3>
+<p><strong>toString을 구현할 때면 반환값의 포맷을 문서화할지 정해야 한다.</strong><br />
+포맷을 명시하면 그 객체는 표준적이고, 명확하고, 사람이 읽을 수 있게 된다.<br />
+포맷을 명시한다면, 명시한 포맷에 맞는 문자열과 객체를 상호 전환할 수 있는 정적 팩터리나 생성자를 함께 제공해주면 좋다.<br />
+포맷 사용시 단점은, 자주 사용되는 클래스의 경우 평생 그 포멧에 얽매이게 된다.<br />
+<strong>포맷을 명시하든 아니든 의도는 명확히 밝혀야 한다.</strong> 포맷 명시 여부와 상관 없이 toString이 반환한 값에 포함된 정보를 얻어올 수 있는 API를 제공하자.</p>
 
-<h3 id="finalizer-cleaner를-대신해줄-묘안">finalizer, cleaner를 대신해줄 묘안</h3>
-<p><strong>AutoCloseable</strong>을 구현해주고 클라이언트에서 인스턴스를 다 쓰고 나면 close 메서드를 호출하면 된다.
-일반적으로 예외가 발생해도 제대로 종료되도록 try-with-resources를 사용해야 한다.</p>
-
-<h3 id="cleaner와-finalizer의-쓰임새">cleaner와 finalizer의 쓰임새</h3>
-<ol>
-  <li>자원의 소유자가 close 메서드를 호출하지 않는 것에 대비한 안전망 역할이다.</li>
-  <li>네이티브 피어(일반 자바 객체가 네이티브 메서드를 통해 기능을 위임한 네이티브 객체)와 연결된 객체에서다.</li>
-</ol>
+<blockquote>
+  <p>정적 유틸리티 클래스는 toString을 제공할 이유가 없다. 또한 대부분의 열거타입도 자바가 이미 완벽한 toString을 제공하니 따로 재정의하지 않아도 된다.
+하지만 하위 클래스들이 공유해야 할 문자열 표현이 있는 추상클래스라면 toString을 재정의해줘야 한다.</p>
+</blockquote>
 
 <h3 id="핵심-정리">핵심 정리</h3>
-<p>cleaner(자바 8까지는 finalizer)는 안전망 역할이나, 중요하지 않은 네이티브 자원 회수용으로만 사용하자.</p>
+<p>모든 구체 클래스에서 Object의 toString을 재정의하자. 상위 클래스에서 이미 알맞게 재정의한 경우는 예외다.<br />
+toString은 해당 객체에 관한 명확하고 유용한 정보를 읽기 좋은 형태로 반환해야 한다.</p>
 
         
       </section>
@@ -439,7 +410,7 @@ C++에서 파괴자(생성자의 꼭 필요한 대척점)는 특정 객체와 �
 
 
         
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2024-01-10T00:00:00+09:00">January 10, 2024</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2024-01-13T00:00:00+09:00">January 13, 2024</time></p>
 
 
       </footer>
@@ -449,23 +420,22 @@ C++에서 파괴자(생성자의 꼭 필요한 대척점)는 특정 객체와 �
     <h4 class="page__share-title">공유하기</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=Effective+Java+-+%EC%95%84%EC%9D%B4%ED%85%9C+8%3A+finalizer%EC%99%80+cleaner+%EC%82%AC%EC%9A%A9%EC%9D%84+%ED%94%BC%ED%95%98%EB%9D%BC%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-%25EC%2595%2584%25EC%259D%25B4%25ED%2585%259C-8-finalizer%25EC%2599%2580-cleaner-%25EC%2582%25AC%25EC%259A%25A9%25EC%259D%2584-%25ED%2594%25BC%25ED%2595%2598%25EB%259D%25BC%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Effective+Java+-+%EC%95%84%EC%9D%B4%ED%85%9C+12%3A+toString%EC%9D%84+%ED%95%AD%EC%83%81+%EC%9E%AC%EC%A0%95%EC%9D%98%ED%95%98%EB%9D%BC%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-12-toString%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-%25EC%2595%2584%25EC%259D%25B4%25ED%2585%259C-8-finalizer%25EC%2599%2580-cleaner-%25EC%2582%25AC%25EC%259A%25A9%25EC%259D%2584-%25ED%2594%25BC%25ED%2595%2598%25EB%259D%25BC%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-12-toString%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-%25EC%2595%2584%25EC%259D%25B4%25ED%2585%259C-8-finalizer%25EC%2599%2580-cleaner-%25EC%2582%25AC%25EC%259A%25A9%25EC%259D%2584-%25ED%2594%25BC%25ED%2595%2598%25EB%259D%25BC%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-12-toString%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
       
   <nav class="pagination">
     
-      <a href="/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-7-%EB%8B%A4-%EC%93%B4-%EA%B0%9D%EC%B2%B4-%EC%B0%B8%EC%A1%B0%EB%A5%BC-%ED%95%B4%EC%A0%9C%ED%95%98%EB%9D%BC/" class="pagination--pager" title="Effective Java - 아이템 7: 다 쓴 객체 참조를 해제하라
+      <a href="/java/Effective-Java-Item-11-equals&hashCode/" class="pagination--pager" title="Effective Java - 아이템 11: equals를 재정의하려거든 hashCode도 재정의하라
 ">이전</a>
     
     
-      <a href="/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-9-try-finally-try-with-resources/" class="pagination--pager" title="Effective Java - 아이템 9: try-finally보다는 try-with-resources를 사용하라
-">다음</a>
+      <a href="#" class="pagination--pager disabled">다음</a>
     
   </nav>
 
@@ -479,47 +449,6 @@ C++에서 파괴자(생성자의 꼭 필요한 대척점)는 특정 객체와 �
     <div class="page__related">
       <h4 class="page__related-title">참고</h4>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/java/Effective-Java-Item-12-toString/" rel="permalink">Effective Java - 아이템 12: toString을 항상 재정의하라
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          최대 1 분 소요
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 {클래스이름}@{16진수}로 표시한 해시코드를 반환할 뿐이다.
-toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다.
-</p>
-  </article>
-</div>
-
         
           
 
@@ -589,7 +518,7 @@ toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 �
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          7 분 소요
+          6 분 소요
         
       </span>
     
@@ -635,7 +564,7 @@ toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 �
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          2 분 소요
+          1 분 소요
         
       </span>
     
@@ -646,6 +575,47 @@ toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 �
 전통적으로 예외가 발생하거나 메서드에서 반환되는 경우를 포함해 자원이 제대로 닫힘을 보장하는 수단으로 try-finally가 쓰였다.
 // 더 이상 자원을 회수하는 최선의 방책이 아니다.
 static String firstLineOfFile(String pat...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-8-finalizer%EC%99%80-cleaner-%EC%82%AC%EC%9A%A9%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/" rel="permalink">Effective Java - 아이템 8: finalizer와 cleaner 사용을 피하라
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">자바는 두 가지 객체 소멸자를 제공한다. 
+finalizer는 예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요하다. 그래서 기본적으로 쓰지 말아야 한다.
+finalizer의 대안으로 나온cleaner는 finalizer보다는 덜 위험하지만, 여전히 예측할 수 없고,...</p>
   </article>
 </div>
 
@@ -714,8 +684,8 @@ static String firstLineOfFile(String pat...</p>
     
   <script>
     var disqus_config = function () {
-      this.page.url = "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-8-finalizer%EC%99%80-cleaner-%EC%82%AC%EC%9A%A9%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/";  /* Replace PAGE_URL with your page's canonical URL variable */
-      this.page.identifier = "/java/Effective-Java-아이템-8-finalizer와-cleaner-사용을-피하라"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+      this.page.url = "http://localhost:4000/java/Effective-Java-Item-12-toString/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/java/Effective-Java-Item-12-toString"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
     };
     (function() { /* DON'T EDIT BELOW THIS LINE */
       var d = document, s = d.createElement('script');
