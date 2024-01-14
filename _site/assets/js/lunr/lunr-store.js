@@ -142,4 +142,10 @@ var store = [{
         "tags": ["Effective Java"],
         "url": "http://localhost:4000/java/Effective-Java-Item-12-toString/",
         "teaser": null
+      },{
+        "title": "Effective Java - 아이템 13: clone 재정의는 주의해서 진행하라",
+        "excerpt":"Cloneable은 복제해도 되는 클래스임을 명시하는 용도의 믹스인 인터페이스(mixin interface)지만, 의도한 목적을 제대로 이루지 못했다. Cloneable 인터페이스는 무슨 일을 할까? 이 인터페이스는 Object의 protected 메서드인 clone의 동작 방식을 결정한다. Cloneable을 구현한 클래스의 인스턴스에서 clone을 호출하면 그 객체의 필드들을 하나하나 복사한 객체를 반환하며, 그렇지 않은 클래스의 인스턴스에서 호출하면 CloneNotSupportedException을 던진다. 실무에서 Cloneable을...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-Item-13-clone/",
+        "teaser": null
       }]
