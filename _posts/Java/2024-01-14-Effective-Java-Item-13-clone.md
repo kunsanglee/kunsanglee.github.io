@@ -37,6 +37,7 @@ Object의 clone은 Object를 반환하지만 PhoneNumber의 clone은 PhoneNumber
 재정의한 메서드의 반환 타입은 상위 클래스의 메서그가 반환하는 타입의 하위 타입일 수 있다.
 
 앞서의 구현이 클래스가 가변 객체를 참조하는 순간 재앙으로 돌변한다.
+
 ```java
 public class Stack {
     private Object[] elements;
@@ -97,7 +98,7 @@ Stack의 clone 메서드는 제대로 동작하려면 스택 내부 정보를 �
 한 편 elements 필드가 final이었다면 앞서의 방식은 작동하지 않는다. final 필드에는 새로운 값을 할당할 수 없기 때문이다.
 이는 근본적인 문제로, 직렬화와 마찬가지로 Cloneable 아키텍처는 '가변 객체를 참조하는 필드는 final로 선언하라'는 일반 용법과 충돌한다.
 
-상속용 클래스는 Cloneable을 구현해서는 안된다.
+**상속용 클래스는 Cloneable을 구현해서는 안된다.**
 
 Cloneable을 구현한 스레드 안전 클래스를 작성할 때는 clone 메서드 역시 적절히 동기화해줘야 한다.
 Object의 clone 메서드는 동기화를 신경쓰지 않았기 때문에 super.clone 호출 외에 다른 할 일이 없더라도 clone을 재정의하고 동기화해줘야 한다.

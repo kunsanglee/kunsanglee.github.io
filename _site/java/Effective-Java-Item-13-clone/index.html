@@ -363,6 +363,7 @@ Object의 clone은 Object를 반환하지만 PhoneNumber의 clone은 PhoneNumber
 재정의한 메서드의 반환 타입은 상위 클래스의 메서그가 반환하는 타입의 하위 타입일 수 있다.</p>
 
 <p>앞서의 구현이 클래스가 가변 객체를 참조하는 순간 재앙으로 돌변한다.</p>
+
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Stack</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="nc">Object</span><span class="o">[]</span> <span class="n">elements</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
@@ -421,7 +422,7 @@ Object의 clone은 Object를 반환하지만 PhoneNumber의 clone은 PhoneNumber
 <p>한 편 elements 필드가 final이었다면 앞서의 방식은 작동하지 않는다. final 필드에는 새로운 값을 할당할 수 없기 때문이다.
 이는 근본적인 문제로, 직렬화와 마찬가지로 Cloneable 아키텍처는 ‘가변 객체를 참조하는 필드는 final로 선언하라’는 일반 용법과 충돌한다.</p>
 
-<p>상속용 클래스는 Cloneable을 구현해서는 안된다.</p>
+<p><strong>상속용 클래스는 Cloneable을 구현해서는 안된다.</strong></p>
 
 <p>Cloneable을 구현한 스레드 안전 클래스를 작성할 때는 clone 메서드 역시 적절히 동기화해줘야 한다.
 Object의 clone 메서드는 동기화를 신경쓰지 않았기 때문에 super.clone 호출 외에 다른 할 일이 없더라도 clone을 재정의하고 동기화해줘야 한다.</p>
@@ -516,7 +517,8 @@ Object의 clone 메서드는 동기화를 신경쓰지 않았기 때문에 super
 ">이전</a>
     
     
-      <a href="#" class="pagination--pager disabled">다음</a>
+      <a href="/java/Effective-Java-Item-14-Comparable/" class="pagination--pager" title="Effective Java - 아이템 14: Comparable을 구현할지 고려하라
+">다음</a>
     
   </nav>
 
@@ -530,6 +532,48 @@ Object의 clone 메서드는 동기화를 신경쓰지 않았기 때문에 super
     <div class="page__related">
       <h4 class="page__related-title">참고</h4>
       <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/Effective-Java-Item-14-Comparable/" rel="permalink">Effective Java - 아이템 14: Comparable을 구현할지 고려하라
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">compareTo
+Comparable 인터페이스의 유일한 메서드인 compareTo는 단순 동치성 비교에 더해 순서까지 비교할 수 있으며, 제네릭하다.
+Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자연적인 순서(natural order)가 있음을 뜻한다.
+</p>
+  </article>
+</div>
+
         
           
 
@@ -655,48 +699,6 @@ toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 �
     
   
   인스턴스의 ‘논리적 동치성(logical equality)’을 검사할 일이 ...</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-9-try-finally-try-with-resources/" rel="permalink">Effective Java - 아이템 9: try-finally보다는 try-with-resources를 사용하라
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          1 분 소요
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">try-finally
-전통적으로 예외가 발생하거나 메서드에서 반환되는 경우를 포함해 자원이 제대로 닫힘을 보장하는 수단으로 try-finally가 쓰였다.
-// 더 이상 자원을 회수하는 최선의 방책이 아니다.
-static String firstLineOfFile(String pat...</p>
   </article>
 </div>
 

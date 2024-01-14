@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Effective Java - 아이템 12: toString을 항상 재정의하라 -  kunsanglee’s</title>
-<meta name="description" content="Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 {클래스이름}@{16진수}로 표시한 해시코드를 반환할 뿐이다. toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다.">
+<!-- begin _includes/seo.html --><title>Effective Java - 아이템 14: Comparable을 구현할지 고려하라 -  kunsanglee’s</title>
+<meta name="description" content="compareTo Comparable 인터페이스의 유일한 메서드인 compareTo는 단순 동치성 비교에 더해 순서까지 비교할 수 있으며, 제네릭하다. Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자연적인 순서(natural order)가 있음을 뜻한다.">
 
 
   <meta name="author" content="이건상">
@@ -22,30 +22,30 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content=" kunsanglee's">
-<meta property="og:title" content="Effective Java - 아이템 12: toString을 항상 재정의하라">
-<meta property="og:url" content="http://localhost:4000/java/Effective-Java-Item-12-toString/">
+<meta property="og:title" content="Effective Java - 아이템 14: Comparable을 구현할지 고려하라">
+<meta property="og:url" content="http://localhost:4000/java/Effective-Java-Item-14-Comparable/">
 
 
-  <meta property="og:description" content="Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 {클래스이름}@{16진수}로 표시한 해시코드를 반환할 뿐이다. toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다.">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2024-01-13T00:00:00+09:00">
+  <meta property="og:description" content="compareTo Comparable 인터페이스의 유일한 메서드인 compareTo는 단순 동치성 비교에 더해 순서까지 비교할 수 있으며, 제네릭하다. Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자연적인 순서(natural order)가 있음을 뜻한다.">
 
 
 
 
 
-  
+
+
+  <meta property="article:published_time" content="2024-01-14T00:00:00+09:00">
+
+
+
+
 
   
 
+  
 
-<link rel="canonical" href="http://localhost:4000/java/Effective-Java-Item-12-toString/">
+
+<link rel="canonical" href="http://localhost:4000/java/Effective-Java-Item-14-Comparable/">
 
 
 
@@ -290,15 +290,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Effective Java - 아이템 12: toString을 항상 재정의하라">
-    <meta itemprop="description" content="Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 {클래스이름}@{16진수}로 표시한 해시코드를 반환할 뿐이다.toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다.">
-    <meta itemprop="datePublished" content="2024-01-13T00:00:00+09:00">
+    <meta itemprop="headline" content="Effective Java - 아이템 14: Comparable을 구현할지 고려하라">
+    <meta itemprop="description" content="compareToComparable 인터페이스의 유일한 메서드인 compareTo는 단순 동치성 비교에 더해 순서까지 비교할 수 있으며, 제네릭하다.Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자연적인 순서(natural order)가 있음을 뜻한다.">
+    <meta itemprop="datePublished" content="2024-01-14T00:00:00+09:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Effective Java - 아이템 12: toString을 항상 재정의하라
+          <h1 id="page-title" class="page__title" itemprop="headline">Effective Java - 아이템 14: Comparable을 구현할지 고려하라
 </h1>
           
 
@@ -314,7 +314,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          최대 1 분 소요
+          1 분 소요
         
       </span>
     
@@ -330,38 +330,76 @@
             <nav class="toc">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
               <ul class="toc__menu">
-  <li><a href="#tostring의-규약">toString의 규약</a></li>
-  <li><a href="#포맷">포맷</a></li>
+  <li><a href="#compareto">compareTo</a></li>
+  <li><a href="#compareto-메서드의-일반-규약">compareTo 메서드의 일반 규약</a></li>
+  <li><a href="#compareto와-equals의-차이점">compareTo와 equals의 차이점</a></li>
+  <li><a href="#비교">비교</a></li>
   <li><a href="#핵심-정리">핵심 정리</a></li>
 </ul>
 
             </nav>
           </aside>
         
-        <p>Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 <code class="language-plaintext highlighter-rouge">{클래스이름}@{16진수}</code>로 표시한 해시코드를 반환할 뿐이다.<br />
-toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다.</p>
+        <h3 id="compareto">compareTo</h3>
+<p>Comparable 인터페이스의 유일한 메서드인 compareTo는 단순 동치성 비교에 더해 순서까지 비교할 수 있으며, 제네릭하다.<br />
+Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자연적인 순서(natural order)가 있음을 뜻한다.</p>
 
-<h3 id="tostring의-규약">toString의 규약</h3>
-<p><strong>모든 하위 클래스에서 이 메서드를 재정의하라</strong><br />
-toString을 잘 구현한 클래스와 시스템은 디버깅하기 쉽다.<br />
-toString을 제대로 재정의하지 않는다면 쓸모없는 메시지만 로그에 남을 것이다.<br />
-실전에서 toString은 그 객체가 가진 주요 정보를 모두 반환하는 게 좋다.</p>
+<p>사실상 자바 플랫폼 라이브러리의 모든 값 클래스와 열거타입이 Comparable을 구현했다.<br />
+알파벳, 숫자, 연대 같이 순서가 명확한 값 클래스를 작성한다면 반드시 Comparable 인터페이스를 구현하자.</p>
 
-<h3 id="포맷">포맷</h3>
-<p><strong>toString을 구현할 때면 반환값의 포맷을 문서화할지 정해야 한다.</strong><br />
-포맷을 명시하면 그 객체는 표준적이고, 명확하고, 사람이 읽을 수 있게 된다.<br />
-포맷을 명시한다면, 명시한 포맷에 맞는 문자열과 객체를 상호 전환할 수 있는 정적 팩터리나 생성자를 함께 제공해주면 좋다.<br />
-포맷 사용시 단점은, 자주 사용되는 클래스의 경우 평생 그 포멧에 얽매이게 된다.<br />
-<strong>포맷을 명시하든 아니든 의도는 명확히 밝혀야 한다.</strong> 포맷 명시 여부와 상관 없이 toString이 반환한 값에 포함된 정보를 얻어올 수 있는 API를 제공하자.</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Comparable</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="nf">compareTo</span><span class="o">(</span><span class="no">T</span> <span class="n">t</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
 
+<h3 id="compareto-메서드의-일반-규약">compareTo 메서드의 일반 규약</h3>
 <blockquote>
-  <p>정적 유틸리티 클래스는 toString을 제공할 이유가 없다. 또한 대부분의 열거타입도 자바가 이미 완벽한 toString을 제공하니 따로 재정의하지 않아도 된다.
-하지만 하위 클래스들이 공유해야 할 문자열 표현이 있는 추상클래스라면 toString을 재정의해줘야 한다.</p>
+  <p>compareTo 메서드의 일반 규약은 equals의 규약과 비슷하다.<br />
+이 객체와 주어진 객체의 순서를 비교한다. 이 객체가 주어진 객체보다 작으면 음수를, 같으면 0, 크면 양수를 반환한다.<br />
+이 객체와 비교할 수 없는 타입의 객체가 주어지면 ClassCastException을 던진다.<br />
+compareTo 메서드로 수행하는 동치성 검사도 equals 규약과 똑같이 반사성, 대칭성, 추이성을 충족해야 함을 뜻한다.</p>
 </blockquote>
 
+<p>equals와 마찬가지로 기존 클래스를 확장한 구체 클래스에서 새로운 값 컴포넌트를 추가했다면 compareTo 규약을 지킬 방법이 없다.
+Comparable을 구현한 클래스를 확장해 값 컴포넌트를 추가하고 싶다면,
+확장하는 대신 독립된 클래스를 만들고 이 클래스에 원래 클래스의 인스턴스를 가리키는 필드를 두자.<br /></p>
+
+<p>compareTo 메서드로 수행한 동치성 테스트의 결과가 equals와 같아야 한다.<br />
+즉 compareTo 반환값이 0이면, equals 비교가 true가 나와야 한다.</p>
+
+<p>컬렉션이 구현한 인터페이스(Collection, Set, Map)들은 equals 메서드의 규약을 따른다고 되어있지만,<br />
+정렬된 컬렉션(SortedSet, TreeSet 등)은 동치성을 비교할 때 equals 대신 compareTo를 사용한다.</p>
+
+<h3 id="compareto와-equals의-차이점">compareTo와 equals의 차이점</h3>
+<p>Comparable은 타입을 인수로 받는 제네릭 인터페이스이므로 compareTo 메서드의 인수 타입은 컴파일타임에 정해진다.<br /> 
+입력 인수의 타입을 확인하거나 형변환할 필요가 없다는 뜻이다.<br /></p>
+
+<p>compareTo 메서드는 각 필드가 동치인지를 비교하는 게 아니라 그 순서를 비교한다.
+객체 참조 필드를 비교하려면 compareTo 메서드를 재귀적으로 호출한다.<br /> 
+Comparable을 구현하지 않은 필드나 표준이 아닌 순서로 비교해야 한다면 비교자(Comparator)를 대신 사용한다.<br /></p>
+
+<p>compareTo 메서드에서 정수 기본 타입 필드를 비교할 때 박싱된 기본 타입 클래스들에 새로 추가된 정적 메서드 compare를 사용해라.</p>
+
+<h3 id="비교">비교</h3>
+<p>클래스에 핵심 필드가 여러 개라면 가장 핵심적인 필드부터 비교해나가자.<br />
+비교 결과가 0이 아니라면, 즉 순서가 결정되면 거기서 끝이다. 바로 결과를 반환하자.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 기본 타입 필드가 여럿일 때의 비교자</span>
+<span class="kd">public</span> <span class="kt">int</span> <span class="nf">compareTo</span><span class="o">(</span><span class="nc">PhoneNumber</span> <span class="n">pn</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="nc">Short</span><span class="o">.</span><span class="na">compare</span><span class="o">(</span><span class="n">areaCode</span><span class="o">,</span> <span class="n">pn</span><span class="o">.</span><span class="na">areaCode</span><span class="o">);</span> <span class="c1">// 가장 중요한 필드</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">result</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nc">Short</span><span class="o">.</span><span class="na">compare</span><span class="o">(</span><span class="n">prefix</span><span class="o">,</span> <span class="n">pn</span><span class="o">.</span><span class="na">prefix</span><span class="o">);</span> <span class="c1">// 두 번째로 중요한 필드</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">result</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nc">Short</span><span class="o">.</span><span class="na">compare</span><span class="o">(</span><span class="n">lineNum</span><span class="o">,</span> <span class="n">pn</span><span class="o">.</span><span class="na">lineNum</span><span class="o">);</span> <span class="c1">// 세 번째로 중요한 필드</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
 <h3 id="핵심-정리">핵심 정리</h3>
-<p>모든 구체 클래스에서 Object의 toString을 재정의하자. 상위 클래스에서 이미 알맞게 재정의한 경우는 예외다.<br />
-toString은 해당 객체에 관한 명확하고 유용한 정보를 읽기 좋은 형태로 반환해야 한다.</p>
+<p>순서를 고려해야 하는 값 클래스(래퍼 클래스)를 작성한다면 꼭 Comparable 인터페이스를 구현하여,<br /> 
+그 인스턴스들을 쉽게 정렬하고, 검색하고, 비교 기능을 제공하는 컬렉션과 어우러지도록 해야 한다.</p>
 
         
       </section>
@@ -410,7 +448,7 @@ toString은 해당 객체에 관한 명확하고 유용한 정보를 읽기 좋�
 
 
         
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2024-01-13T00:00:00+09:00">January 13, 2024</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2024-01-14T00:00:00+09:00">January 14, 2024</time></p>
 
 
       </footer>
@@ -420,23 +458,22 @@ toString은 해당 객체에 관한 명확하고 유용한 정보를 읽기 좋�
     <h4 class="page__share-title">공유하기</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=Effective+Java+-+%EC%95%84%EC%9D%B4%ED%85%9C+12%3A+toString%EC%9D%84+%ED%95%AD%EC%83%81+%EC%9E%AC%EC%A0%95%EC%9D%98%ED%95%98%EB%9D%BC%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-12-toString%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Effective+Java+-+%EC%95%84%EC%9D%B4%ED%85%9C+14%3A+Comparable%EC%9D%84+%EA%B5%AC%ED%98%84%ED%95%A0%EC%A7%80+%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-14-Comparable%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-12-toString%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-14-Comparable%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-12-toString%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-14-Comparable%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
       
   <nav class="pagination">
     
-      <a href="/java/Effective-Java-Item-11-equals&hashCode/" class="pagination--pager" title="Effective Java - 아이템 11: equals를 재정의하려거든 hashCode도 재정의하라
+      <a href="/java/Effective-Java-Item-13-clone/" class="pagination--pager" title="Effective Java - 아이템 13: clone 재정의는 주의해서 진행하라
 ">이전</a>
     
     
-      <a href="/java/Effective-Java-Item-13-clone/" class="pagination--pager" title="Effective Java - 아이템 13: clone 재정의는 주의해서 진행하라
-">다음</a>
+      <a href="#" class="pagination--pager disabled">다음</a>
     
   </nav>
 
@@ -450,48 +487,6 @@ toString은 해당 객체에 관한 명확하고 유용한 정보를 읽기 좋�
     <div class="page__related">
       <h4 class="page__related-title">참고</h4>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/java/Effective-Java-Item-14-Comparable/" rel="permalink">Effective Java - 아이템 14: Comparable을 구현할지 고려하라
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          1 분 소요
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">compareTo
-Comparable 인터페이스의 유일한 메서드인 compareTo는 단순 동치성 비교에 더해 순서까지 비교할 수 있으며, 제네릭하다.
-Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자연적인 순서(natural order)가 있음을 뜻한다.
-</p>
-  </article>
-</div>
-
         
           
 
@@ -528,6 +523,47 @@ Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자�
 
 
     <p class="archive__item-excerpt" itemprop="description">Cloneable은 복제해도 되는 클래스임을 명시하는 용도의 믹스인 인터페이스(mixin interface)지만, 의도한 목적을 제대로 이루지 못했다.
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/Effective-Java-Item-12-toString/" rel="permalink">Effective Java - 아이템 12: toString을 항상 재정의하라
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          최대 1 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 {클래스이름}@{16진수}로 표시한 해시코드를 반환할 뿐이다.
+toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다.
 </p>
   </article>
 </div>
@@ -684,8 +720,8 @@ Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자�
     
   <script>
     var disqus_config = function () {
-      this.page.url = "http://localhost:4000/java/Effective-Java-Item-12-toString/";  /* Replace PAGE_URL with your page's canonical URL variable */
-      this.page.identifier = "/java/Effective-Java-Item-12-toString"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+      this.page.url = "http://localhost:4000/java/Effective-Java-Item-14-Comparable/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/java/Effective-Java-Item-14-Comparable"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
     };
     (function() { /* DON'T EDIT BELOW THIS LINE */
       var d = document, s = d.createElement('script');
