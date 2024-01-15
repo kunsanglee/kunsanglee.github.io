@@ -154,4 +154,10 @@ var store = [{
         "tags": ["Effective Java"],
         "url": "http://localhost:4000/java/Effective-Java-Item-14-Comparable/",
         "teaser": null
+      },{
+        "title": "Effective Java - 아이템 15: 클래스와 멤버의 접근 권한을 최소화하라",
+        "excerpt":"정보 은닉의 장점 시스템을 구성하는 컴포넌트들을 서로 독립시켜서 개발, 테스트, 최적화, 적용, 분석, 수정을 개별적으로 할 수 있게 해주는 것과 연관되어 있다. 시스템 개발 속도를 높인다. 여러 컴포넌트를 병렬로 개발할 수 있기 때문이다. 시스템 관리 비용을 낮춘다. 각 컴포넌트를 더 빨리 파악하여 디버깅 할 수 있고, 다른 컴포넌트로 교체하는 부담도...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-Item-15-%ED%81%B4%EB%9E%98%EC%8A%A4%EC%99%80-%EB%A9%A4%EB%B2%84%EC%9D%98-%EC%A0%91%EA%B7%BC%EA%B6%8C%ED%95%9C%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EB%9D%BC/",
+        "teaser": null
       }]
