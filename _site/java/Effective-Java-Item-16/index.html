@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Effective Java - 아이템 8: finalizer와 cleaner 사용을 피하라 -  kunsanglee’s</title>
-<meta name="description" content="자바는 두 가지 객체 소멸자를 제공한다.  finalizer는 예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요하다. 그래서 기본적으로 쓰지 말아야 한다. finalizer의 대안으로 나온cleaner는 finalizer보다는 덜 위험하지만, 여전히 예측할 수 없고, 느리고, 일반적으로 불필요하다.">
+<!-- begin _includes/seo.html --><title>Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라 -  kunsanglee’s</title>
+<meta name="description" content="```java // 퇴보한 public 클래스 class Point {     public double x;     public double y; } // 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다. // API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며, // 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다.">
 
 
   <meta name="author" content="이건상">
@@ -22,30 +22,30 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content=" kunsanglee's">
-<meta property="og:title" content="Effective Java - 아이템 8: finalizer와 cleaner 사용을 피하라">
-<meta property="og:url" content="http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-8-finalizer%EC%99%80-cleaner-%EC%82%AC%EC%9A%A9%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/">
+<meta property="og:title" content="Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라">
+<meta property="og:url" content="http://localhost:4000/java/Effective-Java-Item-16/">
 
 
-  <meta property="og:description" content="자바는 두 가지 객체 소멸자를 제공한다.  finalizer는 예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요하다. 그래서 기본적으로 쓰지 말아야 한다. finalizer의 대안으로 나온cleaner는 finalizer보다는 덜 위험하지만, 여전히 예측할 수 없고, 느리고, 일반적으로 불필요하다.">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2024-01-10T00:00:00+09:00">
+  <meta property="og:description" content="```java // 퇴보한 public 클래스 class Point {     public double x;     public double y; } // 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다. // API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며, // 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다.">
 
 
 
 
 
-  
+
+
+  <meta property="article:published_time" content="2024-01-16T00:00:00+09:00">
+
+
+
+
 
   
 
+  
 
-<link rel="canonical" href="http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-8-finalizer%EC%99%80-cleaner-%EC%82%AC%EC%9A%A9%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/">
+
+<link rel="canonical" href="http://localhost:4000/java/Effective-Java-Item-16/">
 
 
 
@@ -290,15 +290,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Effective Java - 아이템 8: finalizer와 cleaner 사용을 피하라">
-    <meta itemprop="description" content="자바는 두 가지 객체 소멸자를 제공한다. finalizer는 예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요하다. 그래서 기본적으로 쓰지 말아야 한다.finalizer의 대안으로 나온cleaner는 finalizer보다는 덜 위험하지만, 여전히 예측할 수 없고, 느리고, 일반적으로 불필요하다.">
-    <meta itemprop="datePublished" content="2024-01-10T00:00:00+09:00">
+    <meta itemprop="headline" content="Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라">
+    <meta itemprop="description" content="```java// 퇴보한 public 클래스class Point {    public double x;    public double y;}// 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다.// API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며,// 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다.">
+    <meta itemprop="datePublished" content="2024-01-16T00:00:00+09:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Effective Java - 아이템 8: finalizer와 cleaner 사용을 피하라
+          <h1 id="page-title" class="page__title" itemprop="headline">Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라
 </h1>
           
 
@@ -330,67 +330,56 @@
             <nav class="toc">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
               <ul class="toc__menu">
-  <li><a href="#finallizer와-cleaner-사용을-피해야-하는-이유">finallizer와 cleaner 사용을 피해야 하는 이유</a></li>
-  <li><a href="#finalizer-cleaner를-대신해줄-묘안">finalizer, cleaner를 대신해줄 묘안</a></li>
-  <li><a href="#cleaner와-finalizer의-쓰임새">cleaner와 finalizer의 쓰임새</a></li>
   <li><a href="#핵심-정리">핵심 정리</a></li>
 </ul>
 
             </nav>
           </aside>
         
-        <p>자바는 두 가지 객체 소멸자를 제공한다. 
-<code class="language-plaintext highlighter-rouge">finalizer</code>는 예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요하다. 그래서 기본적으로 쓰지 말아야 한다.
-<code class="language-plaintext highlighter-rouge">finalizer</code>의 대안으로 나온<code class="language-plaintext highlighter-rouge">cleaner</code>는 <code class="language-plaintext highlighter-rouge">finalizer</code>보다는 덜 위험하지만, 여전히 예측할 수 없고, 느리고, 일반적으로 불필요하다.</p>
+        <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 퇴보한 public 클래스</span>
+<span class="kd">class</span> <span class="nc">Point</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">double</span> <span class="n">x</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kt">double</span> <span class="n">y</span><span class="o">;</span>
+<span class="o">}</span>
+<span class="c1">// 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다.</span>
+<span class="c1">// API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며,</span>
+<span class="c1">// 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다.</span>
 
-<p>자바의 <code class="language-plaintext highlighter-rouge">finalizer</code>, <code class="language-plaintext highlighter-rouge">cleaner</code>는 C++의 파괴자(destructor)와 다른 개념이다.
-C++에서 파괴자(생성자의 꼭 필요한 대척점)는 특정 객체와 관련된 자원을 회수하는 보편적인 방법이다.
-자바에서는 접근할 수 없게 된 객체를 회수하는 역할을 가비지 컬렉터가 담당한다.
-또한 자바에서는 <code class="language-plaintext highlighter-rouge">try-with-resources</code>와 <code class="language-plaintext highlighter-rouge">try-finally</code>를 사용해 자원을 회수한다.</p>
+<span class="kd">class</span> <span class="nc">Point</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">double</span> <span class="n">x</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">double</span> <span class="n">y</span><span class="o">;</span>
 
-<h3 id="finallizer와-cleaner-사용을-피해야-하는-이유">finallizer와 cleaner 사용을 피해야 하는 이유</h3>
-<ol>
-  <li>즉시 수행된다는 보장이 없다.
-    <ul>
-      <li>finalizer와 cleaner는 제때 실행되어야 하는 작업은 절대 할 수 없다.</li>
-    </ul>
-  </li>
-  <li>수행 시점뿐 아니라 수행 여부조차 보장하지 않는다.
-    <ul>
-      <li>프로그램 생에주기와 상관없는, 상태를 영구적으로 수정하는 작업에서는 절대 finalizer와 cleaner에 의존해서는 안된다.</li>
-      <li>데이터베이스 같은 공유 자원의 영구 락(lock) 해제를 finalizer나 cleaner에 맡겨 놓으면 분산 시스템 전체가 서서히 멈출 것이다.</li>
-    </ul>
-  </li>
-  <li>finalizer 동작 중 발생한 예외는 무시되며, 처리할 작업이 남았더라도 그 순간 종료된다.
-    <ul>
-      <li>cleaner를 사용하는 라이브러리는 자신의 스레드를 통제하기 때문에 이러한 문제가 발생하지 않는다.</li>
-    </ul>
-  </li>
-  <li>심각한 성능 문제를 동반한다.
-    <ul>
-      <li>finalizer가 가비지 컬렉터의 효율을 떨어뜨린다.</li>
-    </ul>
-  </li>
-  <li>finalizer를 사용한 클래스는 finalizer 공격에 노출되어 심각한 보안 문제를 일으킬 수 있다.
-    <ul>
-      <li>객체 생성을 막으려면 생성자에서 예외를 던지는 것마능로 충분하지만, finalizer가 있다면 그렇지도 않다.</li>
-      <li>final이 아닌 클래스를 finalizer 공격으로부터 방어하려면 아무 일도 하지 않는 finalize 메서드를 만들고 final로 선언하자.</li>
-    </ul>
-  </li>
-</ol>
+    <span class="kd">public</span> <span class="nf">Point</span><span class="o">(</span><span class="kt">double</span> <span class="n">x</span><span class="o">,</span> <span class="kt">double</span> <span class="n">y</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">;</span>
+    <span class="o">}</span>
 
-<h3 id="finalizer-cleaner를-대신해줄-묘안">finalizer, cleaner를 대신해줄 묘안</h3>
-<p><strong>AutoCloseable</strong>을 구현해주고 클라이언트에서 인스턴스를 다 쓰고 나면 close 메서드를 호출하면 된다.
-일반적으로 예외가 발생해도 제대로 종료되도록 try-with-resources를 사용해야 한다.</p>
+    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">getX</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">;</span>
+    <span class="o">}</span>
 
-<h3 id="cleaner와-finalizer의-쓰임새">cleaner와 finalizer의 쓰임새</h3>
-<ol>
-  <li>자원의 소유자가 close 메서드를 호출하지 않는 것에 대비한 안전망 역할이다.</li>
-  <li>네이티브 피어(일반 자바 객체가 네이티브 메서드를 통해 기능을 위임한 네이티브 객체)와 연결된 객체에서다.</li>
-</ol>
+    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">getY</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">y</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">setX</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">setY</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">;</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p>public 클래스는 패키지 바깥에서 접근자를 제공함으로써 클래스 내부 표현 방식을 언제든 바꿀 수 있는 유연성을 얻을 수 있다. 만약 public 클래스의 필드를 공개하면 이를 사용하는 클라이언트가 생겨날 것이므로
+내부 표현 방식을 마음대로 바꿀 수 없게 된다.</p>
+
+<p>하지만 package-private 클래스, private 중첩 클래스는 데이터 필드를 노출한다고 해도 문제가 없다. 이 방식은 접근자 방식보다 훨씬 깔끔하다. 패키지 바깥 코드는 전혀 손대지 않고도 데이터 표현
+방식을 바꿀 수 있다. private 중첩 클래스의 경우라면 수정 범위가 더 좁아져 이 클래스를 포함하는 외부 클래스까지로 제한된다.</p>
 
 <h3 id="핵심-정리">핵심 정리</h3>
-<p>cleaner(자바 8까지는 finalizer)는 안전망 역할이나, 중요하지 않은 네이티브 자원 회수용으로만 사용하자.</p>
+
+<p>public 클래스는 절대 가변 필드를 직접 노출해서는 안 된다. 하지만 package-private 클래스나 private 중첩 클래스에서는 종종(불변이든 가변이든) 필드를 노출하는 편이 나을 때도 있다.</p>
 
         
       </section>
@@ -439,7 +428,7 @@ C++에서 파괴자(생성자의 꼭 필요한 대척점)는 특정 객체와 �
 
 
         
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2024-01-10T00:00:00+09:00">January 10, 2024</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2024-01-16T00:00:00+09:00">January 16, 2024</time></p>
 
 
       </footer>
@@ -449,22 +438,22 @@ C++에서 파괴자(생성자의 꼭 필요한 대척점)는 특정 객체와 �
     <h4 class="page__share-title">공유하기</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=Effective+Java+-+%EC%95%84%EC%9D%B4%ED%85%9C+8%3A+finalizer%EC%99%80+cleaner+%EC%82%AC%EC%9A%A9%EC%9D%84+%ED%94%BC%ED%95%98%EB%9D%BC%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-%25EC%2595%2584%25EC%259D%25B4%25ED%2585%259C-8-finalizer%25EC%2599%2580-cleaner-%25EC%2582%25AC%25EC%259A%25A9%25EC%259D%2584-%25ED%2594%25BC%25ED%2595%2598%25EB%259D%25BC%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Effective+Java+-+%EC%95%84%EC%9D%B4%ED%85%9C+16%3A+public+%ED%81%B4%EB%9E%98%EC%8A%A4%EC%97%90%EC%84%9C%EB%8A%94+public+%ED%95%84%EB%93%9C%EA%B0%80+%EC%95%84%EB%8B%8C+%EC%A0%91%EA%B7%BC%EC%9E%90+%EB%A9%94%EC%84%9C%EB%93%9C%EB%A5%BC+%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC%20http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-16%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-%25EC%2595%2584%25EC%259D%25B4%25ED%2585%259C-8-finalizer%25EC%2599%2580-cleaner-%25EC%2582%25AC%25EC%259A%25A9%25EC%259D%2584-%25ED%2594%25BC%25ED%2595%2598%25EB%259D%25BC%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-16%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-%25EC%2595%2584%25EC%259D%25B4%25ED%2585%259C-8-finalizer%25EC%2599%2580-cleaner-%25EC%2582%25AC%25EC%259A%25A9%25EC%259D%2584-%25ED%2594%25BC%25ED%2595%2598%25EB%259D%25BC%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjava%2FEffective-Java-Item-16%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
       
   <nav class="pagination">
     
-      <a href="/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-7-%EB%8B%A4-%EC%93%B4-%EA%B0%9D%EC%B2%B4-%EC%B0%B8%EC%A1%B0%EB%A5%BC-%ED%95%B4%EC%A0%9C%ED%95%98%EB%9D%BC/" class="pagination--pager" title="Effective Java - 아이템 7: 다 쓴 객체 참조를 해제하라
+      <a href="/java/Effective-Java-Item-15-%ED%81%B4%EB%9E%98%EC%8A%A4%EC%99%80-%EB%A9%A4%EB%B2%84%EC%9D%98-%EC%A0%91%EA%B7%BC%EA%B6%8C%ED%95%9C%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EB%9D%BC/" class="pagination--pager" title="Effective Java - 아이템 15: 클래스와 멤버의 접근 권한을 최소화하라
 ">이전</a>
     
     
-      <a href="/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-9-try-finally-try-with-resources/" class="pagination--pager" title="Effective Java - 아이템 9: try-finally보다는 try-with-resources를 사용하라
+      <a href="/java/Effective-Java-Item-17/" class="pagination--pager" title="Effective Java - 아이템 17: 변경 가능성을 최소화하라
 ">다음</a>
     
   </nav>
@@ -516,52 +505,6 @@ C++에서 파괴자(생성자의 꼭 필요한 대척점)는 특정 객체와 �
 
     <p class="archive__item-excerpt" itemprop="description">불변 클래스
 </p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/java/Effective-Java-Item-16/" rel="permalink">Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          1 분 소요
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">```java
-// 퇴보한 public 클래스
-class Point {
-    public double x;
-    public double y;
-}
-// 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다.
-// API를 수정하지 않고는 내부 표현을 바꿀 수 없...</p>
   </article>
 </div>
 
@@ -648,6 +591,46 @@ Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자�
 </div>
 
         
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/java/Effective-Java-Item-13-clone/" rel="permalink">Effective Java - 아이템 13: clone 재정의는 주의해서 진행하라
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Cloneable은 복제해도 되는 클래스임을 명시하는 용도의 믹스인 인터페이스(mixin interface)지만, 의도한 목적을 제대로 이루지 못했다.
+</p>
+  </article>
+</div>
+
+        
       </div>
     </div>
   
@@ -712,8 +695,8 @@ Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자�
     
   <script>
     var disqus_config = function () {
-      this.page.url = "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-8-finalizer%EC%99%80-cleaner-%EC%82%AC%EC%9A%A9%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/";  /* Replace PAGE_URL with your page's canonical URL variable */
-      this.page.identifier = "/java/Effective-Java-아이템-8-finalizer와-cleaner-사용을-피하라"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+      this.page.url = "http://localhost:4000/java/Effective-Java-Item-16/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/java/Effective-Java-Item-16-"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
     };
     (function() { /* DON'T EDIT BELOW THIS LINE */
       var d = document, s = d.createElement('script');

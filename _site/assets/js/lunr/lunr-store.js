@@ -160,4 +160,16 @@ var store = [{
         "tags": ["Effective Java"],
         "url": "http://localhost:4000/java/Effective-Java-Item-15-%ED%81%B4%EB%9E%98%EC%8A%A4%EC%99%80-%EB%A9%A4%EB%B2%84%EC%9D%98-%EC%A0%91%EA%B7%BC%EA%B6%8C%ED%95%9C%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EB%9D%BC/",
         "teaser": null
+      },{
+        "title": "Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라",
+        "excerpt":"// 퇴보한 public 클래스 class Point { public double x; public double y; } // 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다. // API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며, // 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다. class Point...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-Item-16/",
+        "teaser": null
+      },{
+        "title": "Effective Java - 아이템 17: 변경 가능성을 최소화하라",
+        "excerpt":"불변 클래스 불변 클래스랄 간단히 말해 그 인스턴스의 내부 값을 수정할 수 없는 클래스다. 불변 인스턴스에 간직된 정보는 고정되어 객체가 파괴되는 순간까지 절대 달라지지 않는다. 불변 클래스는 가변 클래스보다 설계하고 구현하고 사용하기 쉬우며, 오류가 생길 여지도 적고 훨씬 안전하다. 불변 클래스를 만들기 위한 5가지 규칙 객체의 상태를 변경하는 메서드(변경자)를 제공하지...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-Item-17/",
+        "teaser": null
       }]
