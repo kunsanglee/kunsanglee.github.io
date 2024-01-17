@@ -164,12 +164,18 @@ var store = [{
         "title": "Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라",
         "excerpt":"// 퇴보한 public 클래스 class Point { public double x; public double y; } // 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다. // API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며, // 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다. class Point...","categories": ["Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-16/",
+        "url": "http://localhost:4000/java/Effective-Java-Item-16-public-class-field/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 17: 변경 가능성을 최소화하라",
         "excerpt":"불변 클래스 불변 클래스랄 간단히 말해 그 인스턴스의 내부 값을 수정할 수 없는 클래스다. 불변 인스턴스에 간직된 정보는 고정되어 객체가 파괴되는 순간까지 절대 달라지지 않는다. 불변 클래스는 가변 클래스보다 설계하고 구현하고 사용하기 쉬우며, 오류가 생길 여지도 적고 훨씬 안전하다. 불변 클래스를 만들기 위한 5가지 규칙 객체의 상태를 변경하는 메서드(변경자)를 제공하지...","categories": ["Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-17/",
+        "url": "http://localhost:4000/java/Effective-Java-Item-17-%EB%B3%80%EA%B2%BD-%EA%B0%80%EB%8A%A5%EC%84%B1%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EB%9D%BC/",
+        "teaser": null
+      },{
+        "title": "Effective Java - 아이템 18: 상속보다는 컴포지션을 사용하라",
+        "excerpt":"메서드 호출과 달리 상속은 캡슐화를 깨뜨린다. 상위 클래스가 어떻게 구현되느냐에 따라 상속하는 하위 클래스의 동작에 이상이 생길 수 있다. 상위 클래스는 릴리스마다 내부 구현이 달라질 수 있기 때문에, 코드 한 줄 수정하지 않은 하위 클래스에서 오동작 할 수 있다. 상속 클래스의 메서드 재정의에서 비롯된 문제 상위 클래스에서 정의한 메서드를 하위...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-Item-18-composition/",
         "teaser": null
       }]

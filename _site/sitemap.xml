@@ -4,7 +4,23 @@
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
     <url>
-        <loc>http://localhost:4000/java/Effective-Java-Item-17/</loc>
+        <loc>http://localhost:4000/java/Effective-Java-Item-18-composition/</loc>
+        
+        <lastmod>2024-01-17T00:00:00+09:00</lastmod>
+        
+
+        
+        <changefreq>weekly</changefreq>
+        
+
+        
+        <priority>0.5</priority>
+        
+
+    </url>
+    
+    <url>
+        <loc>http://localhost:4000/java/Effective-Java-Item-17-%EB%B3%80%EA%B2%BD-%EA%B0%80%EB%8A%A5%EC%84%B1%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EB%9D%BC/</loc>
         
         <lastmod>2024-01-16T00:00:00+09:00</lastmod>
         
@@ -20,7 +36,7 @@
     </url>
     
     <url>
-        <loc>http://localhost:4000/java/Effective-Java-Item-16/</loc>
+        <loc>http://localhost:4000/java/Effective-Java-Item-16-public-class-field/</loc>
         
         <lastmod>2024-01-16T00:00:00+09:00</lastmod>
         
