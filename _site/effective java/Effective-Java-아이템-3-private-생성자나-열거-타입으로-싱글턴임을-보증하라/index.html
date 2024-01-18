@@ -1,0 +1,826 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.2 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Effective Java - 아이템 3: private 생성자나 열거 타입으로 싱글턴임을 보증하라 -  kunsanglee’s</title>
+<meta name="description" content="싱글턴(Singleton)">
+
+
+  <meta name="author" content="이건상">
+  
+  <meta property="article:author" content="이건상">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content=" kunsanglee's">
+<meta property="og:title" content="Effective Java - 아이템 3: private 생성자나 열거 타입으로 싱글턴임을 보증하라">
+<meta property="og:url" content="http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-3-private-%EC%83%9D%EC%84%B1%EC%9E%90%EB%82%98-%EC%97%B4%EA%B1%B0-%ED%83%80%EC%9E%85%EC%9C%BC%EB%A1%9C-%EC%8B%B1%EA%B8%80%ED%84%B4%EC%9E%84%EC%9D%84-%EB%B3%B4%EC%A6%9D%ED%95%98%EB%9D%BC/">
+
+
+  <meta property="og:description" content="싱글턴(Singleton)">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2024-01-08T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-3-private-%EC%83%9D%EC%84%B1%EC%9E%90%EB%82%98-%EC%97%B4%EA%B1%B0-%ED%83%80%EC%9E%85%EC%9C%BC%EB%A1%9C-%EC%8B%B1%EA%B8%80%ED%84%B4%EC%9E%84%EC%9D%84-%EB%B3%B4%EC%A6%9D%ED%95%98%EB%9D%BC/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Kunsang Lee",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title=" kunsanglee's Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+<meta name="naver-site-verification" content="d884164c2f43b5d7cfca36d514355ee3ab493511" />
+<meta name="NaverBot" content="All"/>
+<meta name="NaverBot" content="index,follow"/>
+<meta name="Yeti" content="All"/>
+<meta name="Yeti" content="index,follow"/>
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<!--<link rel="apple-touch-icon" sizes="180x180" href="/assets/logo.ico/apple-touch-icon.png">-->
+<!--<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.ico/favicon-32x32.png">-->
+<!--<link rel="icon" type="image/png" sizes="16x16" href="/assets/logo.ico/favicon-16x16.png">-->
+<!--<link rel="mask-icon" href="/assets/logo.ico/safari-pinned-tab.svg" color="#5bbad5">-->
+<!--<meta name="msapplication-TileColor" content="#da532c">-->
+<!--<meta name="theme-color" content="#ffffff">-->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+           kunsanglee's
+          <span class="site-subtitle">backend</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/">Year</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/image/profile/%EC%9A%9C%EC%9D%B4.png" alt="이건상" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">이건상</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>basic is everything</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Republic of Korea</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Effective Java - 아이템 3: private 생성자나 열거 타입으로 싱글턴임을 보증하라">
+    <meta itemprop="description" content="싱글턴(Singleton)">
+    <meta itemprop="datePublished" content="2024-01-08T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Effective Java - 아이템 3: private 생성자나 열거 타입으로 싱글턴임을 보증하라
+</h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#싱글턴singleton">싱글턴(Singleton)</a></li>
+  <li><a href="#싱글턴을-만드는-방식-3가지">싱글턴을 만드는 방식 3가지</a></li>
+  <li><a href="#1-public-필드-방식의-싱글턴">1. public 필드 방식의 싱글턴</a></li>
+  <li><a href="#2-정적-팩터리-메서드를-public-static-멤버로-제공하는-방식의-싱글턴">2. 정적 팩터리 메서드를 public static 멤버로 제공하는 방식의 싱글턴</a></li>
+  <li><a href="#3-원소가-하나인-열거-타입을-선언하는-방식">3. 원소가 하나인 열거 타입을 선언하는 방식</a></li>
+</ul>
+
+            </nav>
+          </aside>
+        
+        <h3 id="싱글턴singleton">싱글턴(Singleton)</h3>
+
+<p>싱글턴이란 인스턴스를 오직 하나만 생성할 수 있는 클래스를 말한다.<br />
+싱글턴의 전형적인 예로는 무상태(stateless) 객체나 설계상 유일해야 하는 시스템 컴포넌트를 들 수 있다.<br />
+<strong>그러나 클래스를 싱글턴으로 만들면 이를 사용하는 클라이언트를 테스트하기 어려워질 수 있다.</strong></p>
+
+<h3 id="싱글턴을-만드는-방식-3가지">싱글턴을 만드는 방식 3가지</h3>
+
+<blockquote>
+  <p>공통점</p>
+</blockquote>
+
+<ol>
+  <li>두 방식 모두 생성자는 private로 감춰둔다.</li>
+  <li>유일한 인스턴스에 접근할 수 있는 수단으로 public static 멤버를 하나 마련해둔다.<br /></li>
+</ol>
+
+<h3 id="1-public-필드-방식의-싱글턴">1. public 필드 방식의 싱글턴</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// public static final 필드 방식의 싱글턴</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Elvis</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Elvis</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Elvis</span><span class="o">();</span>
+
+    <span class="kd">private</span> <span class="nf">Elvis</span><span class="o">()</span> <span class="o">{...}</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>private 생성자는 public static final 필드 INSTANCE를 초기화할 때 딱 한 번만 호출된다.<br />
+public이나 protected 생성자가 없어서 Elvis 클래스가 초기화될 때 만들어진 인스턴스가 하나뿐임이 보장된다.<br /></p>
+</blockquote>
+
+<p>단, 예외로 권한이 있는 클라이언트가 리플렉션 API인 AccessibleObject.setAccessible을 사용해<br />
+private 생성자를 호출 할 수 있다.<br />
+이런 공격을 방어하려면 생성자를 수정하여 두 번째 객체가 생성되려 할 때 예외를 던지게 하면 된다.<br /></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Elvis</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Elvis</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Elvis</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">instanceCount</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nf">Elvis</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">instanceCount</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// 인스턴스가 생성될 때 카운트가 1 이상이면 예외를 던짐.</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStatementException</span><span class="o">(</span><span class="s">"Elvis 인스턴스는 한 개만 생성 가능."</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">instanceCount</span><span class="o">++;</span> <span class="c1">// 인스턴스 생성시 카운트 증가.</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>public 필드 방식의 장점은 해당 클래스가 싱글턴임이 API에 명백히 드러난다는 것과 간결한 점이다.</p>
+</blockquote>
+
+<h3 id="2-정적-팩터리-메서드를-public-static-멤버로-제공하는-방식의-싱글턴">2. 정적 팩터리 메서드를 public static 멤버로 제공하는 방식의 싱글턴</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Elvis</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Elvis</span> <span class="no">INSTANCE</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Elvis</span><span class="o">();</span>
+
+    <span class="kd">private</span> <span class="nf">Elvis</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">instanceCount</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// 인스턴스가 생성될 때 카운트가 1 이상이면 예외를 던짐.</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStatementException</span><span class="o">(</span><span class="s">"Elvis 인스턴스는 한 개만 생성 가능."</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">instanceCount</span><span class="o">++;</span> <span class="c1">// 인스턴스 생성시 카운트 증가.</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Elvis</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="no">INSTANCE</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Elvis.getInstance는 항상 같은 객체의 참조를 반환한다.</p>
+<blockquote>
+  <p>정적 팩터리 방식의 첫 번째 장점은 API를 바꾸지 않고도 싱글턴이 아니게 변경할 수 있다는 점이다.<br />
+두 번째 장점은 정적 팩터리를 제네릭 싱글턴 팩터리롤 만들 수 있다는 점이다.<br />
+세 번째 장점은 정적 팩터리의 메서드 참조를 공급자(supplier)로 사용할 수 있다는 점이다.<br /></p>
+</blockquote>
+
+<ol>
+  <li>API를 변경하지 않고도 싱글턴이 아니게 변경하는 예
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Singleton</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="nc">Singleton</span> <span class="n">instance</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{</span> <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="nc">Singleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">instance</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+          <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Singleton</span><span class="o">();</span>
+      <span class="o">}</span>
+      <span class="k">return</span> <span class="n">instance</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+    <p>위의 코드는 싱글턴이 아닌 <strong>늦은 초기화(lazy initialization)</strong>를 사용한 코드이다.<br />
+<code class="language-plaintext highlighter-rouge">getInstance()</code> 메서드가 호출될 때 싱글턴 인스턴스가 생성된다. <br />
+이렇게 하면 필요할 때만 인스턴스를 생성하므로 리소스를 절약할 수 있다.<br /></p>
+  </li>
+  <li>제네릭 싱글 팩터리 예
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">GenericSingletonFactory</span> <span class="o">{</span>
+ <span class="kd">private</span> <span class="kd">static</span> <span class="nc">GenericSingletonFactory</span> <span class="n">instance</span><span class="o">;</span>
+
+ <span class="kd">private</span> <span class="nf">GenericSingletonFactory</span><span class="o">()</span> <span class="o">{</span> <span class="o">}</span>
+
+ <span class="kd">public</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">GenericSingletonFactory</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+     <span class="k">if</span> <span class="o">(</span><span class="n">instance</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+         <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">GenericSingletonFactory</span><span class="o">();</span>
+     <span class="o">}</span>
+     <span class="k">return</span> <span class="n">instance</span><span class="o">;</span>
+ <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>메서드 참조를 공급자(supplier)로 사용하는 예
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+ <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+     <span class="nc">Supplier</span><span class="o">&lt;</span><span class="nc">Singleton</span><span class="o">&gt;</span> <span class="n">singletonSupplier</span> <span class="o">=</span> <span class="nl">Singleton:</span><span class="o">:</span><span class="n">getInstance</span><span class="o">;</span>
+     <span class="nc">Singleton</span> <span class="n">singleton</span> <span class="o">=</span> <span class="n">singletonSupplier</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+ <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+    <p>Java 8 이상에서는 <strong>메서드 참조를 사용하여 공급자(supplier)</strong>를 만들 수 있다.<br />
+이 예에서는 <code class="language-plaintext highlighter-rouge">Singleton::getInstance</code> 메서드 참조를 사용하여 <code class="language-plaintext highlighter-rouge">singletonSupplier</code>를 만들었다.<br /> 
+<code class="language-plaintext highlighter-rouge">get()</code> 메서드를 호출하면 <code class="language-plaintext highlighter-rouge">Singleton.getInstance()</code>가 호출되어 싱글턴 인스턴스를 반환한다.<br /></p>
+  </li>
+</ol>
+
+<p>싱글턴 클래스를 직렬화하려면 Serializable을 구현하는 것 만으로는 부족하다.<br />
+모든 인스턴스 필드를 일시적(transient)으로 선언하고 readResolve 메서드를 제공해야 한다.<br />
+이렇게 하지 않으면 직렬화된 인스턴스를 역직렬화 할 때 마다 새로운 인스턴스가 만들어진다.<br /></p>
+
+<h3 id="3-원소가-하나인-열거-타입을-선언하는-방식">3. 원소가 하나인 열거 타입을 선언하는 방식</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 원소가 하나뿐인 enum 사용</span>
+<span class="kd">public</span> <span class="kd">enum</span> <span class="nc">Elvis</span> <span class="o">{</span>
+    <span class="no">INSTANCE</span><span class="o">;</span>
+    
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>대부분 상황에서는 원소가 하나뿐인 열거 타입이 싱글턴을 만드는 가장 좋은 방법이다.<br />
+단, 만들려는 싱글턴이 Enum 외의 클래스를 상속해야 한다면 이 방법은 사용할 수 없다<br />
+(열거 타입이 다른 인터페이스를 구현하도록 선언할 수는 있다).</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#effective-java" class="page__taxonomy-item" rel="tag">Effective Java</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#effective-java" class="page__taxonomy-item" rel="tag">Effective Java</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2024-01-08T00:00:00+09:00">January 8, 2024</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Effective+Java+-+%EC%95%84%EC%9D%B4%ED%85%9C+3%3A+private+%EC%83%9D%EC%84%B1%EC%9E%90%EB%82%98+%EC%97%B4%EA%B1%B0+%ED%83%80%EC%9E%85%EC%9C%BC%EB%A1%9C+%EC%8B%B1%EA%B8%80%ED%84%B4%EC%9E%84%EC%9D%84+%EB%B3%B4%EC%A6%9D%ED%95%98%EB%9D%BC%20http%3A%2F%2Flocalhost%3A4000%2Feffective%2520java%2FEffective-Java-%25EC%2595%2584%25EC%259D%25B4%25ED%2585%259C-3-private-%25EC%2583%259D%25EC%2584%25B1%25EC%259E%2590%25EB%2582%2598-%25EC%2597%25B4%25EA%25B1%25B0-%25ED%2583%2580%25EC%259E%2585%25EC%259C%25BC%25EB%25A1%259C-%25EC%258B%25B1%25EA%25B8%2580%25ED%2584%25B4%25EC%259E%2584%25EC%259D%2584-%25EB%25B3%25B4%25EC%25A6%259D%25ED%2595%2598%25EB%259D%25BC%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Feffective%2520java%2FEffective-Java-%25EC%2595%2584%25EC%259D%25B4%25ED%2585%259C-3-private-%25EC%2583%259D%25EC%2584%25B1%25EC%259E%2590%25EB%2582%2598-%25EC%2597%25B4%25EA%25B1%25B0-%25ED%2583%2580%25EC%259E%2585%25EC%259C%25BC%25EB%25A1%259C-%25EC%258B%25B1%25EA%25B8%2580%25ED%2584%25B4%25EC%259E%2584%25EC%259D%2584-%25EB%25B3%25B4%25EC%25A6%259D%25ED%2595%2598%25EB%259D%25BC%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Feffective%2520java%2FEffective-Java-%25EC%2595%2584%25EC%259D%25B4%25ED%2585%259C-3-private-%25EC%2583%259D%25EC%2584%25B1%25EC%259E%2590%25EB%2582%2598-%25EC%2597%25B4%25EA%25B1%25B0-%25ED%2583%2580%25EC%259E%2585%25EC%259C%25BC%25EB%25A1%259C-%25EC%258B%25B1%25EA%25B8%2580%25ED%2584%25B4%25EC%259E%2584%25EC%259D%2584-%25EB%25B3%25B4%25EC%25A6%259D%25ED%2595%2598%25EB%259D%25BC%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-2-%EC%83%9D%EC%84%B1%EC%9E%90%EC%97%90-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98%EA%B0%80-%EB%A7%8E%EB%8B%A4%EB%A9%B4-%EB%B9%8C%EB%8D%94%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/" class="pagination--pager" title="Effective Java - 아이템 2: 생성자에 매개변수가 많다면 빌더를 고려하라
+">이전</a>
+    
+    
+      <a href="/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-4-%EC%9D%B8%EC%8A%A4%ED%84%B4%EC%8A%A4%ED%99%94%EB%A5%BC-%EB%A7%89%EC%9C%BC%EB%A0%A4%EA%B1%B0%EB%93%A0-private-%EC%83%9D%EC%84%B1%EC%9E%90%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC/" class="pagination--pager" title="Effective Java - 아이템 4: 인스턴스화를 막으려거든 private 생성자를 사용하라
+">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">참고</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/modern%20java%20in%20action/test/" rel="permalink">Modern Java In Action - 동작 파라미터화 코드 전달하기
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">동작 파라미터화(behavior parameterization)를 이용하면 자주 바뀌는 요구사항에 효과적으로 대응할 수 있다.
+동작 파라미터화란 아직은 어떻게 실행할 것인지 결정하지 않은 코드 블록을 의미한다. 이 코드 블록은 나중에 프로그램에서 호출한다.
+즉, 코드 블록의 실행은...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/effective%20java/Effective-Java-Item-20-abstract-class-interface/" rel="permalink">Effective Java - 아이템 20: 추상 클래스보다는 인터페이스를 우선하라
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">자바가 제공하는 다중 구현 메커니즘은 인터페이스와 추상 클래스, 이렇게 두 가지다. 자바 8부터 인터페이스도 디폴트 메서드(default method)를 제공할 수 있게 되어 이제는 두 메커니즘 모두 인스턴스 메서드를 구현 형태로 제공할 수 있다.
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/effective%20java/Effective-Java-Item-19-.extends/" rel="permalink">Effective Java - 아이템 19: 상속을 고려해 설계하고 문서화하라. 그러지 않았다면 상속을 금지하라
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">상속을 고려한 설계와 문서화란?
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/effective%20java/Effective-Java-Item-18-composition/" rel="permalink">Effective Java - 아이템 18: 상속보다는 컴포지션을 사용하라
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">메서드 호출과 달리 상속은 캡슐화를 깨뜨린다.
+상위 클래스가 어떻게 구현되느냐에 따라 상속하는 하위 클래스의 동작에 이상이 생길 수 있다.
+상위 클래스는 릴리스마다 내부 구현이 달라질 수 있기 때문에, 코드 한 줄 수정하지 않은 하위 클래스에서 오동작 할 수 있다.
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:gosmdochee2@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/kunsanglee" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 Kunsang Lee. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-3-private-%EC%83%9D%EC%84%B1%EC%9E%90%EB%82%98-%EC%97%B4%EA%B1%B0-%ED%83%80%EC%9E%85%EC%9C%BC%EB%A1%9C-%EC%8B%B1%EA%B8%80%ED%84%B4%EC%9E%84%EC%9D%84-%EB%B3%B4%EC%A6%9D%ED%95%98%EB%9D%BC/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/effective%20java/Effective-Java-아이템-3-private-생성자나-열거-타입으로-싱글턴임을-보증하라"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://https-kunsanglee-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

@@ -72,122 +72,128 @@ var store = [{
         "teaser": null
       },{
         "title": "Effective Java - 아이템 1: 생성자 대신 정적 팩터리 메서드를 고려하라",
-        "excerpt":"정적 팩터리 메서드 new키워드로 생성하지 않고 객체 생성해서 반환하는 메서드다. // 필드가 private final이고 필드의 값을 수정하는 방법이 없기 때문에 불변 클래스다. public class MyNumber { public static final int ZERO = new MyNumber(0); // 여러 곳에서 사용하는 값을 캐싱. private final int number; // 생성자의 접근자를 private로 하여 외부에서...","categories": ["Java"],
+        "excerpt":"정적 팩터리 메서드 new키워드로 생성하지 않고 객체 생성해서 반환하는 메서드다. // 필드가 private final이고 필드의 값을 수정하는 방법이 없기 때문에 불변 클래스다. public class MyNumber { public static final int ZERO = new MyNumber(0); // 여러 곳에서 사용하는 값을 캐싱. private final int number; // 생성자의 접근자를 private로 하여 외부에서...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-1-%EC%83%9D%EC%84%B1%EC%9E%90-%EB%8C%80%EC%8B%A0-%EC%A0%95%EC%A0%81-%ED%8C%A9%ED%84%B0%EB%A6%AC-%EB%A9%94%EC%84%9C%EB%93%9C%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-1-%EC%83%9D%EC%84%B1%EC%9E%90-%EB%8C%80%EC%8B%A0-%EC%A0%95%EC%A0%81-%ED%8C%A9%ED%84%B0%EB%A6%AC-%EB%A9%94%EC%84%9C%EB%93%9C%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 2: 생성자에 매개변수가 많다면 빌더를 고려하라",
-        "excerpt":"빌더패턴 이전에 사용하던 방식 점층적 생성자 패턴 정적 팩터리와 생성자에는 선택적 매개변수가 많을 때 적절히 대응하기 어렵다는 제약이 있다. // 점층적 생성자 패턴을 사용하는 클래스(선택적 매개변수가 많아서 생성자 또한 많다) public class NutritionFacts { private final int servingSize; // 필수 private final int servings; // 필수 private final int calories;...","categories": ["Java"],
+        "excerpt":"빌더패턴 이전에 사용하던 방식 점층적 생성자 패턴 정적 팩터리와 생성자에는 선택적 매개변수가 많을 때 적절히 대응하기 어렵다는 제약이 있다. // 점층적 생성자 패턴을 사용하는 클래스(선택적 매개변수가 많아서 생성자 또한 많다) public class NutritionFacts { private final int servingSize; // 필수 private final int servings; // 필수 private final int calories;...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-2-%EC%83%9D%EC%84%B1%EC%9E%90%EC%97%90-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98%EA%B0%80-%EB%A7%8E%EB%8B%A4%EB%A9%B4-%EB%B9%8C%EB%8D%94%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-2-%EC%83%9D%EC%84%B1%EC%9E%90%EC%97%90-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98%EA%B0%80-%EB%A7%8E%EB%8B%A4%EB%A9%B4-%EB%B9%8C%EB%8D%94%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 3: private 생성자나 열거 타입으로 싱글턴임을 보증하라",
-        "excerpt":"싱글턴(Singleton) 싱글턴이란 인스턴스를 오직 하나만 생성할 수 있는 클래스를 말한다. 싱글턴의 전형적인 예로는 무상태(stateless) 객체나 설계상 유일해야 하는 시스템 컴포넌트를 들 수 있다. 그러나 클래스를 싱글턴으로 만들면 이를 사용하는 클라이언트를 테스트하기 어려워질 수 있다. 싱글턴을 만드는 방식 3가지 공통점 두 방식 모두 생성자는 private로 감춰둔다. 유일한 인스턴스에 접근할 수 있는...","categories": ["Java"],
+        "excerpt":"싱글턴(Singleton) 싱글턴이란 인스턴스를 오직 하나만 생성할 수 있는 클래스를 말한다. 싱글턴의 전형적인 예로는 무상태(stateless) 객체나 설계상 유일해야 하는 시스템 컴포넌트를 들 수 있다. 그러나 클래스를 싱글턴으로 만들면 이를 사용하는 클라이언트를 테스트하기 어려워질 수 있다. 싱글턴을 만드는 방식 3가지 공통점 두 방식 모두 생성자는 private로 감춰둔다. 유일한 인스턴스에 접근할 수 있는...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-3-private-%EC%83%9D%EC%84%B1%EC%9E%90%EB%82%98-%EC%97%B4%EA%B1%B0-%ED%83%80%EC%9E%85%EC%9C%BC%EB%A1%9C-%EC%8B%B1%EA%B8%80%ED%84%B4%EC%9E%84%EC%9D%84-%EB%B3%B4%EC%A6%9D%ED%95%98%EB%9D%BC/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-3-private-%EC%83%9D%EC%84%B1%EC%9E%90%EB%82%98-%EC%97%B4%EA%B1%B0-%ED%83%80%EC%9E%85%EC%9C%BC%EB%A1%9C-%EC%8B%B1%EA%B8%80%ED%84%B4%EC%9E%84%EC%9D%84-%EB%B3%B4%EC%A6%9D%ED%95%98%EB%9D%BC/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 4: 인스턴스화를 막으려거든 private 생성자를 사용하라",
-        "excerpt":"정적 멤버만 담은 유틸리티 클래스는 인스턴스로 만들어 쓰려고 설계한게 아니다. 하지만 생성자를 명시하지 않으면(직접 작성한 생성자가 하나도 없는 경우) 컴파일러가 자동으로 기본 생성자를 만들어준다. 사용자는 이 생성자가 자동 생성된 것인지 구분할 수 없다. // 인스턴스로 만들 의도가 없는 유틸리티 클래스 public class MyUtility { // 생성자가 하나도 없기 때문에 컴파일러가...","categories": ["Java"],
+        "excerpt":"정적 멤버만 담은 유틸리티 클래스는 인스턴스로 만들어 쓰려고 설계한게 아니다. 하지만 생성자를 명시하지 않으면(직접 작성한 생성자가 하나도 없는 경우) 컴파일러가 자동으로 기본 생성자를 만들어준다. 사용자는 이 생성자가 자동 생성된 것인지 구분할 수 없다. // 인스턴스로 만들 의도가 없는 유틸리티 클래스 public class MyUtility { // 생성자가 하나도 없기 때문에 컴파일러가...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-4-%EC%9D%B8%EC%8A%A4%ED%84%B4%EC%8A%A4%ED%99%94%EB%A5%BC-%EB%A7%89%EC%9C%BC%EB%A0%A4%EA%B1%B0%EB%93%A0-private-%EC%83%9D%EC%84%B1%EC%9E%90%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-4-%EC%9D%B8%EC%8A%A4%ED%84%B4%EC%8A%A4%ED%99%94%EB%A5%BC-%EB%A7%89%EC%9C%BC%EB%A0%A4%EA%B1%B0%EB%93%A0-private-%EC%83%9D%EC%84%B1%EC%9E%90%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 5: 자원을 직접 명시하지 말고 의존 객체 주입을 사용하라",
-        "excerpt":"// 정적 유틸리티를 잘못 사용한 예 - 유연하지 않고 테스트하기 어렵다. public class SpellChecker { private static final Lexicon dictionary = ...; private SpellChecker() {} // 객체 생성 방지 public static boolean isValid(String word) { ... } public static List&lt;String&gt; suggestions(String typo) { ... } } // 싱글턴을 잘못 사용한...","categories": ["Java"],
+        "excerpt":"// 정적 유틸리티를 잘못 사용한 예 - 유연하지 않고 테스트하기 어렵다. public class SpellChecker { private static final Lexicon dictionary = ...; private SpellChecker() {} // 객체 생성 방지 public static boolean isValid(String word) { ... } public static List&lt;String&gt; suggestions(String typo) { ... } } // 싱글턴을 잘못 사용한...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-5-%EC%9E%90%EC%9B%90%EC%9D%84-%EC%A7%81%EC%A0%91-%EB%AA%85%EC%8B%9C%ED%95%98%EC%A7%80-%EB%A7%90%EA%B3%A0-%EC%9D%98%EC%A1%B4-%EA%B0%9D%EC%B2%B4-%EC%A3%BC%EC%9E%85%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-5-%EC%9E%90%EC%9B%90%EC%9D%84-%EC%A7%81%EC%A0%91-%EB%AA%85%EC%8B%9C%ED%95%98%EC%A7%80-%EB%A7%90%EA%B3%A0-%EC%9D%98%EC%A1%B4-%EA%B0%9D%EC%B2%B4-%EC%A3%BC%EC%9E%85%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 6: 불필요한 객체 생성을 피하라",
-        "excerpt":"기존 객체를 재사용해야 한다면 새로운 객체를 만들지 마라 똑같은 기능의 객체를 매번 생성하기보다 불변 객체처럼 재사용하는 편이 낫다. // 절대로 String은 new 키워드로 생성하지 말자. new 키워드로 생성시 인스턴스를 새로 만든다. String s1 = \"hi\"; String s2 = new String(\"hi\"); 생성자 대신 정적 팩터리 메서드를 제공하는 불변 클래스에서는 정적 팩터리...","categories": ["Java"],
+        "excerpt":"기존 객체를 재사용해야 한다면 새로운 객체를 만들지 마라 똑같은 기능의 객체를 매번 생성하기보다 불변 객체처럼 재사용하는 편이 낫다. // 절대로 String은 new 키워드로 생성하지 말자. new 키워드로 생성시 인스턴스를 새로 만든다. String s1 = \"hi\"; String s2 = new String(\"hi\"); 생성자 대신 정적 팩터리 메서드를 제공하는 불변 클래스에서는 정적 팩터리...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-6-%EB%B6%88%ED%95%84%EC%9A%94%ED%95%9C-%EA%B0%9D%EC%B2%B4-%EC%83%9D%EC%84%B1%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-6-%EB%B6%88%ED%95%84%EC%9A%94%ED%95%9C-%EA%B0%9D%EC%B2%B4-%EC%83%9D%EC%84%B1%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 7: 다 쓴 객체 참조를 해제하라",
-        "excerpt":"메모리 누수가 있는 프로그램을 오래 실행하다 보면 점차 가비지 컬렉션 활동과 메모리 사용량이 늘어나 결국 성능이 저하된다. // 메모리 누수가 일어나는 코드 public class Stack { private Object[] elements; private int size = 0; private static final int DEFAULT_INITIAL_CAPACITY = 16; public Stack() { elements = new Object[DEFAULT_INITIAL_CAPACITY]; } public...","categories": ["Java"],
+        "excerpt":"메모리 누수가 있는 프로그램을 오래 실행하다 보면 점차 가비지 컬렉션 활동과 메모리 사용량이 늘어나 결국 성능이 저하된다. // 메모리 누수가 일어나는 코드 public class Stack { private Object[] elements; private int size = 0; private static final int DEFAULT_INITIAL_CAPACITY = 16; public Stack() { elements = new Object[DEFAULT_INITIAL_CAPACITY]; } public...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-7-%EB%8B%A4-%EC%93%B4-%EA%B0%9D%EC%B2%B4-%EC%B0%B8%EC%A1%B0%EB%A5%BC-%ED%95%B4%EC%A0%9C%ED%95%98%EB%9D%BC/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-7-%EB%8B%A4-%EC%93%B4-%EA%B0%9D%EC%B2%B4-%EC%B0%B8%EC%A1%B0%EB%A5%BC-%ED%95%B4%EC%A0%9C%ED%95%98%EB%9D%BC/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 8: finalizer와 cleaner 사용을 피하라",
-        "excerpt":"자바는 두 가지 객체 소멸자를 제공한다. finalizer는 예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요하다. 그래서 기본적으로 쓰지 말아야 한다. finalizer의 대안으로 나온cleaner는 finalizer보다는 덜 위험하지만, 여전히 예측할 수 없고, 느리고, 일반적으로 불필요하다. 자바의 finalizer, cleaner는 C++의 파괴자(destructor)와 다른 개념이다. C++에서 파괴자(생성자의 꼭 필요한 대척점)는 특정 객체와 관련된...","categories": ["Java"],
+        "excerpt":"자바는 두 가지 객체 소멸자를 제공한다. finalizer는 예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요하다. 그래서 기본적으로 쓰지 말아야 한다. finalizer의 대안으로 나온cleaner는 finalizer보다는 덜 위험하지만, 여전히 예측할 수 없고, 느리고, 일반적으로 불필요하다. 자바의 finalizer, cleaner는 C++의 파괴자(destructor)와 다른 개념이다. C++에서 파괴자(생성자의 꼭 필요한 대척점)는 특정 객체와 관련된...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-8-finalizer%EC%99%80-cleaner-%EC%82%AC%EC%9A%A9%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-8-finalizer%EC%99%80-cleaner-%EC%82%AC%EC%9A%A9%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 9: try-finally보다는 try-with-resources를 사용하라",
-        "excerpt":"try-finally 전통적으로 예외가 발생하거나 메서드에서 반환되는 경우를 포함해 자원이 제대로 닫힘을 보장하는 수단으로 try-finally가 쓰였다. // 더 이상 자원을 회수하는 최선의 방책이 아니다. static String firstLineOfFile(String path) throws IOException { BufferedReader br = new BufferedReader(new FileReader(path)); try { return br.readLine(); } finally { br.close(); } } // 자원이 둘 이상이면...","categories": ["Java"],
+        "excerpt":"try-finally 전통적으로 예외가 발생하거나 메서드에서 반환되는 경우를 포함해 자원이 제대로 닫힘을 보장하는 수단으로 try-finally가 쓰였다. // 더 이상 자원을 회수하는 최선의 방책이 아니다. static String firstLineOfFile(String path) throws IOException { BufferedReader br = new BufferedReader(new FileReader(path)); try { return br.readLine(); } finally { br.close(); } } // 자원이 둘 이상이면...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-9-try-finally-try-with-resources/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-9-try-finally-try-with-resources/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 10: equals는 일반 규약을 지켜 재정의하라",
-        "excerpt":"equals를 재정의하지 않는 것이 좋은 상황 각 인스턴스가 본질적으로 고유하다. 값을 표현하는게 아니라 동작하는 개체를 표현하는 클래스. Thread가 좋은 예 인스턴스의 ‘논리적 동치성(logical equality)’을 검사할 일이 없다. 상위 클래스에서 재정의한 equals가 하위 클래스에도 딱 들어맞는다. 상위 클래스의 equals를 쓰면 되는데 굳이 하위 클래스에서 오버라이딩 하지 마라. 클래스가 private이거나 package-private이고 eqauls...","categories": ["Java"],
+        "excerpt":"equals를 재정의하지 않는 것이 좋은 상황 각 인스턴스가 본질적으로 고유하다. 값을 표현하는게 아니라 동작하는 개체를 표현하는 클래스. Thread가 좋은 예 인스턴스의 ‘논리적 동치성(logical equality)’을 검사할 일이 없다. 상위 클래스에서 재정의한 equals가 하위 클래스에도 딱 들어맞는다. 상위 클래스의 equals를 쓰면 되는데 굳이 하위 클래스에서 오버라이딩 하지 마라. 클래스가 private이거나 package-private이고 eqauls...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-10-equals/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-10-equals/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 11: equals를 재정의하려거든 hashCode도 재정의하라",
-        "excerpt":"equals를 재정의한 클래스 모두에서 hashCode도 재정의해야 한다 재정의하지 않으면 일반 규약을 어기게 되어 HashMap, HashSet 같은 컬렉션의 원소로 사용할 때 문제를 일으킬 것이다. Object 명세 equals 비교에 사용되는 정보가 변경되지 않았다면, 애플리케이션이 실행되는 동안 그 객체의 hashCode 메서드는 몇 번을 호출해도 일관되게 항상 같은 값을 반환해야 한다. 단, 애플리케이션을 다시...","categories": ["Java"],
+        "excerpt":"equals를 재정의한 클래스 모두에서 hashCode도 재정의해야 한다 재정의하지 않으면 일반 규약을 어기게 되어 HashMap, HashSet 같은 컬렉션의 원소로 사용할 때 문제를 일으킬 것이다. Object 명세 equals 비교에 사용되는 정보가 변경되지 않았다면, 애플리케이션이 실행되는 동안 그 객체의 hashCode 메서드는 몇 번을 호출해도 일관되게 항상 같은 값을 반환해야 한다. 단, 애플리케이션을 다시...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-11-equals&hashCode/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-11-equals&hashCode/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 12: toString을 항상 재정의하라",
-        "excerpt":"Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 {클래스이름}@{16진수}로 표시한 해시코드를 반환할 뿐이다. toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다. toString의 규약 모든 하위 클래스에서 이 메서드를 재정의하라 toString을 잘 구현한 클래스와 시스템은 디버깅하기 쉽다. toString을 제대로 재정의하지 않는다면 쓸모없는 메시지만 로그에 남을 것이다. 실전에서 toString은...","categories": ["Java"],
+        "excerpt":"Object의 기본 toString은 PhoneNumber@adbbd 처럼 단순히 {클래스이름}@{16진수}로 표시한 해시코드를 반환할 뿐이다. toString의 일반 규약에 따르면 간결하면서 사람이 읽기 쉬운 형태의 유익한 정보를 반환해야 한다. toString의 규약 모든 하위 클래스에서 이 메서드를 재정의하라 toString을 잘 구현한 클래스와 시스템은 디버깅하기 쉽다. toString을 제대로 재정의하지 않는다면 쓸모없는 메시지만 로그에 남을 것이다. 실전에서 toString은...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-12-toString/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-12-toString/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 13: clone 재정의는 주의해서 진행하라",
-        "excerpt":"Cloneable은 복제해도 되는 클래스임을 명시하는 용도의 믹스인 인터페이스(mixin interface)지만, 의도한 목적을 제대로 이루지 못했다. Cloneable 인터페이스는 무슨 일을 할까? 이 인터페이스는 Object의 protected 메서드인 clone의 동작 방식을 결정한다. Cloneable을 구현한 클래스의 인스턴스에서 clone을 호출하면 그 객체의 필드들을 하나하나 복사한 객체를 반환하며, 그렇지 않은 클래스의 인스턴스에서 호출하면 CloneNotSupportedException을 던진다. 실무에서 Cloneable을...","categories": ["Java"],
+        "excerpt":"Cloneable은 복제해도 되는 클래스임을 명시하는 용도의 믹스인 인터페이스(mixin interface)지만, 의도한 목적을 제대로 이루지 못했다. Cloneable 인터페이스는 무슨 일을 할까? 이 인터페이스는 Object의 protected 메서드인 clone의 동작 방식을 결정한다. Cloneable을 구현한 클래스의 인스턴스에서 clone을 호출하면 그 객체의 필드들을 하나하나 복사한 객체를 반환하며, 그렇지 않은 클래스의 인스턴스에서 호출하면 CloneNotSupportedException을 던진다. 실무에서 Cloneable을...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-13-clone/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-13-clone/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 14: Comparable을 구현할지 고려하라",
-        "excerpt":"compareTo Comparable 인터페이스의 유일한 메서드인 compareTo는 단순 동치성 비교에 더해 순서까지 비교할 수 있으며, 제네릭하다. Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자연적인 순서(natural order)가 있음을 뜻한다. 사실상 자바 플랫폼 라이브러리의 모든 값 클래스와 열거타입이 Comparable을 구현했다. 알파벳, 숫자, 연대 같이 순서가 명확한 값 클래스를 작성한다면 반드시 Comparable 인터페이스를 구현하자. public...","categories": ["Java"],
+        "excerpt":"compareTo Comparable 인터페이스의 유일한 메서드인 compareTo는 단순 동치성 비교에 더해 순서까지 비교할 수 있으며, 제네릭하다. Comparable을 구현했다는 것은 그 클래스의 인스턴스들에는 자연적인 순서(natural order)가 있음을 뜻한다. 사실상 자바 플랫폼 라이브러리의 모든 값 클래스와 열거타입이 Comparable을 구현했다. 알파벳, 숫자, 연대 같이 순서가 명확한 값 클래스를 작성한다면 반드시 Comparable 인터페이스를 구현하자. public...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-14-Comparable/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-14-Comparable/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 15: 클래스와 멤버의 접근 권한을 최소화하라",
-        "excerpt":"정보 은닉의 장점 시스템을 구성하는 컴포넌트들을 서로 독립시켜서 개발, 테스트, 최적화, 적용, 분석, 수정을 개별적으로 할 수 있게 해주는 것과 연관되어 있다. 시스템 개발 속도를 높인다. 여러 컴포넌트를 병렬로 개발할 수 있기 때문이다. 시스템 관리 비용을 낮춘다. 각 컴포넌트를 더 빨리 파악하여 디버깅 할 수 있고, 다른 컴포넌트로 교체하는 부담도...","categories": ["Java"],
+        "excerpt":"정보 은닉의 장점 시스템을 구성하는 컴포넌트들을 서로 독립시켜서 개발, 테스트, 최적화, 적용, 분석, 수정을 개별적으로 할 수 있게 해주는 것과 연관되어 있다. 시스템 개발 속도를 높인다. 여러 컴포넌트를 병렬로 개발할 수 있기 때문이다. 시스템 관리 비용을 낮춘다. 각 컴포넌트를 더 빨리 파악하여 디버깅 할 수 있고, 다른 컴포넌트로 교체하는 부담도...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-15-%ED%81%B4%EB%9E%98%EC%8A%A4%EC%99%80-%EB%A9%A4%EB%B2%84%EC%9D%98-%EC%A0%91%EA%B7%BC%EA%B6%8C%ED%95%9C%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EB%9D%BC/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-15-%ED%81%B4%EB%9E%98%EC%8A%A4%EC%99%80-%EB%A9%A4%EB%B2%84%EC%9D%98-%EC%A0%91%EA%B7%BC%EA%B6%8C%ED%95%9C%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EB%9D%BC/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라",
-        "excerpt":"// 퇴보한 public 클래스 class Point { public double x; public double y; } // 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다. // API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며, // 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다. class Point...","categories": ["Java"],
+        "excerpt":"// 퇴보한 public 클래스 class Point { public double x; public double y; } // 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다. // API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며, // 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다. class Point...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-16-public-class-field/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-16-public-class-field/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 17: 변경 가능성을 최소화하라",
-        "excerpt":"불변 클래스 불변 클래스랄 간단히 말해 그 인스턴스의 내부 값을 수정할 수 없는 클래스다. 불변 인스턴스에 간직된 정보는 고정되어 객체가 파괴되는 순간까지 절대 달라지지 않는다. 불변 클래스는 가변 클래스보다 설계하고 구현하고 사용하기 쉬우며, 오류가 생길 여지도 적고 훨씬 안전하다. 불변 클래스를 만들기 위한 5가지 규칙 객체의 상태를 변경하는 메서드(변경자)를 제공하지...","categories": ["Java"],
+        "excerpt":"불변 클래스 불변 클래스랄 간단히 말해 그 인스턴스의 내부 값을 수정할 수 없는 클래스다. 불변 인스턴스에 간직된 정보는 고정되어 객체가 파괴되는 순간까지 절대 달라지지 않는다. 불변 클래스는 가변 클래스보다 설계하고 구현하고 사용하기 쉬우며, 오류가 생길 여지도 적고 훨씬 안전하다. 불변 클래스를 만들기 위한 5가지 규칙 객체의 상태를 변경하는 메서드(변경자)를 제공하지...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-17-%EB%B3%80%EA%B2%BD-%EA%B0%80%EB%8A%A5%EC%84%B1%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EB%9D%BC/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-17-%EB%B3%80%EA%B2%BD-%EA%B0%80%EB%8A%A5%EC%84%B1%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EB%9D%BC/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 18: 상속보다는 컴포지션을 사용하라",
-        "excerpt":"메서드 호출과 달리 상속은 캡슐화를 깨뜨린다. 상위 클래스가 어떻게 구현되느냐에 따라 상속하는 하위 클래스의 동작에 이상이 생길 수 있다. 상위 클래스는 릴리스마다 내부 구현이 달라질 수 있기 때문에, 코드 한 줄 수정하지 않은 하위 클래스에서 오동작 할 수 있다. 상속 클래스의 메서드 재정의에서 비롯된 문제 상위 클래스에서 정의한 메서드를 하위...","categories": ["Java"],
+        "excerpt":"메서드 호출과 달리 상속은 캡슐화를 깨뜨린다. 상위 클래스가 어떻게 구현되느냐에 따라 상속하는 하위 클래스의 동작에 이상이 생길 수 있다. 상위 클래스는 릴리스마다 내부 구현이 달라질 수 있기 때문에, 코드 한 줄 수정하지 않은 하위 클래스에서 오동작 할 수 있다. 상속 클래스의 메서드 재정의에서 비롯된 문제 상위 클래스에서 정의한 메서드를 하위...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-18-composition/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-18-composition/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 19: 상속을 고려해 설계하고 문서화하라. 그러지 않았다면 상속을 금지하라",
-        "excerpt":"상속을 고려한 설계와 문서화란? 상속용 클래스는 재정의할 수 있는 메서드들을 내부적으로 어떻게 이용하는지 문서로 남겨야 한다. ‘재정의 가능’이란 public과 protected 메서드 중 final이 아닌 모든 메서드를 뜻한다. API 문서의 메서드 설명 끝에서 종종 “Implementation Requirements”로 시작하는 그 메서드 내부 동작 방식을 설명하는 곳이 있는데, 메서드 주석에 @implSpec 태그를 붙여주면 자바독...","categories": ["Java"],
+        "excerpt":"상속을 고려한 설계와 문서화란? 상속용 클래스는 재정의할 수 있는 메서드들을 내부적으로 어떻게 이용하는지 문서로 남겨야 한다. ‘재정의 가능’이란 public과 protected 메서드 중 final이 아닌 모든 메서드를 뜻한다. API 문서의 메서드 설명 끝에서 종종 “Implementation Requirements”로 시작하는 그 메서드 내부 동작 방식을 설명하는 곳이 있는데, 메서드 주석에 @implSpec 태그를 붙여주면 자바독...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-19-.extends/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-19-.extends/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 20: 추상 클래스보다는 인터페이스를 우선하라",
-        "excerpt":"자바가 제공하는 다중 구현 메커니즘은 인터페이스와 추상 클래스, 이렇게 두 가지다. 자바 8부터 인터페이스도 디폴트 메서드(default method)를 제공할 수 있게 되어 이제는 두 메커니즘 모두 인스턴스 메서드를 구현 형태로 제공할 수 있다. 인터페이스와 추상 클래스의 차이 추상 클래스가 정의한 타입을 구현하는 클래스는 반드시 추상 클래스의 하위 클래스가 되어야 한다는 점이다....","categories": ["Java"],
+        "excerpt":"자바가 제공하는 다중 구현 메커니즘은 인터페이스와 추상 클래스, 이렇게 두 가지다. 자바 8부터 인터페이스도 디폴트 메서드(default method)를 제공할 수 있게 되어 이제는 두 메커니즘 모두 인스턴스 메서드를 구현 형태로 제공할 수 있다. 인터페이스와 추상 클래스의 차이 추상 클래스가 정의한 타입을 구현하는 클래스는 반드시 추상 클래스의 하위 클래스가 되어야 한다는 점이다....","categories": ["Effective Java"],
         "tags": ["Effective Java"],
-        "url": "http://localhost:4000/java/Effective-Java-Item-20-abstract-class-interface/",
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-20-abstract-class-interface/",
+        "teaser": null
+      },{
+        "title": "Modern Java In Action - 동작 파라미터화 코드 전달하기",
+        "excerpt":"동작 파라미터화(behavior parameterization)를 이용하면 자주 바뀌는 요구사항에 효과적으로 대응할 수 있다. 동작 파라미터화란 아직은 어떻게 실행할 것인지 결정하지 않은 코드 블록을 의미한다. 이 코드 블록은 나중에 프로그램에서 호출한다. 즉, 코드 블록의 실행은 나중으로 미뤄진다. 나중에 실행될 메서드의 인수로 코드 블록을 전달할 수 있다. // 녹색 사과 필터링 enum Color {...","categories": ["Modern Java In Action"],
+        "tags": ["동작 파라미터화"],
+        "url": "http://localhost:4000/modern%20java%20in%20action/test/",
         "teaser": null
       }]
