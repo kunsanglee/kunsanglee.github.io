@@ -178,4 +178,16 @@ var store = [{
         "tags": ["Effective Java"],
         "url": "http://localhost:4000/java/Effective-Java-Item-18-composition/",
         "teaser": null
+      },{
+        "title": "Effective Java - 아이템 19: 상속을 고려해 설계하고 문서화하라. 그러지 않았다면 상속을 금지하라",
+        "excerpt":"상속을 고려한 설계와 문서화란? 상속용 클래스는 재정의할 수 있는 메서드들을 내부적으로 어떻게 이용하는지 문서로 남겨야 한다. ‘재정의 가능’이란 public과 protected 메서드 중 final이 아닌 모든 메서드를 뜻한다. API 문서의 메서드 설명 끝에서 종종 “Implementation Requirements”로 시작하는 그 메서드 내부 동작 방식을 설명하는 곳이 있는데, 메서드 주석에 @implSpec 태그를 붙여주면 자바독...","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-Item-19-.extends/",
+        "teaser": null
+      },{
+        "title": "Effective Java - 아이템 20: 추상 클래스보다는 인터페이스를 우선하라",
+        "excerpt":"자바가 제공하는 다중 구현 메커니즘은 인터페이스와 추상 클래스, 이렇게 두 가지다. 자바 8부터 인터페이스도 디폴트 메서드(default method)를 제공할 수 있게 되어 이제는 두 메커니즘 모두 인스턴스 메서드를 구현 형태로 제공할 수 있다. 인터페이스와 추상 클래스의 차이 추상 클래스가 정의한 타입을 구현하는 클래스는 반드시 추상 클래스의 하위 클래스가 되어야 한다는 점이다....","categories": ["Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/java/Effective-Java-Item-20-abstract-class-interface/",
+        "teaser": null
       }]
