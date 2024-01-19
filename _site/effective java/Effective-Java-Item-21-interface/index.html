@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라 -  kunsanglee’s</title>
-<meta name="description" content="```java // 퇴보한 public 클래스 class Point {     public double x;     public double y; } // 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다. // API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며, // 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다.">
+<!-- begin _includes/seo.html --><title>Effective Java - 아이템 21: 인터페이스는 구현하는 쪽을 생각해 설계하라 -  kunsanglee’s</title>
+<meta name="description" content="디폴트 메서드 디폴트 메서드(default method)를 선언하면, 그 인터페이스를 구현한 후 디폴트 메서드를 재정의하지 않은 모든 클래스에서 디폴트 구현이 쓰이게 된다. 디폴트 메서드는 구현 클래스에 대해 아무것도 모른 채 합의 없이 무작정 ‘삽입’될 뿐이다. 그로인해 생각할 수 있는 모든 상황에서 불변식을 해치지 않는 디폴트 메서드를 작성하기란 어려운 법이다.">
 
 
   <meta name="author" content="이건상">
@@ -22,30 +22,30 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content=" kunsanglee's">
-<meta property="og:title" content="Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라">
-<meta property="og:url" content="http://localhost:4000/effective%20java/Effective-Java-Item-16-public-class-field/">
+<meta property="og:title" content="Effective Java - 아이템 21: 인터페이스는 구현하는 쪽을 생각해 설계하라">
+<meta property="og:url" content="http://localhost:4000/effective%20java/Effective-Java-Item-21-interface/">
 
 
-  <meta property="og:description" content="```java // 퇴보한 public 클래스 class Point {     public double x;     public double y; } // 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다. // API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며, // 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다.">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2024-01-16T00:00:00+09:00">
+  <meta property="og:description" content="디폴트 메서드 디폴트 메서드(default method)를 선언하면, 그 인터페이스를 구현한 후 디폴트 메서드를 재정의하지 않은 모든 클래스에서 디폴트 구현이 쓰이게 된다. 디폴트 메서드는 구현 클래스에 대해 아무것도 모른 채 합의 없이 무작정 ‘삽입’될 뿐이다. 그로인해 생각할 수 있는 모든 상황에서 불변식을 해치지 않는 디폴트 메서드를 작성하기란 어려운 법이다.">
 
 
 
 
 
-  
+
+
+  <meta property="article:published_time" content="2024-01-19T00:00:00+09:00">
+
+
+
+
 
   
 
+  
 
-<link rel="canonical" href="http://localhost:4000/effective%20java/Effective-Java-Item-16-public-class-field/">
+
+<link rel="canonical" href="http://localhost:4000/effective%20java/Effective-Java-Item-21-interface/">
 
 
 
@@ -290,15 +290,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라">
-    <meta itemprop="description" content="```java// 퇴보한 public 클래스class Point {    public double x;    public double y;}// 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다.// API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며,// 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다.">
-    <meta itemprop="datePublished" content="2024-01-16T00:00:00+09:00">
+    <meta itemprop="headline" content="Effective Java - 아이템 21: 인터페이스는 구현하는 쪽을 생각해 설계하라">
+    <meta itemprop="description" content="디폴트 메서드디폴트 메서드(default method)를 선언하면, 그 인터페이스를 구현한 후 디폴트 메서드를 재정의하지 않은 모든 클래스에서 디폴트 구현이 쓰이게 된다.디폴트 메서드는 구현 클래스에 대해 아무것도 모른 채 합의 없이 무작정 ‘삽입’될 뿐이다.그로인해 생각할 수 있는 모든 상황에서 불변식을 해치지 않는 디폴트 메서드를 작성하기란 어려운 법이다.">
+    <meta itemprop="datePublished" content="2024-01-19T00:00:00+09:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Effective Java - 아이템 16: public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라
+          <h1 id="page-title" class="page__title" itemprop="headline">Effective Java - 아이템 21: 인터페이스는 구현하는 쪽을 생각해 설계하라
 </h1>
           
 
@@ -314,7 +314,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          1 분 소요
+          최대 1 분 소요
         
       </span>
     
@@ -330,56 +330,34 @@
             <nav class="toc">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
               <ul class="toc__menu">
-  <li><a href="#핵심-정리">핵심 정리</a></li>
+  <li><a href="#디폴트-메서드">디폴트 메서드</a></li>
+  <li><a href="#디폴트-메서드의-위험성">디폴트 메서드의 위험성</a></li>
+  <li><a href="#릴리스-전에-테스트를-반드시-해라">릴리스 전에 테스트를 반드시 해라</a></li>
 </ul>
 
             </nav>
           </aside>
         
-        <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 퇴보한 public 클래스</span>
-<span class="kd">class</span> <span class="nc">Point</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kt">double</span> <span class="n">x</span><span class="o">;</span>
-    <span class="kd">public</span> <span class="kt">double</span> <span class="n">y</span><span class="o">;</span>
-<span class="o">}</span>
-<span class="c1">// 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못한다.</span>
-<span class="c1">// API를 수정하지 않고는 내부 표현을 바꿀 수 없고, 불변식을 보장할 수 없으며,</span>
-<span class="c1">// 외부에서 필드에 접근할 때 부수 작업을 수행할 수도 없다.</span>
+        <h3 id="디폴트-메서드">디폴트 메서드</h3>
+<p><strong>디폴트 메서드(default method)</strong>를 선언하면, <strong>그 인터페이스를 구현한 후 디폴트 메서드를 재정의하지 않은 모든 클래스에서 디폴트 구현이 쓰이게 된다.</strong>
+디폴트 메서드는 구현 클래스에 대해 아무것도 모른 채 합의 없이 무작정 ‘삽입’될 뿐이다.
+그로인해 생각할 수 있는 모든 상황에서 <strong>불변식</strong>을 해치지 않는 디폴트 메서드를 작성하기란 어려운 법이다.</p>
 
-<span class="kd">class</span> <span class="nc">Point</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kt">double</span> <span class="n">x</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kt">double</span> <span class="n">y</span><span class="o">;</span>
+<h3 id="디폴트-메서드의-위험성">디폴트 메서드의 위험성</h3>
+<p>디폴트 메서드로 기존 인터페이스에 새로운 메서드를 추가하면 커다란 위험도 딸려 온다.
+디폴트 메서드는(컴파일에 성공하더라도) 기존 구현체에 런타임 오류를 일으킬 수 있다.
+인터페이스에 내재된 결함이 이를 포함한 API에 어떤 재앙을 몰고 올지 알 수 없다.</p>
 
-    <span class="kd">public</span> <span class="nf">Point</span><span class="o">(</span><span class="kt">double</span> <span class="n">x</span><span class="o">,</span> <span class="kt">double</span> <span class="n">y</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">;</span>
-    <span class="o">}</span>
+<p>기존 인터페이스에 디폴트 메서드로 새 메서드를 추가하는 일은 꼭 필요한 경우가 아니면 피해야 한다.
+추가하려는 디폴트 메서드가 기존 구현체들과 충돌하지 않을지 심사숙고해야 함도 당연하다.
+반면, 새로운 인터페이스를 만드는 경우라면 표준적인 메서드 구현을 제공하는 데 아주 유용한 수단이며, 그 인터페이스를 더 쉽게 구현해 활용할 수 있게끔 해준다.
+한편, 디폴트 메서드는 인터페이스로부터 메서드를 제거하거나 기존 메서드의 시그니처를 수정하는 용도가 아님을 명심해야 한다.</p>
 
-    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">getX</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">x</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">getY</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">y</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">setX</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">setY</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">;</span>
-    <span class="o">}</span>
-</code></pre></div></div>
-
-<p>public 클래스는 패키지 바깥에서 접근자를 제공함으로써 클래스 내부 표현 방식을 언제든 바꿀 수 있는 유연성을 얻을 수 있다. 만약 public 클래스의 필드를 공개하면 이를 사용하는 클라이언트가 생겨날 것이므로
-내부 표현 방식을 마음대로 바꿀 수 없게 된다.</p>
-
-<p>하지만 package-private 클래스, private 중첩 클래스는 데이터 필드를 노출한다고 해도 문제가 없다. 이 방식은 접근자 방식보다 훨씬 깔끔하다. 패키지 바깥 코드는 전혀 손대지 않고도 데이터 표현
-방식을 바꿀 수 있다. private 중첩 클래스의 경우라면 수정 범위가 더 좁아져 이 클래스를 포함하는 외부 클래스까지로 제한된다.</p>
-
-<h3 id="핵심-정리">핵심 정리</h3>
-
-<p>public 클래스는 절대 가변 필드를 직접 노출해서는 안 된다. 하지만 package-private 클래스나 private 중첩 클래스에서는 종종(불변이든 가변이든) 필드를 노출하는 편이 나을 때도 있다.</p>
+<h3 id="릴리스-전에-테스트를-반드시-해라">릴리스 전에 테스트를 반드시 해라</h3>
+<p>새로운 인터페이스라면 릴리스 전에 반드시 테스트를 거쳐야 한다.
+릴리스하기 전에 결함을 찾아야 한다. 
+인터페이스를 릴리스 한 후라도 결함을 수정하는게 가능한 경우도 있겠지만,
+그 가능성에 기대서는 안 된다.</p>
 
         
       </section>
@@ -428,7 +406,7 @@
 
 
         
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2024-01-16T00:00:00+09:00">January 16, 2024</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time datetime="2024-01-19T00:00:00+09:00">January 19, 2024</time></p>
 
 
       </footer>
@@ -438,22 +416,22 @@
     <h4 class="page__share-title">공유하기</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=Effective+Java+-+%EC%95%84%EC%9D%B4%ED%85%9C+16%3A+public+%ED%81%B4%EB%9E%98%EC%8A%A4%EC%97%90%EC%84%9C%EB%8A%94+public+%ED%95%84%EB%93%9C%EA%B0%80+%EC%95%84%EB%8B%8C+%EC%A0%91%EA%B7%BC%EC%9E%90+%EB%A9%94%EC%84%9C%EB%93%9C%EB%A5%BC+%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC%20http%3A%2F%2Flocalhost%3A4000%2Feffective%2520java%2FEffective-Java-Item-16-public-class-field%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Effective+Java+-+%EC%95%84%EC%9D%B4%ED%85%9C+21%3A+%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4%EB%8A%94+%EA%B5%AC%ED%98%84%ED%95%98%EB%8A%94+%EC%AA%BD%EC%9D%84+%EC%83%9D%EA%B0%81%ED%95%B4+%EC%84%A4%EA%B3%84%ED%95%98%EB%9D%BC%20http%3A%2F%2Flocalhost%3A4000%2Feffective%2520java%2FEffective-Java-Item-21-interface%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Feffective%2520java%2FEffective-Java-Item-16-public-class-field%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Feffective%2520java%2FEffective-Java-Item-21-interface%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Feffective%2520java%2FEffective-Java-Item-16-public-class-field%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Feffective%2520java%2FEffective-Java-Item-21-interface%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
       
   <nav class="pagination">
     
-      <a href="/effective%20java/Effective-Java-Item-15-%ED%81%B4%EB%9E%98%EC%8A%A4%EC%99%80-%EB%A9%A4%EB%B2%84%EC%9D%98-%EC%A0%91%EA%B7%BC%EA%B6%8C%ED%95%9C%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EB%9D%BC/" class="pagination--pager" title="Effective Java - 아이템 15: 클래스와 멤버의 접근 권한을 최소화하라
+      <a href="/modern%20java%20in%20action/test/" class="pagination--pager" title="Modern Java In Action - 동작 파라미터화 코드 전달하기
 ">이전</a>
     
     
-      <a href="/effective%20java/Effective-Java-Item-17-%EB%B3%80%EA%B2%BD-%EA%B0%80%EB%8A%A5%EC%84%B1%EC%9D%84-%EC%B5%9C%EC%86%8C%ED%99%94%ED%95%98%EB%9D%BC/" class="pagination--pager" title="Effective Java - 아이템 17: 변경 가능성을 최소화하라
+      <a href="/effective%20java/Effective-Java-Item-22-interface-for-type/" class="pagination--pager" title="Effective Java - 아이템 22: 인터페이스는 타입을 정의하는 용도로만 사용하라
 ">다음</a>
     
   </nav>
@@ -508,48 +486,6 @@
 달리 말해, 클래스가 어떤 인터페이스를 구현한다는 것은 자신의 인스턴스로 무엇을 할 수 있는지를 클라이언트에 얘기해주는 것이다.
 인터페이스는 오직 이 용도로만 사용해야 한다.
 </p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/effective%20java/Effective-Java-Item-21-interface/" rel="permalink">Effective Java - 아이템 21: 인터페이스는 구현하는 쪽을 생각해 설계하라
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          최대 1 분 소요
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">디폴트 메서드
-디폴트 메서드(default method)를 선언하면, 그 인터페이스를 구현한 후 디폴트 메서드를 재정의하지 않은 모든 클래스에서 디폴트 구현이 쓰이게 된다.
-디폴트 메서드는 구현 클래스에 대해 아무것도 모른 채 합의 없이 무작정 ‘삽입’될 뿐이다.
-그로인해 생각할 ...</p>
   </article>
 </div>
 
@@ -635,6 +571,46 @@
 </div>
 
         
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/effective%20java/Effective-Java-Item-19-.extends/" rel="permalink">Effective Java - 아이템 19: 상속을 고려해 설계하고 문서화하라. 그러지 않았다면 상속을 금지하라
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">상속을 고려한 설계와 문서화란?
+</p>
+  </article>
+</div>
+
+        
       </div>
     </div>
   
@@ -699,8 +675,8 @@
     
   <script>
     var disqus_config = function () {
-      this.page.url = "http://localhost:4000/effective%20java/Effective-Java-Item-16-public-class-field/";  /* Replace PAGE_URL with your page's canonical URL variable */
-      this.page.identifier = "/effective%20java/Effective-Java-Item-16-public-class-field"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+      this.page.url = "http://localhost:4000/effective%20java/Effective-Java-Item-21-interface/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/effective%20java/Effective-Java-Item-21-interface"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
     };
     (function() { /* DON'T EDIT BELOW THIS LINE */
       var d = document, s = d.createElement('script');

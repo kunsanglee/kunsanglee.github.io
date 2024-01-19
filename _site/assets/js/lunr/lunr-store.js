@@ -196,4 +196,16 @@ var store = [{
         "tags": ["동작 파라미터화"],
         "url": "http://localhost:4000/modern%20java%20in%20action/test/",
         "teaser": null
+      },{
+        "title": "Effective Java - 아이템 21: 인터페이스는 구현하는 쪽을 생각해 설계하라",
+        "excerpt":"디폴트 메서드 디폴트 메서드(default method)를 선언하면, 그 인터페이스를 구현한 후 디폴트 메서드를 재정의하지 않은 모든 클래스에서 디폴트 구현이 쓰이게 된다. 디폴트 메서드는 구현 클래스에 대해 아무것도 모른 채 합의 없이 무작정 ‘삽입’될 뿐이다. 그로인해 생각할 수 있는 모든 상황에서 불변식을 해치지 않는 디폴트 메서드를 작성하기란 어려운 법이다. 디폴트 메서드의 위험성...","categories": ["Effective Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-21-interface/",
+        "teaser": null
+      },{
+        "title": "Effective Java - 아이템 22: 인터페이스는 타입을 정의하는 용도로만 사용하라",
+        "excerpt":"인터페이스의 인터페이스는 자신을 구현한 클래스의 인스턴스를 참조할 수 있는 타입 역할을 한다. 달리 말해, 클래스가 어떤 인터페이스를 구현한다는 것은 자신의 인스턴스로 무엇을 할 수 있는지를 클라이언트에 얘기해주는 것이다. 인터페이스는 오직 이 용도로만 사용해야 한다. 안티패턴 인터페이스 사용 이 지침에 반하는 예로 상수 인터페이스라는 것이 있다. 상수 인터페이스란 메서드 없이, 상수를...","categories": ["Effective Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-22-interface-for-type/",
+        "teaser": null
       }]
