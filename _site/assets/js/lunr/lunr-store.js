@@ -232,4 +232,10 @@ var store = [{
         "tags": ["Effective Java"],
         "url": "http://localhost:4000/effective%20java/Effective-Java-Item-26-generic-raw-type/",
         "teaser": null
+      },{
+        "title": "행동대장 프로젝트",
+        "excerpt":"우아한테크코스 6기 레벨3에는 팀 프로젝트를 진행하는데, 내가 속한 팀은 행동대장 팀이다. 우리 팀은 행사 주최자들에게 편리하게 행사를 주최하고 참여자들을 관리할 수 있는 핵심 가치를 전달해 주려고 했다. 그 과정에서 팀원들의 지인들에게 구글 설문폼을 만들어서 행사를 주최하는 입장과, 참여하는 입장에서 어떤 점이 불편한지, 어떤 점이 개선되었으면 하는지 응답을 받았다. 응답을 바탕으로...","categories": ["woowacourse"],
+        "tags": ["project"],
+        "url": "http://localhost:4000/woowacourse/%ED%96%89%EB%8F%99%EB%8C%80%EC%9E%A5-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-2%EC%B0%A8-%EB%8D%B0%EB%AA%A8%EB%8D%B0%EC%9D%B4/",
+        "teaser": null
       }]
