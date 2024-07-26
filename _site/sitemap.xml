@@ -4,6 +4,70 @@
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
     <url>
+        <loc>http://localhost:4000/effective%20java/Effective-Java-Item-26-generic-raw-type/</loc>
+        
+        <lastmod>2024-01-25T00:00:00+09:00</lastmod>
+        
+
+        
+        <changefreq>weekly</changefreq>
+        
+
+        
+        <priority>0.5</priority>
+        
+
+    </url>
+    
+    <url>
+        <loc>http://localhost:4000/effective%20java/Effective-Java-Item-24-member-class-be-static/</loc>
+        
+        <lastmod>2024-01-23T00:00:00+09:00</lastmod>
+        
+
+        
+        <changefreq>weekly</changefreq>
+        
+
+        
+        <priority>0.5</priority>
+        
+
+    </url>
+    
+    <url>
+        <loc>http://localhost:4000/effective%20java/Effective-Java-Item-23-rather-than-tag-class/</loc>
+        
+        <lastmod>2024-01-22T00:00:00+09:00</lastmod>
+        
+
+        
+        <changefreq>weekly</changefreq>
+        
+
+        
+        <priority>0.5</priority>
+        
+
+    </url>
+    
+    <url>
+        <loc>http://localhost:4000/modern%20java%20in%20action/lambda-expression/</loc>
+        
+        <lastmod>2024-01-21T00:00:00+09:00</lastmod>
+        
+
+        
+        <changefreq>weekly</changefreq>
+        
+
+        
+        <priority>0.5</priority>
+        
+
+    </url>
+    
+    <url>
         <loc>http://localhost:4000/effective%20java/Effective-Java-Item-22-interface-for-type/</loc>
         
         <lastmod>2024-01-19T00:00:00+09:00</lastmod>
@@ -36,7 +100,7 @@
     </url>
     
     <url>
-        <loc>http://localhost:4000/modern%20java%20in%20action/test/</loc>
+        <loc>http://localhost:4000/modern%20java%20in%20action/behavior-parameterization/</loc>
         
         <lastmod>2024-01-18T00:00:00+09:00</lastmod>
         

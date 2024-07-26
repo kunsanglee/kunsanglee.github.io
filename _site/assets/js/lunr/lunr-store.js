@@ -194,7 +194,7 @@ var store = [{
         "title": "Modern Java In Action - 동작 파라미터화 코드 전달하기",
         "excerpt":"동작 파라미터화(behavior parameterization)를 이용하면 자주 바뀌는 요구사항에 효과적으로 대응할 수 있다. 동작 파라미터화란 아직은 어떻게 실행할 것인지 결정하지 않은 코드 블록을 의미한다. 이 코드 블록은 나중에 프로그램에서 호출한다. 즉, 코드 블록의 실행은 나중으로 미뤄진다. 나중에 실행될 메서드의 인수로 코드 블록을 전달할 수 있다. // 녹색 사과 필터링 enum Color {...","categories": ["Modern Java In Action"],
         "tags": ["동작 파라미터화"],
-        "url": "http://localhost:4000/modern%20java%20in%20action/test/",
+        "url": "http://localhost:4000/modern%20java%20in%20action/behavior-parameterization/",
         "teaser": null
       },{
         "title": "Effective Java - 아이템 21: 인터페이스는 구현하는 쪽을 생각해 설계하라",
@@ -207,5 +207,29 @@ var store = [{
         "excerpt":"인터페이스의 인터페이스는 자신을 구현한 클래스의 인스턴스를 참조할 수 있는 타입 역할을 한다. 달리 말해, 클래스가 어떤 인터페이스를 구현한다는 것은 자신의 인스턴스로 무엇을 할 수 있는지를 클라이언트에 얘기해주는 것이다. 인터페이스는 오직 이 용도로만 사용해야 한다. 안티패턴 인터페이스 사용 이 지침에 반하는 예로 상수 인터페이스라는 것이 있다. 상수 인터페이스란 메서드 없이, 상수를...","categories": ["Effective Java"],
         "tags": ["Effective Java"],
         "url": "http://localhost:4000/effective%20java/Effective-Java-Item-22-interface-for-type/",
+        "teaser": null
+      },{
+        "title": "Modern Java In Action - 람다 표현식",
+        "excerpt":"람다 표현식은 메서드로 전달할 수 있는 익명 함수를 단순화한 것이라고 할 수 있다. 익명: 보통의 메서드와 달리 이름이 없으므로 익명이라 표현한다. 함수: 람다는 메서드처럼 특정 클래스에 종속되지 않으므로 함수라 한다. 하지만 메서드처럼 파라미터 리스트, 바디, 반환 형식, 가능한 예외 리스트를 포함한다. 전달: 람다 표현식을 메서드 인수로 전달하거나 변수로 저장할 수...","categories": ["Modern Java In Action"],
+        "tags": ["람다"],
+        "url": "http://localhost:4000/modern%20java%20in%20action/lambda-expression/",
+        "teaser": null
+      },{
+        "title": "Effective Java - 아이템 23: 태그 달린 클래스보다는 클래스 계층구조를 활용하라",
+        "excerpt":"// 태그 달린 클래스 - 클래스 계층구조보다 훨씬 나쁘다 class Figure { enum Shape { RECTANGLE, CIRCLE }; // 태그 필드 - 현재 모양을 나타낸다. final Shape shape; // 다음 필드들은 모양이 사각형일 때만 쓰인다. double length; double width; // 다음 필드는 모양이 원일 때만 쓰인다. double radius; // 원용...","categories": ["Effective Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-23-rather-than-tag-class/",
+        "teaser": null
+      },{
+        "title": "Effective Java - 아이템 24: 멤버 클래스는 되도록 static으로 만들라",
+        "excerpt":"중첩 클래스(nested class)란 다른 클래스 안에 정의된 클래스를 말한다. 중첩 클래스는 자신을 감싼 바깥 클래스에서만 쓰여야 하며, 그 외의 쓰임새가 있다면 톱레벨 클래스로 만들어야 한다. 중첩 클래스의 종류는 정적 멤버 클래스, (비정적) 멤버 클래스, 익명 클래스, 지역 클래스, 이렇게 네 가지다. 이 중 첫 번째를 제외한 나머지는 내부 클래스(inner class)에...","categories": ["Effective Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-24-member-class-be-static/",
+        "teaser": null
+      },{
+        "title": "Effective Java - 아이템 25: 로 타입은 사용하지 말라",
+        "excerpt":"제네릭 클래스와 인터페이스 선언에 타입 매개변수(type parameter)가 쓰이면, 이를 제네릭 클래스 혹은 제네릭 인터페이스라 한다. 제네릭 클래스와 제네릭 인터페이스를 통틀어 제네릭 타입(generic type)이라 한다. 각각의 제네릭 타입은 일련의 매개변수화 타입(parameterized type)을 정의한다. 제네릭 타입을 하나 정의하면 그에 딸리 로 타입(raw type)도 함께 정의된다. 로 타입이란 제네릭 타입에서 타입 매개변수를 전혀...","categories": ["Effective Java"],
+        "tags": ["Effective Java"],
+        "url": "http://localhost:4000/effective%20java/Effective-Java-Item-26-generic-raw-type/",
         "teaser": null
       }]
