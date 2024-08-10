@@ -233,9 +233,21 @@ var store = [{
         "url": "http://localhost:4000/effective%20java/Effective-Java-Item-26-generic-raw-type/",
         "teaser": null
       },{
+        "title": "codeforces contest 첫 참가",
+        "excerpt":"처음으로 참가한 대회 Pinely Round 4 (Div. 1 + Div. 2) 나는 ps를 이제 거의 처음 시작하는 초보라 A번 문제만 풀고 이후 문제는 이해하기 어려워서 진행하지 않았다. 내가 푼 문제는 A. Maximize the Last Element 라는 문제였다. 이 문제는 기본적으로 홀수개의 원소를 가진 배열을 준다. 그리고 원소가 딱 하나만 남을...","categories": ["ps"],
+        "tags": ["codeforces"],
+        "url": "http://localhost:4000/ps/code-force-first-contest/",
+        "teaser": null
+      },{
         "title": "행동대장 프로젝트",
         "excerpt":"우아한테크코스 6기 레벨3에는 팀 프로젝트를 진행하는데, 내가 속한 팀은 행동대장 팀이다. 우리 팀은 행사 주최자들에게 편리하게 행사를 주최하고 참여자들을 관리할 수 있는 핵심 가치를 전달해 주려고 했다. 그 과정에서 팀원들의 지인들에게 구글 설문폼을 만들어서 행사를 주최하는 입장과, 참여하는 입장에서 어떤 점이 불편한지, 어떤 점이 개선되었으면 하는지 응답을 받았다. 응답을 바탕으로...","categories": ["woowacourse"],
         "tags": ["project"],
         "url": "http://localhost:4000/woowacourse/%ED%96%89%EB%8F%99%EB%8C%80%EC%9E%A5-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-2%EC%B0%A8-%EB%8D%B0%EB%AA%A8%EB%8D%B0%EC%9D%B4/",
+        "teaser": null
+      },{
+        "title": "sql 파일 이용해서 데이터 저장하기",
+        "excerpt":"얼마 전 우테코의 코치 토미가 인덱스 강의를 해주셨다. 아마 토미가 미리 만들어두신 것으로 추정되는 백만에 가까운 row가 들어있는 대용량의 데이터를 바탕으로 강의가 진행되었다. 원래 수업시간 외에 크루들에게 데이터를 제공할 계획이 없으셨으나, 무수한 백엔드 크루들의 성원에 못이기셨는지 학습 목적으로만 사용하는 것을 조건으로 제공해 주셨다. 고로 데이터를 외부에 절대 공유하지 않을 것이다....","categories": ["DB"],
+        "tags": ["DB","linux","mysql","parallel"],
+        "url": "http://localhost:4000/db/sql-%ED%8C%8C%EC%9D%BC-%EC%9D%B4%EC%9A%A9%ED%95%B4%EC%84%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%80%EC%9E%A5/",
         "teaser": null
       }]
