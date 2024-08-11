@@ -5,9 +5,47 @@
     <description></description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 10 Aug 2024 23:38:13 +0900</pubDate>
-    <lastBuildDate>Sat, 10 Aug 2024 23:38:13 +0900</lastBuildDate>
+    <pubDate>Sun, 11 Aug 2024 17:24:24 +0900</pubDate>
+    <lastBuildDate>Sun, 11 Aug 2024 17:24:24 +0900</lastBuildDate>
     <generator>Jekyll v4.3.2</generator>
+    
+      <item>
+        <title>행동대장을 정산 특화 서비스로 탈바꿈 하기 위한 아이디어</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;정산을 위해 지출 내용을 직접 입력해야 된다는 것 자체가 엄청나게 큰 허들.&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;행사를 자주 주최하거나, 현재까지 정산에 큰 불편함을 느껴보지 않은 사용자라서 이런 허들 때문에 정산 기능이 뭐가 추가된다고 해도 안쓸 것 같다는 의견을 친구에게 들었다.&lt;/p&gt;
+
+&lt;p&gt;이 허들을 낮추기 위한 방법으로 토스처럼 지출 내역을 종합적으로 관리할 수 있는 &lt;strong&gt;마이 데이터&lt;/strong&gt; 방식이 있지만, 현실적으로 불가능하다. &lt;strong&gt;토다리가 이전에 말한 토스 한정으로라도, 영수증 OCR 을 지원하거나, 토스앱 내에 쌓인 지출 내역 읽어서 사용자가 직접 지출 내역을 적지 않고도 등록할 수 있는 기능을 지원한다면 가장 좋을 것 같다.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;현재까지 우리가 개발한 직접 입력 방식을 완전히 대체할 수 있으면 가장 편하고 좋겠지만, 모든 작업을 롤백하기는 무리라고 생각되기 때문에 현재 기능을 지원하면서 부가적으로 있으면 좋을 것 같다. 그리고 이 기능을 위해 얼만큼의 작업량이 생길지 미지수다.&lt;/p&gt;
+
+&lt;p&gt;이런 진입 장벽을 허물었다고 가정 하고,&lt;/p&gt;
+
+&lt;h1 id=&quot;우리가-해결해야-하는-문제&quot;&gt;우리가 해결해야 하는 문제&lt;/h1&gt;
+
+&lt;h2 id=&quot;1-인원-변동-때문에-발생하는-복잡함&quot;&gt;1. 인원 변동 때문에 발생하는 복잡함.&lt;/h2&gt;
+&lt;p&gt;행사, 모임, 회식과 같은 활동은 전 인원이 전부 모인 상태에서 시작하지 않을 수 있기 때문에, 누군가는 그 자리에 늦게 오거나 일찍 간다. 이런 상황으로 인해 균등하게 지출 금액을 나누려고 해도 쉽지 않은 문제가 있는데, 현재 행동대장 서비스는 이 문제에 대해서 &lt;strong&gt;1/N 계산할 수 있는 기능&lt;/strong&gt;으로 해결한 상태다.&lt;/p&gt;
+
+&lt;h2 id=&quot;2-지출-비율-불균형-때문에-발생하는-복잡함&quot;&gt;2. 지출 비율 불균형 때문에 발생하는 복잡함.&lt;/h2&gt;
+&lt;p&gt;누군가 조금 회식 자리에 늦게 참여했는데 아예 안먹은건 아니거나, 다들 술을 마시는데 혼자 술을 안먹는 사람이라거나 하는 개별성으로 인해 발생한다. 그렇다고 술을 한 잔도 안마신 사람에게 술 값을 전부 똑같이 나눠 내게 하는 것은 불합리하지만, 현실에서는 계산의 번거로움 등으로 인해 정확한 정산 자체를 포기하고 그 사람에게 아예 돈을 안받거나, 다른 사람과 똑같이 내는 상황이 발생한다. 이 문제는 &lt;strong&gt;해당 인원이 부담해야할 금액이나 비율을 할당할 수 있게 하고, 나머지 인원들에 한해서 1/N 계산을 할 수 있게 하는 등 세부적인 금액 할당 기능&lt;/strong&gt;이 추가된다면 어느정도 해결 가능하다고 생각한다.&lt;/p&gt;
+
+&lt;h2 id=&quot;3-정산을-여러명이-나눠서-했을-때-발생하는-복잡함&quot;&gt;3. 정산을 여러명이 나눠서 했을 때 발생하는 복잡함.&lt;/h2&gt;
+&lt;p&gt;한 명이 전부 금액을 계산한 상황이면 계산 자체는 그렇게 복잡하지 않지만, 여러개의 지출을 여러 명이 나눠서 지출한다면 계산이 복잡해질 수 있다. 그런 상황에서 &lt;strong&gt;서로 지출한 금액을 상쇄하고 남은 차액에 한해서 누가 누구에게 얼마를 주면 정산이 끝나는지 계산해주는 기능&lt;/strong&gt;이 추가되면 좋을 것 같다.&lt;/p&gt;
+
+&lt;p&gt;우선 이런 방향으로 문제를 정의하고 해결하면 좋지 않을까 생각했지만, 회의를 통해서 팀원들과 더 아이디에이션을 거쳐야 할 것 같다.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 11 Aug 2024 00:00:00 +0900</pubDate>
+        <link>http://localhost:4000/woowacourse/%E1%84%92%E1%85%A2%E1%86%BC%E1%84%83%E1%85%A9%E1%86%BC%E1%84%83%E1%85%A2%E1%84%8C%E1%85%A1%E1%86%BC-%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%89%E1%85%A1%E1%86%AB-%E1%84%90%E1%85%B3%E1%86%A8%E1%84%92%E1%85%AA-%E1%84%89%E1%85%A5%E1%84%87%E1%85%B5%E1%84%89%E1%85%B3%E1%84%85%E1%85%A9-%E1%84%90%E1%85%A1%E1%86%AF%E1%84%87%E1%85%A1%E1%84%81%E1%85%AE%E1%86%B7%E1%84%8B%E1%85%B3%E1%86%AF-%E1%84%8B%E1%85%B1%E1%84%92%E1%85%A1%E1%86%AB-%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%83%E1%85%B5%E1%84%8B%E1%85%A5/</link>
+        <guid isPermaLink="true">http://localhost:4000/woowacourse/%E1%84%92%E1%85%A2%E1%86%BC%E1%84%83%E1%85%A9%E1%86%BC%E1%84%83%E1%85%A2%E1%84%8C%E1%85%A1%E1%86%BC-%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%89%E1%85%A1%E1%86%AB-%E1%84%90%E1%85%B3%E1%86%A8%E1%84%92%E1%85%AA-%E1%84%89%E1%85%A5%E1%84%87%E1%85%B5%E1%84%89%E1%85%B3%E1%84%85%E1%85%A9-%E1%84%90%E1%85%A1%E1%86%AF%E1%84%87%E1%85%A1%E1%84%81%E1%85%AE%E1%86%B7%E1%84%8B%E1%85%B3%E1%86%AF-%E1%84%8B%E1%85%B1%E1%84%92%E1%85%A1%E1%86%AB-%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%83%E1%85%B5%E1%84%8B%E1%85%A5/</guid>
+        
+        <category>project</category>
+        
+        
+        <category>woowacourse</category>
+        
+      </item>
     
       <item>
         <title>sql 파일 이용해서 데이터 저장하기</title>
@@ -3573,210 +3611,6 @@ private 생성자를 호출 할 수 있다.&lt;br /&gt;
         <pubDate>Sun, 07 Jan 2024 00:00:00 +0900</pubDate>
         <link>http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-2-%EC%83%9D%EC%84%B1%EC%9E%90%EC%97%90-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98%EA%B0%80-%EB%A7%8E%EB%8B%A4%EB%A9%B4-%EB%B9%8C%EB%8D%94%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/</link>
         <guid isPermaLink="true">http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-2-%EC%83%9D%EC%84%B1%EC%9E%90%EC%97%90-%EB%A7%A4%EA%B0%9C%EB%B3%80%EC%88%98%EA%B0%80-%EB%A7%8E%EB%8B%A4%EB%A9%B4-%EB%B9%8C%EB%8D%94%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/</guid>
-        
-        <category>Effective Java</category>
-        
-        
-        <category>Effective Java</category>
-        
-      </item>
-    
-      <item>
-        <title>Effective Java - 아이템 1: 생성자 대신 정적 팩터리 메서드를 고려하라</title>
-        <description>&lt;h2 id=&quot;정적-팩터리-메서드&quot;&gt;정적 팩터리 메서드&lt;/h2&gt;
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;new&lt;/code&gt;키워드로 생성하지 않고 객체 생성해서 반환하는 메서드다.&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 필드가 private final이고 필드의 값을 수정하는 방법이 없기 때문에 불변 클래스다.&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyNumber&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ZERO&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyNumber&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 여러 곳에서 사용하는 값을 캐싱.&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;c1&quot;&gt;// 생성자의 접근자를 private로 하여 외부에서 생성자를 호출하지 못하도록 한다.&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;MyNumber&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;c1&quot;&gt;// 외부에서 객체를 생성하여 반환받을 수 있는 public API 제공.&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyNumber&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;MyNumber&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    
-    &lt;span class=&quot;c1&quot;&gt;// 클래스에 상수로 선언한 ZERO가 필요하면 새로 생성하지 않고 캐싱해둔 값을 제공한다.&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyNumber&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getZero&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ZERO&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;정적-팩터리-메서드의-장점&quot;&gt;정적 팩터리 메서드의 장점&lt;/h3&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;이름을 가질 수 있다.
-    &lt;blockquote&gt;
-      &lt;p&gt;생성자에 넘기는 매개변수와 생성자 자체만으로는 반환될 객체의 특성을 제대로 설명하지 못한다.
-반면 정적 팩터리는 이름만 잘 지으면 반환될 객체의 특성을 쉽게 묘사할 수 있다.
-그래서 한 클래스에 시그니처가 같은 생성자가 여러개 필요할 것 같으면(생성자 오버라이딩 할 메서드가 많다면) 
-정적 팩터리 메서드로 바꾸고 메서드 네이밍을 잘 지어주는 것이 좋다.&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-  &lt;li&gt;호출될 때마다 인스턴스를 새로 생성하지 않아도 된다.
-    &lt;blockquote&gt;
-      &lt;p&gt;불변 클래스(immutable class)는 인스턴스를 미리 만들어 놓거나 
-새로 생성한 인스턴스를 캐싱하여 재활용하는 식으로 불필요한 객체 생성을 피할 수 있다.
-정적 팩터리 메서드는 필요에 따라 미리 생성된 인스턴스를 반환하거나, 
-생성된 인스턴스를 캐싱하여 재사용할 수 있다. 이는 불변 클래스에서 특히 유용하며, 이를 통해 객체 생성 비용을 줄일 수 있다.
-플라이 웨이트 패턴(Flyweight pattern)과 유사한 기법이다.
-반복되는 요청에 같은 객체를 반환하는 식으로 정적 팩터리 방식의 클래스는 인스턴스를 살아있게 할지를 철저히 통제할 수 있다.
-이런 클래스를 인스턴스 통제 클래스라 한다.
-인스턴스를 통제할 수 있다면 클래스를 싱글턴으로 만들 수도, 인스턴스화 불가로 만들 수 있고,
-불변 클래스에서 동치인 인스턴스가 단 하나뿐임을 보장할 수 있다.
-또 열거 타입 인스턴스가 하나만 만들어짐을 보장한다.&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-  &lt;li&gt;반환 타입의 하위 객체를 반환할 수 있는 능력이 있다.
-    &lt;blockquote&gt;
-      &lt;p&gt;생성자는 해당 타입만 반환하지만, 팩터리 메서드는 다형성을 이용해 반환할 객체의 클래스를 자유롭게 선택할 수 있게 하는 유연성을 준다.
-이 유연성을 응용하면 구현 클래스를 공개하지 않고도 그 객체를 반환할 수 있다.
-클라이언트는 알 필요 없는 정보를 캡슐화할 수 있다.&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;DiscountPolicy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nc&quot;&gt;Amount&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;discount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Order&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;order&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;DiscountCondition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isDiscountable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Order&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;order&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PercentDiscountPolicy&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;DiscountPolicy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;DISCOUNT_PERCENT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Amount&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;discount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Order&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;order&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Amount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;order&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getAmount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;multiply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;DISCOUNT_PERCENT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PercentDiscountCondition&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;DiscountCondition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;DiscountCondition&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;discountCondition&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;PercentDiscountCondition&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;DiscountCondition&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;discountCondition&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;discountCondition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;discountCondition&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    
-    &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isDiscountable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Order&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;order&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;discountCondition&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isDiscountable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;order&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;DiscountPolicies&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;DiscountPolicy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;discountPolicies&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;discountPolicies&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PercentDiscountPolicy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PercentDiscountCondition&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()));&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;c1&quot;&gt;// 여러 할인 정책중에 할인 가능한 하나의 할인 정책을 반환하는 정적 팩터리 메서드.&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// discountPolicies에 DiscountPolicy 인터페이스를 구현한 각기 다른 구현체들이 들어있다.&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// 정적 팩터리 메서드를 사용하면 구체 클래스인 PercentDiscountPolicy 타입으로 반환하지 않고,&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// 다형성을 이용해 상위 타입으로 반환할 수 있다.&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;DiscountPolicy&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getDiscountableDiscountPolicy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Order&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;order&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;discountPolicies&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
-                &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;discountPolicy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;discountPolicy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isDiscountable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;order&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
-                &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;findAny&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
-                &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;orElse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NoneDiscountPolicy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;입력 매개변수에 따라 매번 다른 클래스의 객체를 반환할 수 있다.
-    &lt;blockquote&gt;
-      &lt;p&gt;반환 타입이 하위 타입이기만 하면 어떤 클래스의 객체를 반환하든 상관없다.
-클라이언트는 팩터리가 건네주는 객체가 어느 클래스의 인스턴스인지 알 수도 없고 알 필요도 없다.
-위의 예시 코드의 getDiscountableDiscountPolicy 메서드의 반환 타입이 그 예다.&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-  &lt;li&gt;정적 팩터리 메서드를 작성하는 시점에는 반환할 객체의 클래스가 존재하지 않아도 된다.
-    &lt;blockquote&gt;
-      &lt;p&gt;위의 예시 코드에서 DiscountPolicy 인터페이스를 구현하는 새로운 클래스가 추가된다고 해도 기존 코드를 변경할 필요가 없다.&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;정적-팩터리-메서드의-단점&quot;&gt;정적 팩터리 메서드의 단점&lt;/h3&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;상속을 하려면 public이나 protected 생성자가 필요하니 정적 팩터리 메서드만 제공하면 하위 클래스를 만들 수 없다.
-    &lt;blockquote&gt;
-      &lt;p&gt;상속을 하는 하위 클래스의 생성자에서 상위 클래스의 생성자 super()를 호출해야 하지만,
-상위 클래스에서 정적 팩토리 메서드를 제공하며 생성자의 접근자가 private라면 상속할 수 없다.&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-  &lt;li&gt;정적 팩터리 메서드는 프로그래머가 찾기 어렵다.
-    &lt;blockquote&gt;
-      &lt;p&gt;생성자처럼 API 설명에 명확히 드러나지 않아 사용자가 직접 생성자를 대신할 팩터리 메서드를 알아내야 한다.
-이런 이유로 널리 알려진 규약을 따라 메서드 이름을 짓는다.&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;정적-팩터리-메서드-명명-방식&quot;&gt;정적 팩터리 메서드 명명 방식&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;from: 매개 변수를 하나 받아서 해당 타입의 인스턴스를 반환하는 형변환 메서드
-    &lt;ul&gt;
-      &lt;li&gt;Date d = Date.from(instant);&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;of: 여러 매개변수를 받아 적합한 타입의 인스턴스를 반환하는 집계 메서드
-    &lt;ul&gt;
-      &lt;li&gt;Set&lt;Rank&gt; faceCards = EnumSet.of(JACK, QUEEN, KING);&lt;/Rank&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;valueOf: from과 of의 더 자세한 버전
-    &lt;ul&gt;
-      &lt;li&gt;BigInteger prime = BigInteger.valueOf(Integer.MAX_VALUE);&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;instance 혹은 getInstance: 매개변수를 받는다면 매개변수로 명시한 인스턴스를 반환하지만, 같은 신스턴스임을 보장하지는 않는다.
-    &lt;ul&gt;
-      &lt;li&gt;StackWalker luke = StackWalker.getInstance(options);&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;create 혹은 newInstance: instance 혹은 getInstance와 같지만, 매번 새로운 인스턴스를 생성해 반환함을 보장한다.
-    &lt;ul&gt;
-      &lt;li&gt;Object newArray = Array.newInstance(classObject, arrayLen);&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;getType: getInstance와 같으나, 생성할 클래스가 아닌 다른 클래스에 팩터리 메서드를 정의할 때 쓴다.
-    &lt;ul&gt;
-      &lt;li&gt;FileStore fs = Files.getFileStore(path);&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;newType: newInstance와 같으나, 생성할 클래스가 아닌 다른 클래스에 패겉리 메서드를 정의할 때 쓴다.
-    &lt;ul&gt;
-      &lt;li&gt;BufferedReader br = Files.newBufferedReader(path);&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;type: getType과 newType의 간결한 버전
-    &lt;ul&gt;
-      &lt;li&gt;List&lt;Complaint&gt; litany = Collections.list(legacyLitany);&lt;/Complaint&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;핵심-정리&quot;&gt;핵심 정리&lt;/h3&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;정적 팩터리 메서드와 public 생성자는 각자의 쓰임새가 있으니 상대적인 장단점을 이해하고 사용하는 것이 좋다.&lt;br /&gt;
-정적 팩터리를 사용하는 게 유리한 경우가 더 많으므로 무작정 public 생성자를 제공하던 습관이 있다면 고치자.&lt;/p&gt;
-&lt;/blockquote&gt;
-</description>
-        <pubDate>Fri, 05 Jan 2024 00:00:00 +0900</pubDate>
-        <link>http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-1-%EC%83%9D%EC%84%B1%EC%9E%90-%EB%8C%80%EC%8B%A0-%EC%A0%95%EC%A0%81-%ED%8C%A9%ED%84%B0%EB%A6%AC-%EB%A9%94%EC%84%9C%EB%93%9C%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/</link>
-        <guid isPermaLink="true">http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-1-%EC%83%9D%EC%84%B1%EC%9E%90-%EB%8C%80%EC%8B%A0-%EC%A0%95%EC%A0%81-%ED%8C%A9%ED%84%B0%EB%A6%AC-%EB%A9%94%EC%84%9C%EB%93%9C%EB%A5%BC-%EA%B3%A0%EB%A0%A4%ED%95%98%EB%9D%BC/</guid>
         
         <category>Effective Java</category>
         

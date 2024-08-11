@@ -250,4 +250,10 @@ var store = [{
         "tags": ["DB","linux","mysql","parallel"],
         "url": "http://localhost:4000/db/sql-%ED%8C%8C%EC%9D%BC-%EC%9D%B4%EC%9A%A9%ED%95%B4%EC%84%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%80%EC%9E%A5/",
         "teaser": null
+      },{
+        "title": "행동대장을 정산 특화 서비스로 탈바꿈 하기 위한 아이디어",
+        "excerpt":"정산을 위해 지출 내용을 직접 입력해야 된다는 것 자체가 엄청나게 큰 허들. 행사를 자주 주최하거나, 현재까지 정산에 큰 불편함을 느껴보지 않은 사용자라서 이런 허들 때문에 정산 기능이 뭐가 추가된다고 해도 안쓸 것 같다는 의견을 친구에게 들었다. 이 허들을 낮추기 위한 방법으로 토스처럼 지출 내역을 종합적으로 관리할 수 있는 마이 데이터...","categories": ["woowacourse"],
+        "tags": ["project"],
+        "url": "http://localhost:4000/woowacourse/%ED%96%89%EB%8F%99%EB%8C%80%EC%9E%A5-%EC%A0%95%EC%82%B0-%ED%8A%B9%ED%99%94-%EC%84%9C%EB%B9%84%EC%8A%A4%EB%A1%9C-%ED%83%88%EB%B0%94%EA%BF%88%EC%9D%84-%EC%9C%84%ED%95%9C-%EC%95%84%EC%9D%B4%EB%94%94%EC%96%B4/",
+        "teaser": null
       }]
