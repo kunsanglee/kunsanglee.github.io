@@ -256,4 +256,16 @@ var store = [{
         "tags": ["project"],
         "url": "http://localhost:4000/woowacourse/%ED%96%89%EB%8F%99%EB%8C%80%EC%9E%A5-%EC%A0%95%EC%82%B0-%ED%8A%B9%ED%99%94-%EC%84%9C%EB%B9%84%EC%8A%A4%EB%A1%9C-%ED%83%88%EB%B0%94%EA%BF%88%EC%9D%84-%EC%9C%84%ED%95%9C-%EC%95%84%EC%9D%B4%EB%94%94%EC%96%B4/",
         "teaser": null
+      },{
+        "title": "org.hibernate.HibernateException: A collection with cascade=\"all-delete-orphan\" was no longer referenced by the owning entity instance 에러 트러블 슈팅",
+        "excerpt":"org.hibernate.HibernateException: A collection with cascade=”all-delete-orphan” was no longer referenced by the owning entity instance 에러 트러블 슈팅한 내용이다. 지출 내역의 이름과 금액을 BillAction이라는 엔티티로 관리하고 있다. 예를 들어 민수, 철수, 영희 3명이 스타벅스에서 각각 아메리카노 1잔씩 마셨다고 가정하면, BillAction의 title에는 스타벅스, price는 15,000원을 저장한다. 그리고 하나의 지출 내역 BillAction은 해당...","categories": ["woowacourse"],
+        "tags": ["project","JPA"],
+        "url": "http://localhost:4000/woowacourse/A-collection-with-cascade=-all-delete-orphan-was-no-longer-referenced-by-the-owning-entity-instance-%EC%97%90%EB%9F%AC/",
+        "teaser": null
+      },{
+        "title": "토미의 Coupon 인덱스 정리 - 1",
+        "excerpt":"public class IndexPerformanceTest { private static final String BASE_URI = \"http://localhost:8080\"; private static final Long MIN_COUPON_ID = 1L; private static final Long MAX_COUPON_ID = 351160L; private static final Long MIN_MEMBER_ID = 1L; private static final Long MAX_MEMBER_ID = 250000L; private static final int THREAD_COUNT = 10; private static final int...","categories": ["DB"],
+        "tags": ["index","mysql"],
+        "url": "http://localhost:4000/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-1/",
+        "teaser": null
       }]

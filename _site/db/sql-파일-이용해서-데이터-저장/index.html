@@ -314,7 +314,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          5 분 소요
+          6 분 소요
         
       </span>
     
@@ -335,8 +335,12 @@
   <li><a href="#병렬-실행-명령어">병렬 실행 명령어</a></li>
   <li><a href="#병렬-작업-성능-테스트">병렬 작업 성능 테스트</a>
     <ul>
-      <li><a href="#4개의-병렬-작업">4개의 병렬 작업</a></li>
-      <li><a href="#8개의-병렬-작업">8개의 병렬 작업</a></li>
+      <li><a href="#단일-커넥션으로-실행">단일 커넥션으로 실행</a></li>
+      <li><a href="#4개의-커넥션으로-병렬-실행">4개의 커넥션으로 병렬 실행</a></li>
+      <li><a href="#8개의-커넥션으로-병렬-실행">8개의 커넥션으로 병렬 실행</a></li>
+      <li><a href="#12개의-커넥션으로-병렬-실행">12개의 커넥션으로 병렬 실행</a></li>
+      <li><a href="#16개의-커넥션으로-병렬-실행">16개의 커넥션으로 병렬 실행</a></li>
+      <li><a href="#20개의-커넥션으로-병렬-실행">20개의 커넥션으로 병렬 실행</a></li>
       <li><a href="#결론">결론</a></li>
     </ul>
   </li>
@@ -399,9 +403,7 @@ sql은 한 개당 수십만 insert 쿼리로 되어 있었기 때문에 적당�
 
 <p>파일 읽기/쓰기가 많이 발생하는 작업의 경우, 디스크 I/O 성능도 중요한 요소이다. SSD를 사용하는 경우 더 많은 병렬 작업을 실행할 수 있지만, HDD를 사용하는 경우 디스크 병목 현상을 피하기 위해 병렬 작업 수를 줄이는 것이 좋다.</p>
 
-<p>병렬 작업 수가 너무 많으면 메모리 부족 현상이 발생할 수 있다. 각 작업이 얼마나 많은 메모리를 사용하는지를 고려하여 적절한 병렬 작업 수를 결정해야 한다.</p>
-
-<p>현재 내 환경을 예로 들면, M1 MacBook Pro(16GB RAM, 1TB SSD)이기 때문에 8~12개 정도 병렬 작업을 실행하는 것이 적절할 것이다.</p>
+<p>병렬 작업 수가 너무 많으면 메모리 부족 현상이 발생할 수 있다. 각 작업이 얼마나 많은 메모리를 사용하는지를 고려하여 적절한 병렬 작업 수를 결정해야 한다. 현재 내 환경을 예로 들면, M1 MacBook Pro(16GB RAM, 1TB SSD)이기 때문에 8~12개 정도 병렬 작업을 실행하는 것이 적절할 것이다.</p>
 
 <p>사전 작업으로 mysql에 database를 생성하고, Entity를 바탕으로 테이블을 생성하여 insert 쿼리를 실행하기 위한 모든 준비를 마쳤다.</p>
 
@@ -427,10 +429,29 @@ sql은 한 개당 수십만 insert 쿼리로 되어 있었기 때문에 적당�
 <h2 id="병렬-작업-성능-테스트">병렬 작업 성능 테스트</h2>
 
 <p>추가적으로 동일한 쿼리를 삽입할 때 병렬 작업 개수별 성능 테스트도 해봤다.
-<code class="language-plaintext highlighter-rouge">time</code> 명령어를 사용해서 각 명령어가 실행되는데 걸리는 시간을 측정할 수 있다.
-테스트에 쓰이는 sql 쿼리 데이터의 양은 약 35만 row 가량을 기준으로 한다.</p>
+<code class="language-plaintext highlighter-rouge">time</code> 명령어를 사용해서 각 명령어가 실행되는데 걸리는 시간을 측정할 수 있다.</p>
+<ul>
+  <li>user: 사용자 모드에서 CPU가 사용된 시간입니다. 이 시간은 CPU가 사용자 프로세스에 의해 작업을 수행하는 데 소요된 시간이다.</li>
+  <li>system: 시스템 모드에서 CPU가 사용된 시간입니다. 이 시간은 운영 체제가 시스템 호출을 처리하는 데 소요된 시간이다.</li>
+  <li>cpu: CPU 사용률을 나타내며, 전체 시간 동안 CPU가 얼마나 사용되었는지를 백분율로 보여준다.</li>
+  <li>total: 전체 경과 시간입니다. 벽 시계 시간으로, 명령어가 시작된 시점부터 끝날 때까지의 총 시간이다.</li>
+</ul>
 
-<h3 id="4개의-병렬-작업">4개의 병렬 작업</h3>
+<p>테스트에 쓰이는 sql 쿼리 데이터의 양은 약 35만 row 가량을 기준으로 한다.</p>
+
+<h3 id="단일-커넥션으로-실행">단일 커넥션으로 실행</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">time </span>mysql <span class="nt">--login-path</span><span class="o">=</span>client coupon &lt; 01-coupon.sql
+
+mysql <span class="nt">--login-path</span><span class="o">=</span>client coupon &lt; 01-coupon.sql  4.77s user 6.11s system 10% cpu 1:45.28 total
+</code></pre></div></div>
+<ul>
+  <li>사용자 모드에서 4.77초가 소요,</li>
+  <li>시스템 모드에서 6.11초가 소요,</li>
+  <li>전체 CPU 사용률은 <strong>10%</strong>였고,</li>
+  <li>전체 실행 시간은 1분 45초 28밀리초였다.</li>
+</ul>
+
+<h3 id="4개의-커넥션으로-병렬-실행">4개의 커넥션으로 병렬 실행</h3>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">time ls </span>part_<span class="k">*</span> | parallel <span class="nt">-j</span> 4 <span class="s2">"mysql --login-path=client 'my_database' &lt; {}"</span>
 
 <span class="nb">ls</span> <span class="nt">-G</span> part_<span class="k">*</span>  0.00s user 0.00s system 75% cpu 0.009 total
@@ -450,7 +471,7 @@ parallel <span class="nt">-j</span> 4 <span class="s2">"mysql --login-path=clien
   <li>전체 CPU 사용률은 71%로, 병렬 작업이 CPU를 효율적으로 사용했다.</li>
 </ul>
 
-<h3 id="8개의-병렬-작업">8개의 병렬 작업</h3>
+<h3 id="8개의-커넥션으로-병렬-실행">8개의 커넥션으로 병렬 실행</h3>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">time ls </span>part_<span class="k">*</span> | parallel <span class="nt">-j</span> 8 <span class="s2">"mysql --login-path=client 'my_database' &lt; {}"</span>
 
 <span class="nb">ls</span> <span class="nt">-G</span> part_<span class="k">*</span>  0.00s user 0.00s system 77% cpu 0.010 total
@@ -473,8 +494,40 @@ parallel <span class="nt">-j</span> 8 <span class="s2">"mysql --login-path=clien
   <p>CPU 사용률이 100%를 넘는 것은 시스템이 멀티코어 CPU를 효율적으로 활용하고 있다는 의미이다. 이 수치는 단일 코어 사용률이 아닌, 전체 코어의 총합으로 계산된 값이다.</p>
 </blockquote>
 
+<h3 id="12개의-커넥션으로-병렬-실행">12개의 커넥션으로 병렬 실행</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">time ls </span>part_<span class="k">*</span> | parallel <span class="nt">-j</span> 12 <span class="s2">"mysql --login-path=client coupon &lt; {}"</span>
+
+<span class="nb">ls</span> <span class="nt">-G</span> part_<span class="k">*</span>  0.00s user 0.00s system 79% cpu 0.010 total
+parallel <span class="nt">-j</span> 12 <span class="s2">"mysql --login-path=client coupon &lt; {}"</span>  29.14s user 9.84s system 135% cpu 28.859 total
+</code></pre></div></div>
+
+<h3 id="16개의-커넥션으로-병렬-실행">16개의 커넥션으로 병렬 실행</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">time ls </span>part_<span class="k">*</span> | parallel <span class="nt">-j</span> 16 <span class="s2">"mysql --login-path=client coupon &lt; {}"</span>
+
+<span class="nb">ls</span> <span class="nt">-G</span> part_<span class="k">*</span>  0.00s user 0.00s system 79% cpu 0.010 total
+parallel <span class="nt">-j</span> 16 <span class="s2">"mysql --login-path=client coupon &lt; {}"</span>  29.38s user 9.97s system 152% cpu 25.758 total
+</code></pre></div></div>
+
+<h3 id="20개의-커넥션으로-병렬-실행">20개의 커넥션으로 병렬 실행</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">time ls </span>part_<span class="k">*</span> | parallel <span class="nt">-j</span> 20 <span class="s2">"mysql --login-path=client coupon &lt; {}"</span>
+
+<span class="nb">ls</span> <span class="nt">-G</span> part_<span class="k">*</span>  0.00s user 0.00s system 80% cpu 0.011 total
+parallel <span class="nt">-j</span> 20 <span class="s2">"mysql --login-path=client coupon &lt; {}"</span>  29.73s user 10.53s system 154% cpu 26.090 total
+</code></pre></div></div>
+
 <h3 id="결론">결론</h3>
-<p>현재 나의 환경에서는 8코어 CPU를 사용하고 있기 때문에 위에서 예상한 것 처럼 8개의 병렬 작업이, 4개 병렬 작업 보다 35% 가량 더 효율적으로 작업할 수 있다는 것을 확인할 수 있었다.</p>
+<p>단일 커넥션 실행의 소요 시간은 105.28초였고, 8개 커넥션 실행의 소요 시간은 37.854초로, 단일 커넥션 대비 성능 향상 비율이 약 278%였다. 또한, 8개의 병렬 작업이 4개의 병렬 작업보다 약 35% 더 효율적이라는 점도 확인했다.</p>
+
+<p>추가적으로 12개, 16개, 20개 커넥션으로 병렬 실행한 결과는 다음과 같다</p>
+<ul>
+  <li>12개 커넥션: 28.859초</li>
+  <li>16개 커넥션: 25.758초</li>
+  <li>20개 커넥션: 26.090초</li>
+</ul>
+
+<p>12개와 16개 커넥션 실행 시 8개 커넥션 대비 조금이나마 성능이 계속 향상되었지만, 20개 커넥션에서는 소요 시간이 다시 증가했다. 그 이유는 현재 나의 환경에서 20개 커넥션이 시스템 자원을 초과하여 오히려 성능이 떨어진 것으로 보인다.</p>
+
+<p>이 결과는 병렬로 작업할 수 있는 상황에서 단일 커넥션 대신 병렬 작업을 적절히 활용하면 데이터베이스 작업의 성능이 크게 향상될 수 있음을 보여준다. 그러나 병렬 커넥션 수가 시스템의 최적 성능을 초과하면 오히려 성능이 저하될 수 있다는 점도 중요하다. 따라서, 병렬 처리가 가능한 상황에서는 환경에 맞게 적절한 수의 병렬 작업을 설정하여 성능을 극대화하는 것이 중요하다.</p>
 
         
       </section>
@@ -585,6 +638,89 @@ parallel <span class="nt">-j</span> 8 <span class="s2">"mysql --login-path=clien
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
+        <a href="/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-1/" rel="permalink">토미의 Coupon 인덱스 정리 - 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          14 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">```java
+public class IndexPerformanceTest {
+
+private static final String BASE_URI = "http://localhost:8080";  
+private static final Long MIN_COUPON_ID = 1L; ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/woowacourse/A-collection-with-cascade=-all-delete-orphan-was-no-longer-referenced-by-the-owning-entity-instance-%EC%97%90%EB%9F%AC/" rel="permalink">org.hibernate.HibernateException: A collection with cascade=”all-delete-orphan” was no longer referenced by the owning entity instance 에러 트러블 슈팅
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">org.hibernate.HibernateException: A collection with cascade=”all-delete-orphan” was no longer referenced by the owning entity instance 에러 트러블 슈팅한 내용이다.
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
         <a href="/woowacourse/%ED%96%89%EB%8F%99%EB%8C%80%EC%9E%A5-%EC%A0%95%EC%82%B0-%ED%8A%B9%ED%99%94-%EC%84%9C%EB%B9%84%EC%8A%A4%EB%A1%9C-%ED%83%88%EB%B0%94%EA%BF%88%EC%9D%84-%EC%9C%84%ED%95%9C-%EC%95%84%EC%9D%B4%EB%94%94%EC%96%B4/" rel="permalink">행동대장을 정산 특화 서비스로 탈바꿈 하기 위한 아이디어
 </a>
       
@@ -653,88 +789,6 @@ parallel <span class="nt">-j</span> 8 <span class="s2">"mysql --login-path=clien
 
 
     <p class="archive__item-excerpt" itemprop="description">우아한테크코스 6기 레벨3에는 팀 프로젝트를 진행하는데, 내가 속한 팀은 행동대장 팀이다.
-</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/ps/code-force-first-contest/" rel="permalink">codeforces contest 첫 참가
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          1 분 소요
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">처음으로 참가한 대회 Pinely Round 4 (Div. 1 + Div. 2)
-</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/effective%20java/Effective-Java-Item-26-generic-raw-type/" rel="permalink">Effective Java - 아이템 25: 로 타입은 사용하지 말라
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-
-    
-
-    
-      
-      
-
-      <span class="page__meta-readtime">
-        <i class="far fa-clock" aria-hidden="true"></i>
-        
-          4 분 소요
-        
-      </span>
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">제네릭
-클래스와 인터페이스 선언에 타입 매개변수(type parameter)가 쓰이면, 이를 제네릭 클래스 혹은 제네릭 인터페이스라 한다.
-제네릭 클래스와 제네릭 인터페이스를 통틀어 제네릭 타입(generic type)이라 한다.
 </p>
   </article>
 </div>
