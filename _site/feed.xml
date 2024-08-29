@@ -5,8 +5,8 @@
     <description></description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 30 Aug 2024 02:46:01 +0900</pubDate>
-    <lastBuildDate>Fri, 30 Aug 2024 02:46:01 +0900</lastBuildDate>
+    <pubDate>Fri, 30 Aug 2024 02:52:53 +0900</pubDate>
+    <lastBuildDate>Fri, 30 Aug 2024 02:52:53 +0900</lastBuildDate>
     <generator>Jekyll v4.3.2</generator>
     
       <item>
@@ -70,18 +70,18 @@
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;각 테스트 메서드는 먼저 해당 API의 상태 코드를 확인하고, 이후 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;executeMultipleRequests&lt;/code&gt; 메서드를 호출하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;executeRequest&lt;/code&gt; 메서드를 호출해서 여러 스레드로 동시에 요청을 보낸다.&lt;/p&gt;
+&lt;p&gt;각 테스트 메서드는 먼저 해당 API의 상태 코드를 확인하고, 이후 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;executeMultipleRequests&lt;/code&gt; 메서드를 호출하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;executeRequest&lt;/code&gt; 메서드를 호출해서 여러 스레드로 동시에 요청을 보낸다.&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;&lt;strong&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;executeMultipleRequests&lt;/code&gt; 메서드&lt;/strong&gt;
     &lt;ul&gt;
-      &lt;li&gt;주어진 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Runnable&lt;/code&gt;을 여러 스레드에서 실행하여, 지정된 시간 동안 요청을 보낸다.&lt;/li&gt;
-      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AtomicBoolean&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AtomicInteger&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AtomicLong&lt;/code&gt;을 사용하여 멀티스레드 환경에서 안전하게 상태를 관리한다.&lt;/li&gt;
+      &lt;li&gt;주어진 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Runnable&lt;/code&gt;을 여러 스레드에서 실행하여, 지정된 시간 동안 요청을 보낸다.&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AtomicBoolean&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AtomicInteger&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AtomicLong&lt;/code&gt;을 사용하여 멀티스레드 환경에서 안전하게 상태를 관리한다.&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;strong&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;executeRequest&lt;/code&gt; 메서드&lt;/strong&gt;
     &lt;ul&gt;
-      &lt;li&gt;주어진 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Runnable&lt;/code&gt;을 실행하여 요청을 보내고, 소요된 시간을 측정한다.&lt;/li&gt;
+      &lt;li&gt;주어진 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Runnable&lt;/code&gt;을 실행하여 요청을 보내고, 소요된 시간을 측정한다.&lt;/li&gt;
       &lt;li&gt;요청 수와 총 소요 시간을 각각 증가시켜, 테스트 결과를 집계한다.&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
@@ -361,8 +361,9 @@
 &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Coupon&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MemberCoupon&lt;/code&gt;의 관계는 1:N &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@ManyToOne&lt;/code&gt; 관계이다.
 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MemberCoupon&lt;/code&gt; 은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Coupon&lt;/code&gt; 의 id를 FK 로 가지고 있다.&lt;br /&gt;
 외래 키 제약 조건(FK Constraints) 설정시 외래 키 컬럼에 대한 인덱스를 자동으로 생성한다.&lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;show index from member_coupon;&lt;/code&gt; 조회를 해보면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_coupon&lt;/code&gt; 테이블에 생성된 인덱스를 볼 수 있다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_id&lt;/code&gt; 컬럼에 대한 외래 키 인덱스는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FKkxw7ja7v55gk4a368w3gs6s0j&lt;/code&gt; 라는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Key_name&lt;/code&gt;으로 지정되어 있다.
-![[Pasted image 20240829195911.png]]&lt;/p&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;show index from member_coupon;&lt;/code&gt; 조회를 해보면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_coupon&lt;/code&gt; 테이블에 생성된 인덱스를 볼 수 있다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_id&lt;/code&gt; 컬럼에 대한 외래 키 인덱스는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FKkxw7ja7v55gk4a368w3gs6s0j&lt;/code&gt; 라는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Key_name&lt;/code&gt;으로 지정되어 있다.&lt;/p&gt;
+
+&lt;p&gt;![[Pasted image 20240829195911.png]]&lt;/p&gt;
 
 &lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| #  | Table        | Non_unique | Key_name                     | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible |
 |----|--------------|------------|-------------------------------|---------------|-------------|-----------|-------------|----------|--------|------|-------------|---------|----------------|---------|
@@ -378,6 +379,7 @@
 &lt;p&gt;조회 쿼리의 맨 앞에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;explain&lt;/code&gt; 을 붙여서 실행 계획을 볼 수 있다.&lt;/p&gt;
 
 &lt;p&gt;![[Pasted image 20240829200549.png]]&lt;/p&gt;
+
 &lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| #  | id | select_type | table | partitions | type | possible_keys                  | key                           | key_len | ref  | rows | filtered | Extra         |
 |----|----|-------------|-------|------------|------|--------------------------------|-------------------------------|---------|------|------|----------|---------------|
 | 1  | 1  | SIMPLE      | mc    |            | ref  | FKkxw7ja7v55gk4a368w3gs6s0j | FKkxw7ja7v55gk4a368w3gs6s0j | 9       | const | 183  | 100      | Using index   |
@@ -428,9 +430,9 @@
 &lt;h3 id=&quot;type&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;&lt;/h3&gt;
 &lt;blockquote&gt;
 
-  &lt;p&gt;type은 접근 방식을 표시하는 필드다. 접근 방식은 테이블에서 어떻게 행데이터를 가져올것인가를 가리킨다. 위 EXPLAIN에서는 ALL, eq_ref, ref가 있는데 ALL, eq_ref는 조인시 기본 키나 고유키를 사용하여 하나의 값으로 접근(최대 1행만을 정확하게 패치), ref는 여러 개의 행을 패치할 가능성이 있는 접근을 의미한다. &lt;strong&gt;접근 방식은 대상 테이블로의 접근이 효율적일지 여부를 판단하는 데 아주 중요한 항목이다.&lt;/strong&gt;&lt;/p&gt;
+  &lt;p&gt;type은 접근 방식을 표시하는 필드다. 접근 방식은 테이블에서 어떻게 행데이터를 가져올것인가를 가리킨다. 위 EXPLAIN에서는 ALL, eq_ref, ref가 있는데 ALL, eq_ref는 조인시 기본 키나 고유키를 사용하여 하나의 값으로 접근(최대 1행만을 정확하게 패치), ref는 여러 개의 행을 패치할 가능성이 있는 접근을 의미한다. &lt;strong&gt;접근 방식은 대상 테이블로의 접근이 효율적일지 여부를 판단하는 데 아주 중요한 항목이다.&lt;/strong&gt;&lt;/p&gt;
 
-  &lt;p&gt;이들 접근 방식 가운데도 주의가 필요한 것은 ALL, index, ref_or_null이다. &lt;strong&gt;ALL, index 두 가지는 테이블 또는 특정 인덱스가 전체 행에 접근하기 때문에 테이블 크기가 크면 효율이 떨어진다. ref_or_null의 경우 NUL이 들어있는 행은 인덱스의 맨 앞에 모아서 저장하지만 그 건수가 많으면 MySQL 서버의 작업량이 방대해진다. 다시 말해서 ALL 이외의 접근 방식은 모두 인덱스를 사용한다.&lt;/strong&gt;&lt;/p&gt;
+  &lt;p&gt;이들 접근 방식 가운데도 주의가 필요한 것은 ALL, index, ref_or_null이다. &lt;strong&gt;ALL, index 두 가지는 테이블 또는 특정 인덱스가 전체 행에 접근하기 때문에 테이블 크기가 크면 효율이 떨어진다. ref_or_null의 경우 NUL이 들어있는 행은 인덱스의 맨 앞에 모아서 저장하지만 그 건수가 많으면 MySQL 서버의 작업량이 방대해진다. 다시 말해서 ALL 이외의 접근 방식은 모두 인덱스를 사용한다.&lt;/strong&gt;&lt;/p&gt;
 
   &lt;p&gt;접근 방식이 ALL 또는 index인 경우는 그 쿼리로 사용할 수 있는 적절한 인덱스가 없다는 의미일 수도 있다. 위 쿼리에서 Country 테이블에 대한 접근은 ALL이지만 이는 WHERE 구의 조건을 지정하지 않았기 때문이다. 그러한 쿼리에서 드라이빙 테이블에 접근한다면 전체 행을 스캔 할수 밖에 없다.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -508,9 +510,11 @@
 &lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DROP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FOREIGN&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FKkxw7ja7v55gk4a368w3gs6s0j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  
 &lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DROP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INDEX&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FKkxw7ja7v55gk4a368w3gs6s0j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;p&gt;![[Pasted image 20240829204204.png]]
-![[Pasted image 20240829204245.png]]
-보다시피 인덱스를 제거하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;explain&lt;/code&gt;으로 실행 계획을 살펴보면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ALL&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;key&lt;/code&gt;에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;null&lt;/code&gt;이 들어가 있는 것을 볼 수 있다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ALL&lt;/code&gt;이라는 것은 테이블의 전체 데이터에 접근했다는 것을 의미한다. 결과적으로 평균 경과 시간이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;100ms&lt;/code&gt;를 초과했기 때문에 검증에 실패한다.&lt;/p&gt;
+![[Pasted image 20240829204245.png]]&lt;/p&gt;
+
+&lt;p&gt;보다시피 인덱스를 제거하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;explain&lt;/code&gt;으로 실행 계획을 살펴보면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ALL&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;key&lt;/code&gt;에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;null&lt;/code&gt;이 들어가 있는 것을 볼 수 있다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ALL&lt;/code&gt;이라는 것은 테이블의 전체 데이터에 접근했다는 것을 의미한다. 결과적으로 평균 경과 시간이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;100ms&lt;/code&gt;를 초과했기 때문에 검증에 실패한다.&lt;/p&gt;
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;count:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;913&lt;/span&gt;
 &lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100258&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
 &lt;span class=&quot;nc&quot;&gt;Average&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;109&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
@@ -583,6 +587,7 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;![[Pasted image 20240830010640.png]]&lt;/p&gt;
+
 &lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| # | Table        | Non_unique | Key_name                        | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible |
 |---|--------------|------------|---------------------------------|---------------|-------------|-----------|-------------|----------|--------|------|-------------|---------|----------------|---------|
 | 1 | member_coupon| 0          | PRIMARY                         | 1             | id          | A         | 468036      |          |        |      | BTREE       |         |                | YES     |
@@ -602,6 +607,7 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;![[Pasted image 20240830011011.png]]&lt;/p&gt;
+
 &lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| # | id | select_type | table | partitions | type | possible_keys                     | key                             | key_len | ref   | rows | filtered | Extra       |
 |---|----|--------------|-------|------------|------|-----------------------------------|---------------------------------|---------|-------|------|----------|-------------|
 | 1 | 1  | SIMPLE       | mc    |            | ref  | FKkxw7ja7v55gk4a368w3gs6s0j      | FKkxw7ja7v55gk4a368w3gs6s0j    | 9       | const | 183  | 10       | Using where |
@@ -624,8 +630,10 @@
 
 &lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;create&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx_coupon_used&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;on&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coupon_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;used&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;![[Pasted image 20240830014647.png]]
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt; 컬럼을 묶어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;idx_coupon_used&lt;/code&gt;라는 이름의 복합 인덱스를 생성했다.
+
+&lt;p&gt;![[Pasted image 20240830014647.png]]&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt; 컬럼을 묶어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;idx_coupon_used&lt;/code&gt;라는 이름의 복합 인덱스를 생성했다.
 복합 인덱스를 구성하고 다시 한 번 실행 계획을 살펴보면 아래와 같다.&lt;/p&gt;
 
 &lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gh&quot;&gt;#,id,select_type,table,partitions,type,possible_keys,key,key_len,ref,rows,filtered,Extra  &lt;/span&gt;
@@ -641,8 +649,10 @@
 
 &lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;show&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;![[Pasted image 20240830021433.png]]
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;idx_coupon_used&lt;/code&gt; 인덱스의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cardinality&lt;/code&gt;를 보면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_id&lt;/code&gt;는 1344, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt;는 2505 이다.
+
+&lt;p&gt;![[Pasted image 20240830021433.png]]&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;idx_coupon_used&lt;/code&gt; 인덱스의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cardinality&lt;/code&gt;를 보면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_id&lt;/code&gt;는 1344, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt;는 2505 이다.
 인덱스를 활용해서 최대한 중복도가 낮은 컬럼 순으로 데이터를 필터링 하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cardinality&lt;/code&gt;가 높은 컬럼인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used, coupon_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;idx_used_coupon&lt;/code&gt; 순서로 인덱스를 생성해서 실행해 보았다.&lt;/p&gt;
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;count:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;11494&lt;/span&gt;  
 &lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;99948&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;  

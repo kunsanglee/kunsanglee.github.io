@@ -314,7 +314,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          13 분 소요
+          14 분 소요
         
       </span>
     
@@ -413,18 +413,18 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>각 테스트 메서드는 먼저 해당 API의 상태 코드를 확인하고, 이후 <code class="language-plaintext highlighter-rouge">executeMultipleRequests</code> 메서드를 호출하고 <code class="language-plaintext highlighter-rouge">executeRequest</code> 메서드를 호출해서 여러 스레드로 동시에 요청을 보낸다.</p>
+<p>각 테스트 메서드는 먼저 해당 API의 상태 코드를 확인하고, 이후 <code class="language-plaintext highlighter-rouge">executeMultipleRequests</code> 메서드를 호출하고 <code class="language-plaintext highlighter-rouge">executeRequest</code> 메서드를 호출해서 여러 스레드로 동시에 요청을 보낸다.</p>
 
 <ol>
   <li><strong><code class="language-plaintext highlighter-rouge">executeMultipleRequests</code> 메서드</strong>
     <ul>
-      <li>주어진 <code class="language-plaintext highlighter-rouge">Runnable</code>을 여러 스레드에서 실행하여, 지정된 시간 동안 요청을 보낸다.</li>
-      <li><code class="language-plaintext highlighter-rouge">AtomicBoolean</code>, <code class="language-plaintext highlighter-rouge">AtomicInteger</code>, <code class="language-plaintext highlighter-rouge">AtomicLong</code>을 사용하여 멀티스레드 환경에서 안전하게 상태를 관리한다.</li>
+      <li>주어진 <code class="language-plaintext highlighter-rouge">Runnable</code>을 여러 스레드에서 실행하여, 지정된 시간 동안 요청을 보낸다.</li>
+      <li><code class="language-plaintext highlighter-rouge">AtomicBoolean</code>, <code class="language-plaintext highlighter-rouge">AtomicInteger</code>, <code class="language-plaintext highlighter-rouge">AtomicLong</code>을 사용하여 멀티스레드 환경에서 안전하게 상태를 관리한다.</li>
     </ul>
   </li>
   <li><strong><code class="language-plaintext highlighter-rouge">executeRequest</code> 메서드</strong>
     <ul>
-      <li>주어진 <code class="language-plaintext highlighter-rouge">Runnable</code>을 실행하여 요청을 보내고, 소요된 시간을 측정한다.</li>
+      <li>주어진 <code class="language-plaintext highlighter-rouge">Runnable</code>을 실행하여 요청을 보내고, 소요된 시간을 측정한다.</li>
       <li>요청 수와 총 소요 시간을 각각 증가시켜, 테스트 결과를 집계한다.</li>
     </ul>
   </li>
@@ -704,8 +704,9 @@
 <p><code class="language-plaintext highlighter-rouge">Coupon</code>과 <code class="language-plaintext highlighter-rouge">MemberCoupon</code>의 관계는 1:N <code class="language-plaintext highlighter-rouge">@ManyToOne</code> 관계이다.
 <code class="language-plaintext highlighter-rouge">MemberCoupon</code> 은 <code class="language-plaintext highlighter-rouge">Coupon</code> 의 id를 FK 로 가지고 있다.<br />
 외래 키 제약 조건(FK Constraints) 설정시 외래 키 컬럼에 대한 인덱스를 자동으로 생성한다.<br />
-<code class="language-plaintext highlighter-rouge">show index from member_coupon;</code> 조회를 해보면 <code class="language-plaintext highlighter-rouge">member_coupon</code> 테이블에 생성된 인덱스를 볼 수 있다. <code class="language-plaintext highlighter-rouge">coupon_id</code> 컬럼에 대한 외래 키 인덱스는 <code class="language-plaintext highlighter-rouge">FKkxw7ja7v55gk4a368w3gs6s0j</code> 라는 <code class="language-plaintext highlighter-rouge">Key_name</code>으로 지정되어 있다.
-![[Pasted image 20240829195911.png]]</p>
+<code class="language-plaintext highlighter-rouge">show index from member_coupon;</code> 조회를 해보면 <code class="language-plaintext highlighter-rouge">member_coupon</code> 테이블에 생성된 인덱스를 볼 수 있다. <code class="language-plaintext highlighter-rouge">coupon_id</code> 컬럼에 대한 외래 키 인덱스는 <code class="language-plaintext highlighter-rouge">FKkxw7ja7v55gk4a368w3gs6s0j</code> 라는 <code class="language-plaintext highlighter-rouge">Key_name</code>으로 지정되어 있다.</p>
+
+<p>![[Pasted image 20240829195911.png]]</p>
 
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>| #  | Table        | Non_unique | Key_name                     | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible |
 |----|--------------|------------|-------------------------------|---------------|-------------|-----------|-------------|----------|--------|------|-------------|---------|----------------|---------|
@@ -721,6 +722,7 @@
 <p>조회 쿼리의 맨 앞에 <code class="language-plaintext highlighter-rouge">explain</code> 을 붙여서 실행 계획을 볼 수 있다.</p>
 
 <p>![[Pasted image 20240829200549.png]]</p>
+
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>| #  | id | select_type | table | partitions | type | possible_keys                  | key                           | key_len | ref  | rows | filtered | Extra         |
 |----|----|-------------|-------|------------|------|--------------------------------|-------------------------------|---------|------|------|----------|---------------|
 | 1  | 1  | SIMPLE      | mc    |            | ref  | FKkxw7ja7v55gk4a368w3gs6s0j | FKkxw7ja7v55gk4a368w3gs6s0j | 9       | const | 183  | 100      | Using index   |
@@ -771,9 +773,9 @@
 <h3 id="type"><code class="language-plaintext highlighter-rouge">type</code></h3>
 <blockquote>
 
-  <p>type은 접근 방식을 표시하는 필드다. 접근 방식은 테이블에서 어떻게 행데이터를 가져올것인가를 가리킨다. 위 EXPLAIN에서는 ALL, eq_ref, ref가 있는데 ALL, eq_ref는 조인시 기본 키나 고유키를 사용하여 하나의 값으로 접근(최대 1행만을 정확하게 패치), ref는 여러 개의 행을 패치할 가능성이 있는 접근을 의미한다. <strong>접근 방식은 대상 테이블로의 접근이 효율적일지 여부를 판단하는 데 아주 중요한 항목이다.</strong></p>
+  <p>type은 접근 방식을 표시하는 필드다. 접근 방식은 테이블에서 어떻게 행데이터를 가져올것인가를 가리킨다. 위 EXPLAIN에서는 ALL, eq_ref, ref가 있는데 ALL, eq_ref는 조인시 기본 키나 고유키를 사용하여 하나의 값으로 접근(최대 1행만을 정확하게 패치), ref는 여러 개의 행을 패치할 가능성이 있는 접근을 의미한다. <strong>접근 방식은 대상 테이블로의 접근이 효율적일지 여부를 판단하는 데 아주 중요한 항목이다.</strong></p>
 
-  <p>이들 접근 방식 가운데도 주의가 필요한 것은 ALL, index, ref_or_null이다. <strong>ALL, index 두 가지는 테이블 또는 특정 인덱스가 전체 행에 접근하기 때문에 테이블 크기가 크면 효율이 떨어진다. ref_or_null의 경우 NUL이 들어있는 행은 인덱스의 맨 앞에 모아서 저장하지만 그 건수가 많으면 MySQL 서버의 작업량이 방대해진다. 다시 말해서 ALL 이외의 접근 방식은 모두 인덱스를 사용한다.</strong></p>
+  <p>이들 접근 방식 가운데도 주의가 필요한 것은 ALL, index, ref_or_null이다. <strong>ALL, index 두 가지는 테이블 또는 특정 인덱스가 전체 행에 접근하기 때문에 테이블 크기가 크면 효율이 떨어진다. ref_or_null의 경우 NUL이 들어있는 행은 인덱스의 맨 앞에 모아서 저장하지만 그 건수가 많으면 MySQL 서버의 작업량이 방대해진다. 다시 말해서 ALL 이외의 접근 방식은 모두 인덱스를 사용한다.</strong></p>
 
   <p>접근 방식이 ALL 또는 index인 경우는 그 쿼리로 사용할 수 있는 적절한 인덱스가 없다는 의미일 수도 있다. 위 쿼리에서 Country 테이블에 대한 접근은 ALL이지만 이는 WHERE 구의 조건을 지정하지 않았기 때문이다. 그러한 쿼리에서 드라이빙 테이블에 접근한다면 전체 행을 스캔 할수 밖에 없다.</p>
 </blockquote>
@@ -851,9 +853,11 @@
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">member_coupon</span> <span class="k">DROP</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="n">FKkxw7ja7v55gk4a368w3gs6s0j</span><span class="p">;</span>  
 <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">member_coupon</span> <span class="k">DROP</span> <span class="k">INDEX</span> <span class="n">FKkxw7ja7v55gk4a368w3gs6s0j</span><span class="p">;</span>
 </code></pre></div></div>
+
 <p>![[Pasted image 20240829204204.png]]
-![[Pasted image 20240829204245.png]]
-보다시피 인덱스를 제거하고 <code class="language-plaintext highlighter-rouge">explain</code>으로 실행 계획을 살펴보면 <code class="language-plaintext highlighter-rouge">type</code>가 <code class="language-plaintext highlighter-rouge">ALL</code>, <code class="language-plaintext highlighter-rouge">key</code>에는 <code class="language-plaintext highlighter-rouge">null</code>이 들어가 있는 것을 볼 수 있다. <code class="language-plaintext highlighter-rouge">type</code>으로 <code class="language-plaintext highlighter-rouge">ALL</code>이라는 것은 테이블의 전체 데이터에 접근했다는 것을 의미한다. 결과적으로 평균 경과 시간이 <code class="language-plaintext highlighter-rouge">100ms</code>를 초과했기 때문에 검증에 실패한다.</p>
+![[Pasted image 20240829204245.png]]</p>
+
+<p>보다시피 인덱스를 제거하고 <code class="language-plaintext highlighter-rouge">explain</code>으로 실행 계획을 살펴보면 <code class="language-plaintext highlighter-rouge">type</code>가 <code class="language-plaintext highlighter-rouge">ALL</code>, <code class="language-plaintext highlighter-rouge">key</code>에는 <code class="language-plaintext highlighter-rouge">null</code>이 들어가 있는 것을 볼 수 있다. <code class="language-plaintext highlighter-rouge">type</code>으로 <code class="language-plaintext highlighter-rouge">ALL</code>이라는 것은 테이블의 전체 데이터에 접근했다는 것을 의미한다. 결과적으로 평균 경과 시간이 <code class="language-plaintext highlighter-rouge">100ms</code>를 초과했기 때문에 검증에 실패한다.</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Total</span> <span class="n">request</span> <span class="nl">count:</span> <span class="mi">913</span>
 <span class="nc">Total</span> <span class="n">elapsed</span> <span class="nl">time:</span> <span class="mi">100258</span><span class="n">ms</span>
 <span class="nc">Average</span> <span class="n">elapsed</span> <span class="nl">time:</span> <span class="mi">109</span><span class="n">ms</span>
@@ -926,6 +930,7 @@
 </code></pre></div></div>
 
 <p>![[Pasted image 20240830010640.png]]</p>
+
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>| # | Table        | Non_unique | Key_name                        | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible |
 |---|--------------|------------|---------------------------------|---------------|-------------|-----------|-------------|----------|--------|------|-------------|---------|----------------|---------|
 | 1 | member_coupon| 0          | PRIMARY                         | 1             | id          | A         | 468036      |          |        |      | BTREE       |         |                | YES     |
@@ -945,6 +950,7 @@
 </code></pre></div></div>
 
 <p>![[Pasted image 20240830011011.png]]</p>
+
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>| # | id | select_type | table | partitions | type | possible_keys                     | key                             | key_len | ref   | rows | filtered | Extra       |
 |---|----|--------------|-------|------------|------|-----------------------------------|---------------------------------|---------|-------|------|----------|-------------|
 | 1 | 1  | SIMPLE       | mc    |            | ref  | FKkxw7ja7v55gk4a368w3gs6s0j      | FKkxw7ja7v55gk4a368w3gs6s0j    | 9       | const | 183  | 10       | Using where |
@@ -967,8 +973,10 @@
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">create</span> <span class="k">index</span> <span class="n">idx_coupon_used</span> <span class="k">on</span> <span class="n">member_coupon</span> <span class="p">(</span><span class="n">coupon_id</span><span class="p">,</span> <span class="n">used</span><span class="p">);</span>
 </code></pre></div></div>
-<p>![[Pasted image 20240830014647.png]]
-<code class="language-plaintext highlighter-rouge">coupon_id</code>, <code class="language-plaintext highlighter-rouge">used</code> 컬럼을 묶어서 <code class="language-plaintext highlighter-rouge">idx_coupon_used</code>라는 이름의 복합 인덱스를 생성했다.
+
+<p>![[Pasted image 20240830014647.png]]</p>
+
+<p><code class="language-plaintext highlighter-rouge">coupon_id</code>, <code class="language-plaintext highlighter-rouge">used</code> 컬럼을 묶어서 <code class="language-plaintext highlighter-rouge">idx_coupon_used</code>라는 이름의 복합 인덱스를 생성했다.
 복합 인덱스를 구성하고 다시 한 번 실행 계획을 살펴보면 아래와 같다.</p>
 
 <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gh">#,id,select_type,table,partitions,type,possible_keys,key,key_len,ref,rows,filtered,Extra  </span>
@@ -984,8 +992,10 @@
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">show</span> <span class="k">index</span> <span class="k">from</span> <span class="n">member_coupon</span><span class="p">;</span>
 </code></pre></div></div>
-<p>![[Pasted image 20240830021433.png]]
-<code class="language-plaintext highlighter-rouge">idx_coupon_used</code> 인덱스의 <code class="language-plaintext highlighter-rouge">Cardinality</code>를 보면 <code class="language-plaintext highlighter-rouge">coupon_id</code>는 1344, <code class="language-plaintext highlighter-rouge">used</code>는 2505 이다.
+
+<p>![[Pasted image 20240830021433.png]]</p>
+
+<p><code class="language-plaintext highlighter-rouge">idx_coupon_used</code> 인덱스의 <code class="language-plaintext highlighter-rouge">Cardinality</code>를 보면 <code class="language-plaintext highlighter-rouge">coupon_id</code>는 1344, <code class="language-plaintext highlighter-rouge">used</code>는 2505 이다.
 인덱스를 활용해서 최대한 중복도가 낮은 컬럼 순으로 데이터를 필터링 하기 위해 <code class="language-plaintext highlighter-rouge">Cardinality</code>가 높은 컬럼인 <code class="language-plaintext highlighter-rouge">used, coupon_id</code>, <code class="language-plaintext highlighter-rouge">idx_used_coupon</code> 순서로 인덱스를 생성해서 실행해 보았다.</p>
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Total</span> <span class="n">request</span> <span class="nl">count:</span> <span class="mi">11494</span>  
 <span class="nc">Total</span> <span class="n">elapsed</span> <span class="nl">time:</span> <span class="mi">99948</span><span class="n">ms</span>  
