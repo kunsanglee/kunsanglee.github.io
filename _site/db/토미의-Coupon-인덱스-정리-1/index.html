@@ -10,7 +10,7 @@
     <meta charset="utf-8">
 
 <!-- begin _includes/seo.html --><title>토미의 Coupon 인덱스 정리 - 1 -  kunsanglee’s</title>
-<meta name="description" content="```java public class IndexPerformanceTest {  private static final String BASE_URI = &quot;http://localhost:8080&quot;;   private static final Long MIN_COUPON_ID = 1L;   private static final Long MAX_COUPON_ID = 351160L;   private static final Long MIN_MEMBER_ID = 1L;   private static final Long MAX_MEMBER_ID = 250000L;   private static final int THREAD_COUNT = 10;   private static final int TEST_DURATION_SECONDS = 10;   private static final long MILLISECONDS_IN_SECOND = 1000L;      @BeforeEach   void setUp() {       RestAssured.baseURI = BASE_URI;   }">
+<meta name="description" content="토미의 트랜잭션, 인덱스 강의 자료를 학습하여 작성했다.">
 
 
   <meta name="author" content="이건상">
@@ -26,7 +26,7 @@
 <meta property="og:url" content="http://localhost:4000/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-1/">
 
 
-  <meta property="og:description" content="```java public class IndexPerformanceTest {  private static final String BASE_URI = &quot;http://localhost:8080&quot;;   private static final Long MIN_COUPON_ID = 1L;   private static final Long MAX_COUPON_ID = 351160L;   private static final Long MIN_MEMBER_ID = 1L;   private static final Long MAX_MEMBER_ID = 250000L;   private static final int THREAD_COUNT = 10;   private static final int TEST_DURATION_SECONDS = 10;   private static final long MILLISECONDS_IN_SECOND = 1000L;      @BeforeEach   void setUp() {       RestAssured.baseURI = BASE_URI;   }">
+  <meta property="og:description" content="토미의 트랜잭션, 인덱스 강의 자료를 학습하여 작성했다.">
 
 
 
@@ -291,7 +291,7 @@
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
     <meta itemprop="headline" content="토미의 Coupon 인덱스 정리 - 1">
-    <meta itemprop="description" content="```javapublic class IndexPerformanceTest {private static final String BASE_URI = &quot;http://localhost:8080&quot;;  private static final Long MIN_COUPON_ID = 1L;  private static final Long MAX_COUPON_ID = 351160L;  private static final Long MIN_MEMBER_ID = 1L;  private static final Long MAX_MEMBER_ID = 250000L;  private static final int THREAD_COUNT = 10;  private static final int TEST_DURATION_SECONDS = 10;  private static final long MILLISECONDS_IN_SECOND = 1000L;    @BeforeEach  void setUp() {      RestAssured.baseURI = BASE_URI;  }">
+    <meta itemprop="description" content="토미의 트랜잭션, 인덱스 강의 자료를 학습하여 작성했다.">
     <meta itemprop="datePublished" content="2024-08-30T00:00:00+09:00">
     
 
@@ -354,7 +354,9 @@
             </nav>
           </aside>
         
-        <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">IndexPerformanceTest</span> <span class="o">{</span>  
+        <p>토미의 트랜잭션, 인덱스 강의 자료를 학습하여 작성했다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">IndexPerformanceTest</span> <span class="o">{</span>  
   
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">BASE_URI</span> <span class="o">=</span> <span class="s">"http://localhost:8080"</span><span class="o">;</span>  
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">Long</span> <span class="no">MIN_COUPON_ID</span> <span class="o">=</span> <span class="mi">1L</span><span class="o">;</span>  
@@ -989,8 +991,8 @@
 <p><code class="language-plaintext highlighter-rouge">explain</code>으로 실행 계획을 보니, <code class="language-plaintext highlighter-rouge">type</code>은 <code class="language-plaintext highlighter-rouge">ref</code>, <code class="language-plaintext highlighter-rouge">key</code>는 <code class="language-plaintext highlighter-rouge">coupon_id</code> 외래 키 인덱스를 사용하여 조회 된다. 그런데 <code class="language-plaintext highlighter-rouge">Extra</code> 컬럼을 보면 <code class="language-plaintext highlighter-rouge">Using where</code>라고 나와있다.
 인덱스를 사용했다면 <code class="language-plaintext highlighter-rouge">Using index</code>가 나와야 하는데 이게 무슨 말일까?</p>
 
-<p>결론부터 말하면 인덱스를 사용한 것이다. <code class="language-plaintext highlighter-rouge">Using where</code>는 인덱스를 활용하여 데이터를 찾았지만, 추가적인 조건을 만족하기 위해 ` where<code class="language-plaintext highlighter-rouge"> 절로 필터링을 했다는 것을 의미한다. 즉, 인덱스가 사용되어
-조회 성능이 향상되었지만, </code>used<code class="language-plaintext highlighter-rouge"> 컬럼에 대한 인덱스가 걸려있지 않기 때문에, 모든 조건을 인덱스만으로 처리할 수는 없어서 </code> where` 절로 추가 필터링이 필요했던 것이다.</p>
+<p>결론부터 말하면 인덱스를 사용한 것이다. <code class="language-plaintext highlighter-rouge">Using where</code>는 인덱스를 활용하여 데이터를 찾았지만, 추가적인 조건을 만족하기 위해 <code class="language-plaintext highlighter-rouge">where</code> 절로 필터링을 했다는 것을 의미한다. 즉, 인덱스가 사용되어
+조회 성능이 향상되었지만, <code class="language-plaintext highlighter-rouge">used</code> 컬럼에 대한 인덱스가 걸려있지 않기 때문에, 모든 조건을 인덱스만으로 처리할 수는 없어서 <code class="language-plaintext highlighter-rouge">where</code> 절로 추가 필터링이 필요했던 것이다.</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Total</span> <span class="n">request</span> <span class="nl">count:</span> <span class="mi">9804</span>
 <span class="nc">Total</span> <span class="n">elapsed</span> <span class="nl">time:</span> <span class="mi">100019</span><span class="n">ms</span>

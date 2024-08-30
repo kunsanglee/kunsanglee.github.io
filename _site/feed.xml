@@ -5,13 +5,15 @@
     <description></description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 30 Aug 2024 11:20:33 +0900</pubDate>
-    <lastBuildDate>Fri, 30 Aug 2024 11:20:33 +0900</lastBuildDate>
+    <pubDate>Fri, 30 Aug 2024 11:31:27 +0900</pubDate>
+    <lastBuildDate>Fri, 30 Aug 2024 11:31:27 +0900</lastBuildDate>
     <generator>Jekyll v4.3.2</generator>
     
       <item>
         <title>토미의 Coupon 인덱스 정리 - 1</title>
-        <description>&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;IndexPerformanceTest&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+        <description>&lt;p&gt;토미의 트랜잭션, 인덱스 강의 자료를 학습하여 작성했다.&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;IndexPerformanceTest&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
   
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;BASE_URI&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;http://localhost:8080&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Long&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;MIN_COUPON_ID&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
@@ -646,8 +648,8 @@
 &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;explain&lt;/code&gt;으로 실행 계획을 보니, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ref&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;key&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_id&lt;/code&gt; 외래 키 인덱스를 사용하여 조회 된다. 그런데 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Extra&lt;/code&gt; 컬럼을 보면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using where&lt;/code&gt;라고 나와있다.
 인덱스를 사용했다면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index&lt;/code&gt;가 나와야 하는데 이게 무슨 말일까?&lt;/p&gt;
 
-&lt;p&gt;결론부터 말하면 인덱스를 사용한 것이다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using where&lt;/code&gt;는 인덱스를 활용하여 데이터를 찾았지만, 추가적인 조건을 만족하기 위해 ` where&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt; 절로 필터링을 했다는 것을 의미한다. 즉, 인덱스가 사용되어
-조회 성능이 향상되었지만, &lt;/code&gt;used&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt; 컬럼에 대한 인덱스가 걸려있지 않기 때문에, 모든 조건을 인덱스만으로 처리할 수는 없어서 &lt;/code&gt; where` 절로 추가 필터링이 필요했던 것이다.&lt;/p&gt;
+&lt;p&gt;결론부터 말하면 인덱스를 사용한 것이다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using where&lt;/code&gt;는 인덱스를 활용하여 데이터를 찾았지만, 추가적인 조건을 만족하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;where&lt;/code&gt; 절로 필터링을 했다는 것을 의미한다. 즉, 인덱스가 사용되어
+조회 성능이 향상되었지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt; 컬럼에 대한 인덱스가 걸려있지 않기 때문에, 모든 조건을 인덱스만으로 처리할 수는 없어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;where&lt;/code&gt; 절로 추가 필터링이 필요했던 것이다.&lt;/p&gt;
 
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;count:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9804&lt;/span&gt;
 &lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100019&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;

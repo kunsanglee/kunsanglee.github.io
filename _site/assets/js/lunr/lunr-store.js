@@ -264,7 +264,7 @@ var store = [{
         "teaser": null
       },{
         "title": "토미의 Coupon 인덱스 정리 - 1",
-        "excerpt":"public class IndexPerformanceTest { private static final String BASE_URI = \"http://localhost:8080\"; private static final Long MIN_COUPON_ID = 1L; private static final Long MAX_COUPON_ID = 351160L; private static final Long MIN_MEMBER_ID = 1L; private static final Long MAX_MEMBER_ID = 250000L; private static final int THREAD_COUNT = 10; private static final int...","categories": ["DB"],
+        "excerpt":"토미의 트랜잭션, 인덱스 강의 자료를 학습하여 작성했다. public class IndexPerformanceTest { private static final String BASE_URI = \"http://localhost:8080\"; private static final Long MIN_COUPON_ID = 1L; private static final Long MAX_COUPON_ID = 351160L; private static final Long MIN_MEMBER_ID = 1L; private static final Long MAX_MEMBER_ID = 250000L; private static final int...","categories": ["DB"],
         "tags": ["index","mysql"],
         "url": "http://localhost:4000/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-1/",
         "teaser": null
