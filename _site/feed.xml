@@ -5,9 +5,392 @@
     <description></description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 30 Aug 2024 11:31:27 +0900</pubDate>
-    <lastBuildDate>Fri, 30 Aug 2024 11:31:27 +0900</lastBuildDate>
+    <pubDate>Fri, 30 Aug 2024 18:00:36 +0900</pubDate>
+    <lastBuildDate>Fri, 30 Aug 2024 18:00:36 +0900</lastBuildDate>
     <generator>Jekyll v4.3.2</generator>
+    
+      <item>
+        <title>토미의 Coupon 인덱스 정리 - 2</title>
+        <description>&lt;h2 id=&quot;3번-문제&quot;&gt;3번 문제&lt;/h2&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@Test&lt;/span&gt;  
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;현재_발급_가능한_쿠폰_조회&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;throws&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;InterruptedException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;AtomicBoolean&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;running&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AtomicBoolean&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;AtomicInteger&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AtomicInteger&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;AtomicLong&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AtomicLong&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;statusCode&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;RestAssured&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/coupons/issuable&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+    &lt;span class=&quot;n&quot;&gt;assertThat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;withFailMessage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;발급 가능한 쿠폰 조회 API 호출에 실패했습니다. 테스트 대상 서버가 실행중인지 확인해 주세요.&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isEqualTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;n&quot;&gt;executeMultipleRequests&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;running&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;RestAssured&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/coupons/issuable&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;  
+  
+    &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Total request count: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Total elapsed time: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;ms&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;averageElapsedTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Average elapsed time: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;ms&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;n&quot;&gt;assertThat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;averageElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isLessThanOrEqualTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;500L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3번 문제는 현재 발급 가능한 쿠폰을 조회하는 API 테스트이다. 호출하는 메서드를 살펴보자.&lt;/p&gt;
+
+&lt;h3 id=&quot;couponcontroller&quot;&gt;CouponController&lt;/h3&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// CouponController.class&lt;/span&gt;
+&lt;span class=&quot;nd&quot;&gt;@GetMapping&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/issuable&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;CouponResponse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;findIssuableCoupons&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;couponService&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;findIssuableCoupons&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;CouponResponse:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;collect&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;toList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;couponservice&quot;&gt;CouponService&lt;/h3&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// CouponService.class&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Coupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;findIssuableCoupons&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;now&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;couponRepository&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;findAllByIssuableAndCouponStatusAndIssueStartedAtLessThanAndIssueEndedAtGreaterThan&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;  
+                    &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;CouponStatus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ISSUABLE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isIssuableCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;collect&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;toList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;couponrepository&quot;&gt;CouponRepository&lt;/h3&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// CouponRepository.class&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Coupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;findAllByIssuableAndCouponStatusAndIssueStartedAtLessThanAndIssueEndedAtGreaterThan&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;issuable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;CouponStatus&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;couponStatus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;issueStartedAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;issueEndedAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;findAllByIssuableAndCouponStatusAndIssueStartedAtLessThanAndIssueEndedAtGreaterThan&lt;/code&gt; 메서드는 발급 가능한지 여부를 나타내는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt;, 쿠폰의 상태를 나타내는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CouponStatus&lt;/code&gt;, 쿠폰의 유효 시작기간 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issueStartedAt&lt;/code&gt;과 만료기간 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issueEndedAt&lt;/code&gt;을 매개변수로 받아서 쿠폰 리스트를 조회한다.&lt;/p&gt;
+
+&lt;h3 id=&quot;couponstatus&quot;&gt;CouponStatus&lt;/h3&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;CouponStatus&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;no&quot;&gt;PREPARING&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;  
+    &lt;span class=&quot;no&quot;&gt;ISSUABLE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;  
+    &lt;span class=&quot;no&quot;&gt;EXPIRED&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;  
+    &lt;span class=&quot;no&quot;&gt;DISCARDED&lt;/span&gt;  
+    &lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isNotIssuable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ISSUABLE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;  
+  
+    &lt;span class=&quot;cm&quot;&gt;/**  
+     * 폐기된 쿠폰은 사용할 수 없다.
+     */&lt;/span&gt;    
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isNotUsable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;PREPARING&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;DISCARDED&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CouponStatus&lt;/code&gt; enum은 이런 값들을 가지고 있다.&lt;/p&gt;
+
+&lt;h3 id=&quot;sql-쿼리-예상&quot;&gt;SQL 쿼리 예상&lt;/h3&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;findAllByIssuableAndCouponStatusAndIssueStartedAtLessThanAndIssueEndedAtGreaterThan&lt;/code&gt; 메서드를 사용해서 만료된 쿠폰들을 조회한다고 가정하고, 해당 메서드를 sql 쿼리로 작성해보면 이런 식이다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issuable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;false&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coupon_status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;EXPIRED&apos;&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issue_started_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-02-01 00:00:00.000000&apos;&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issue_ended_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-01-01 00:00:00.00000&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;query creation으로 작성된 부분 중에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IusseStartedAtLessThan&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IssueEndedAtGreaterThan&lt;/code&gt; 부분으로 인해 약간 날짜 값이 반대로 뒤집혀있는 느낌이 든다. 마치 젓가락질을 X자로 하는 듯 한..? 개인적인 생각으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IssueStartedAtGreaterThanOrEqual&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IssueEndedAtLessThanOrEqual&lt;/code&gt; 이런 식으로 작성하는 것이 가독성이 더 좋을 거라고 생각한다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;인덱스-분석&quot;&gt;인덱스 분석&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon&lt;/code&gt; 테이블의 인덱스를 살펴보면&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_id&lt;/code&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PRIMARY&lt;/code&gt; 키를 제외한 어떠한 인덱스도 없다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/image/for-post/tommy-index/Pasted image 20240830143759.png&quot; alt=&quot;[Pasted image 20240830143759.png]&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;실행-계획-분석&quot;&gt;실행 계획 분석&lt;/h3&gt;
+
+&lt;p&gt;해당 쿼리를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;explain&lt;/code&gt;을 통해서 살펴보자.&lt;/p&gt;
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;explain&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issuable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;false&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coupon_status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;EXPIRED&apos;&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issue_started_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-02-01 00:00:00.000000&apos;&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issue_ended_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-01-01 00:00:00.00000&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/image/for-post/tommy-index/Pasted image 20240830143842.png&quot; alt=&quot;[Pasted image 20240830143842.png]&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;실행 계획을 보면 해당 쿼리는 조건절에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_id&lt;/code&gt;를 포함하지 않기 때문에 인덱스를 사용하지 않는다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ALL&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;key&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;null&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filtered&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0.11&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Extra&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using where&lt;/code&gt;다.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-&amp;gt; Filter: ((c.coupon_status = &apos;EXPIRED&apos;) and (c.issuable = false) and (c.issue_started_at &amp;lt; TIMESTAMP&apos;2019-02-01 00:00:00&apos;) and (c.issue_ended_at &amp;gt; TIMESTAMP&apos;2019-01-01 00:00:00&apos;))  (cost=32839 rows=357) (actual time=3.52..174 rows=8 loops=1)
+    -&amp;gt; Table scan on c  (cost=32839 rows=321576) (actual time=3.4..142 rows=351160 loops=1)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;explain analyze&lt;/code&gt; 결과를 분석해보면 filter 조건으로 쿠폰의 상태, 발행 가능한지, 발행 시작일과 만료일 4개의 조건으로 조회했고, 실제 실행 시간은 3.52ms에서 174ms 사이였고, 비용은 32,839가 나왔다. 인덱스를 사용하지 않은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Table scan&lt;/code&gt;이 이루어졌고, 전체 351,160 행 중에서 필터 조건에 만족될 것으로 예상되는 행 수는 321,576행이다. 여기서 중요한 점은 &lt;strong&gt;예상되는 321,576행 중 실제로 조건에 맞는 행은 8개의 행&lt;/strong&gt;만 남았다는 것이다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;예상 행 수와 실제 결과의 차이가 많이 난다는 것&lt;/strong&gt;은 인덱스 사용이나 쿼리 조건을 재검토하여 성능을 개선할 필요가 있다는 것을 의미한다.&lt;/p&gt;
+
+&lt;h3 id=&quot;table-scan을-통한-성능-테스트-결과&quot;&gt;Table scan을 통한 성능 테스트 결과&lt;/h3&gt;
+
+&lt;p&gt;인덱스가 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Table scan&lt;/code&gt;을 통해 주어진 테스트를 돌려보고 요청 당 평균 소요시간을 살펴보면 이런 결과가 나온다.&lt;/p&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;count:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;471&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100600&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Average&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;213&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;조건절에-포함된-매개변수-인덱스-설정&quot;&gt;조건절에 포함된 매개변수 인덱스 설정&lt;/h3&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issuable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;false&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coupon_status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;EXPIRED&apos;&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issue_started_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-02-01 00:00:00.000000&apos;&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issue_ended_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-01-01 00:00:00.00000&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;조건절에 포함된 4가지 컬럼에 인덱스를 설정한다.&lt;/p&gt;
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;create&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx_issuable_coupon_status_issue_started_at_issue_ended_at&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;on&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issuable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon_status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;issue_started_at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;issue_ended_at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/image/for-post/tommy-index/Pasted image 20240830151003.png&quot; alt=&quot;[Pasted image 20240830151003.png]&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;explain&quot;&gt;explain&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/image/for-post/tommy-index/Pasted image 20240830151049.png&quot; alt=&quot;[Pasted image 20240830151049.png]&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| #  | id | select_type | table | partitions | type  | possible_keys                                      | key                                               | key_len | ref | rows | filtered | Extra                    |
+|----|----|-------------|-------|------------|-------|---------------------------------------------------|---------------------------------------------------|---------|-----|------|----------|--------------------------|
+| 1  | 1  | SIMPLE      | c     |            | range | idx_issuable_coupon_status_issue_started_at_issue_ended_at | idx_issuable_coupon_status_issue_started_at_issue_ended_at | 134     |     | 8    | 33.33    | Using index condition     |
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;range&lt;/code&gt;로 인덱스를 사용하여 범위 검색을 하도록 변경되었고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;key&lt;/code&gt;로는 방금 만든 인덱스를 사용하고 있다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filtered&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;33.33%&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Extra&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index condition&lt;/code&gt;이 되었다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index&lt;/code&gt;는 봤었는데, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index condition&lt;/code&gt;은 뭘까?&lt;/p&gt;
+
+&lt;h3 id=&quot;using-index와-using-index-condition의-차이점&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index condition&lt;/code&gt;의 차이점&lt;/h3&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index condition&lt;/code&gt;은 두 가지 다른 인덱스 사용 방식이다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Using index&lt;/strong&gt;:&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;쿼리가 인덱스를 사용하여 데이터를 검색하고, 인덱스에서 직접 필요한 데이터를 가져오는 경우이다. 이 경우, 테이블의 데이터 페이지를 읽지 않고, 다시 말해서 &lt;strong&gt;데이터가 있는 테이블에 직접 접근하지 않고 인덱스만으로 쿼리를 처리할 수 있어 성능이 향상&lt;/strong&gt;된다.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Using index condition&lt;/strong&gt;:&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;인덱스를 사용하여 조건을 평가&lt;/strong&gt;하는 경우입니다. 즉, 인덱스의 값을 기반으로 특정 조건을 필터링하는 과정을 포함합니다. 이 경우, 인덱스가 적용되지만, &lt;strong&gt;최종적으로 조건에 맞는 데이터를 찾기 위해 테이블의 데이터 페이지를 읽어야 할 수도 있다&lt;/strong&gt;.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;expain-analyze&quot;&gt;expain analyze&lt;/h3&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-&amp;gt; Index range scan on c using idx_issuable_coupon_status_issue_started_at_issue_ended_at over (issuable = 0 AND coupon_status = &apos;EXPIRED&apos; AND NULL &amp;lt; issue_started_at &amp;lt; &apos;2019-02-01 00:00:00.000000&apos;), with index condition: ((c.coupon_status = &apos;EXPIRED&apos;) and (c.issuable = false) and (c.issue_started_at &amp;lt; TIMESTAMP&apos;2019-02-01 00:00:00&apos;) and (c.issue_ended_at &amp;gt; TIMESTAMP&apos;2019-01-01 00:00:00&apos;))  (cost=3.86 rows=8) (actual time=0.0441..0.09 rows=8 loops=1)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;쿼리 실행 계획 분석을 보면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Index range scan&lt;/code&gt;을 하고있고, &lt;strong&gt;조건과 인덱스 조건&lt;/strong&gt;이 각각 있다. 비용과 실제 실행 시간은 눈에 띄게 줄어들은 것을 확인할 수 있다.&lt;/p&gt;
+
+&lt;h3 id=&quot;커버링-인덱스를-통한-성능-테스트-결과&quot;&gt;커버링 인덱스를 통한 성능 테스트 결과&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_ended_at&lt;/code&gt; 컬럼 순서로 인덱스.&lt;/p&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;count:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;12853&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100049&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Average&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;그런데-조건-인덱스-조건index-condition은-무슨-차이가-있을까&quot;&gt;그런데 조건, 인덱스 조건(index condition)은 무슨 차이가 있을까?&lt;/h3&gt;
+
+&lt;h3 id=&quot;조건where과-인덱스-조건index-condition&quot;&gt;조건(where)과 인덱스 조건(Index condition)&lt;/h3&gt;
+
+&lt;p&gt;1.&lt;strong&gt;조건 (where 조건)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;쿼리에서 주로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;where&lt;/code&gt;절에 명시되는 데이터를 필터링하기 위해 사용되는 조건이다. 예를 들어,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable = 0&lt;/code&gt;이나&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status = &apos;EXPIRED&apos;&lt;/code&gt;같은 조건이 여기에 해당한다. 데이터베이스가 검색해야 할 데이터를 제한하는 역할을 한다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;2.&lt;strong&gt;인덱스 조건 (Index condition)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;인덱스를 사용할 때 적용되는 조건이다. 인덱스 조건은 인덱스를 통해 데이터 검색을 최적화하는 데 도움을 준다. 예를 들어,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;c.coupon_status = &apos;EXPIRED&apos;&lt;/code&gt;와 같은 조건이 인덱스를 기반으로 필터링할 때 사용된다. 인덱스를 통해 더 빠르게 데이터를 찾고, 검색 성능을 향상시키는 역할을 한다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;결과적으로 위 쿼리와 인덱스 설정으로 인해, 4가지 컬럼 모두 where, index condition으로 적용된다. 그런데 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt; 컬럼의 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;대입 조건&lt;/code&gt;이고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_ended_at&lt;/code&gt; 컬럼의 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;범위 검색 조건&lt;/code&gt;이다. 이 두 조건은 어떤 식으로 적용될까?&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;a href=&quot;https://dev.mysql.com/doc/refman/8.0/en/explain.html&quot;&gt;MySQL EXPLAIN Documentation&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;https://dev.mysql.com/doc/refman/8.0/en/optimization.html&quot;&gt;MySQL 쿼리 최적화&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;조건의-종류&quot;&gt;조건의 종류&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;범위 검색 조건&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;issue_started_at&lt;/strong&gt;:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NULL &amp;lt; issue_started_at &amp;lt; &apos;2019-02-01 00:00:00.000000&apos;&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;issue_ended_at&lt;/strong&gt;:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_ended_at &amp;gt; TIMESTAMP &apos;2019-01-01 00:00:00&apos;&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;이 조건들은 특정 범위 내의 값을 찾는 데 사용된다. 데이터베이스는 이 범위에 해당하는 날짜를 가진 행들을 검색한다.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;대입 조건&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;issuable = 0&lt;/strong&gt;: 발행 가능한 쿠폰이 아닌 데이터 필터링.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;coupon_status = ‘EXPIRED’&lt;/strong&gt;: 쿠폰이 만료된 상태인 데이터 필터링.&lt;/li&gt;
+      &lt;li&gt;이 조건들은 특정 값을 가진 행들을 찾는 데 사용된다.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;적용-과정&quot;&gt;적용 과정&lt;/h3&gt;
+
+&lt;p&gt;쿼리가 실행될 때, 다음과 같은 순서로 조건이 적용된다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;인덱스 활용&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;인덱스가 설정된 컬럼(예:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt;,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_ended_at&lt;/code&gt;)에 대해 인덱스 범위 스캔이 이루어진다.&lt;/li&gt;
+      &lt;li&gt;이 과정에서 인덱스 조건이 먼저 적용되어 인덱스를 통해 필터링된 데이터 집합이 생성된다.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;범위 검색 조건 적용&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;인덱스를 통해 검색된 데이터에서 먼저 범위 검색 조건이 적용된다. 즉,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;과&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_ended_at&lt;/code&gt;의 범위에 맞는 행들이 필터링된다.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;대입 조건 적용&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;이후, 범위 검색을 통과한 결과에서 대입 조건인&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt;과&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;를 적용하여 최종적으로 조건을 만족하는 행들을 찾는다.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;최종-결과&quot;&gt;최종 결과&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;인덱스를 사용하여 범위 조건으로 데이터를 축소한 후, 대입 조건을 통해 남은 데이터에서 최종적으로 반환할 행을 결정&lt;/strong&gt;한다. 쿼리의 성능을 최적화하고, 필요 없는 데이터를 미리 걸러내는 효과가 있다.&lt;/p&gt;
+
+&lt;h3 id=&quot;cardinality-고려한-인덱스-컬럼-순서&quot;&gt;Cardinality 고려한 인덱스 컬럼 순서&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/image/for-post/tommy-index/Pasted image 20240830151003.png&quot; alt=&quot;[Pasted image 20240830151003.png]&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;그런데 위 index에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cardinality&lt;/code&gt; 부분을 자세히 살펴보면 이상하다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_ended_at&lt;/code&gt; 순서로 인덱스가 걸려있는데, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cardinality&lt;/code&gt;는 시작, 만료 기간을 나타내는 컬럼이 앞의 두 컬럼보다 훨씬 높다. 그렇다면 인덱스가 필터링을 더 잘 수행하게 하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_ended_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt; 순서로 인덱스를 생성하는 것이 더 좋지 않을까?&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;create&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx_issue_started_at_issue_ended_at_coupon_status_issuable&lt;/span&gt;  
+    &lt;span class=&quot;k&quot;&gt;on&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issue_started_at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;issue_ended_at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon_status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;issuable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;실험을 위해 새로운 인덱스를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_ended_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt; 순서로 생성한다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/image/for-post/tommy-index/Pasted image 20240830162423.png&quot; alt=&quot;[Pasted image 20240830162423.png]&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;이제 컬럼 순서가 다른 복합 인덱스 두 개가 생성되어 있다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;explain&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;analyze&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt; 
+&lt;span class=&quot;n&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idx_issue_started_at_issue_ended_at_coupon_status_issuable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  
+        &lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issuable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;false&lt;/span&gt;  
+          &lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coupon_status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;EXPIRED&apos;&lt;/span&gt;  
+          &lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issue_started_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-02-01 00:00:00.000000&apos;&lt;/span&gt;  
+          &lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;issue_ended_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-01-01 00:00:00.00000&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이렇게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;from&lt;/code&gt;절 뒤에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use index (인덱스명)&lt;/code&gt; 형태로 인덱스를 지정해주면 MySQL Optimizer가 cost 기반으로 최적의 선택을 하는 대신, 지정한 인덱스를 사용하도록 강제할 수 있다.&lt;/p&gt;
+
+&lt;h3 id=&quot;explain-1&quot;&gt;explain&lt;/h3&gt;
+
+&lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| #  | id | select_type | table | partitions | type  | possible_keys                                         | key                                                   | key_len | ref | rows | filtered | Extra                     |
+|----|----|-------------|-------|------------|-------|------------------------------------------------------|------------------------------------------------------|---------|-----|------|----------|---------------------------|
+| 1  | 1  | SIMPLE      | c     |            | range | idx_issue_started_at_issue_ended_at_coupon_status_issuable | idx_issue_started_at_issue_ended_at_coupon_status_issuable | 9       |     | 2180 | 3.33     | Using index condition      |
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;새로 만든 시작, 만료 기간이 우선으로 설정된 인덱스를 사용하고 있고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;range&lt;/code&gt;로 전과 똑같다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filtered&lt;/code&gt;가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;3.33%&lt;/code&gt;로 이전의 커버링 인덱스와 비교하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1/10&lt;/code&gt; 정도 떨어졌지만, 똑같은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Extra&lt;/code&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index condition&lt;/code&gt;인 것을 볼 수 있다.&lt;/p&gt;
+
+&lt;h3 id=&quot;explain-analyze&quot;&gt;explain analyze&lt;/h3&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-&amp;gt; Index range scan on c using idx_issue_started_at_issue_ended_at_coupon_status_issuable over (NULL &amp;lt; issue_started_at &amp;lt; &apos;2019-02-01 00:00:00.000000&apos;), with index condition: ((c.coupon_status = &apos;EXPIRED&apos;) and (c.issuable = false) and (c.issue_started_at &amp;lt; TIMESTAMP&apos;2019-02-01 00:00:00&apos;) and (c.issue_ended_at &amp;gt; TIMESTAMP&apos;2019-01-01 00:00:00&apos;))  (cost=981 rows=2180) (actual time=0.0358..1.34 rows=8 loops=1)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Index range scan&lt;/code&gt;을 하고있고, 인덱스 범위 스캔의 조건으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NULL&lt;/code&gt;보다 크고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&apos;2019-02-01 00:00:00.000000&apos;&lt;/code&gt;보다 작은 범위를 지정하고 있다. 인덱스 범위 스캔의 조건을 먼저 적용한 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index condition&lt;/code&gt;에 명시된 조건들을 적용한다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cost&lt;/code&gt;는 981로 이전 커버링 인덱스보다 비용이 많이 늘어났다.&lt;/p&gt;
+
+&lt;h3 id=&quot;범위-조건-우선하여-인덱스-설정하고-성능-테스트&quot;&gt;범위 조건 우선하여 인덱스 설정하고 성능 테스트&lt;/h3&gt;
+
+&lt;p&gt;기존에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;를 먼저 설정한 인덱스를 지우고 테스트를 실행했다.&lt;/p&gt;
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;alter&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;drop&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx_issuable_coupon_status_issue_started_at_issue_ended_at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/image/for-post/tommy-index/Pasted image 20240830170424.png&quot; alt=&quot;[Pasted image 20240830170424.png]&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;count:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;329&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;101617&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Average&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;308&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3번 문제의 검증 조건이 요청 평균 소요 시간 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;500ms&lt;/code&gt; 이하라서 테스트에는 통과했지만, 이전 커버링 인덱스를 통한 요청 평균 소요 시간인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;7ms&lt;/code&gt;과 비교해서 현재 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;308ms&lt;/code&gt;가 나왔으므로 성능이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;4285.71%&lt;/code&gt; 떨어졌다. 왜 이렇게까지 효율이 많이 떨어졌을까?&lt;/p&gt;
+
+&lt;h3 id=&quot;효율이-떨어진-이유&quot;&gt;효율이 떨어진 이유&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cardinality&lt;/code&gt;가 높은 컬럼의 순서를 우선하도록 하여 성능이 더 좋아질 줄 알았는데 오히려 성능이 하락한 이유는 바로 인덱스의 첫 번째 컬럼인&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;의 조건을 우선적으로 평가하기 때문이다. 근데 해당 컬럼은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;범위 조건&lt;/code&gt;이기 때문에 인덱스 검색 방식을 변경한다. 사실 첫 번째가 아니더라도 &lt;strong&gt;범위 검색 조건 뒤에 오는 컬럼은 인덱스의 효율성을 잃게 된다.&lt;/strong&gt; &lt;a href=&quot;https://jojoldu.tistory.com/243&quot;&gt;향로님의 인덱스 포스팅 참고&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;between&lt;/code&gt;,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;like&lt;/code&gt;,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;&lt;/code&gt;,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt; 등 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;범위 조건&lt;/code&gt;이 적용되면, 인덱스는 해당 범위 내의 모든 데이터를 검색하게 되므로, 이후 인덱스의 다른 컬럼들은 효율적으로 사용하지 못한다. 따라서, 위의 인덱스 기준으로&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;조건 이후에 오는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_ended_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt; 컬럼은 인덱스에서 최적화되지 않고, 전체 데이터에서 필터링 하게 된다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cardinality&lt;/code&gt;가 높은 순서로 인덱스를 구성하는 것은 중요하지만, 인덱스 컬럼을 사용할 때 고정 조건이냐, 범위 조건이냐에 따라서 다르게 구성하는 것이 좋다. 데이터 상황에 따라서도 달라지겠지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cardinality&lt;/code&gt;가 높으면서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;고정 조건&lt;/code&gt; 인덱스 컬럼을 앞에 배치하고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;범위 조건&lt;/code&gt; 인덱스 컬럼을 뒤에 배치하는 것이 인덱스를 더 효율을 극대화 시킬 수 있는 방법이다. 위 경우에는 범위 조건이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_ended_at&lt;/code&gt; 두 개 이기 때문에 둘 중 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cardinality&lt;/code&gt;가 더 높은 한 개만 추가하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt; 이렇게 세 개의 컬럼으로 인덱스를 구성하는 것이 데이터 추가 시 인덱스 테이블에 데이터를 정렬하면서 발생하는 부담을 줄일 수 있을 것이다.&lt;/p&gt;
+
+&lt;h3 id=&quot;쿼리에서-사용된-모든-컬럼에-대한-인덱스를-만드는-것이-좋을까&quot;&gt;쿼리에서 사용된 모든 컬럼에 대한 인덱스를 만드는 것이 좋을까?&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://dev.mysql.com/doc/refman/8.0/en/optimization-indexes.html&quot;&gt;MySQL Document&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;The best way to improve the performance of&lt;a href=&quot;https://dev.mysql.com/doc/refman/8.0/en/select.html&quot; title=&quot;15.2.13SELECT Statement&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SELECT&lt;/code&gt;&lt;/a&gt;operations is to create indexes on one or more of the columns that are tested in the query. The index entries act like pointers to the table rows, allowing the query to quickly determine which rows match a condition in the&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WHERE&lt;/code&gt;clause, and retrieve the other column values for those rows. All MySQL data types can be indexed.
+Although it can be tempting to create an indexes for every possible column used in a query, unnecessary indexes waste space and waste time for MySQL to determine which indexes to use. Indexes also add to the cost of inserts, updates, and deletes because each index must be updated. You must find the right balance to achieve fast queries using the optimal set of indexes.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;MySQL 문서에서도 언급하듯이, 불필요한 인덱스는 여러 가지 문제를 야기할 수 있다. 쿼리 성능을 개선하려면 최적의 인덱스 세트를 찾아야 한다. 이를 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cardinality&lt;/code&gt;, 고정 조건과 범위 조건의 조합, 그리고 쿼리의 사용 패턴을 고려해야 한다. 모든 쿼리를 대상으로 커버링 인덱스를 구성하기보다는, 자주 사용되거나 성능이 중요한 쿼리를 분석하여 필요한 인덱스를 선택적으로 구성하는 것이 더 효율적이다.&lt;/p&gt;
+
+&lt;h3 id=&quot;여러-컬럼으로-인덱스-설정-시-조건-누락&quot;&gt;여러 컬럼으로 인덱스 설정 시 조건 누락&lt;/h3&gt;
+
+&lt;p&gt;인덱스가 여러 컬럼으로 구성되어 있을 때, 모든 컬럼을 조회 조건에 포함해야만 인덱스가 사용되는 것은 아니다. 어떤 컬럼은 누락될 수 있고, 어떤 컬럼은 반드시 포함되어야 인덱스를 효과적으로 사용할 수 있다.&lt;/p&gt;
+
+&lt;p&gt;인덱스 예시:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt;,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;첫 번째 조회 쿼리&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;조건:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;와&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt;을 포함&lt;/p&gt;
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupons&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon_status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;active&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;issuable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;인덱스를 정상적으로 사용함. (필터링 비율이 10%로 효율적이지는 않지만, 인덱스 사용 가능)&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;두 번째 조회 쿼리&lt;/strong&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;조건:&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issuable&lt;/code&gt;과&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;issue_started_at&lt;/code&gt;만 포함,&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;제외&lt;/p&gt;
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupons&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;issuable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;true&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;issue_started_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2023-01-01&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;인덱스를 전혀 사용하지 못함.&lt;/p&gt;
+
+&lt;p&gt;조회 쿼리를 작성할 때 인덱스를 효과적으로 사용하기 위해서는 반드시 첫 번째 인덱스 컬럼(예: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_status&lt;/code&gt;)이 포함되어야 한다. 첫 번째 컬럼이 누락되면 인덱스를 사용할 수 없다.&lt;/p&gt;
+</description>
+        <pubDate>Fri, 30 Aug 2024 00:00:00 +0900</pubDate>
+        <link>http://localhost:4000/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-2/</link>
+        <guid isPermaLink="true">http://localhost:4000/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-2/</guid>
+        
+        <category>index</category>
+        
+        <category>mysql</category>
+        
+        
+        <category>DB</category>
+        
+      </item>
     
       <item>
         <title>토미의 Coupon 인덱스 정리 - 1</title>
@@ -3978,66 +4361,6 @@ null 처리한 참조를 실수로 사용하려 하면&lt;code class=&quot;langu
         <pubDate>Tue, 09 Jan 2024 00:00:00 +0900</pubDate>
         <link>http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-5-%EC%9E%90%EC%9B%90%EC%9D%84-%EC%A7%81%EC%A0%91-%EB%AA%85%EC%8B%9C%ED%95%98%EC%A7%80-%EB%A7%90%EA%B3%A0-%EC%9D%98%EC%A1%B4-%EA%B0%9D%EC%B2%B4-%EC%A3%BC%EC%9E%85%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC/</link>
         <guid isPermaLink="true">http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-5-%EC%9E%90%EC%9B%90%EC%9D%84-%EC%A7%81%EC%A0%91-%EB%AA%85%EC%8B%9C%ED%95%98%EC%A7%80-%EB%A7%90%EA%B3%A0-%EC%9D%98%EC%A1%B4-%EA%B0%9D%EC%B2%B4-%EC%A3%BC%EC%9E%85%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC/</guid>
-        
-        <category>Effective Java</category>
-        
-        
-        <category>Effective Java</category>
-        
-      </item>
-    
-      <item>
-        <title>Effective Java - 아이템 4: 인스턴스화를 막으려거든 private 생성자를 사용하라</title>
-        <description>&lt;p&gt;정적 멤버만 담은 유틸리티 클래스는 인스턴스로 만들어 쓰려고 설계한게 아니다.&lt;br /&gt;
-&lt;strong&gt;하지만 생성자를 명시하지 않으면(직접 작성한 생성자가 하나도 없는 경우) 컴파일러가 자동으로 기본 생성자를 만들어준다.&lt;/strong&gt;&lt;br /&gt;
-&lt;strong&gt;사용자는 이 생성자가 자동 생성된 것인지 구분할 수 없다.&lt;/strong&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 인스턴스로 만들 의도가 없는 유틸리티 클래스&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyUtility&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    
-    &lt;span class=&quot;c1&quot;&gt;// 생성자가 하나도 없기 때문에 컴파일러가 기본 생성자를 만든다.&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// public MyUtility() {}&lt;/span&gt;
-    
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;printHello&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;추상 클래스로 만드는 것으로는 인스턴스화를 막을 수 없다.&lt;br /&gt;
-하위 클래스를 만들어 인스턴스화할 수 있다.&lt;br /&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Super&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Sub&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Super&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    
-    &lt;span class=&quot;c1&quot;&gt;// 상속받은 하위 클래스에서 생성할 수 있다.&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// public Sub() { super(); }&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;인스턴스화를-막는-방법&quot;&gt;인스턴스화를 막는 방법&lt;/h3&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;UtilityClass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// 기본 생성자가 만들어지는 것을 막는다(인스턴스 방지용).&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;UtilityClass&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;AssertionError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 클래스 안에서 실수로라도 생성자를 호출하지 않도록 해준다.&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;생성자의 접근자를 private로 만드는 방식은 해당 클래스를 상속 불가능하게 만드는 효과도 있다.&lt;br /&gt;
-해당 클래스를 상속하는 하위 클래스에서 상위 클래스의 생성자 super()를 호출해야 하는데,&lt;br /&gt;
-상위 클래스가 가진 생성자의 접근 제어자가 private이기 때문에 상위 클래스의 생성자에 접근할 수 없기 때문이다.&lt;br /&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-</description>
-        <pubDate>Mon, 08 Jan 2024 00:00:00 +0900</pubDate>
-        <link>http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-4-%EC%9D%B8%EC%8A%A4%ED%84%B4%EC%8A%A4%ED%99%94%EB%A5%BC-%EB%A7%89%EC%9C%BC%EB%A0%A4%EA%B1%B0%EB%93%A0-private-%EC%83%9D%EC%84%B1%EC%9E%90%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC/</link>
-        <guid isPermaLink="true">http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-4-%EC%9D%B8%EC%8A%A4%ED%84%B4%EC%8A%A4%ED%99%94%EB%A5%BC-%EB%A7%89%EC%9C%BC%EB%A0%A4%EA%B1%B0%EB%93%A0-private-%EC%83%9D%EC%84%B1%EC%9E%90%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC/</guid>
         
         <category>Effective Java</category>
         

@@ -268,4 +268,10 @@ var store = [{
         "tags": ["index","mysql"],
         "url": "http://localhost:4000/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-1/",
         "teaser": null
+      },{
+        "title": "토미의 Coupon 인덱스 정리 - 2",
+        "excerpt":"3번 문제 @Test void 현재_발급_가능한_쿠폰_조회() throws InterruptedException { AtomicBoolean running = new AtomicBoolean(false); AtomicInteger requestCount = new AtomicInteger(0); AtomicLong totalElapsedTime = new AtomicLong(0); int statusCode = RestAssured.get(\"/coupons/issuable\").statusCode(); assertThat(statusCode).withFailMessage(\"발급 가능한 쿠폰 조회 API 호출에 실패했습니다. 테스트 대상 서버가 실행중인지 확인해 주세요.\").isEqualTo(200); executeMultipleRequests(running, requestCount, totalElapsedTime, () -&gt; RestAssured.get(\"/coupons/issuable\")); System.out.println(\"Total request count: \"...","categories": ["DB"],
+        "tags": ["index","mysql"],
+        "url": "http://localhost:4000/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-2/",
+        "teaser": null
       }]
