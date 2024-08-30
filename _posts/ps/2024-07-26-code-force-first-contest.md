@@ -15,7 +15,8 @@ toc_icon: ""
 나는 ps를 이제 거의 처음 시작하는 초보라 A번 문제만 풀고 이후 문제는 이해하기 어려워서 진행하지 않았다.
 
 내가 푼 문제는 A. Maximize the Last Element 라는 문제였다.
-![img.png](codeforces_a.png)
+
+![codeforces_a](/image/for-post/codeforces_a.png)
 
 이 문제는 기본적으로 홀수개의 원소를 가진 배열을 준다.
 그리고 원소가 딱 하나만 남을 때 까지 그 배열의 원소 중 연속된 두 원소를 지워나간다.

@@ -19,7 +19,7 @@ toc_icon: ""
 >*문자열 리터럴이란?*<br>
 > 문자열 리터럴은 소스코드에서 문자열 값을 표현하는 고정된 문자열이다.
 
-![StringPool.png](..%2F..%2Fimage%2FforPost%2FStringPool.png)
+![StringPool.png](/image/for-post/StringPool.png)
 
 ### Constant Pool의 특징
 1. 문자열 리터럴의 재사용: Constant Pool은 리터럴을 중복하여 생성하지 않도록 하나의 인스턴스로 관리한다. 동일한 문자열을 참조하면 결국 같은 인스턴스를 참조하게 된다.

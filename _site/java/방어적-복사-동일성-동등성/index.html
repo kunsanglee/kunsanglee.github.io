@@ -359,9 +359,9 @@
 <p>getFavoriteFoods() 메서드를 호출하면 <strong>방어적 복사</strong>를 하여 원본의 참조와 <strong>동일하지 않은</strong> 새로운 참조를 지닌 <strong>동등한 값</strong>을 지닌 객체를 반환한다. 이렇게 되면 외부에서 getter를 호출하여 얻은 객체를 수정해도 원본 객체의 무결성을 유지할 수 있다.</p>
 
 <ul>
-  <li><strong>장점</strong> : 가변적인 상태를 유지하면서도 클래스의 상태를 안전하게 보호할 수 있다. 따라서 상태가 자주 변화하는 클래스에서 유용하게 사용할 수 있다.</li>
-  <li><strong>단점</strong> : 메모리 사용량이 증가하고, 성능이 저하될 수 있다. 각 getter 호출 시마다 새로운 객체를 생성하므로, 메모리와 CPU 시간을 추가로 사용.</li>
-  <li><strong>적합한 사용 경우</strong> : 상태가 자주 변화하거나, 큰 데이터 구조를 가지고 있는 클래스에서 사용.</li>
+  <li><strong>장점</strong> : 가변적인 상태를 유지하면서도 클래스의 상태를 안전하게 보호할 수 있다. 따라서 상태가 자주 변화하는 클래스에서 유용하게 사용할 수 있다.</li>
+  <li><strong>단점</strong> : 메모리 사용량이 증가하고, 성능이 저하될 수 있다. 각 getter 호출 시마다 새로운 객체를 생성하므로, 메모리와 CPU 시간을 추가로 사용.</li>
+  <li><strong>적합한 사용 경우</strong> : 상태가 자주 변화하거나, 큰 데이터 구조를 가지고 있는 클래스에서 사용.</li>
 </ul>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">str1</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">String</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">);</span>
