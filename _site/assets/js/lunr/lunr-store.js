@@ -274,4 +274,10 @@ var store = [{
         "tags": ["index","mysql"],
         "url": "http://localhost:4000/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-2/",
         "teaser": null
+      },{
+        "title": "토미의 Coupon 인덱스 정리 - 3",
+        "excerpt":"4번 문제 회원이 가지고 있는 사용 가능한 쿠폰을 조회하는 API 이다. @Test void 회원이_가지고_있는_사용_가능한_쿠폰_조회() throws InterruptedException { AtomicBoolean running = new AtomicBoolean(false); AtomicInteger requestCount = new AtomicInteger(0); AtomicLong totalElapsedTime = new AtomicLong(0); int statusCode = RestAssured.get(\"/member-coupons/by-member-id?memberId=\" + ThreadLocalRandom.current() .nextLong(MIN_MEMBER_ID, MAX_MEMBER_ID + 1)).statusCode(); assertThat(statusCode).withFailMessage(\"회원이 가지고 있는 쿠폰 조회 API 호출에 실패했습니다....","categories": ["DB"],
+        "tags": ["index","mysql"],
+        "url": "http://localhost:4000/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-3/",
+        "teaser": null
       }]

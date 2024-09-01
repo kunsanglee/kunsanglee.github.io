@@ -5,9 +5,472 @@
     <description></description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 30 Aug 2024 18:00:36 +0900</pubDate>
-    <lastBuildDate>Fri, 30 Aug 2024 18:00:36 +0900</lastBuildDate>
+    <pubDate>Sun, 01 Sep 2024 18:12:06 +0900</pubDate>
+    <lastBuildDate>Sun, 01 Sep 2024 18:12:06 +0900</lastBuildDate>
     <generator>Jekyll v4.3.2</generator>
+    
+      <item>
+        <title>토미의 Coupon 인덱스 정리 - 3</title>
+        <description>&lt;h3 id=&quot;4번-문제&quot;&gt;4번 문제&lt;/h3&gt;
+
+&lt;p&gt;회원이 가지고 있는 사용 가능한 쿠폰을 조회하는 API 이다.&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@Test&lt;/span&gt;  
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;회원이_가지고_있는_사용_가능한_쿠폰_조회&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;throws&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;InterruptedException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;AtomicBoolean&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;running&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AtomicBoolean&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;AtomicInteger&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AtomicInteger&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;AtomicLong&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AtomicLong&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;statusCode&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;RestAssured&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/member-coupons/by-member-id?memberId=&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ThreadLocalRandom&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;nextLong&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;MIN_MEMBER_ID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;MAX_MEMBER_ID&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+    &lt;span class=&quot;n&quot;&gt;assertThat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;withFailMessage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;회원이 가지고 있는 쿠폰 조회 API 호출에 실패했습니다. 테스트 대상 서버가 실행중인지 확인해 주세요.&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isEqualTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;n&quot;&gt;executeMultipleRequests&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;running&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;RestAssured&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/member-coupons/by-member-id?memberId=&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ThreadLocalRandom&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;  
+                    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;nextLong&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;MIN_MEMBER_ID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;MAX_MEMBER_ID&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)));&lt;/span&gt;  
+  
+    &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Total request count: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Total elapsed time: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;ms&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;averageElapsedTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Average elapsed time: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;ms&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;n&quot;&gt;assertThat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;averageElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isLessThanOrEqualTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;membercouponcontroller&quot;&gt;MemberCouponController&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@GetMapping&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/by-member-id&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;MemberCouponResponse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getMemberCoupons&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nd&quot;&gt;@RequestParam&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;memberId&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberCouponService&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;findUsableMemberCoupons&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memberId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;MemberCouponResponse:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;collect&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;toList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;membercouponservice&quot;&gt;MemberCouponService&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@Transactional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;readOnly&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;MemberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;findUsableMemberCoupons&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberCouponRepository&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;findByMemberIdAndUsedAndUseEndedAtAfter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memberId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memberCoupon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isUsableCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;collect&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;toList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;membercouponrepository&quot;&gt;MemberCouponRepository&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;MemberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;findByMemberIdAndUsedAndUseEndedAtAfter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;used&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;membercoupon&quot;&gt;MemberCoupon&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@Entity&lt;/span&gt;  
+&lt;span class=&quot;nd&quot;&gt;@Table&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;member_coupon&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+&lt;span class=&quot;nd&quot;&gt;@Getter&lt;/span&gt;  
+&lt;span class=&quot;nd&quot;&gt;@NoArgsConstructor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;access&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AccessLevel&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;PROTECTED&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MemberCoupon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+  
+    &lt;span class=&quot;cm&quot;&gt;/**  
+     * 모든 쿠폰은 발급 일시부터 7일간 사용할 수 있다.     
+     */&lt;/span&gt;    
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;COUPON_USABLE_DAYS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Id&lt;/span&gt;  
+    &lt;span class=&quot;nd&quot;&gt;@GeneratedValue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strategy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;GenerationType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;IDENTITY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;member_id&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@ManyToOne&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fetch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;FetchType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;EAGER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;nd&quot;&gt;@JoinColumn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;coupon_id&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Coupon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;issued_at&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columnDefinition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;DATETIME(6)&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;issuedAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;use_ended_at&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columnDefinition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;DATETIME(6)&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;useEndedAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;used&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columnDefinition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;BOOLEAN&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;used&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;used_at&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columnDefinition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;DATETIME(6)&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;usedAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;modified_at&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columnDefinition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;DATETIME(6)&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;modifiedAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MemberCoupon&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;issue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Coupon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;issue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+  
+        &lt;span class=&quot;nc&quot;&gt;MemberCoupon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberCoupon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MemberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;memberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;memberId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;memberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;coupon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;memberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;issuedAt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;memberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;useEndedAt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;issuedAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plusDays&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;COUPON_USABLE_DAYS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;memberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;modifiedAt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;memberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;used&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberCoupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;  
+  
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;use&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;used&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+            &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;IllegalStateException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;이미 사용한 쿠폰입니다.&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;  
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;coupon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;use&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+  
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;used&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;usedAt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;modifiedAt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;sql-쿼리&quot;&gt;SQL 쿼리&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;findByMemberIdAndUsedAndUseEndedAtAfter&lt;/code&gt;메서드가 생성하는 쿼리를 살펴보면 아래와 같은 형태를 띈다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;member_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;used&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;use_ended_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-01-12 00:38:50.000000&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;show&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/image/for-post/tommy-index/Pasted image 20240831185816.png&quot; alt=&quot;[Pasted image 20240831185816.png]&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위 쿼리에서 사용되는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_coupon&lt;/code&gt; 테이블의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used_ended_at&lt;/code&gt; 컬럼에 대한 인덱스는 아무것도 걸려있지 않은 상태이다.&lt;/p&gt;
+
+&lt;h3 id=&quot;explain&quot;&gt;explain&lt;/h3&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;explain&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;member_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;used&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;use_ended_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-01-12 00:38:50.000000&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| #  | id | select_type | table | partitions | type | possible_keys | key | key_len | ref | rows   | filtered | Extra        |
+|----|----|--------------|-------|------------|------|----------------|-----|---------|-----|--------|----------|--------------|
+| 1  | 1  | SIMPLE       | mc    |            | ALL  |                |     |         |     | 495482 | 0.33     | Using where  |
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;explain&lt;/code&gt; 결과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ALL&lt;/code&gt;로 전체 테이블을 스캔했고, 사용된 인덱스는 없다. 또 495,482행을 스캔했는데, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filtered&lt;/code&gt;된 비율은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0.33%&lt;/code&gt;였다. 인덱스가 없으니 필터링 되는 행이 거의 없어서 매우 비효율적이다.&lt;/p&gt;
+
+&lt;h3 id=&quot;explain-analyze&quot;&gt;explain analyze&lt;/h3&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-&amp;gt; Filter: ((mc.used = true) and (mc.member_id = 1) and (mc.use_ended_at &amp;gt; TIMESTAMP&apos;2019-01-12 00:38:50&apos;))  (cost=50149 rows=1651) (actual time=122..294 rows=2 loops=1)
+    -&amp;gt; Table scan on mc  (cost=50149 rows=495482) (actual time=0.473..272 rows=500020 loops=1)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Table scan&lt;/code&gt;을 사용하고, 비용이 50,149로 매우 비싸다.&lt;/p&gt;
+
+&lt;h3 id=&quot;성능-테스트-결과&quot;&gt;성능 테스트 결과&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Table scan&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;count:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;493&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100578&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Average&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;204&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;인덱스가 없이 매우 비효율적으로 테이블 풀 스캔을 했기 때문에 검증에 실패했다.&lt;/p&gt;
+
+&lt;h3 id=&quot;인덱스를-사용해서-개선&quot;&gt;인덱스를 사용해서 개선&lt;/h3&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;explain&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;member_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;used&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;use_ended_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-01-12 00:38:50.000000&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;조건절에 사용하는 컬럼은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt; 세 개다. 각 컬럼 마다 고유한 값이 몇개나 있는지 확인해야 한다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;distinct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;member_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  
+       &lt;span class=&quot;k&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;distinct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;used&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;used&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  
+       &lt;span class=&quot;k&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;distinct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;use_ended_at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;use_ended_at&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;-- member_id : 246670&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;-- used : 2&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;-- use_ended_at : 135584&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;distinct 한 값을 count 한 것과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cardinality&lt;/code&gt;가 일치하지 않지만, 그럼에도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt; 컬럼에 들어있는 값의 범위가 넓다는 것을 확인했다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cardinality&lt;/code&gt;가 높은 순서로 보면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt; 컬럼 순으로 인덱스를 설정하는 것이 좋다. 하지만 쿼리에 사용되는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt; 컬럼의 조건은 범위 조건으로, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt; 컬럼 뒤에 오는 컬럼은 인덱스를 사용하지 않게 된다.&lt;/p&gt;
+
+&lt;p&gt;그럼 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt; 컬럼 순서로 인덱스를 설정하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cardinality&lt;/code&gt;가 높은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt; 컬럼만 인덱스를 사용하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt;의 인덱스를 사용하지 않는 것이 좋을까? 아니면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt; 순서로 설정하여 모든 컬럼의 인덱스를 사용하고 마지막에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index range&lt;/code&gt;를 사용하는 것이 좋을까?&lt;/p&gt;
+
+&lt;h3 id=&quot;cardinality-고려한-인덱스-컬럼-순서&quot;&gt;Cardinality 고려한 인덱스 컬럼 순서&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt; 순서로 인덱스를 걸면, 두 번째 컬럼인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt; 컬럼이 범위 조건이기 때문에 해당 범위 내의 모든 데이터를 검색하게 되므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt; 컬럼의 인덱스는 적용되지 않는다. 그러므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt; 두 컬럼만 복합 인덱스로 설정한다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;create&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx_member_use_ended_at&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;on&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;member_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;use_ended_at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/image/for-post/tommy-index/Pasted image 20240831204415.png&quot; alt=&quot;[Pasted image 20240831204415.png]&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;explain-1&quot;&gt;explain&lt;/h3&gt;
+
+&lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;|   # | id | select_type | table | partitions | type  | possible_keys                  | key                     | key_len | ref | rows | filtered | Extra                          |
+|-----|----|-------------|-------|------------|-------|--------------------------------|-------------------------|---------|-----|------|----------|--------------------------------|
+|  1  | 1  | SIMPLE      | mc    |            | range | idx_member_use_ended_at       | idx_member_use_ended_at | 18      |     | 22   | 10       | Using index condition; Using where |
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;인덱스 설정 후 실행 계획을 보면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;range&lt;/code&gt;로 인덱스 범위 검색을 하고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;idx_member_use_ended_at&lt;/code&gt; 인덱스를 사용하고 있다. 또 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Extra&lt;/code&gt;로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index condition&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using where&lt;/code&gt;가 나타난다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index condition&lt;/code&gt;은 인덱스를 사용하여 조건을 평가하고 있다는 의미이다. 즉, 쿼리에서 필터링 조건을 적용하기 위해 인덱스를 사용하고 있으며, 인덱스에서 직접 조건을 확인하여 불필요한 데이터 접근을 줄이는 방식이다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using where&lt;/code&gt;는 앞에 인덱스를 사용한다고 하더라도, 최종적으로 데이터를 필터링하기 위해 where 절이 필요하다는 것을 의미한다. 즉, 인덱스를 사용해서 일부 데이터를 빠르게 찾았지만, 추가적인 조건이 필요해 데이터베이스에서 직접적으로 추가 필터링이 이루어지는 것이다.&lt;/p&gt;
+
+&lt;p&gt;즉, 인덱스가 모든 조건을 만족시키지 못하고, 최종적으로 결과를 위해 추가적인 필터링이 필요하다는 의미이다.&lt;/p&gt;
+
+&lt;h3 id=&quot;explain-analyze-1&quot;&gt;explain analyze&lt;/h3&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-&amp;gt; Filter: (mc.used = true)  (cost=10.2 rows=2.2) (actual time=1.28..1.37 rows=2 loops=1)
+    -&amp;gt; Index range scan on mc using idx_member_use_ended_at over (member_id = 1 AND &apos;2019-01-12 00:38:50.000000&apos; &amp;lt; use_ended_at), with index condition: ((mc.member_id = 1) and (mc.use_ended_at &amp;gt; TIMESTAMP&apos;2019-01-12 00:38:50&apos;))  (cost=10.2 rows=22) (actual time=1.28..1.36 rows=22 loops=1)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;필터링 조건으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt;를 확인하고 있고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt; 인덱스를 통해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index range scan&lt;/code&gt;을 사용하고 있다. 즉, 인덱스 범위 검색으로 데이터들을 걸러내고 최종적으로 필터링 조건을 확인한다.&lt;/p&gt;
+
+&lt;h3 id=&quot;cardinality-고려한-인덱스-적용-후-성능-테스트&quot;&gt;Cardinality 고려한 인덱스 적용 후 성능 테스트&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;count:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;14609&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100034&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Average&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt; 컬럼을 인덱스 설정하지 않고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;where&lt;/code&gt; 조건으로 필터링 해도, 앞에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt; 컬럼을 통해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index range scan&lt;/code&gt;을 해서 충분히 데이터들을 많이 걸러서 조회 성능이 매우 개선되었다.&lt;/p&gt;
+
+&lt;h3 id=&quot;커버링-인덱스-적용&quot;&gt;커버링 인덱스 적용&lt;/h3&gt;
+
+&lt;p&gt;이번에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;used&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;use_ended_at&lt;/code&gt; 컬럼 순서로 인덱스를 설정해서 비교한다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;create&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx_member_used_use_ended_at&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;on&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;member_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;used&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;use_ended_at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/image/for-post/tommy-index/Pasted image 20240831210721.png&quot; alt=&quot;[Pasted image 20240831210721.png]&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;explain-2&quot;&gt;explain&lt;/h3&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;explain&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;member_coupon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;member_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;used&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;true&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;use_ended_at&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2019-01-12 00:38:50.000000&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;|   # | id | select_type | table | partitions | type  | possible_keys                          | key                        | key_len | ref | rows | filtered | Extra               |
+|-----|----|-------------|-------|------------|-------|----------------------------------------|----------------------------|---------|-----|------|----------|---------------------|
+|  1  | 1  | SIMPLE      | mc    |            | range | idx_member_use_ended_at, idx_member_used_use_ended_at | idx_member_used_use_ended_at | 20      |     | 2    | 100      | Using index condition |
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;눈여겨 볼 점은 explain으로 실행 계획을 살펴보니 방금 생성한 컬럼 3개로 구성된 복합 인덱스를 사용한다. SQL Optimizer가 판단했을 때 cost가 더 낮아서 효율적이라고 판단한 것 같다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;range&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Extra&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Using index condition&lt;/code&gt;이다.&lt;/p&gt;
+
+&lt;h3 id=&quot;explain-analyze-2&quot;&gt;explain analyze&lt;/h3&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-&amp;gt; Index range scan on mc using idx_member_used_use_ended_at over (member_id = 1 AND used = 1 AND &apos;2019-01-12 00:38:50.000000&apos; &amp;lt; use_ended_at), with index condition: ((mc.used = true) and (mc.member_id = 1) and (mc.use_ended_at &amp;gt; TIMESTAMP&apos;2019-01-12 00:38:50&apos;))  (cost=1.16 rows=2) (actual time=0.036..0.048 rows=2 loops=1)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이전 인덱스 설정과 비교하여 모든 컬럼을 인덱스 범위 검색을 통해 세 가지 조건을 모두 인덱스에서 처리한다는 차이가 있어서 더 효율적으로 동작한다.&lt;/p&gt;
+
+&lt;h3 id=&quot;커버링-인덱스-성능-테스트&quot;&gt;커버링 인덱스 성능 테스트&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;count:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;14330&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100011&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Average&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;평균 소요시간을 보면 이전 인덱스 설정과 크게 차이나지는 않는다. 하지만 분명히 데이터가 더 많아질 수록 커버링 인덱스를 통해 모든 조건을 인덱스에서 처리하는 것과 추가로 where 조건을 필터링 하는 것의 차이가 크게 작용할 것이다.&lt;/p&gt;
+
+&lt;h3 id=&quot;5번-문제&quot;&gt;5번 문제&lt;/h3&gt;
+
+&lt;p&gt;월별 쿠폰 할인을 가장 많이 받는 회원을 조회하는 테스트다.&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@Test&lt;/span&gt;  
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;월별_쿠폰_할인을_가장_많이_받은_회원_조회&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;throws&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;InterruptedException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;AtomicBoolean&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;running&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AtomicBoolean&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;AtomicInteger&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AtomicInteger&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;AtomicLong&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AtomicLong&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;statusCode&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;RestAssured&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/marketing/max-coupon-discount-member?year=2019&amp;amp;month=1&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+    &lt;span class=&quot;n&quot;&gt;assertThat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;withFailMessage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;월별 쿠폰 할인을 가장 많이 받은 회원 조회 API 호출에 실패했습니다. 테스트 대상 서버가 실행중인지 확인해 주세요.&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isEqualTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;n&quot;&gt;executeMultipleRequests&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;running&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+        &lt;span class=&quot;nc&quot;&gt;RestAssured&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;  
+                &lt;span class=&quot;s&quot;&gt;&quot;/marketing/max-coupon-discount-member?year=2019&amp;amp;month=&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ThreadLocalRandom&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;  
+                        &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;nextInt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;  
+    &lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;  
+  
+    &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Total request count: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Total elapsed time: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;ms&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;averageElapsedTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+    &lt;span class=&quot;nc&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Average elapsed time: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;totalElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestCount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;ms&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+  
+    &lt;span class=&quot;n&quot;&gt;assertThat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;averageElapsedTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isLessThanOrEqualTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;marketingcontroller&quot;&gt;MarketingController&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@GetMapping&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/marketing/max-coupon-discount-member&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MonthlyMemberBenefit&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;findMaxCouponDiscountAmountMemberByMonth&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nd&quot;&gt;@RequestParam&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;year&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;  
+                                                                     &lt;span class=&quot;nd&quot;&gt;@RequestParam&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;month&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;marketingService&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;findMaxCouponDiscountAmountMemberByMonth&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Month&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;month&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;marketingservice&quot;&gt;MarketingService&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@Transactional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;readOnly&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MonthlyMemberBenefit&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;findMaxCouponDiscountAmountMemberByMonth&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Year&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Month&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;monthlyMemberBenefitRepository&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;findTopByYearAndMonthOrderByCouponDiscountAmountDesc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+            &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;orElseThrow&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;IllegalArgumentException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;해당 월에 쿠폰을 사용한 회원 정보가 없습니다.&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;monthlymemberbenefitrepository&quot;&gt;MonthlyMemberBenefitRepository&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Optional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;MonthlyMemberBenefit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;findTopByYearAndMonthOrderByCouponDiscountAmountDesc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Year&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Month&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;monthlymemberbenefit&quot;&gt;MonthlyMemberBenefit&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@Entity&lt;/span&gt;  
+&lt;span class=&quot;nd&quot;&gt;@Table&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;monthly_member_benefit&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+&lt;span class=&quot;nd&quot;&gt;@Getter&lt;/span&gt;  
+&lt;span class=&quot;nd&quot;&gt;@NoArgsConstructor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;access&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AccessLevel&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;PROTECTED&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MonthlyMemberBenefit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Id&lt;/span&gt;  
+    &lt;span class=&quot;nd&quot;&gt;@GeneratedValue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strategy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;GenerationType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;IDENTITY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;id&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;member_id&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;year&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columnDefinition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;SMALLINT&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Year&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;month&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columnDefinition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;SMALLINT&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Month&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;coupon_discount_amount&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;couponDiscountAmount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;created_at&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columnDefinition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;DATETIME(6)&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;createdAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;nd&quot;&gt;@Column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;modified_at&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columnDefinition&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;DATETIME(6)&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;modifiedAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MonthlyMemberBenefit&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Year&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Month&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+        &lt;span class=&quot;nc&quot;&gt;MonthlyMemberBenefit&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;monthlyMemberBenefit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MonthlyMemberBenefit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;monthlyMemberBenefit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;memberId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memberId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;monthlyMemberBenefit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;monthlyMemberBenefit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;monthlyMemberBenefit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;couponDiscountAmount&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;monthlyMemberBenefit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;createdAt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;monthlyMemberBenefit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;modifiedAt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;monthlyMemberBenefit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;createdAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+  
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;monthlyMemberBenefit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;  
+  
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;increaseCouponDiscountAmount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;discountAmount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;couponDiscountAmount&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;discountAmount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;  
+        &lt;span class=&quot;n&quot;&gt;modifiedAt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LocalDateTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MonthlyMemberBenefit&lt;/code&gt; 엔티티는 다른 테이블의 외래 키를 가지고 있지 않아서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;member_id&lt;/code&gt; 컬럼의 PK 인덱스만 있다.&lt;/p&gt;
+
+&lt;h3 id=&quot;sql-쿼리-분석&quot;&gt;SQL 쿼리 분석&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;findTopByYearAndMonthOrderByCouponDiscountAmountDesc&lt;/code&gt; 메서드를 호출하면 아래와 같은 쿼리가 발생한다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;monthly_member_benefit&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2019&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;order&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;by&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon_discount_amount&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;desc&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;limit&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이 쿼리는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;monthly_member_benefit&lt;/code&gt; 테이블에 있는 모든 행을 대상으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;year&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;month&lt;/code&gt;가 일치하는 행들 중에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_discount_amount&lt;/code&gt;를 내림차순 하여 가장 큰 값인 행을 하나 반환한다. 즉, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_discount_amount&lt;/code&gt; 값이 가장 큰 값을 반환하기 위해서 정렬을 해야만 한다. 조건절에서 데이터를 걸렀다고 하더라도 정렬할 데이터가 많은 상황이면 정렬을 수행하면서 데이터베이스에 부담이 되지 않을까?&lt;/p&gt;
+
+&lt;h3 id=&quot;데이터베이스에서-정렬-vs-애플리케이션에서-정렬&quot;&gt;데이터베이스에서 정렬 vs 애플리케이션에서 정렬&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;인덱스가 걸려있지 않은 상황&lt;/strong&gt;에서 정렬을 수행할 경우 애플리케이션으로 데이터를 불러와서 정렬하는 것이 데이터베이스 커넥션 연결을 조금이라도 짧게 하기 때문에 유리할 것이다. 하지만 이 경우에도 데이터베이스에서 애플리케이션으로 많은 양의 데이터를 불러와야 하기 때문에 좋지 않다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;인덱스가 걸려있는 상황&lt;/strong&gt;이라면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;order by&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;limit&lt;/code&gt;으로 데이터를 정렬한 후 값을 가져오는 부분에 대한 정렬을 따로 수행하지 않아도 된다. 왜냐하면 데이터가 저장될 때 이미 정렬된 상태로 인덱스에 저장되기 때문에 데이터에 직접 접근하지 않고 가져오기만 하면 된다. 그래서 애플리케이션에서 정렬하는 것 보다 훨씬 효율적이다.&lt;/p&gt;
+
+&lt;h3 id=&quot;인덱스-설정&quot;&gt;인덱스 설정&lt;/h3&gt;
+
+&lt;p&gt;위 쿼리에 사용되는 조건은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;year&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;month&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_discount_amount&lt;/code&gt; 세 개다.
+그렇다면 인덱스 순서는 어떻게 하면 좋을까? 실제 데이터 상황에 따라 다르겠지만, 보편적으로 생각해보면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;month&lt;/code&gt;는 시간이 지남에 따라 생길 수 있는 최대 범위가 12개이고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;year&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_discount_amount&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;month&lt;/code&gt; 보다 범위가 넓을 것이다. 그보다 중요한 점은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_discount_amount&lt;/code&gt;로 인덱스를 시작하면 데이터베이스는 이 컬럼을 기준으로 정렬된 데이터를 먼저 검색하게 된다. 그 결과, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;year&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;month&lt;/code&gt; 조건을 만족하지 않는 데이터도 많이 검색하게 되어 전체 쿼리 성능이 떨어지게 된다. 그래서 이전의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;범위 조건&lt;/code&gt;과 마찬가지로 인덱스 가장 마지막에 설정하는 것이 좋다.&lt;/p&gt;
+
+&lt;p&gt;결론적으로 위 쿼리에 사용하는 인덱스는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;year&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;month&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coupon_discount_amount&lt;/code&gt; 순으로 설정하는 것이 좋다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;create&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx_year_month_coupon_discount_amount&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;on&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;monthly_member_benefit&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;month&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon_discount_amount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;explain-3&quot;&gt;explain&lt;/h3&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;explain&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;monthly_member_benefit&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;year&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2019&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;month&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;order&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;by&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coupon_discount_amount&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;desc&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;limit&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| #  | id | select_type | table | partitions | type | possible_keys                              | key                                   | key_len | ref            | rows    | filtered | Extra                |
+|----|----|-------------|-------|------------|------|--------------------------------------------|---------------------------------------|---------|----------------|---------|----------|----------------------|
+| 1  | 1  | SIMPLE      | m     |            | ref  | idx_year_month_coupon_discount_amount     | idx_year_month_coupon_discount_amount | 6       | const,const    | 374770  | 100      | Backward index scan   |
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ref&lt;/code&gt;로 인덱스를 사용하여 특정 키를 조회하는 것을 의미한다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filtered&lt;/code&gt;는 100%로 모든 행이 조건에 만족한다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Extra&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Backward index scan&lt;/code&gt;이다. 이는 인덱스를 역방향으로 스캔하고 있다는 것을 의미한다.&lt;/p&gt;
+
+&lt;h3 id=&quot;explain-analyze-3&quot;&gt;explain analyze&lt;/h3&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-&amp;gt; Limit: 1 row(s)  (cost=43141 rows=1) (actual time=1.42..1.42 rows=1 loops=1)
+    -&amp;gt; Index lookup on m using idx_year_month_coupon_discount_amount (year=2019, month=1) (reverse)  (cost=43141 rows=374770) (actual time=1.42..1.42 rows=1 loops=1)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;(year=2019, month=1) (reverse)&lt;/strong&gt; 이 조건을 기반으로 인덱스를 조회하고 &lt;strong&gt;(reverse)&lt;/strong&gt; 인덱스를 역방향으로 스캔하고 있다. 이는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DESC&lt;/code&gt;와 같이 특정한 정렬 조건이 필요할 때 효율적일 수 있다.&lt;/p&gt;
+
+&lt;h3 id=&quot;인덱스-성능-테스트&quot;&gt;인덱스 성능 테스트&lt;/h3&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;count:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;12663&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100059&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;Average&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elapsed&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;time:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;인덱스를 설정하여 조회를 효율적으로 수행했다.&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 31 Aug 2024 00:00:00 +0900</pubDate>
+        <link>http://localhost:4000/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-3/</link>
+        <guid isPermaLink="true">http://localhost:4000/db/%ED%86%A0%EB%AF%B8%EC%9D%98-Coupon-%EC%9D%B8%EB%8D%B1%EC%8A%A4-%EC%A0%95%EB%A6%AC-3/</guid>
+        
+        <category>index</category>
+        
+        <category>mysql</category>
+        
+        
+        <category>DB</category>
+        
+      </item>
     
       <item>
         <title>토미의 Coupon 인덱스 정리 - 2</title>
@@ -4279,88 +4742,6 @@ null 처리한 참조를 실수로 사용하려 하면&lt;code class=&quot;langu
         <pubDate>Tue, 09 Jan 2024 00:00:00 +0900</pubDate>
         <link>http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-6-%EB%B6%88%ED%95%84%EC%9A%94%ED%95%9C-%EA%B0%9D%EC%B2%B4-%EC%83%9D%EC%84%B1%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/</link>
         <guid isPermaLink="true">http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-6-%EB%B6%88%ED%95%84%EC%9A%94%ED%95%9C-%EA%B0%9D%EC%B2%B4-%EC%83%9D%EC%84%B1%EC%9D%84-%ED%94%BC%ED%95%98%EB%9D%BC/</guid>
-        
-        <category>Effective Java</category>
-        
-        
-        <category>Effective Java</category>
-        
-      </item>
-    
-      <item>
-        <title>Effective Java - 아이템 5: 자원을 직접 명시하지 말고 의존 객체 주입을 사용하라</title>
-        <description>&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 정적 유틸리티를 잘못 사용한 예 - 유연하지 않고 테스트하기 어렵다.&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SpellChecker&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Lexicon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dictionary&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...;&lt;/span&gt;
-    
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;SpellChecker&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 객체 생성 방지&lt;/span&gt;
-    
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isValid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;suggestions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;typo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 싱글턴을 잘못 사용한 예 - 유연하지 않고 테스트하기 어렵다.&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SpellChecker&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Lexicon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dictionary&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...;&lt;/span&gt;
-    
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;SpellChecker&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(...)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SpellChecker&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;INSTANCE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SpellChecker&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(...);&lt;/span&gt;
-    
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isValid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;suggestions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;typo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;두 방식 모두 사전을 단 하나만 사용한다고 가정하는 코드이다.&lt;br /&gt;
-다른 여러가지 사전을 사용해야 한다면 코드를 교체하는 작업이 힘들다.&lt;br /&gt;
-사용하는 자원에 따라 동작이 달라지는 클래스에는 정적 유틸리티 클래스나 싱글턴 방식이 적합하지 않다.&lt;br /&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;유연하게-사용하는-방법&quot;&gt;유연하게 사용하는 방법&lt;/h3&gt;
-&lt;p&gt;유연하게 변경하려면 클래스가 여러 자원 인스턴스를 지원해야 하며, 클라이언트가 원하는 자원을 사용해야 한다.&lt;br /&gt;
-&lt;strong&gt;인스턴스를 생성할 때 생성자에 필요한 자원을 넘겨주는 방식&lt;/strong&gt;이다.&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 생성자 의존성 주입 패턴&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SpellChecker&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Lexicon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dictionary&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;SpellChecker&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Lexicon&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dictionary&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;dictionary&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Objects&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;requireNonNull&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dictionary&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isValid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;suggestions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;typo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;의존 객체 주입 패턴은 자원이 몇 개든 의존 관계가 어떻든 상관없이 잘 작동한다.&lt;br /&gt;
-또한 불변 을 보장하여 여러 클라이언트가 의존 객체들을 안심하고 공유할 수 있다.&lt;br /&gt;
-의존 객체 주입은 생성자, 정적 팩터리, 빌더 모두에 똑같이 응용할 수 있다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;이 패턴의 변형으로 생성자에 자원 팩터리를 넘겨주는 방식이 있다.&lt;br /&gt;
-&lt;strong&gt;팩터리란 호출할 때마다 특정 타입의 인스턴스를 반복해서 만들어주는 객체를 말한다.&lt;/strong&gt;&lt;br /&gt;
-즉 팩터리 메서드 패턴을 구현한 것이다.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Supplier&amp;lt;T&amp;gt;&lt;/code&gt; 인터페이스가 팩터리를 표현한 완벽한 예다. &lt;br /&gt;
-일반적으로 한정적 &lt;strong&gt;와일드카드 타입(bounded wildcard type)&lt;/strong&gt;을 사용해 팩터리의 타입 매개변수를 제한해야 한다.&lt;br /&gt;
-자신이 명시한 타입의 하위 타입이라면 무엇이든 생성할 수 있는 팩터리를 넘길 수 있다.&lt;br /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 클라이언트가 제공한 팩터리가 생성한 타일들로 구성된 모자이크를 만드는 메서드&lt;/span&gt;
-&lt;span class=&quot;nc&quot;&gt;Mosaic&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Supplier&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;?&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Tile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tileFactory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;핵심-정리&quot;&gt;핵심 정리&lt;/h3&gt;
-&lt;p&gt;클래스가 내부적으로 하나 이상의 자원에 의존하고, 그 자원이 클래스 동작에 영향을 준다면 싱글턴과 정적 유틸리티 클래스는 사용하지 않는 것이 좋다.&lt;br /&gt;
-이 자원들을 클래스가 직접 만들게 해서도 안 된다.&lt;br /&gt; 
-&lt;strong&gt;대신 필요한 자원을(혹은 그 자원을 만들어주는 팩터리) 생성자에 넘겨주자.&lt;/strong&gt;&lt;/p&gt;
-</description>
-        <pubDate>Tue, 09 Jan 2024 00:00:00 +0900</pubDate>
-        <link>http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-5-%EC%9E%90%EC%9B%90%EC%9D%84-%EC%A7%81%EC%A0%91-%EB%AA%85%EC%8B%9C%ED%95%98%EC%A7%80-%EB%A7%90%EA%B3%A0-%EC%9D%98%EC%A1%B4-%EA%B0%9D%EC%B2%B4-%EC%A3%BC%EC%9E%85%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC/</link>
-        <guid isPermaLink="true">http://localhost:4000/effective%20java/Effective-Java-%EC%95%84%EC%9D%B4%ED%85%9C-5-%EC%9E%90%EC%9B%90%EC%9D%84-%EC%A7%81%EC%A0%91-%EB%AA%85%EC%8B%9C%ED%95%98%EC%A7%80-%EB%A7%90%EA%B3%A0-%EC%9D%98%EC%A1%B4-%EA%B0%9D%EC%B2%B4-%EC%A3%BC%EC%9E%85%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC/</guid>
         
         <category>Effective Java</category>
         
