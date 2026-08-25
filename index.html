@@ -1,4 +1,781 @@
----
-layout: home
-author_profile: true
----
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b0d10">
+<title>이건상 — 백엔드 개발자</title>
+<meta name="description" content="사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
+<link rel="canonical" href="https://kunsanglee.github.io/">
+<meta property="og:title" content="이건상 — 백엔드 개발자">
+<meta property="og:description" content="사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kunsanglee.github.io/">
+<meta property="og:image" content="https://kunsanglee.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="이건상 — 백엔드 개발자. 사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="이건상 — 백엔드 개발자">
+<meta name="twitter:description" content="사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
+<meta name="twitter:image" content="https://kunsanglee.github.io/og-image.png">
+<meta name="twitter:image:alt" content="이건상 — 백엔드 개발자. 사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB4klEQVR4nGNkwAI+bIn6z0ADIOCzjBFdjJEeFuNzCCM2y6Ujt9HE4qfLvTAcwUQvy9HNhtnJhEsBPRwBAowwl9DDcmzRwcQwwIBpWDlATICd4Wi/A5gmFrCQYgEvFwtDjp8yg5GKAMOj198ZFu95xHDh7ge4PBMTI4OCBBeYpnoIcLEzM2xosGTQUeRjWLD7IcOrDz8ZVteaM1hqCjFQAliIVRjuIMPAyMjIEN91huHP3/8MW0++YPj//z9DaZgaQ1DjCbIdwESsQi9TCYbl+x+DLYeBRXseMZhrCDEI8bLR3gHSopwMd55+QRF78e4Hw5fvfxhkRDhp7wB2FiaGX3/+YYiDxDjYyM9MTMQqfPr2O4M0mk852ZnBwf/kzXfaO+D0zfcMPuYSKGLe5hJgy1+8+0l7B8zd8YDBUkuYIdNXiYGbg5nBTF2QoS5ak2H65nsM//7/p302fPb2B0No80mGnjRdhqpIdYY3H38xzNx6n2HBrodkW06SA0AAVOq5lB9m4GBjZvjx6y8DNQATOZqoZTnZDqAmYKKmYa8//GQwz90PpmmSBgiBv//+k1wmMDEMMGAadYAAtIOA3GmgNYDZBbIbJQro4Qh0O5hgLqGHI7B1zRiRFQxo55QeDsHWPQcArQCt7lpCww0AAAAASUVORK5CYII=">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0d10'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%23f0b45a' font-family='sans-serif' font-weight='700'%3E이%3C/text%3E%3C/svg%3E">
+<script>document.documentElement.classList.add("js");</script>
+<style>
+:root {
+  --bg: #0b0d10;
+  --bg-card: #111419;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.13);
+  --text: #e9ecf2;
+  --text-muted: #aab2c0;
+  --text-faint: #8a93a6;
+  --amber: #f0b45a;
+  --amber-bright: #f5c47a;
+  --amber-dim: rgba(240, 180, 90, 0.1);
+  --mint: #63e6c0;
+  --mint-dim: rgba(99, 230, 192, 0.08);
+  --mint-border: rgba(99, 230, 192, 0.32);
+  --amber-border: rgba(240, 180, 90, 0.5);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --max-width: 1060px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  letter-spacing: -0.01em;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 미세 질감 오버레이 */
+body::after {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 90;
+}
+
+::selection { background: var(--amber); color: #1a1206; }
+
+.skip-link {
+  position: absolute; left: -9999px; top: 0;
+  background: var(--amber); color: #1a1206;
+  padding: 0.6rem 1.2rem; border-radius: 0 0 8px 0; z-index: 100;
+}
+.skip-link:focus { left: 0; }
+.skip-link:focus-visible { outline-color: var(--text); }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+/* ── 내비게이션 ─────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: rgba(11, 13, 16, 0.75);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.85rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-weight: 700; font-size: 0.95rem; color: var(--text);
+  text-decoration: none; letter-spacing: 0.02em;
+}
+.nav-logo span { color: var(--amber); }
+.nav-links { display: flex; gap: 1.75rem; list-style: none; }
+.nav-links a {
+  color: var(--text-muted); text-decoration: none; font-size: 0.88rem;
+  padding: 0.4rem 0.5rem 3px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-links a.active { color: var(--text); border-bottom-color: var(--amber); }
+@media (max-width: 640px) {
+  .nav-links { gap: 1.1rem; }
+  .nav-links a { font-size: 0.78rem; }
+  .hero h1 br { display: none; }
+}
+@media (max-width: 360px) {
+  .nav-links { gap: 0.8rem; }
+  .nav-links a { font-size: 0.74rem; }
+}
+
+/* ── 레이아웃 공통 ─────────────────────── */
+main { display: block; }
+section { padding: 5rem 1.5rem; scroll-margin-top: 70px; }
+.wrap { max-width: var(--max-width); margin: 0 auto; }
+
+.kicker {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em;
+  color: var(--amber); text-transform: uppercase; margin-bottom: 1.1rem;
+}
+.kicker::before {
+  content: ""; width: 1.4rem; height: 1px; background: var(--amber);
+}
+
+h2 {
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+  font-weight: 700; letter-spacing: -0.02em; line-height: 1.32;
+  margin-bottom: 1rem;
+}
+
+.section-lead {
+  color: var(--text-muted); max-width: 620px; font-size: 1.02rem;
+}
+
+/* ── 히어로 ────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex; align-items: center;
+  position: relative;
+  padding-top: 5rem; padding-bottom: 5rem;
+}
+.hero-inner { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; width: 100%; }
+.hero-eyebrow {
+  font-size: 0.95rem; color: var(--text-faint);
+  margin-bottom: 1.8rem;
+}
+.hero-eyebrow strong { color: var(--text); font-weight: 600; }
+.hero h1 {
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 800; letter-spacing: -0.02em; line-height: 1.22;
+  margin-bottom: 1.4rem;
+  word-break: keep-all;
+}
+.hero h1 .accent { color: var(--mint); }
+.hero-sub {
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  color: var(--text-muted);
+  margin-bottom: 3rem;
+  word-break: keep-all;
+}
+.live-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--mint); margin-right: 0.5rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 50% { opacity: 0.35; } }
+.hero-actions { display: flex; gap: 0.9rem; flex-wrap: wrap; }
+.scroll-cue {
+  position: absolute; bottom: 2.4rem; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 44px;
+  background: linear-gradient(to bottom, var(--text-faint), transparent);
+}
+.js .scroll-cue { animation: drop 1.8s ease-in-out infinite; transform-origin: top; }
+@keyframes drop {
+  0%, 100% { opacity: 0.25; transform: translateX(-50%) scaleY(0.6); }
+  50%      { opacity: 1; transform: translateX(-50%) scaleY(1); }
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.8rem 1.55rem; border-radius: 10px;
+  font-size: 0.95rem; font-weight: 700; text-decoration: none;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+.btn-primary {
+  background: var(--amber);
+  color: #1a1206;
+}
+.btn-primary:hover { background: var(--amber-bright); }
+.btn-ghost {
+  border: 1px solid var(--border-strong); color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.02);
+}
+.btn-ghost:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.24); }
+
+/* ── 등장 애니메이션 ─────────────────── */
+.js .reveal {
+  opacity: 0; transform: translateY(26px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.js .reveal.visible { opacity: 1; transform: none; }
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .reveal { opacity: 1; transform: none; }
+}
+
+/* ── 대표 사례 ────────────────────────── */
+#featured { padding-top: 7rem; }
+.featured-head { margin-bottom: 3.2rem; }
+
+.case-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.4rem; max-width: 640px; }
+.badge {
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--text-muted); border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.28rem 0.7rem; border-radius: 999px;
+}
+.badge.live { color: var(--mint); border-color: var(--mint-border); background: var(--mint-dim); }
+
+.case-problem {
+  color: var(--text-muted); max-width: 640px; margin-bottom: 2.6rem;
+  border-left: 2px solid var(--amber);
+  padding-left: 1.15rem;
+  word-break: keep-all;
+}
+.case-problem strong { color: var(--text); }
+
+/* 슬랙 스레드 목업 — 앰버는 질문하는 사람, 민트는 에이전트 */
+.case-duo {
+  display: grid; grid-template-columns: minmax(0, 640px) 1fr;
+  gap: 2.5rem; align-items: start;
+}
+@media (max-width: 1100px) { .case-duo { grid-template-columns: 1fr; gap: 1.4rem; } }
+.thread {
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.thread-head {
+  padding: 0.65rem 1.2rem;
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--text-faint); letter-spacing: 0.04em;
+  word-break: keep-all;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--border);
+}
+.msg { padding: 1.05rem 1.3rem 1.15rem; font-size: 0.9rem; line-height: 1.65; }
+.msg + .msg { border-top: 1px solid var(--border); }
+.msg-name {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-weight: 700; font-size: 0.82rem; margin-bottom: 0.35rem;
+}
+.msg-name .avatar {
+  width: 20px; height: 20px; border-radius: 6px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.62rem; font-weight: 700; color: #1a1206;
+}
+.msg-user .msg-name { color: var(--amber); }
+.msg-user .avatar { background: var(--amber); }
+.msg-agent .msg-name { color: var(--mint); }
+.msg-agent .avatar { background: var(--mint); }
+.msg p { color: var(--text); word-break: keep-all; }
+.msg .evidence {
+  display: block;
+  font-family: var(--font-mono); font-size: 0.74rem; line-height: 1.8;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 2px solid var(--mint);
+  padding: 0.7rem 0.9rem;
+  margin-top: 0.75rem;
+}
+.msg .evidence b { color: var(--mint); font-weight: 600; }
+.reaction {
+  display: inline-flex; margin-top: 0.65rem;
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px; padding: 0.12rem 0.6rem;
+  color: var(--text-muted);
+}
+.case-side {
+  border-top: 1px solid var(--border-strong);
+  padding-top: 1.3rem;
+  font-size: 0.88rem;
+  display: grid; gap: 0.9rem;
+  align-content: start;
+}
+.side-row { display: grid; grid-template-columns: 3.2rem 1fr; gap: 0.8rem; align-items: baseline; }
+.side-label {
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--amber); letter-spacing: 0.08em;
+}
+.side-row span:last-child { color: var(--text-muted); word-break: keep-all; }
+.side-note { font-size: 0.8rem; color: var(--text-faint); word-break: keep-all; border-top: 1px solid var(--border); padding-top: 0.9rem; margin-top: 0.3rem; }
+.nowrap { white-space: nowrap; }
+
+.pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem 2.5rem; }
+@media (min-width: 648px) and (max-width: 968px) {
+  .pillars { grid-template-columns: repeat(2, 1fr); }
+  .pillar:last-child { grid-column: 1 / -1; }
+}
+.pillar {
+  border-top: 1px solid var(--border-strong);
+  padding-top: 1.4rem;
+  transition: border-color 0.25s ease;
+}
+.pillar:hover { border-top-color: var(--amber); }
+.pillar-icon {
+  color: var(--amber); margin-bottom: 0.8rem;
+  width: 2.4rem; height: 2.4rem; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--amber-dim);
+}
+.pillar h3 { font-size: 1.02rem; font-weight: 700; margin-bottom: 0.55rem; letter-spacing: -0.01em; }
+.pillar p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.68; word-break: keep-all; }
+.pillar p code {
+  font-family: var(--font-mono); font-size: 0.8rem;
+  background: var(--amber-dim); color: var(--amber);
+  padding: 0.08rem 0.36rem; border-radius: 5px;
+}
+
+/* ── 두 개의 저장소 ──────────────────── */
+.impl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; margin-top: 2.8rem; }
+@media (max-width: 760px) { .impl-grid { grid-template-columns: 1fr; } }
+.impl { padding-left: 1.25rem; border-left: 2px solid var(--border-strong); }
+.impl-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.7rem; }
+.impl-lang {
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
+  color: var(--text-muted); background: rgba(255, 255, 255, 0.03);
+  padding: 0.22rem 0.62rem; border-radius: 6px;
+}
+.impl h3 { font-size: 1.05rem; font-weight: 700; }
+.impl p { font-size: 0.88rem; color: var(--text-muted); word-break: keep-all; }
+.impl p strong { color: var(--text); font-weight: 600; }
+
+/* ── 다른 작업물 ─────────────────────── */
+#works .works-head {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  gap: 2rem; flex-wrap: wrap; margin-bottom: 3rem;
+}
+#works .works-head .section-lead { max-width: 380px; }
+.work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+@media (max-width: 760px) { .work-grid { grid-template-columns: 1fr; } }
+.work {
+  display: block; text-decoration: none; color: inherit;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px; padding: 2rem;
+  transition: border-color 0.25s ease;
+}
+.work:hover { border-color: var(--amber-border); }
+.work-kind {
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--text-faint); letter-spacing: 0.1em; text-transform: uppercase;
+}
+.work h3 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; margin: 0.55rem 0 0.65rem; }
+.work p { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1.3rem; word-break: keep-all; }
+.work-link {
+  font-size: 0.87rem; font-weight: 600; color: var(--amber);
+  display: inline-flex; align-items: center; gap: 0.35rem;
+}
+.work:hover .work-link { color: var(--amber-bright); }
+
+/* ── 글 ─────────────────────────── */
+.writing-list { margin-top: 3rem; border-top: 1px solid var(--border-strong); list-style: none; }
+.writing-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 1.4rem;
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 0.25rem;
+  text-decoration: none; color: inherit;
+  transition: background 0.25s ease;
+}
+a.writing-item:hover { background: rgba(255, 255, 255, 0.015); }
+.writing-meta { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-faint); margin-bottom: 0.4rem; }
+.writing-item h3 { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.5; word-break: keep-all; }
+.writing-arrow { color: var(--text-faint); flex-shrink: 0; transition: color 0.2s ease; }
+a.writing-item:hover .writing-arrow { color: var(--amber); }
+
+/* ── 마무리 ─────────────────────────── */
+#contact { padding-top: 8rem; padding-bottom: 5rem; text-align: center; }
+#contact .kicker { justify-content: center; }
+#contact .kicker::after {
+  content: ""; width: 1.4rem; height: 1px; background: var(--amber);
+}
+#contact h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); }
+#contact .section-lead { margin: 0 auto 2.4rem; }
+.outro-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2.2rem 1.5rem;
+  text-align: center;
+  color: var(--text-faint); font-size: 0.8rem;
+}
+footer a { color: var(--text-muted); text-decoration: none; }
+footer a:hover { color: var(--text); }
+
+/* ── 인쇄 ─────────────────────────────── */
+@media print {
+  :root {
+    --bg: #fff; --bg-card: #fff;
+    --border: #ddd; --border-strong: #ccc;
+    --text: #111; --text-muted: #444; --text-faint: #666;
+    --amber: #b45309; --amber-dim: rgba(180, 83, 9, 0.08);
+    --mint: #0f766e; --mint-dim: rgba(15, 118, 110, 0.08);
+    --mint-border: rgba(15, 118, 110, 0.4); --amber-border: rgba(180, 83, 9, 0.4);
+  }
+  body { background: #fff; }
+  html { background: #fff; color-scheme: light; }
+  body::after, .scroll-cue, .skip-link { display: none; }
+  .nav-links a.active { border-bottom-color: transparent; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; overflow-wrap: anywhere; }
+  .writing-item { display: block; }
+  .pillar, .work, .thread, .msg, .impl, .writing-item { break-inside: avoid; }
+  h2 { break-after: avoid; }
+  section { padding-block: 2rem; }
+  #featured { padding-top: 3rem; }
+  #contact { padding-top: 3rem; padding-bottom: 2rem; break-inside: avoid; }
+  .js .reveal { opacity: 1; transform: none; }
+  nav {
+    position: static;
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .hero { min-height: auto; padding-top: 2rem; padding-bottom: 2rem; }
+  .pillar { border-top: none; }
+  .btn-primary {
+    background: none;
+    color: var(--amber);
+    border: 1px solid var(--amber);
+  }
+  .msg-name .avatar { color: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+<header>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+<nav aria-label="주요 내비게이션">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#top">이건상<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#featured">대표 작업</a></li>
+      <li><a href="#works">작업물</a></li>
+      <li><a href="#writing">글</a></li>
+      <li><a href="#contact">연결</a></li>
+    </ul>
+  </div>
+</nav>
+</header>
+
+<main id="main" tabindex="-1">
+
+<!-- ═══ 히어로 ═══ -->
+<header class="hero" id="top">
+  <div class="hero-inner">
+    <p class="hero-eyebrow"><strong>이건상</strong> · 백엔드 개발자</p>
+    <h1>
+      사내 슬랙에서 동료처럼 일하는<br>
+      <span class="accent">AI 에이전트</span>를 만들고 운영합니다
+    </h1>
+    <p class="hero-sub"><span class="live-dot" aria-hidden="true"></span>지금도 사내에서 답하고 있습니다.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#featured">대표 작업 보기</a>
+      <a class="btn btn-ghost" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only">(새 탭)</span></a>
+    </div>
+  </div>
+  <div class="scroll-cue" aria-hidden="true"></div>
+</header>
+
+<!-- ═══ 대표 사례 ═══ -->
+<section id="featured" aria-labelledby="featured-heading">
+  <div class="wrap">
+    <div class="featured-head reveal">
+      <p class="kicker">대표 작업</p>
+      <h2 id="featured-heading">네 저장소의 코드 질문에, 근거와 함께 답합니다</h2>
+      <p class="section-lead">
+        백엔드·안드로이드·iOS·웹, 네 저장소로 나뉜 회사 코드. 화면이 어떤 API 를 호출하는지 알고 싶으면 늘 다른 파트 개발자를 찾아다녀야 했습니다.
+        그 질문을 사람에게 묻는 대신, 에이전트에게 묻게 만든 것이 이 프로젝트입니다.
+      </p>
+    </div>
+
+    <article class="reveal reveal-delay-1">
+      <div class="case-badges">
+        <span class="badge live">운영 중</span>
+        <span class="badge">Slack</span>
+        <span class="badge">Claude Code Headless</span>
+        <span class="badge">Event Sourcing</span>
+      </div>
+
+      <p class="case-problem">
+        <strong>문제:</strong> 사소한 코드 질문 하나가 늘 다른 파트 개발자의 시간에 의존했습니다.
+        상대가 회의 중이면 묻는 사람도 멈춰 있고, 부담스러워 아예 못 물어보기도 했습니다.
+      </p>
+
+      <div class="case-duo">
+        <div class="thread">
+          <div class="thread-head">앰버는 사람, 민트는 에이전트</div>
+          <div class="msg msg-user">
+            <div class="msg-name"><span class="avatar" aria-hidden="true">동</span>동료</div>
+            <p>디스커버리 응답의 id 필드, 안드로이드는 Long 으로 iOS 는 Int 로 받고 있어요. 서버는 어떤 타입으로 내려주나요?</p>
+            <span class="reaction" role="img" aria-label="반응 3개">👀 3</span>
+          </div>
+          <div class="msg msg-agent">
+            <div class="msg-name"><span class="avatar" aria-hidden="true">AI</span>에이전트</div>
+            <p>
+              서버는 Long, 즉 64비트 정수로 응답합니다. Int 로 받으면 범위를 넘는 값이 잘릴 수 있습니다.
+            </p>
+            <div class="evidence"><b>근거 추적 경로</b><br>android/…/DiscoveryResponse.kt — <span class="nowrap">id: Long</span><br>ios/…/DiscoveryResponse.swift — <span class="nowrap">id: Int</span><br>api/…/DiscoveryController.kt — <span class="nowrap">응답: Long</span></div>
+          </div>
+        </div>
+        <div class="case-side" role="group" aria-label="운영 사실">
+          <div class="side-row"><span class="side-label">시작</span><span>서버 한 대 없이 Slack Socket Mode 로</span></div>
+          <div class="side-row"><span class="side-label">비용</span><span>내 장비에서 파일럿 0원</span></div>
+          <div class="side-row"><span class="side-label">처리</span><span>동시 3건 · 모래시계·눈 이모지로 상태 표시</span></div>
+          <p class="side-note">위 스레드는 실제 채널 흐름을 재구성한 예시입니다.</p>
+        </div>
+      </div>
+
+      <div class="pillars">
+        <div class="pillar">
+          <div class="pillar-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5l-1.7 3.3-3.3 1.7 1.7-3.3z" fill="currentColor" stroke="none"/></svg>
+          </div>
+          <h3>검색이 아니라 탐색</h3>
+          <p>
+            단어가 들어간 파일 목록을 주는 검색 대신, 사람이 하듯 화면 코드를 열고 함수 호출을 한 단계씩 따라갑니다.
+            답에는 화면 파일에서 호출 지점까지의 <code>근거 경로</code>가 붙어, 묻는 사람이 직접 확인할 수 있습니다.
+          </p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          </div>
+          <h3>처음부터 막힌 경계</h3>
+          <p>
+            도구는 파일 읽기와 검색만 허용하고 쓰기와 웹 접근은 명시적으로 차단했습니다.
+            자식 프로세스 환경에서 시크릿을 걷어내고, 데이터 조회는 조회문만 허용하고 읽기 전용으로 한 번 더 막는 등
+            여러 겹의 안전장치를 둔 통로로만 열었습니다.
+          </p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+          </div>
+          <h3>틀린 답을 학습으로</h3>
+          <p>
+            스레드에서 에이전트를 태그해 지적하면 그 자리에서 정정하고, 무엇을 왜 틀렸는지 따로 기록합니다.
+            기록은 사람 검수를 거쳐 가이드에 반영되고, 재시작 없이 다음 질문부터 적용됩니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="impl-grid">
+        <div class="impl">
+          <div class="impl-head">
+            <span class="impl-lang">Kotlin</span>
+            <h3>운영본</h3>
+          </div>
+          <p>
+            Spring Boot 위에 채널마다 행위자(actor)를 두어 같은 채널은 직렬로, 다른 채널은 병렬로 처리합니다.
+            모든 메시지는 append-only 이벤트 스트림으로 남기고 채널 상태는 그 재생으로 만듭니다.
+            <strong>launchd 로 실제 사내 운영 중</strong>입니다.
+          </p>
+        </div>
+        <div class="impl">
+          <div class="impl-head">
+            <span class="impl-lang">TypeScript</span>
+            <h3>재구축본</h3>
+          </div>
+          <p>
+            운영본을 TypeScript 로 다시 짜는 이식 프로젝트입니다.
+            이식의 전제가 되는 과거 이벤트 전량 재생 검증과, 넓히면 안 되는 보안 경계의 실행 가능한 명세화부터
+            차근차근 쌓고 있습니다.
+          </p>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ═══ 다른 작업물 ═══ -->
+<section id="works" aria-labelledby="works-heading">
+  <div class="wrap">
+    <div class="works-head reveal">
+      <div>
+        <p class="kicker">다른 작업물</p>
+        <h2 id="works-heading">에이전트 밖에서 만든 것들</h2>
+      </div>
+      <p class="section-lead">일하는 방식 자체를 도구로 만들어 두려는 습관이 남긴 작업물입니다.</p>
+    </div>
+    <div class="work-grid">
+      <a class="work reveal reveal-delay-1" href="https://github.com/kunsanglee/ai-ready" target="_blank" rel="noopener noreferrer" aria-label="ai-ready 저장소 보기(새 탭)">
+        <span class="work-kind">Open Source · Plugin</span>
+        <h3>ai-ready</h3>
+        <p>
+          감사(audit) → 적용(apply) → 무인 검증을 하나의 Claude Code 플러그인으로 묶은 도구입니다.
+          AI 코딩 도구가 프로젝트 규칙을 준비된 대로 따르게 하는 준비 작업을 자동화합니다.
+        </p>
+        <span class="work-link">저장소 보기
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+      <a class="work reveal reveal-delay-2" href="https://maeil-mail.kr" target="_blank" rel="noopener noreferrer" aria-label="매일메일 서비스 보기(새 탭)">
+        <span class="work-kind">Service</span>
+        <h3>매일메일</h3>
+        <p>
+          개발자 면접 질문을 매일 메일로 받아 볼 수 있는 서비스입니다.
+          만드는 데 참여했고, 예습·복습 루틴을 만드는 가장 단순한 형태라고 생각합니다.
+        </p>
+        <span class="work-link">서비스 보기
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Writing ═══ -->
+<section id="writing" aria-labelledby="writing-heading">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="kicker">글</p>
+      <h2 id="writing-heading">만든 것을 글로 정리합니다</h2>
+      <p class="section-lead">성공담보다 판단의 근거를 적으려 노력합니다. 어떤 선택지를 검토했고 왜 골랐는지가 글의 몸통입니다.</p>
+    </div>
+    <ul class="writing-list reveal reveal-delay-1">
+      <li>
+        <a class="writing-item" href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer" aria-label="파트 경계를 넘는 코드 질문에 답하는 사내 AI 에이전트를 만들기까지 — Medium 글 보기(새 탭)">
+          <div>
+            <p class="writing-meta">Medium · 2026.06 · 14분 분량 · 시리즈 1편</p>
+            <h3>파트 경계를 넘는 코드 질문에 답하는 사내 AI 에이전트를 만들기까지</h3>
+          </div>
+          <span class="writing-arrow" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══ 마무리 ═══ -->
+<section id="contact" aria-labelledby="contact-heading">
+  <div class="wrap reveal">
+    <p class="kicker">연결</p>
+    <h2 id="contact-heading">코드가 말하게 하는 개발자</h2>
+    <p class="section-lead">
+      작업물이나 글을 통해 이야기를 나누고 싶다면 언제든 연락 주세요.
+    </p>
+    <div class="outro-links">
+      <a class="btn btn-primary" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only">(새 탭)</span></a>
+      <a class="btn btn-ghost" href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<span class="sr-only">(새 탭)</span></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer id="site-footer">
+  © 2026 이건상 · <a href="https://github.com/kunsanglee/kunsanglee.github.io" target="_blank" rel="noopener noreferrer">이 페이지의 소스<span class="sr-only">(새 탭)</span></a>
+</footer>
+
+<script>
+(function () {
+  var mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var targets = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+
+  function revealAll() {
+    targets.forEach(function (el) { el.classList.add("visible"); });
+  }
+
+  if (!("IntersectionObserver" in window) || mq.matches) {
+    revealAll();
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: "0px 0px -15% 0px" });
+    targets.forEach(function (el) { io.observe(el); });
+
+    try {
+      mq.addEventListener("change", function (e) {
+        if (e.matches) { io.disconnect(); revealAll(); }
+      });
+    } catch (err) {
+      if (mq.addListener) {
+        mq.addListener(function (e) {
+          if (e.matches) { io.disconnect(); revealAll(); }
+        });
+      }
+    }
+  }
+
+  var navMap = {};
+  document.querySelectorAll(".nav-links a").forEach(function (a) {
+    var id = a.getAttribute("href").slice(1);
+    navMap[id] = a;
+  });
+  function clearActive() {
+    Object.keys(navMap).forEach(function (id) {
+      navMap[id].classList.remove("active");
+      navMap[id].removeAttribute("aria-current");
+    });
+  }
+
+  if ("IntersectionObserver" in window) {
+    var spy = new IntersectionObserver(function (entries) {
+      /* 밴드(뷰포트 40~45%)에 걸친 대상 중 문서에서 가장 아래인 것을 활성화한다.
+         contact 가 마지막 섹션이라 바닥에서도 이 경로로 "연결"이 활성된다. */
+      var hit = null;
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        if (!hit || (hit.compareDocumentPosition(entry.target) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+          hit = entry.target;
+        }
+      });
+      if (!hit) return;
+      /* 높은 창에서 바닥에 닿으면 contact 가 밴드에 못 미치므로 바닥 판정이 최종 결정자가 된다 */
+      if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1) {
+        hit = document.getElementById("contact");
+      }
+      clearActive();
+      var link = navMap[hit.id];
+      if (link) {
+        link.classList.add("active");
+        link.setAttribute("aria-current", "location");
+      }
+      /* 히어로(#top)가 밴드에 걸치면 활성 없음 */
+    }, { rootMargin: "-40% 0px -55% 0px", threshold: 0 });
+    Object.keys(navMap).forEach(function (id) {
+      var s = document.getElementById(id);
+      if (s) spy.observe(s);
+    });
+    var hero = document.getElementById("top");
+    if (hero) spy.observe(hero);
+
+    /* 높은 창에서 contact 가 밴드에 못 닿는 환경용 바닥 판정 — 정확한 바닥에서만 개입한다 */
+    window.addEventListener("scroll", function () {
+      if (navMap.contact &&
+          window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1) {
+        clearActive();
+        navMap.contact.classList.add("active");
+        navMap.contact.setAttribute("aria-current", "location");
+      }
+    }, { passive: true });
+  }
+})();
+</script>
+</body>
+</html>
