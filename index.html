@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0b0d10">
+<meta name="theme-color" content="#080b0f">
 <title>이건상 — 백엔드 개발자</title>
 <meta name="description" content="사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
 <link rel="canonical" href="https://kunsanglee.github.io/">
@@ -22,24 +22,25 @@
 <meta name="twitter:image" content="https://kunsanglee.github.io/og-image.png">
 <meta name="twitter:image:alt" content="이건상 — 백엔드 개발자. 사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB4klEQVR4nGNkwAI+bIn6z0ADIOCzjBFdjJEeFuNzCCM2y6Ujt9HE4qfLvTAcwUQvy9HNhtnJhEsBPRwBAowwl9DDcmzRwcQwwIBpWDlATICd4Wi/A5gmFrCQYgEvFwtDjp8yg5GKAMOj198ZFu95xHDh7ge4PBMTI4OCBBeYpnoIcLEzM2xosGTQUeRjWLD7IcOrDz8ZVteaM1hqCjFQAliIVRjuIMPAyMjIEN91huHP3/8MW0++YPj//z9DaZgaQ1DjCbIdwESsQi9TCYbl+x+DLYeBRXseMZhrCDEI8bLR3gHSopwMd55+QRF78e4Hw5fvfxhkRDhp7wB2FiaGX3/+YYiDxDjYyM9MTMQqfPr2O4M0mk852ZnBwf/kzXfaO+D0zfcMPuYSKGLe5hJgy1+8+0l7B8zd8YDBUkuYIdNXiYGbg5nBTF2QoS5ak2H65nsM//7/p302fPb2B0No80mGnjRdhqpIdYY3H38xzNx6n2HBrodkW06SA0AAVOq5lB9m4GBjZvjx6y8DNQATOZqoZTnZDqAmYKKmYa8//GQwz90PpmmSBgiBv//+k1wmMDEMMGAadYAAtIOA3GmgNYDZBbIbJQro4Qh0O5hgLqGHI7B1zRiRFQxo55QeDsHWPQcArQCt7lpCww0AAAAASUVORK5CYII=">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0d10'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%23f0b45a' font-family='sans-serif' font-weight='700'%3E이%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080b0f'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%23c9d9d4' font-family='sans-serif' font-weight='700'%3E이%3C/text%3E%3C/svg%3E">
 <script>document.documentElement.classList.add("js");</script>
 <style>
 :root {
-  --bg: #0b0d10;
-  --bg-card: #111419;
-  --border: rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.13);
-  --text: #e9ecf2;
-  --text-muted: #aab2c0;
-  --text-faint: #8a93a6;
-  --amber: #f0b45a;
-  --amber-bright: #f5c47a;
-  --amber-dim: rgba(240, 180, 90, 0.1);
-  --mint: #63e6c0;
-  --mint-dim: rgba(99, 230, 192, 0.08);
-  --mint-border: rgba(99, 230, 192, 0.32);
-  --amber-border: rgba(240, 180, 90, 0.5);
+  /* runningtier 미네랄 팔레트 — 따뜻한 앰버 대신 옅은 광물색을 강조색으로 */
+  --bg: #080b0f;
+  --bg-card: rgba(16, 23, 35, 0.72);
+  --border: rgba(53, 68, 72, 0.45);
+  --border-strong: #354448;
+  --text: #f1f5f4;
+  --text-muted: #b5c4c5;
+  --text-faint: #8a9a9c;
+  --amber: #c9d9d4;
+  --amber-bright: #ffffff;
+  --amber-dim: rgba(201, 217, 212, 0.1);
+  --mint: #8fcdb9;
+  --mint-dim: rgba(143, 205, 185, 0.08);
+  --mint-border: rgba(143, 205, 185, 0.35);
+  --amber-border: rgba(201, 217, 212, 0.5);
   --font-sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   --max-width: 1060px;
@@ -69,11 +70,11 @@ body::after {
   z-index: 90;
 }
 
-::selection { background: var(--amber); color: #1a1206; }
+::selection { background: var(--amber); color: #141816; }
 
 .skip-link {
   position: absolute; left: -9999px; top: 0;
-  background: var(--amber); color: #1a1206;
+  background: var(--amber); color: #141816;
   padding: 0.6rem 1.2rem; border-radius: 0 0 8px 0; z-index: 100;
 }
 .skip-link:focus { left: 0; }
@@ -95,7 +96,7 @@ nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 50;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  background: rgba(11, 13, 16, 0.75);
+  background: rgba(8, 11, 15, 0.55);
   border-bottom: 1px solid var(--border);
 }
 .nav-inner {
@@ -105,13 +106,13 @@ nav {
   display: flex; align-items: center; justify-content: space-between;
 }
 .nav-logo {
-  font-weight: 700; font-size: 0.95rem; color: var(--text);
-  text-decoration: none; letter-spacing: 0.02em;
+  font-weight: 400; font-size: 1.15rem; color: #fff;
+  text-decoration: none; letter-spacing: -0.05em;
 }
 .nav-logo span { color: var(--amber); }
 .nav-links { display: flex; gap: 1.75rem; list-style: none; }
 .nav-links a {
-  color: var(--text-muted); text-decoration: none; font-size: 0.88rem;
+  color: var(--text-muted); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.02em;
   padding: 0.4rem 0.5rem 3px;
   border-bottom: 1px solid transparent;
   transition: color 0.2s ease, border-color 0.2s ease;
@@ -135,21 +136,19 @@ section { padding: 5rem 1.5rem; scroll-margin-top: 70px; }
 
 .kicker {
   display: inline-flex; align-items: center; gap: 0.5rem;
-  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em;
-  color: var(--amber); text-transform: uppercase; margin-bottom: 1.1rem;
-}
-.kicker::before {
-  content: ""; width: 1.4rem; height: 1px; background: var(--amber);
+  font-size: 0.66rem; font-weight: 500; letter-spacing: 0.22em;
+  color: var(--amber); text-transform: uppercase; margin-bottom: 1.3rem;
 }
 
 h2 {
-  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
-  font-weight: 700; letter-spacing: -0.02em; line-height: 1.32;
-  margin-bottom: 1rem;
+  font-size: clamp(1.8rem, 3.4vw, 2.9rem);
+  font-weight: 300; letter-spacing: -0.045em; line-height: 1.38;
+  margin-bottom: 1.2rem; color: #fff;
 }
+main > section + section { border-top: 1px solid var(--border); }
 
 .section-lead {
-  color: var(--text-muted); max-width: 620px; font-size: 1.02rem;
+  color: var(--text-muted); max-width: 620px; font-size: 1rem; line-height: 1.9;
 }
 
 /* ── 히어로 ────────────────────────────── */
@@ -162,20 +161,20 @@ h2 {
 }
 .hero-inner { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; width: 100%; }
 .hero-eyebrow {
-  font-size: 0.95rem; color: var(--text-faint);
+  font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.2em;
   margin-bottom: 1.8rem;
 }
-.hero-eyebrow strong { color: var(--text); font-weight: 600; }
+.hero-eyebrow strong { color: #fff; font-weight: 500; }
 .hero h1 {
-  font-size: clamp(2.4rem, 6vw, 4.2rem);
-  font-weight: 800; letter-spacing: -0.02em; line-height: 1.22;
-  margin-bottom: 1.4rem;
+  font-size: clamp(2.5rem, 6.2vw, 4.8rem);
+  font-weight: 300; letter-spacing: -0.05em; line-height: 1.25;
+  margin-bottom: 1.6rem; color: #fff;
   word-break: keep-all;
 }
 .hero h1 .accent { color: var(--mint); }
 .hero-sub {
-  font-size: clamp(1rem, 1.8vw, 1.15rem);
-  color: var(--text-muted);
+  font-size: clamp(1rem, 1.8vw, 1.1rem);
+  color: #eee; line-height: 1.9;
   margin-bottom: 3rem;
   word-break: keep-all;
 }
@@ -198,20 +197,20 @@ h2 {
 }
 .btn {
   display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.8rem 1.55rem; border-radius: 10px;
-  font-size: 0.95rem; font-weight: 700; text-decoration: none;
+  min-height: 44px; padding: 11px 24px; border-radius: 999px;
+  font-size: 14px; font-weight: 500; text-decoration: none;
   transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 .btn-primary {
-  background: var(--amber);
-  color: #1a1206;
+  background: #fff; border: 1px solid #fff;
+  color: #252525;
 }
-.btn-primary:hover { background: var(--amber-bright); }
+.btn-primary:hover { background: #edeceb; border-color: #edeceb; }
 .btn-ghost {
-  border: 1px solid var(--border-strong); color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--amber); color: var(--amber);
+  background: transparent;
 }
-.btn-ghost:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.24); }
+.btn-ghost:hover { color: #141816; background: var(--amber); }
 
 /* ── 미네랄 흐름 배경 (dev.runningtier.com 첫 화면과 동일) ─── */
 .track-flow {
@@ -265,7 +264,7 @@ main > section, footer { position: relative; background: rgba(8, 11, 15, 0.91); 
 }
 .case-problem strong { color: var(--text); }
 
-/* 슬랙 스레드 목업 — 앰버는 질문하는 사람, 민트는 에이전트 */
+/* 슬랙 스레드 목업 — 옅은 광물색은 질문하는 사람, 민트는 에이전트 */
 .case-duo {
   display: grid; grid-template-columns: minmax(0, 640px) 1fr;
   gap: 2.5rem; align-items: start;
@@ -274,8 +273,9 @@ main > section, footer { position: relative; background: rgba(8, 11, 15, 0.91); 
 .thread {
   background: var(--bg-card);
   border: 1px solid var(--border-strong);
-  border-radius: 14px;
+  border-radius: 4px;
   overflow: hidden;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 .thread-head {
   padding: 0.65rem 1.2rem;
@@ -289,12 +289,12 @@ main > section, footer { position: relative; background: rgba(8, 11, 15, 0.91); 
 .msg + .msg { border-top: 1px solid var(--border); }
 .msg-name {
   display: flex; align-items: center; gap: 0.5rem;
-  font-weight: 700; font-size: 0.82rem; margin-bottom: 0.35rem;
+  font-weight: 500; font-size: 0.82rem; margin-bottom: 0.35rem;
 }
 .msg-name .avatar {
-  width: 20px; height: 20px; border-radius: 6px;
+  width: 20px; height: 20px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: 0.62rem; font-weight: 700; color: #1a1206;
+  font-size: 0.62rem; font-weight: 700; color: #141816;
 }
 .msg-user .msg-name { color: var(--amber); }
 .msg-user .avatar { background: var(--amber); }
@@ -348,11 +348,11 @@ main > section, footer { position: relative; background: rgba(8, 11, 15, 0.91); 
 .pillar:hover { border-top-color: var(--amber); }
 .pillar-icon {
   color: var(--amber); margin-bottom: 0.8rem;
-  width: 2.4rem; height: 2.4rem; border-radius: 10px;
+  width: 2.4rem; height: 2.4rem; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   background: var(--amber-dim);
 }
-.pillar h3 { font-size: 1.02rem; font-weight: 700; margin-bottom: 0.55rem; letter-spacing: -0.01em; }
+.pillar h3 { font-size: 1.15rem; font-weight: 500; margin-bottom: 0.55rem; letter-spacing: -0.01em; }
 .pillar p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.68; word-break: keep-all; }
 .pillar p code {
   font-family: var(--font-mono); font-size: 0.8rem;
@@ -370,7 +370,7 @@ main > section, footer { position: relative; background: rgba(8, 11, 15, 0.91); 
   color: var(--text-muted); background: rgba(255, 255, 255, 0.03);
   padding: 0.22rem 0.62rem; border-radius: 6px;
 }
-.impl h3 { font-size: 1.05rem; font-weight: 700; }
+.impl h3 { font-size: 1.15rem; font-weight: 500; }
 .impl p { font-size: 0.88rem; color: var(--text-muted); word-break: keep-all; }
 .impl p strong { color: var(--text); font-weight: 600; }
 
@@ -386,7 +386,8 @@ main > section, footer { position: relative; background: rgba(8, 11, 15, 0.91); 
   display: block; text-decoration: none; color: inherit;
   background: var(--bg-card);
   border: 1px solid var(--border-strong);
-  border-radius: 14px; padding: 2rem;
+  border-radius: 4px; padding: 2rem;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   transition: border-color 0.25s ease;
 }
 .work:hover { border-color: var(--amber-border); }
@@ -394,10 +395,10 @@ main > section, footer { position: relative; background: rgba(8, 11, 15, 0.91); 
   font-family: var(--font-mono); font-size: 0.72rem;
   color: var(--text-faint); letter-spacing: 0.1em; text-transform: uppercase;
 }
-.work h3 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; margin: 0.55rem 0 0.65rem; }
+.work h3 { font-size: 1.5rem; font-weight: 400; letter-spacing: -0.02em; margin: 0.55rem 0 0.65rem; }
 .work p { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1.3rem; word-break: keep-all; }
 .work-link {
-  font-size: 0.87rem; font-weight: 600; color: var(--amber);
+  font-size: 0.87rem; font-weight: 500; color: var(--amber);
   display: inline-flex; align-items: center; gap: 0.35rem;
 }
 .work:hover .work-link { color: var(--amber-bright); }
@@ -413,17 +414,14 @@ main > section, footer { position: relative; background: rgba(8, 11, 15, 0.91); 
 }
 a.writing-item:hover { background: rgba(255, 255, 255, 0.015); }
 .writing-meta { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-faint); margin-bottom: 0.4rem; }
-.writing-item h3 { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.5; word-break: keep-all; }
+.writing-item h3 { font-size: 1.1rem; font-weight: 400; letter-spacing: -0.01em; line-height: 1.5; word-break: keep-all; }
 .writing-arrow { color: var(--text-faint); flex-shrink: 0; transition: color 0.2s ease; }
 a.writing-item:hover .writing-arrow { color: var(--amber); }
 
 /* ── 마무리 ─────────────────────────── */
 #contact { padding-top: 8rem; padding-bottom: 5rem; text-align: center; }
 #contact .kicker { justify-content: center; }
-#contact .kicker::after {
-  content: ""; width: 1.4rem; height: 1px; background: var(--amber);
-}
-#contact h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); }
+#contact h2 { font-size: clamp(2rem, 4.5vw, 3.4rem); }
 #contact .section-lead { margin: 0 auto 2.4rem; }
 .outro-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
 
@@ -450,6 +448,7 @@ footer a:hover { color: var(--text); }
   html { background: #fff; color-scheme: light; }
   body::after, .scroll-cue, .skip-link, .track-flow, .hero::after { display: none; }
   main > section, footer { background: none; }
+  main > section + section { border-top: none; }
   .nav-links a.active { border-bottom-color: transparent; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; overflow-wrap: anywhere; }
   .writing-item { display: block; }
@@ -540,7 +539,7 @@ footer a:hover { color: var(--text); }
 
       <div class="case-duo">
         <div class="thread">
-          <div class="thread-head">앰버는 사람, 민트는 에이전트</div>
+          <div class="thread-head">옅은 광물색은 사람, 민트는 에이전트</div>
           <div class="msg msg-user">
             <div class="msg-name"><span class="avatar" aria-hidden="true">동</span>동료</div>
             <p>디스커버리 응답의 id 필드, 안드로이드는 Long 으로 iOS 는 Int 로 받고 있어요. 서버는 어떤 타입으로 내려주나요?</p>
