@@ -213,6 +213,23 @@ h2 {
 }
 .btn-ghost:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.24); }
 
+/* ── 미네랄 흐름 배경 (dev.runningtier.com 첫 화면과 동일) ─── */
+.track-flow {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(at 80% 20%, rgb(176, 199, 191), rgba(0, 0, 0, 0) 65%),
+    linear-gradient(130deg, rgb(7, 11, 18), rgb(46, 74, 87));
+}
+.track-flow canvas { width: 100%; height: 100%; display: block; }
+/* 히어로: 위·아래로 어둡게 눌러 글자가 뜨게 */
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(rgba(8, 11, 15, 0.267), rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(8, 11, 15, 0.91));
+}
+.hero-inner { text-shadow: rgba(8, 11, 15, 0.667) 0 2px 18px; }
+/* 히어로 아래 본문은 91% 어둡게 덮어 흐름이 은은히 비치게 */
+main > section, footer { position: relative; background: rgba(8, 11, 15, 0.91); }
+
 /* ── 등장 애니메이션 ─────────────────── */
 .js .reveal {
   opacity: 0; transform: translateY(26px);
@@ -431,7 +448,8 @@ footer a:hover { color: var(--text); }
   }
   body { background: #fff; }
   html { background: #fff; color-scheme: light; }
-  body::after, .scroll-cue, .skip-link { display: none; }
+  body::after, .scroll-cue, .skip-link, .track-flow, .hero::after { display: none; }
+  main > section, footer { background: none; }
   .nav-links a.active { border-bottom-color: transparent; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; overflow-wrap: anywhere; }
   .writing-item { display: block; }
@@ -459,6 +477,7 @@ footer a:hover { color: var(--text); }
 </style>
 </head>
 <body>
+<div class="track-flow"><canvas aria-hidden="true"></canvas></div>
 <header>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 
@@ -775,6 +794,85 @@ footer a:hover { color: var(--text); }
       }
     }, { passive: true });
   }
+})();
+</script>
+<script>
+/* 미네랄 흐름 배경 — dev.runningtier.com 의 WebGL 셰이더와 그리기 루프를 그대로 옮긴 것 */
+(function () {
+  var canvas = document.querySelector('.track-flow canvas');
+  if (!canvas) return;
+  var FRAG = 'precision highp float;\n' +
+    'uniform vec2 res,mouse;uniform float time;\n' +
+    'const vec3 dark=vec3(.027,.045,.07),mid=vec3(.18,.29,.34),bright=vec3(.69,.78,.75);\n' +
+    'float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}\n' +
+    'float field(vec2 q){return sin(q.x*1.6+q.y*.8+sin(q.y*1.25-time*.12)*1.5)+.52*sin(q.y*1.8-q.x*.45+time*.08);}\n' +
+    'void main(){vec2 uv=gl_FragCoord.xy/res;vec2 q=(uv-.5)*vec2(res.x/res.y,1.)*2.5;\n' +
+    'vec2 m=(mouse-.5)*vec2(res.x/res.y,1.)*2.5;vec2 d=q-m;float touch=exp(-dot(d,d)*1.3);\n' +
+    'q+=d*touch*.48;q+=vec2(sin(time*.07),cos(time*.06))*.19;\n' +
+    'float f=field(q);float edge=sin(f*2.1+q.x*.35);float light=smoothstep(-.4,.9,edge);\n' +
+    'vec3 col=mix(dark,mid,smoothstep(-.95,.2,edge));col=mix(col,bright,pow(light,3.)*.83);\n' +
+    'float rim=exp(-pow((edge-.72)*12.,2.));col+=bright*rim*.095;\n' +
+    'col+=(hash(gl_FragCoord.xy)-.5)*.04;col*=1.-.2*length(uv-.5);gl_FragColor=vec4(col,1.);}';
+  var gl = canvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'low-power' });
+  if (!gl) return;
+  var shaders = [], prog = gl.createProgram(), buf = gl.createBuffer();
+  function free() { shaders.forEach(function (s) { gl.deleteShader(s); }); gl.deleteBuffer(buf); gl.deleteProgram(prog); }
+  try {
+    if (!prog || !buf) throw new Error('GPU allocation');
+    var srcs = [[gl.VERTEX_SHADER, 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}'], [gl.FRAGMENT_SHADER, FRAG]];
+    for (var i = 0; i < srcs.length; i++) {
+      var sh = gl.createShader(srcs[i][0]);
+      if (!sh) throw new Error('Shader allocation');
+      shaders.push(sh); gl.shaderSource(sh, srcs[i][1]); gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error('Shader compilation');
+      gl.attachShader(prog, sh);
+    }
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error('Shader linking');
+    gl.useProgram(prog); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(prog, 'p');
+    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  } catch (e) { free(); return; }
+  var uRes = gl.getUniformLocation(prog, 'res'), uMouse = gl.getUniformLocation(prog, 'mouse'), uTime = gl.getUniformLocation(prog, 'time');
+  var mq = matchMedia('(prefers-reduced-motion: reduce)');
+  var motion = !mq.matches, visible = true, lost = false, raf = 0, last = 0, t = 0, mouse = [0.5, 0.5], target = [0.5, 0.5];
+  function draw() {
+    if (lost) return;
+    gl.uniform2f(uRes, canvas.width, canvas.height); gl.uniform2f(uMouse, mouse[0], mouse[1]); gl.uniform1f(uTime, t);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+  }
+  function tick(now) {
+    raf = 0;
+    if (!(motion && visible && !document.hidden && !lost)) return;
+    if (now - last >= 32) {
+      t += Math.min((now - last) / 1000, 0.05); last = now;
+      mouse = mouse.map(function (v, k) { return v + (target[k] - v) * 0.09; });
+      draw();
+    }
+    raf = requestAnimationFrame(tick);
+  }
+  function restart() {
+    cancelAnimationFrame(raf); raf = 0;
+    if (motion && visible && !document.hidden && !lost) { last = performance.now(); raf = requestAnimationFrame(tick); }
+  }
+  function resize() {
+    var r = canvas.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    var dpr = Math.min(devicePixelRatio, 1.5, 1500 / r.width);
+    canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+    gl.viewport(0, 0, canvas.width, canvas.height); draw();
+  }
+  window.addEventListener('pointermove', function (e) {
+    var r = canvas.getBoundingClientRect();
+    target = [(e.clientX - r.left) / r.width, 1 - (e.clientY - r.top) / r.height];
+  }, { passive: true });
+  mq.addEventListener('change', function () { motion = !mq.matches; restart(); });
+  document.addEventListener('visibilitychange', restart);
+  canvas.addEventListener('webglcontextlost', function () { lost = true; canvas.style.visibility = 'hidden'; restart(); });
+  new IntersectionObserver(function (en) { visible = en[0].isIntersecting; restart(); }).observe(canvas);
+  new ResizeObserver(resize).observe(canvas);
+  resize(); restart();
 })();
 </script>
 </body>
