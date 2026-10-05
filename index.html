@@ -245,134 +245,66 @@ main > section, footer { position: relative; background: rgba(8, 11, 15, 0.91); 
 
 /* ── 대표 사례 ────────────────────────── */
 #featured { padding-top: 7rem; }
-.featured-head { margin-bottom: 3.2rem; }
+.featured-head { margin-bottom: 1.6rem; }
+.featured-head h2, .featured-head .section-lead { word-break: keep-all; }
 
-.case-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.4rem; max-width: 640px; }
+.case-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.6rem; max-width: 640px; }
 .badge {
   font-family: var(--font-mono); font-size: 0.72rem;
   color: var(--text-muted); border: 1px solid var(--border-strong);
   background: rgba(255, 255, 255, 0.03);
   padding: 0.28rem 0.7rem; border-radius: 999px;
 }
-.badge.live { color: var(--mint); border-color: var(--mint-border); background: var(--mint-dim); }
 
-.case-problem {
-  color: var(--text-muted); max-width: 640px; margin-bottom: 2.6rem;
-  border-left: 2px solid var(--amber);
-  padding-left: 1.15rem;
-  word-break: keep-all;
+/* 실측 수치 — 타일 사이 1px 줄은 gap 으로 비친 테두리색 */
+.stats {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border-strong); border-radius: 4px; overflow: hidden;
+  list-style: none;
 }
-.case-problem strong { color: var(--text); }
-
-/* 슬랙 스레드 목업 — 옅은 광물색은 질문하는 사람, 민트는 에이전트 */
-.case-duo {
-  display: grid; grid-template-columns: minmax(0, 640px) 1fr;
-  gap: 2.5rem; align-items: start;
-}
-@media (max-width: 1100px) { .case-duo { grid-template-columns: 1fr; gap: 1.4rem; } }
-.thread {
-  background: var(--bg-card);
-  border: 1px solid var(--border-strong);
-  border-radius: 4px;
-  overflow: hidden;
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-}
-.thread-head {
-  padding: 0.65rem 1.2rem;
-  font-family: var(--font-mono); font-size: 0.72rem;
-  color: var(--text-faint); letter-spacing: 0.04em;
-  word-break: keep-all;
-  background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid var(--border);
-}
-.msg { padding: 1.05rem 1.3rem 1.15rem; font-size: 0.9rem; line-height: 1.65; }
-.msg + .msg { border-top: 1px solid var(--border); }
-.msg-name {
-  display: flex; align-items: center; gap: 0.5rem;
-  font-weight: 500; font-size: 0.82rem; margin-bottom: 0.35rem;
-}
-.msg-name .avatar {
-  width: 20px; height: 20px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 0.62rem; font-weight: 700; color: #141816;
-}
-.msg-user .msg-name { color: var(--amber); }
-.msg-user .avatar { background: var(--amber); }
-.msg-agent .msg-name { color: var(--mint); }
-.msg-agent .avatar { background: var(--mint); }
-.msg p { color: var(--text); word-break: keep-all; }
-.msg .evidence {
+@media (min-width: 760px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.stat { background: var(--bg-card); padding: 1.1rem 1rem 1.2rem; }
+.stat-value {
   display: block;
-  font-family: var(--font-mono); font-size: 0.74rem; line-height: 1.8;
-  color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.03);
-  border-left: 2px solid var(--mint);
-  padding: 0.7rem 0.9rem;
-  margin-top: 0.75rem;
+  font-size: clamp(1.9rem, 4.2vw, 2.6rem); font-weight: 300;
+  letter-spacing: -0.04em; line-height: 1.15; color: #fff;
 }
-.msg .evidence b { color: var(--mint); font-weight: 600; }
-.reaction {
-  display: inline-flex; margin-top: 0.65rem;
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-strong);
-  border-radius: 999px; padding: 0.12rem 0.6rem;
-  color: var(--text-muted);
-}
-.case-side {
-  border-top: 1px solid var(--border-strong);
-  padding-top: 1.3rem;
-  font-size: 0.88rem;
-  display: grid; gap: 0.9rem;
-  align-content: start;
-}
-.side-row { display: grid; grid-template-columns: 3.2rem 1fr; gap: 0.8rem; align-items: baseline; }
-.side-label {
-  font-family: var(--font-mono); font-size: 0.72rem;
-  color: var(--amber); letter-spacing: 0.08em;
-}
-.side-row span:last-child { color: var(--text-muted); word-break: keep-all; }
-.side-note { font-size: 0.8rem; color: var(--text-faint); word-break: keep-all; border-top: 1px solid var(--border); padding-top: 0.9rem; margin-top: 0.3rem; }
-.nowrap { white-space: nowrap; }
+.stat-unit { font-size: 0.5em; letter-spacing: 0; color: var(--text-muted); margin-left: 0.15em; }
+.stat-label { display: block; margin-top: 0.45rem; font-size: 0.8rem; line-height: 1.5; color: var(--text-muted); word-break: keep-all; }
+.stats-note { margin-top: 0.8rem; font-size: 0.76rem; line-height: 1.7; color: var(--text-faint); word-break: keep-all; max-width: 760px; }
 
-.pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem 2.5rem; }
-@media (min-width: 648px) and (max-width: 968px) {
-  .pillars { grid-template-columns: repeat(2, 1fr); }
-  .pillar:last-child { grid-column: 1 / -1; }
+/* 설계 요점 + 그림 */
+.design {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+  gap: 3rem; align-items: start; margin-top: 3.6rem;
 }
-.pillar {
-  border-top: 1px solid var(--border-strong);
-  padding-top: 1.4rem;
-  transition: border-color 0.25s ease;
-}
-.pillar:hover { border-top-color: var(--amber); }
-.pillar-icon {
+@media (max-width: 860px) { .design { grid-template-columns: minmax(0, 1fr); gap: 2.4rem; } }
+.points { list-style: none; display: grid; gap: 1.8rem; }
+.point { border-top: 1px solid var(--border-strong); padding-top: 1.3rem; transition: border-color 0.25s ease; }
+.point:hover { border-top-color: var(--amber); }
+.point-icon {
   color: var(--amber); margin-bottom: 0.8rem;
   width: 2.4rem; height: 2.4rem; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   background: var(--amber-dim);
 }
-.pillar h3 { font-size: 1.15rem; font-weight: 500; margin-bottom: 0.55rem; letter-spacing: -0.01em; }
-.pillar p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.68; word-break: keep-all; }
-.pillar p code {
-  font-family: var(--font-mono); font-size: 0.8rem;
-  background: var(--amber-dim); color: var(--amber);
-  padding: 0.08rem 0.36rem; border-radius: 5px;
-}
+.point h3 { font-size: 1.12rem; font-weight: 500; margin-bottom: 0.45rem; letter-spacing: -0.01em; word-break: keep-all; }
+.point p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; word-break: keep-all; }
 
-/* ── 두 개의 저장소 ──────────────────── */
-.impl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; margin-top: 2.8rem; }
-@media (max-width: 760px) { .impl-grid { grid-template-columns: 1fr; } }
-.impl { padding-left: 1.25rem; border-left: 2px solid var(--border-strong); }
-.impl-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.7rem; }
-.impl-lang {
-  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
-  color: var(--text-muted); background: rgba(255, 255, 255, 0.03);
-  padding: 0.22rem 0.62rem; border-radius: 6px;
+.design-figure a {
+  display: block; border: 1px solid var(--border-strong); border-radius: 4px; overflow: hidden;
+  transition: border-color 0.25s ease;
 }
-.impl h3 { font-size: 1.15rem; font-weight: 500; }
-.impl p { font-size: 0.88rem; color: var(--text-muted); word-break: keep-all; }
-.impl p strong { color: var(--text); font-weight: 600; }
+.design-figure a:hover { border-color: var(--amber-border); }
+.design-figure img { display: block; width: 100%; height: auto; }
+.design-figure figcaption { margin-top: 0.6rem; font-size: 0.78rem; line-height: 1.6; color: var(--text-faint); word-break: keep-all; }
+
+/* 블로그 1·2편 */
+.series { margin-top: 3.6rem; border-top: 1px solid var(--border-strong); padding-top: 1.6rem; }
+.series p { font-size: 0.9rem; color: var(--text-muted); max-width: 640px; margin-bottom: 1.3rem; word-break: keep-all; }
+.series-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+@media (max-width: 480px) { .series-actions .btn { flex: 1 1 100%; justify-content: center; } }
 
 /* ── 다른 작업물 ─────────────────────── */
 #works .works-head {
@@ -452,7 +384,7 @@ footer a:hover { color: var(--text); }
   .nav-links a.active { border-bottom-color: transparent; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; overflow-wrap: anywhere; }
   .writing-item { display: block; }
-  .pillar, .work, .thread, .msg, .impl, .writing-item { break-inside: avoid; }
+  .stat, .point, .design-figure, .work, .writing-item { break-inside: avoid; }
   h2 { break-after: avoid; }
   section { padding-block: 2rem; }
   #featured { padding-top: 3rem; }
@@ -465,13 +397,12 @@ footer a:hover { color: var(--text); }
     backdrop-filter: none;
   }
   .hero { min-height: auto; padding-top: 2rem; padding-bottom: 2rem; }
-  .pillar { border-top: none; }
+  .point { border-top: none; }
   .btn-primary {
     background: none;
     color: var(--amber);
     border: 1px solid var(--amber);
   }
-  .msg-name .avatar { color: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 </style>
 </head>
@@ -517,106 +448,79 @@ footer a:hover { color: var(--text); }
   <div class="wrap">
     <div class="featured-head reveal">
       <p class="kicker">대표 작업</p>
-      <h2 id="featured-heading">네 저장소의 코드 질문에, 근거와 함께 답합니다</h2>
+      <h2 id="featured-heading">Slack 스레드에서 동료처럼 일하는 사내 AI 에이전트</h2>
       <p class="section-lead">
-        백엔드·안드로이드·iOS·웹, 네 저장소로 나뉜 회사 코드. 화면이 어떤 API 를 호출하는지 알고 싶으면 늘 다른 파트 개발자를 찾아다녀야 했습니다.
-        그 질문을 사람에게 묻는 대신, 에이전트에게 묻게 만든 것이 이 프로젝트입니다.
+        코드 질문에는 근거 파일 경로를 붙여 답하고, 티켓 만들기·DB 조회·PR 올리기도 스레드에서 부탁할 수 있게 만들었습니다.
+        처음 만든 봇을 Claude Agent SDK 로 다시 설계한 agent-colleague 입니다.
       </p>
     </div>
 
     <article class="reveal reveal-delay-1">
       <div class="case-badges">
-        <span class="badge live">운영 중</span>
+        <span class="badge">Claude Agent SDK</span>
+        <span class="badge">TypeScript</span>
         <span class="badge">Slack</span>
-        <span class="badge">Claude Code Headless</span>
-        <span class="badge">Event Sourcing</span>
+        <span class="badge">PostgreSQL</span>
       </div>
 
-      <p class="case-problem">
-        <strong>문제:</strong> 사소한 코드 질문 하나가 늘 다른 파트 개발자의 시간에 의존했습니다.
-        상대가 회의 중이면 묻는 사람도 멈춰 있고, 부담스러워 아예 못 물어보기도 했습니다.
+      <h3 class="kicker">1편 봇부터 이어진 15주 운영 기록</h3>
+      <ul class="stats">
+        <li class="stat"><span class="stat-value">15<span class="stat-unit">주</span></span><span class="stat-label">팀 코드 질문 채널에서 운영한 기간</span></li>
+        <li class="stat"><span class="stat-value">235<span class="stat-unit">건</span></span><span class="stat-label">에이전트가 답한 질문 스레드</span></li>
+        <li class="stat"><span class="stat-value">96<span class="stat-unit">초</span></span><span class="stat-label">첫 질문에서 첫 답까지 중앙값</span></li>
+        <li class="stat"><span class="stat-value">46<span class="stat-unit">%</span></span><span class="stat-label">사람이 이어서 말한 스레드</span></li>
+      </ul>
+      <p class="stats-note">
+        2026년 6월 중순~9월 하순, 팀 코드 질문 채널의 Slack 스레드를 직접 센 사내 운영 기록입니다.
+        기간 대부분은 1편의 봇이 답했고, 9월 중순에 지금 구조로 바꿨습니다.
+        이어서 말한 스레드에는 되물음과 정정도 섞여 있고, 답이 맞았는지는 따로 재지 않았습니다.
       </p>
 
-      <div class="case-duo">
-        <div class="thread">
-          <div class="thread-head">옅은 광물색은 사람, 민트는 에이전트</div>
-          <div class="msg msg-user">
-            <div class="msg-name"><span class="avatar" aria-hidden="true">동</span>동료</div>
-            <p>디스커버리 응답의 id 필드, 안드로이드는 Long 으로 iOS 는 Int 로 받고 있어요. 서버는 어떤 타입으로 내려주나요?</p>
-            <span class="reaction" role="img" aria-label="반응 3개">👀 3</span>
-          </div>
-          <div class="msg msg-agent">
-            <div class="msg-name"><span class="avatar" aria-hidden="true">AI</span>에이전트</div>
-            <p>
-              서버는 Long, 즉 64비트 정수로 응답합니다. Int 로 받으면 범위를 넘는 값이 잘릴 수 있습니다.
-            </p>
-            <div class="evidence"><b>근거 추적 경로</b><br>android/…/DiscoveryResponse.kt — <span class="nowrap">id: Long</span><br>ios/…/DiscoveryResponse.swift — <span class="nowrap">id: Int</span><br>api/…/DiscoveryController.kt — <span class="nowrap">응답: Long</span></div>
-          </div>
+      <div class="design">
+        <div>
+          <h3 class="sr-only">설계 요점</h3>
+          <ol class="points">
+            <li class="point">
+              <div class="point-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+              </div>
+              <h3>말뜻은 모델이, 실행 허용은 코드가</h3>
+              <p>사람의 답이 승인인지는 모델이 읽습니다. 도구를 실행해도 되는지는 코드가 정하는데, 누가·언제 말했는지, 이미 실행했는지, 운영 DB 라면 예상 비용 같은 사실만 봅니다.</p>
+            </li>
+            <li class="point">
+              <div class="point-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <h3>스레드 하나에 세션 하나</h3>
+              <p>Slack 스레드마다 에이전트 세션을 하나씩 붙였습니다. 그 스레드의 말·리액션·편집을 모두 읽고, 답할지와 할 일은 모델이 정합니다.</p>
+            </li>
+            <li class="point">
+              <div class="point-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+              </div>
+              <h3>정해 둔 도구만, 외부에 영향을 주는 일은 초안 먼저</h3>
+              <p>세션은 목록에 있는 도구만 씁니다. 티켓 생성처럼 외부에 영향을 주는 일을 부탁받으면 초안을 먼저 올리고, 사람이 답한 뒤에 실행합니다.</p>
+            </li>
+          </ol>
         </div>
-        <div class="case-side" role="group" aria-label="운영 사실">
-          <div class="side-row"><span class="side-label">시작</span><span>서버 한 대 없이 Slack Socket Mode 로</span></div>
-          <div class="side-row"><span class="side-label">비용</span><span>내 장비에서 파일럿 0원</span></div>
-          <div class="side-row"><span class="side-label">처리</span><span>동시 3건 · 모래시계·눈 이모지로 상태 표시</span></div>
-          <p class="side-note">위 스레드는 실제 채널 흐름을 재구성한 예시입니다.</p>
-        </div>
+        <figure class="design-figure">
+          <a href="assets/featured/policy-flow.png" target="_blank" rel="noopener">
+            <img src="assets/featured/policy-flow.png" width="1400" height="2286" decoding="async"
+                 alt="티켓 만들어 줘 요청이 실행되기까지의 흐름. 모델이 티켓 도구를 바로 부르면 정책 함수가 봇이 올린 글이 없다는 이유로 거부하고, 모델이 초안을 스레드에 올린 뒤 사람이 답하면 같은 도구 호출이 허용되어 티켓이 만들어진다.">
+            <span class="sr-only">(원본 크기로 새 탭에서 열기)</span>
+          </a>
+          <figcaption>"티켓 만들어 줘"가 실행되기까지. 그림을 누르면 원본 크기로 볼 수 있습니다.</figcaption>
+        </figure>
       </div>
 
-      <div class="pillars">
-        <div class="pillar">
-          <div class="pillar-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5l-1.7 3.3-3.3 1.7 1.7-3.3z" fill="currentColor" stroke="none"/></svg>
-          </div>
-          <h3>검색이 아니라 탐색</h3>
-          <p>
-            단어가 들어간 파일 목록을 주는 검색 대신, 사람이 하듯 화면 코드를 열고 함수 호출을 한 단계씩 따라갑니다.
-            답에는 화면 파일에서 호출 지점까지의 <code>근거 경로</code>가 붙어, 묻는 사람이 직접 확인할 수 있습니다.
-          </p>
-        </div>
-        <div class="pillar">
-          <div class="pillar-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
-          </div>
-          <h3>처음부터 막힌 경계</h3>
-          <p>
-            도구는 파일 읽기와 검색만 허용하고 쓰기와 웹 접근은 명시적으로 차단했습니다.
-            자식 프로세스 환경에서 시크릿을 걷어내고, 데이터 조회는 조회문만 허용하고 읽기 전용으로 한 번 더 막는 등
-            여러 겹의 안전장치를 둔 통로로만 열었습니다.
-          </p>
-        </div>
-        <div class="pillar">
-          <div class="pillar-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
-          </div>
-          <h3>틀린 답을 학습으로</h3>
-          <p>
-            스레드에서 에이전트를 태그해 지적하면 그 자리에서 정정하고, 무엇을 왜 틀렸는지 따로 기록합니다.
-            기록은 사람 검수를 거쳐 가이드에 반영되고, 재시작 없이 다음 질문부터 적용됩니다.
-          </p>
-        </div>
-      </div>
-
-      <div class="impl-grid">
-        <div class="impl">
-          <div class="impl-head">
-            <span class="impl-lang">Kotlin</span>
-            <h3>운영본</h3>
-          </div>
-          <p>
-            Spring Boot 위에 채널마다 행위자(actor)를 두어 같은 채널은 직렬로, 다른 채널은 병렬로 처리합니다.
-            모든 메시지는 append-only 이벤트 스트림으로 남기고 채널 상태는 그 재생으로 만듭니다.
-            <strong>launchd 로 실제 사내 운영 중</strong>입니다.
-          </p>
-        </div>
-        <div class="impl">
-          <div class="impl-head">
-            <span class="impl-lang">TypeScript</span>
-            <h3>재구축본</h3>
-          </div>
-          <p>
-            운영본을 TypeScript 로 다시 짜는 이식 프로젝트입니다.
-            이식의 전제가 되는 과거 이벤트 전량 재생 검증과, 넓히면 안 되는 보안 경계의 실행 가능한 명세화부터
-            차근차근 쌓고 있습니다.
-          </p>
+      <div class="series">
+        <p>
+          1편은 처음 만든 봇 이야기입니다. Claude Code 헤드리스 모드로 백엔드·안드로이드·iOS·웹 네 저장소의 코드를 읽고 답했습니다.
+          2편은 15주 운영 기록과, 기능이 늘면서 구조를 다시 짠 과정을 다룹니다.
+        </p>
+        <div class="series-actions">
+          <a class="btn btn-primary" href="https://medium.com/@gosmdochee/%EC%82%AC%EB%82%B4-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EC%9E%AC%EC%84%A4%EA%B3%84%ED%95%9C-%EC%9D%B4%EC%95%BC%EA%B8%B0-2%ED%8E%B8-9f76459b6b5a" target="_blank" rel="noopener noreferrer">2편 · 재설계한 이야기<span class="sr-only">(새 탭)</span></a>
+          <a class="btn btn-ghost" href="https://medium.com/@gosmdochee/%ED%8C%8C%ED%8A%B8-%EA%B2%BD%EA%B3%84%EB%A5%BC-%EB%84%98%EB%8A%94-%EC%BD%94%EB%93%9C-%EC%A7%88%EB%AC%B8%EC%97%90-%EB%8B%B5%ED%95%98%EB%8A%94-%EC%82%AC%EB%82%B4-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EB%A7%8C%EB%93%A4%EA%B8%B0%EA%B9%8C%EC%A7%80-1%ED%8E%B8-5f566069f38a" target="_blank" rel="noopener noreferrer">1편 · 처음 만든 봇<span class="sr-only">(새 탭)</span></a>
         </div>
       </div>
     </article>
