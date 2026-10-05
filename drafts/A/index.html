@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#f3f1ec">
+<title>이건상 — 백엔드 개발자</title>
+<meta name="description" content="사내 Slack 에서 동료처럼 일하는 AI 에이전트를 만들고 15주 운영한 백엔드 개발자 이건상의 작업과 글">
+<link rel="canonical" href="https://kunsanglee.github.io/">
+<meta property="og:title" content="이건상 — 백엔드 개발자">
+<meta property="og:description" content="사내 Slack 에서 동료처럼 일하는 AI 에이전트를 만들고 15주 운영한 백엔드 개발자 이건상의 작업과 글">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kunsanglee.github.io/">
+<meta property="og:image" content="https://kunsanglee.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="이건상 — 백엔드 개발자. 사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="이건상 — 백엔드 개발자">
+<meta name="twitter:description" content="사내 Slack 에서 동료처럼 일하는 AI 에이전트를 만들고 15주 운영한 백엔드 개발자 이건상의 작업과 글">
+<meta name="twitter:image" content="https://kunsanglee.github.io/og-image.png">
+<meta name="twitter:image:alt" content="이건상 — 백엔드 개발자. 사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231c2433'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%23fbfaf8' font-family='sans-serif' font-weight='700'%3E이%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></noscript>
+<script>document.documentElement.classList.add("js");</script>
+<style>
+:root {
+  --paper: #fbfaf8;
+  --paper-2: #f3f1ec;
+  --ink: #1c2433;
+  --ink-2: #364154;
+  --muted: #5b6577;
+  --rule: rgba(28, 36, 51, 0.12);
+  --rule-2: rgba(28, 36, 51, 0.22);
+  /* 역할 색: 사람·Slack 호박 / 모델 보라 / 정책·검사 비취 / 외부 파랑 / 거부 빨강 / 허용 초록 */
+  --person: #b26b00;
+  --person-ink: #8f5600;
+  --person-tint: #f8ead2;
+  --model: #6b4fbb;
+  --policy: #0f7a66;
+  --ext: #2f5bb7;
+  --deny: #b23a32;
+  --allow: #2e7d4f;
+  --sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --mono: "SF Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Roboto Mono", monospace;
+  --nav-h: 56px;
+  --wrap: 1120px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--nav-h) + 8px); background: var(--paper); }
+body {
+  margin: 0;
+  background: var(--paper-2);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.7;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--ext); outline-offset: 3px; border-radius: 4px; }
+::selection { background: var(--ink); color: #fff; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip {
+  position: absolute; left: 8px; top: -64px; z-index: 100;
+  background: var(--ink); color: #fff; padding: 10px 14px; border-radius: 8px;
+  font-size: 14px; text-decoration: none;
+}
+.skip:focus { top: 8px; }
+
+/* ── 내비게이션 ───────────────────────── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+  height: var(--nav-h);
+  background: rgba(243, 241, 236, 0.84);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.nav.is-scrolled { border-bottom-color: var(--rule); background: rgba(251, 250, 248, 0.88); }
+.nav-in {
+  max-width: var(--wrap); height: 100%; margin: 0 auto;
+  padding: 0 6px 0 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.logo {
+  display: inline-flex; align-items: center; gap: 9px; min-height: 44px;
+  color: var(--ink); text-decoration: none;
+  font-weight: 700; font-size: 17px; letter-spacing: -0.02em;
+}
+.logo-mark { width: 9px; height: 9px; background: var(--policy); border-radius: 1.5px; transform: rotate(45deg); }
+.nav-links { display: flex; list-style: none; margin: 0; padding: 0; }
+.nav-links a {
+  display: flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 0 9px;
+  color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500;
+  border-radius: 8px;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a[aria-current] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 7px; }
+
+/* ── 첫 화면 ─────────────────────────── */
+.hero { position: relative; padding: calc(var(--nav-h) + 18px) 16px 24px; }
+.hero-grid { max-width: var(--wrap); margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.eyebrow { margin: 0 0 10px; font-size: 13.5px; font-weight: 500; color: var(--muted); }
+.eyebrow b { color: var(--ink); font-weight: 700; }
+.hero h1 {
+  margin: 0;
+  font-size: clamp(26px, 7vw, 54px);
+  line-height: 1.3; font-weight: 750; letter-spacing: -0.035em;
+}
+.hero h1 em { font-style: normal; background: linear-gradient(transparent 62%, var(--person-tint) 62%); }
+.hero-lead { display: none; }
+.hero-facts {
+  list-style: none; margin: 14px 0 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 4px 18px;
+  font-size: 13.5px; color: var(--muted);
+}
+.hero-facts b {
+  font-size: 19px; font-weight: 750; color: var(--ink);
+  letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-right: 2px;
+}
+.hero-src { display: none; }
+.hero-actions { display: none; }
+
+/* ── 재현 데모 ───────────────────────── */
+.demo { margin: 0; display: flex; flex-direction: column; min-height: 0; }
+.demo-card {
+  --c-bg: #ffffff; --c-ink: var(--ink); --c-ink-2: var(--ink-2); --c-muted: var(--muted);
+  --c-line: var(--rule); --c-spine: rgba(28, 36, 51, 0.14); --c-chip: #f5f3ef; --bar: transparent;
+  position: relative; display: flex; flex-direction: column; min-height: 0;
+  background: var(--c-bg); color: var(--c-ink);
+  border: 1px solid var(--c-line); border-radius: 12px; overflow: hidden;
+  transition: background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease;
+}
+.demo-card.lens {
+  --c-bg: #111820; --c-ink: #e6ecf2; --c-ink-2: #c3cedb; --c-muted: #8d9bb0;
+  --c-line: rgba(255, 255, 255, 0.12); --c-spine: rgba(111, 211, 187, 0.5); --c-chip: #1a2330; --bar: #2b3646;
+}
+.demo-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+  min-height: 52px; padding: 4px 4px 4px 14px;
+  border-bottom: 1px solid var(--c-line);
+  transition: border-color 0.45s ease;
+}
+.demo-id { margin: 0; display: flex; flex-direction: column; line-height: 1.3; min-width: 0; }
+.demo-name { font-family: var(--mono); font-size: 12.5px; font-weight: 600; color: var(--c-ink); white-space: nowrap; }
+.demo-tag { font-size: 12px; color: var(--c-muted); }
+.demo-ctrls { display: none; align-items: center; flex-shrink: 0; }
+.anim .demo-ctrls { display: flex; }
+.lens-btn { flex-shrink: 0; }
+html:not(.js) .lens-btn { display: none; }
+.ctrl {
+  appearance: none; -webkit-appearance: none; border: 0; background: transparent; color: var(--c-ink);
+  font: inherit; cursor: pointer;
+  min-width: 44px; min-height: 44px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  border-radius: 8px;
+}
+.ctrl:hover { background: rgba(127, 127, 127, 0.12); }
+.ctrl svg { width: 18px; height: 18px; }
+.lens-btn { padding: 0 8px; font-size: 12.5px; font-weight: 600; letter-spacing: -0.01em; }
+.lens-sw {
+  position: relative; width: 28px; height: 16px; border-radius: 999px;
+  background: rgba(127, 127, 127, 0.35); transition: background-color 0.25s ease;
+}
+.lens-sw::after {
+  content: ""; position: absolute; left: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%;
+  background: #fff; transition: transform 0.25s ease;
+}
+.lens-btn[aria-pressed="true"] .lens-sw { background: var(--policy); }
+.lens-btn[aria-pressed="true"] .lens-sw::after { transform: translateX(12px); }
+.ico-play { display: none; }
+.is-paused .ico-play, .is-ended .ico-play { display: block; }
+.is-paused .ico-pause, .is-ended .ico-pause { display: none; }
+
+.demo-stage { position: relative; display: flex; flex-direction: column; min-height: 0; }
+.demo-window { position: relative; overflow: hidden; flex: 1 1 auto; min-height: 0; }
+.demo-window.can-scroll { overflow-y: auto; overscroll-behavior-y: auto; }
+.demo-window { --mt: 0px; --mb: 0px; }
+.demo-window.scrolled { --mt: 26px; }
+.demo-window.more { --mb: 26px; }
+.demo-window.scrolled, .demo-window.more {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--mt), #000 calc(100% - var(--mb)), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 var(--mt), #000 calc(100% - var(--mb)), transparent 100%);
+}
+.thread { list-style: none; margin: 0; padding: 12px 14px 14px 6px; position: relative; transition: transform 0.45s ease; }
+.thread::before {
+  content: ""; position: absolute; left: 19px; top: 24px; bottom: 24px; width: 1px;
+  background: var(--c-spine); transition: background-color 0.45s ease;
+}
+.entry {
+  --role: var(--model); --role-ink: var(--model);
+  position: relative;
+  display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 8px;
+  padding: 7px 0;
+}
+.person { --role: var(--person); --role-ink: var(--person-ink); }
+.agent, .call { --role: var(--model); --role-ink: var(--model); }
+.policy { --role: var(--policy); --role-ink: var(--policy); }
+.ext { --role: var(--ext); --role-ink: var(--ext); }
+.lens .person { --role-ink: #e8a64c; }
+.lens .agent, .lens .call { --role-ink: #ab98ee; }
+.lens .policy { --role-ink: #6fd3bb; }
+.lens .ext { --role-ink: #8eaef0; }
+.mark {
+  grid-column: 1; grid-row: 1 / span 2; justify-self: center; align-self: start;
+  margin-top: 7px; width: 10px; height: 10px; position: relative; z-index: 1;
+  background: var(--role); box-shadow: 0 0 0 4px var(--c-bg);
+  transition: box-shadow 0.45s ease;
+}
+.person .mark { border-radius: 50%; }
+.agent .mark { border-radius: 2px; }
+.call .mark { background: var(--c-bg); border: 2px solid var(--role); border-radius: 2px; }
+.policy .mark { width: 9px; height: 9px; border-radius: 1px; transform: rotate(45deg); margin-top: 8px; }
+.ext .mark { width: 10px; height: 11px; clip-path: polygon(0 0, 100% 50%, 0 100%); box-shadow: none; margin-top: 7px; }
+.fact {
+  grid-column: 2; margin: 0;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px;
+  font-size: 12px; line-height: 1.6; color: var(--c-muted);
+}
+.who { font-weight: 700; font-size: 13.5px; color: var(--c-ink); }
+.lens .who { color: var(--role-ink); }
+.fact time { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0; }
+.kind { font-size: 12px; }
+.eyes { display: none; font-size: 13px; line-height: 1; }
+.eyes.on { display: inline; animation: pop 0.3s ease backwards; }
+.body { grid-column: 2; min-width: 0; }
+.text { margin: 1px 0 0; font-size: 15px; line-height: 1.6; color: var(--c-ink); }
+.person .text { font-weight: 500; }
+.r { transition: color 0.4s ease, background-color 0.4s ease; border-radius: 3px; }
+.lens .r {
+  color: transparent; background: var(--bar);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.c { display: none; }
+.lens .h { display: none; }
+.lens .c { display: inline; }
+.status {
+  display: none; margin: 2px 0 0; font-size: 13px; color: var(--c-muted);
+}
+.status.on { display: block; }
+.dots i { display: inline-block; width: 4px; height: 4px; margin-left: 3px; border-radius: 50%; background: currentColor; vertical-align: middle; animation: blink 1s ease-in-out infinite; }
+.dots i:nth-child(2) { animation-delay: 0.15s; }
+.dots i:nth-child(3) { animation-delay: 0.3s; }
+.refs { list-style: none; margin: 8px 0 2px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.refs li {
+  display: inline-flex; align-items: center; gap: 6px; max-width: 100%;
+  padding: 3px 9px 3px 7px; border: 1px solid var(--c-line); border-radius: 6px;
+  background: var(--c-chip); color: var(--c-ink-2);
+  font-family: var(--mono); font-size: 12px; line-height: 1.5;
+  transition: background-color 0.45s ease, border-color 0.45s ease;
+}
+.refs svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--c-muted); }
+.refs code { font: inherit; overflow-wrap: anywhere; }
+.draft {
+  margin: 8px 0 2px; padding: 9px 12px 10px;
+  border: 1px solid var(--c-line); border-left: 2px solid var(--model); border-radius: 6px;
+  background: var(--c-bg);
+  transition: background-color 0.45s ease, border-color 0.45s ease;
+}
+.draft p { margin: 0; }
+.draft-label { font-size: 12px; font-weight: 600; color: var(--role-ink); }
+.draft-title { font-size: 14.5px; font-weight: 700; line-height: 1.5; margin-top: 2px !important; }
+.draft-desc { font-size: 13px; color: var(--c-ink-2); line-height: 1.55; }
+.lens .draft-label, .lens .draft-desc { display: none; }
+.lens .draft-title { margin-top: 0 !important; }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px; margin-top: 7px;
+  padding: 3px 10px; border: 1px solid var(--c-line); border-radius: 999px;
+  font-size: 12.5px; font-weight: 600; color: var(--ext);
+}
+.lens .chip { color: var(--c-ink-2); }
+.sys-line {
+  grid-column: 2; margin: 0; padding-top: 2px;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px;
+  font-size: 13px; line-height: 1.55; color: var(--c-ink);
+}
+.sys-k { font-size: 12.5px; font-weight: 700; color: var(--role-ink); }
+.sys-v { font-weight: 700; }
+.sys-s { font-size: 12px; color: var(--c-muted); }
+.hl .fact {
+  border-radius: 4px;
+  background: rgba(111, 211, 187, 0.14);
+  box-shadow: 0 0 0 1px rgba(111, 211, 187, 0.65);
+}
+
+/* 정책 검사 판 */
+.lens-panel {
+  position: absolute; left: 10px; right: 10px; top: 10px; z-index: 3;
+  padding: 10px 14px 11px; border-radius: 10px;
+  background: #0b1117; border: 1px solid rgba(111, 211, 187, 0.5);
+  color: #e6ecf2;
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
+}
+.lens-panel.on { opacity: 1; visibility: visible; transform: none; transition: opacity 0.3s ease, transform 0.3s ease; }
+.lp-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
+.lp-title { margin: 0; font-size: 12.5px; font-weight: 600; color: #6fd3bb; }
+.lp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.lp-list li {
+  display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 8px; align-items: baseline;
+  font-size: 13px; line-height: 1.45; color: #6f7d91;
+}
+.lp-list li.ok, .lp-list li.no { color: #e6ecf2; }
+.lp-ico { font-family: var(--mono); font-weight: 700; text-align: center; }
+.lp-ico::before { content: "·"; }
+.ok .lp-ico::before { content: "✓"; color: #6fd3bb; }
+.no .lp-ico::before { content: "✕"; color: #ff8f80; }
+.lp-v { font-size: 12px; color: #8d9bb0; font-variant-numeric: tabular-nums; }
+.lp-note { margin: 7px 0 0; font-size: 12px; color: #8d9bb0; opacity: 0; transition: opacity 0.3s ease; }
+.lp-note.on { opacity: 1; }
+.lp-verdict {
+  margin: 0; padding: 0 11px; border: 1px solid currentColor; border-radius: 6px; flex-shrink: 0;
+  font-size: 14.5px; line-height: 1.6; font-weight: 800; color: #84e2ab;
+  opacity: 0; transform: scale(1.25);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(.2, .9, .3, 1.3);
+}
+.lp-verdict.deny { color: #ff8f80; }
+.lp-verdict.on { opacity: 1; transform: none; }
+.scan {
+  position: absolute; left: 0; right: 0; top: 0; height: 2px; z-index: 2; pointer-events: none;
+  background: #6fd3bb; opacity: 0;
+}
+.scan.go { animation: scan 0.8s ease-in-out both; }
+
+.demo-foot { border-top: 1px solid var(--c-line); transition: border-color 0.45s ease; }
+.anim .demo-foot { border-top: 0; }
+.demo-progress { height: 2px; background: var(--c-line); overflow: hidden; display: none; transition: background-color 0.45s ease; }
+.anim .demo-progress { display: block; }
+.demo-progress span { display: block; height: 100%; background: var(--c-ink); transform-origin: 0 50%; transform: scaleX(0); }
+.foot-row { display: flex; align-items: center; gap: 2px; min-height: 58px; padding: 7px 14px; }
+.anim .foot-row { padding-left: 4px; }
+.caption { flex: 1 1 auto; min-width: 0; margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--c-ink-2); }
+.anim .caption { min-height: 3em; display: flex; align-items: center; }
+
+/* 재생 중에는 아직 오지 않은 단계를 이름만 흐리게 보여 준다(스크립트가 없으면 끝 장면이 그대로 보인다) */
+.ghost { display: none; }
+.anim .entry:not(.on) { padding: 3px 0; }
+.anim .entry:not(.on) > :not(.mark):not(.ghost) { display: none; }
+.anim .entry:not(.on) .ghost { display: block; grid-column: 2; grid-row: 1; font-size: 13px; line-height: 1.6; color: var(--c-muted); opacity: 0.75; }
+.anim .entry:not(.on) .mark { opacity: 0.3; margin-top: 6px; }
+.anim .entry:not(.on).policy .mark { margin-top: 7px; }
+.anim .entry.on { animation: rise 0.4s ease backwards; }
+.anim .refs li:not(.on), .anim .draft:not(.on), .anim .chip:not(.on) { display: none; }
+.anim .refs li.on, .anim .draft.on, .anim .chip.on { animation: pop 0.3s ease backwards; }
+.typing .r::after {
+  content: ""; display: inline-block; width: 2px; height: 1.05em; margin-left: 2px;
+  vertical-align: -0.17em; background: var(--person); animation: caret 0.9s steps(1) infinite;
+}
+.instant, .instant * { transition: none !important; animation: none !important; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes pop { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes caret { 50% { opacity: 0; } }
+@keyframes blink { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+@keyframes scan { 0% { top: 0; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { top: calc(100% - 2px); opacity: 0; } }
+
+/* 첫 화면을 붙여 두고 다음 판이 덮으며 올라오는 구성(움직임 허용 + 화면이 충분히 높을 때만) */
+.fold .hero {
+  position: sticky; top: 0;
+  height: 100vh; height: 100svh; min-height: 560px; max-height: 1080px;
+  display: flex; flex-direction: column; padding-bottom: 12px;
+}
+.fold .hero-grid { flex: 1 1 auto; min-height: 0; width: 100%; }
+.fold .demo-card, .fold .demo-stage, .fold .demo-window { flex: 1 1 auto; min-height: 0; }
+.anim:not(.fold) .demo-window { height: 470px; }
+.folding .entry {
+  transform: translateY(calc(var(--dy, 0px) * var(--p, 0))) scaleY(calc(1 - (1 - var(--sy, 1)) * var(--p, 0)));
+  transform-origin: 0 0;
+}
+.folding .entry > * { opacity: calc(1 - var(--p, 0) * 2.6); }
+.folding .entry::after {
+  content: ""; position: absolute; left: 4px; right: 0; top: 0; bottom: 0; border-radius: 3px;
+  background: var(--role); opacity: calc((var(--p, 0) - 0.3) * 1.45);
+}
+.folding .thread::before { opacity: calc(1 - var(--p, 0) * 3); }
+.folding .demo-window { -webkit-mask-image: none !important; mask-image: none !important; }
+.folding .lens-panel, .folding .entry:not(.on) { visibility: hidden; }
+.folding .demo-card { clip-path: inset(0 0 calc((100% - var(--fold-h, 160px)) * var(--p, 0)) 0 round 12px); }
+.folding .hero-copy { opacity: calc(1 - var(--p, 0) * 0.85); transform: translateY(calc(var(--p, 0) * -12px)); }
+
+/* ── 아래 판 ─────────────────────────── */
+.sheet {
+  position: relative; z-index: 2;
+  background: var(--paper);
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -1px 0 var(--rule), 0 -20px 40px -28px rgba(28, 36, 51, 0.35);
+}
+.sec { padding: 72px 16px; }
+.sec + .sec { border-top: 1px solid var(--rule); }
+.wrap { max-width: var(--wrap); margin: 0 auto; }
+.kicker {
+  display: flex; align-items: center; gap: 9px; margin: 0 0 14px;
+  font-size: 13.5px; font-weight: 700; color: var(--policy); letter-spacing: 0;
+}
+.kicker::before { content: ""; width: 8px; height: 8px; background: currentColor; border-radius: 1px; transform: rotate(45deg); }
+h2 { margin: 0 0 16px; font-size: clamp(26px, 6.4vw, 44px); line-height: 1.3; font-weight: 750; letter-spacing: -0.035em; }
+.lead { margin: 0; max-width: 680px; font-size: 16.5px; line-height: 1.8; color: var(--ink-2); }
+.badges { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.badges li {
+  padding: 4px 11px; border: 1px solid var(--rule-2); border-radius: 999px; background: #fff;
+  font-family: var(--mono); font-size: 12px; color: var(--ink-2);
+}
+
+.record { margin-top: 48px; padding-top: 14px; border-top: 2px solid var(--ink); }
+.record-title { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+.stats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.stat { padding: 18px 12px 20px 0; border-bottom: 1px solid var(--rule); }
+.stat + .stat:not(.stat-main) { padding-left: 12px; border-left: 1px solid var(--rule); }
+.stat-main { grid-column: 1 / -1; padding-right: 0; padding-bottom: 0; border-bottom: 0; }
+.stat-units { grid-column: 1 / -1; grid-row: 2; padding: 0 0 20px; border-bottom: 1px solid var(--rule); }
+html:not(.js) .stat-units { display: none; }
+html:not(.js) .stat-main { padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
+.stat-main + .stat { border-left: 0 !important; padding-left: 0 !important; }
+.num {
+  display: block; font-size: 38px; font-weight: 750; line-height: 1.1;
+  letter-spacing: -0.04em; font-variant-numeric: tabular-nums;
+}
+.stat-main .num { font-size: 64px; }
+.num small { font-size: 0.42em; font-weight: 650; margin-left: 3px; letter-spacing: -0.01em; color: var(--muted); }
+.stat-label { display: block; margin-top: 6px; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+.units { display: none; }
+.js .units { display: grid; grid-template-columns: repeat(auto-fill, 6px); gap: 3px; margin-top: 16px; }
+.units i { display: block; width: 6px; height: 6px; border-radius: 1px; background: var(--model); }
+.units.wait i { opacity: 0.12; }
+.units.go i { animation: unit 0.35s ease both; animation-delay: calc(var(--i) * 3.6ms); }
+@keyframes unit { from { opacity: 0.12; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+.note { margin: 16px 0 0; max-width: 760px; font-size: 13.5px; line-height: 1.75; color: var(--muted); }
+
+.design { margin-top: 72px; display: grid; gap: 40px; }
+.design-title { margin: 0 0 4px; font-size: 15px; font-weight: 700; }
+.points { list-style: none; margin: 0; padding: 0; }
+.point { padding: 22px 0 24px; border-top: 1px solid var(--rule); }
+.point-n {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 12px; color: var(--muted);
+}
+.point-n i { width: 9px; height: 9px; display: inline-block; }
+.pn-policy i { background: var(--policy); transform: rotate(45deg); border-radius: 1px; }
+.pn-thread i { background: var(--person); border-radius: 50%; }
+.pn-tools i { background: var(--model); border-radius: 2px; }
+.point h4 { margin: 8px 0 8px; font-size: 19px; line-height: 1.45; font-weight: 700; letter-spacing: -0.02em; }
+.point p { margin: 0; font-size: 15.5px; line-height: 1.75; color: var(--ink-2); }
+.see {
+  display: none; margin-top: 10px; min-height: 44px; padding: 0 2px;
+  align-items: center; gap: 6px;
+  border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: 14px; font-weight: 600; color: var(--ext);
+}
+.anim .see { display: inline-flex; }
+.see:hover { text-decoration: underline; text-underline-offset: 4px; }
+.see svg { width: 15px; height: 15px; }
+
+.fig { margin: 0; }
+.fig-link {
+  position: relative; display: block; overflow: hidden;
+  border: 1px solid var(--rule); border-radius: 12px; background: #fbfaf8; text-decoration: none;
+}
+.fig-link img { display: block; width: 100%; height: auto; }
+.fig-open {
+  position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%);
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px;
+  background: var(--ink); color: #fff; font-size: 14px; font-weight: 600; white-space: nowrap; z-index: 1;
+}
+.fig-link::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 140px;
+  background: linear-gradient(rgba(251, 250, 248, 0), #fbfaf8 78%);
+}
+.fig-link { max-height: 500px; }
+.fig figcaption { margin-top: 10px; font-size: 13.5px; line-height: 1.6; color: var(--muted); }
+
+.series { margin-top: 64px; padding: 24px 20px; border: 1px solid var(--rule); border-radius: 14px; background: #fff; }
+.series-title { margin: 0 0 8px; font-size: 15px; font-weight: 700; }
+.series p { margin: 0 0 18px; font-size: 15px; line-height: 1.8; color: var(--ink-2); max-width: 680px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 22px; border-radius: 999px;
+  font-size: 15px; font-weight: 600; text-decoration: none; letter-spacing: -0.01em;
+  border: 1px solid var(--ink); transition: background-color 0.18s ease, color 0.18s ease;
+}
+.btn svg { width: 15px; height: 15px; }
+.btn-ink { background: var(--ink); color: #fff; }
+.btn-ink:hover { background: #2c3850; }
+.btn-line { background: transparent; color: var(--ink); }
+.btn-line:hover { background: rgba(28, 36, 51, 0.06); }
+
+.works-grid { display: grid; gap: 14px; margin-top: 32px; }
+.work {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 24px 22px; border: 1px solid var(--rule); border-radius: 14px; background: #fff;
+  text-decoration: none; color: inherit;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.work:hover { border-color: var(--rule-2); transform: translateY(-2px); }
+.work-kind { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.work h3 { margin: 0; font-size: 22px; font-weight: 750; letter-spacing: -0.03em; }
+.work p { margin: 0; font-size: 15px; line-height: 1.75; color: var(--ink-2); }
+.work-go { margin-top: auto; padding-top: 6px; display: inline-flex; align-items: center; gap: 6px; font-size: 14.5px; font-weight: 600; color: var(--ext); }
+.work-go svg { width: 15px; height: 15px; }
+
+.writing-list { list-style: none; margin: 32px 0 0; padding: 0; border-top: 1px solid var(--rule-2); }
+.writing-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 20px 2px; border-bottom: 1px solid var(--rule);
+  color: inherit; text-decoration: none;
+}
+.writing-meta { margin: 0 0 4px; font-size: 13px; color: var(--muted); }
+.writing-item h3 { margin: 0; font-size: 17px; font-weight: 650; line-height: 1.5; letter-spacing: -0.02em; }
+.writing-arrow { flex-shrink: 0; width: 20px; height: 20px; color: var(--muted); transition: transform 0.2s ease, color 0.2s ease; }
+.writing-item:hover .writing-arrow { color: var(--ink); transform: translateX(3px); }
+
+.contact { text-align: left; }
+.contact h2 { font-size: clamp(28px, 7vw, 52px); }
+.contact .lead { margin-bottom: 26px; }
+
+.foot {
+  position: relative; z-index: 2; background: var(--paper);
+  border-top: 1px solid var(--rule); padding: 26px 16px 34px;
+  font-size: 13px; color: var(--muted);
+}
+.foot .wrap { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+.foot a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--rule-2); text-underline-offset: 4px; }
+
+/* ── 넓은 화면 ───────────────────────── */
+@media (max-width: 959px) {
+  .fold .demo { flex: 1 1 auto; min-height: 0; }
+}
+@media (min-width: 760px) {
+  .sec { padding: 104px 32px; }
+  .hero { padding-left: 32px; padding-right: 32px; }
+  .nav-in { padding: 0 20px 0 32px; }
+  .stats { grid-template-columns: 1.7fr 1fr 1fr 1fr; }
+  .stat { padding: 22px 20px 24px; border-bottom: 0; border-left: 1px solid var(--rule); }
+  .stat-main { grid-column: auto; padding-left: 0; padding-bottom: 0; border-left: 0; }
+  .stat-units { grid-column: 1; padding: 0 20px 26px 0; border-bottom: 0; }
+  html:not(.js) .stat-main { padding-bottom: 24px; border-bottom: 0; }
+  .stat-main + .stat { border-left: 1px solid var(--rule) !important; padding-left: 20px !important; }
+  .num { font-size: 46px; }
+  .stat-main .num { font-size: 76px; }
+  .stats { border-bottom: 1px solid var(--rule); }
+  .works-grid { grid-template-columns: 1.15fr 0.85fr; }
+  .series { padding: 32px; }
+}
+@media (min-width: 960px) {
+  :root { --nav-h: 64px; }
+  .nav-links a { padding: 0 14px; font-size: 14.5px; }
+  .hero { padding-top: calc(var(--nav-h) + 28px); padding-bottom: 28px; }
+  .hero-grid { flex-direction: row; align-items: stretch; gap: 64px; }
+  .hero-copy { flex: 1 1 0; min-width: 0; align-self: center; padding-bottom: 12px; }
+  .demo { flex: 0 0 540px; }
+  .hero h1 { font-size: 46px; }
+  .hero-lead { display: block; margin: 22px 0 0; max-width: 470px; font-size: 17px; line-height: 1.75; color: var(--ink-2); }
+  .hero-facts { margin-top: 26px; gap: 6px 24px; font-size: 14px; }
+  .hero-facts b { font-size: 24px; }
+  .hero-src { display: block; margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+  .fold .demo { justify-content: center; }
+  .fold .demo-card { max-height: 800px; }
+  .demo-head { padding-left: 18px; }
+  .thread { padding: 16px 20px 16px 10px; }
+  .thread::before { left: 23px; }
+  .text { font-size: 15.5px; }
+  .foot-row { padding-right: 18px; }
+  .caption { font-size: 14px; }
+  .design { grid-template-columns: minmax(0, 1fr) 420px; gap: 64px; align-items: start; }
+  .fig { position: sticky; top: calc(var(--nav-h) + 24px); }
+  .fig-link { max-height: none; }
+  .fig-link::after, .fig-open { display: none; }
+}
+@media (min-width: 1240px) {
+  .demo { flex-basis: 580px; }
+  .hero h1 { font-size: 52px; }
+}
+@media (max-width: 370px) {
+  .nav-links a { padding: 0 6px; font-size: 13px; }
+}
+@media (max-width: 959px) and (max-height: 740px) {
+  .hero { padding-top: calc(var(--nav-h) + 10px); }
+  .hero h1 { font-size: 24px; }
+  .eyebrow { margin-bottom: 6px; }
+  .hero-facts { margin-top: 8px; }
+  .hero-grid { gap: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media print {
+  .nav, .demo-ctrls, .lens-btn, .demo-progress, .see, .fig-open, .fig-link::after, .skip { display: none !important; }
+  .hero { position: static !important; height: auto !important; }
+  .sheet { box-shadow: none; border-radius: 0; }
+  body, .demo-card { background: #fff; }
+  .fig-link { max-height: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; overflow-wrap: anywhere; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<header class="nav" id="nav">
+  <nav class="nav-in" aria-label="주요 내비게이션">
+    <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"></span>이건상</a>
+    <ul class="nav-links">
+      <li><a href="#featured">대표 작업</a></li>
+      <li><a href="#works">작업물</a></li>
+      <li><a href="#writing">글</a></li>
+      <li><a href="#contact">연결</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main" tabindex="-1">
+
+<!-- ═══ 첫 화면: 재현한 스레드가 쓰여 나간다 ═══ -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow"><b>이건상</b> · 백엔드 개발자</p>
+      <h1 id="hero-title">사내 Slack 에서 <em>동료처럼 일하는</em> AI 에이전트를 만들고 15주 운영했습니다</h1>
+      <p class="hero-lead">말뜻은 모델이 읽고, 도구를 실행해도 되는지는 코드가 정하도록 설계했습니다. 옆의 스레드는 그 흐름을 재현한 예시입니다.</p>
+      <ul class="hero-facts">
+        <li><b>235</b>건 답한 질문 스레드</li>
+        <li><b>96</b>초 첫 답까지 중앙값</li>
+      </ul>
+      <p class="hero-src">2026년 6월 중순~9월 하순, 팀 코드 질문 채널의 Slack 스레드를 직접 센 기록</p>
+      <div class="hero-actions">
+        <a class="btn btn-ink" href="#featured">대표 작업 보기</a>
+        <a class="btn btn-line" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only">(새 탭)</span></a>
+      </div>
+    </div>
+
+    <figure class="demo" data-demo aria-labelledby="demo-name demo-tag">
+      <div class="demo-card">
+        <div class="demo-head">
+          <p class="demo-id"><span class="demo-name" id="demo-name">agent-colleague</span><span class="demo-tag" id="demo-tag">재현한 예시</span></p>
+          <button type="button" class="ctrl lens-btn" data-act="lens" aria-pressed="false"><span class="lens-label">코드가 보는 것</span><span class="lens-sw" aria-hidden="true"></span></button>
+        </div>
+
+        <div class="demo-stage">
+          <span class="scan" aria-hidden="true"></span>
+          <div class="lens-panel" data-panel aria-hidden="true">
+            <div class="lp-head">
+              <p class="lp-title" data-lp-title>정책 검사 · 티켓 만들기 직전</p>
+              <p class="lp-verdict" data-verdict>허용</p>
+            </div>
+            <ul class="lp-list">
+              <li data-chk="1"><span class="lp-ico"></span><span>봇이 이 스레드에 글을 올렸다</span><span class="lp-v" data-v="1">14:05:31</span></li>
+              <li data-chk="2"><span class="lp-ico"></span><span>봇의 마지막 글 뒤에 사람이 답했다</span><span class="lp-v" data-v="2">14:06:14</span></li>
+              <li data-chk="3"><span class="lp-ico"></span><span>같은 내용으로 실행한 기록이 없다</span><span class="lp-v" data-v="3">0줄</span></li>
+            </ul>
+            <p class="lp-note" data-lp-note>글의 내용은 보지 않습니다</p>
+          </div>
+
+          <div class="demo-window" data-window>
+          <ol class="thread" data-thread aria-hidden="true">
+            <li class="entry person" data-step="q">
+              <span class="mark"></span><span class="ghost">동료의 질문</span>
+              <p class="fact"><b class="who"><span class="h">동료</span><span class="c">사람</span></b><span class="kind c">글</span><time><span class="h">14:02</span><span class="c">14:02:10</span></time><span class="eyes h" data-eyes>👀</span></p>
+              <div class="body"><p class="text"><span class="r" data-type>홈 화면은 어떤 API 를 불러요?</span></p></div>
+            </li>
+            <li class="entry agent" data-step="a">
+              <span class="mark"></span><span class="ghost">근거 파일을 붙인 답</span>
+              <p class="fact"><b class="who"><span class="h">에이전트</span><span class="c">봇</span></b><span class="kind c">글</span><time><span class="h">14:03</span><span class="c">14:03:48</span></time></p>
+              <div class="body">
+                <p class="status" data-status>앱·서버 저장소의 코드를 읽는 중<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></p>
+                <p class="text"><span class="r" data-stream>홈 화면은 들어올 때 API 두 개를 불러요. 앱과 서버 코드를 함께 확인했어요.</span></p>
+                <ul class="refs">
+                  <li data-ref><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 1.75h5.2L12.25 4.8v9.45H4z"/><path d="M9 1.75V5h3.25"/></svg><code class="r">ios/…/HomeView:42</code></li>
+                  <li data-ref><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 1.75h5.2L12.25 4.8v9.45H4z"/><path d="M9 1.75V5h3.25"/></svg><code class="r">backend/…/HomeController:18</code></li>
+                </ul>
+              </div>
+            </li>
+            <li class="entry person" data-step="ask">
+              <span class="mark"></span><span class="ghost">티켓 부탁</span>
+              <p class="fact"><b class="who"><span class="h">동료</span><span class="c">사람</span></b><span class="kind c">글</span><time><span class="h">14:05</span><span class="c">14:05:02</span></time></p>
+              <div class="body"><p class="text"><span class="r" data-type>이거 티켓으로 만들어 줘</span></p></div>
+            </li>
+            <li class="entry agent" data-step="draft">
+              <span class="mark"></span><span class="ghost">티켓 초안</span>
+              <p class="fact"><b class="who"><span class="h">에이전트</span><span class="c">봇</span></b><span class="kind c">글</span><time><span class="h">14:05</span><span class="c">14:05:31</span></time></p>
+              <div class="body">
+                <p class="text"><span class="r" data-stream>티켓 초안이에요. 이대로 만들까요?</span></p>
+                <div class="draft" data-draft>
+                  <p class="draft-label"><span class="r">티켓 초안</span></p>
+                  <p class="draft-title"><span class="r">홈 화면 API 호출 정리</span></p>
+                  <p class="draft-desc"><span class="r">들어올 때 부르는 API 두 개와 근거 파일 경로</span></p>
+                </div>
+              </div>
+            </li>
+            <li class="entry person" data-step="ok">
+              <span class="mark"></span><span class="ghost">사람의 답</span>
+              <p class="fact"><b class="who"><span class="h">동료</span><span class="c">사람</span></b><span class="kind c">글</span><time><span class="h">14:06</span><span class="c">14:06:14</span></time></p>
+              <div class="body"><p class="text"><span class="r" data-type>좋아요, 진행해 주세요</span></p></div>
+            </li>
+            <li class="entry call" data-step="call">
+              <span class="mark"></span><span class="ghost">도구 호출</span>
+              <p class="sys-line"><span class="sys-k">도구 호출</span><span class="sys-v">티켓 만들기</span><span class="sys-s">외부에 영향을 주는 작업</span></p>
+            </li>
+            <li class="entry policy" data-step="check">
+              <span class="mark"></span><span class="ghost">정책 검사</span>
+              <p class="sys-line"><span class="sys-k">정책 검사</span><span class="sys-v">허용</span><span class="sys-s">누가·언제 썼는지와 실행 기록만 확인</span></p>
+            </li>
+            <li class="entry ext" data-step="exec">
+              <span class="mark"></span><span class="ghost">티켓 생성</span>
+              <p class="sys-line"><span class="sys-k">이슈 트래커</span><span class="sys-v">티켓 생성</span><span class="sys-s">실행 기록 1줄 남김</span></p>
+            </li>
+            <li class="entry agent" data-step="done">
+              <span class="mark"></span><span class="ghost">완료 알림</span>
+              <p class="fact"><b class="who"><span class="h">에이전트</span><span class="c">봇</span></b><span class="kind c">글</span><time><span class="h">14:06</span><span class="c">14:06:24</span></time></p>
+              <div class="body">
+                <p class="text"><span class="r" data-stream>티켓을 만들었어요.</span></p>
+                <span class="chip" data-chip><span class="r">티켓 링크</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+              </div>
+            </li>
+          </ol>
+          </div>
+        </div>
+
+        <div class="demo-foot">
+          <div class="demo-progress" aria-hidden="true"><span data-progress></span></div>
+          <div class="foot-row">
+            <div class="demo-ctrls">
+            <button type="button" class="ctrl" data-act="toggle" aria-label="일시정지">
+              <svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+              <svg class="ico-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+            </button>
+            <button type="button" class="ctrl" data-act="replay" aria-label="처음부터 다시 보기">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.6-5.9"/><path d="M4 4v4.5h4.5"/></svg>
+            </button>
+            </div>
+            <p class="caption" data-caption>재현한 예시: 질문에는 근거 파일 경로를 붙여 답하고, 티켓 부탁은 초안 → 사람의 답 → 정책 검사 → 실행 순서로 처리합니다.</p>
+          </div>
+        </div>
+      </div>
+      <figcaption class="sr-only">
+        재현한 예시이며 실제 대화가 아닙니다. 동료가 홈 화면이 어떤 API 를 부르는지 묻자 에이전트가 앱과 서버 저장소의 근거 파일 경로 두 곳을 붙여 답합니다.
+        동료가 티켓을 부탁하자 에이전트가 초안을 올리고, 동료가 "좋아요, 진행해 주세요"라고 답합니다.
+        도구를 실행하기 직전에 코드는 봇이 이 스레드에 글을 올렸는지, 봇의 마지막 글 뒤에 사람이 답했는지, 같은 내용으로 실행한 기록이 있는지만 확인하고 글의 내용은 보지 않습니다.
+        허용되면 티켓을 만들고 실행 기록을 한 줄 남겨, 같은 호출이 다시 오면 거부합니다.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="sheet">
+
+<!-- ═══ 대표 작업 ═══ -->
+<section class="sec" id="featured" aria-labelledby="featured-title">
+  <div class="wrap">
+    <p class="kicker">대표 작업 · agent-colleague</p>
+    <h2 id="featured-title">Slack 스레드에서 동료처럼 일하는 사내 AI 에이전트</h2>
+    <p class="lead">
+      코드 질문에는 근거 파일 경로를 붙여 답하고, 티켓 만들기·DB 조회·PR 올리기도 스레드에서 부탁할 수 있게 만들었습니다.
+      처음 만든 봇을 Claude Agent SDK 로 다시 설계한 agent-colleague 입니다.
+    </p>
+    <ul class="badges" aria-label="사용한 기술">
+      <li>Claude Agent SDK</li><li>TypeScript</li><li>Slack</li><li>PostgreSQL</li>
+    </ul>
+
+    <div class="record">
+      <h3 class="record-title">1편 봇부터 이어진 15주 운영 기록</h3>
+      <ul class="stats">
+        <li class="stat stat-main">
+          <span class="num"><span data-count="235">235</span><small>건</small></span>
+          <span class="stat-label">에이전트가 답한 질문 스레드</span>
+        </li>
+        <li class="stat">
+          <span class="num"><span data-count="15">15</span><small>주</small></span>
+          <span class="stat-label">팀 코드 질문 채널에서 운영한 기간</span>
+        </li>
+        <li class="stat">
+          <span class="num"><span data-count="96">96</span><small>초</small></span>
+          <span class="stat-label">첫 질문에서 첫 답까지 중앙값</span>
+        </li>
+        <li class="stat">
+          <span class="num"><span data-count="46">46</span><small>%</small></span>
+          <span class="stat-label">사람이 이어서 말한 스레드</span>
+        </li>
+        <li class="stat-units" aria-hidden="true"><span class="units wait" data-units></span></li>
+      </ul>
+      <p class="note">
+        2026년 6월 중순~9월 하순, 팀 코드 질문 채널의 Slack 스레드를 직접 센 사내 운영 기록입니다.
+        기간 대부분은 1편의 봇이 답했고, 9월 중순에 지금 구조로 바꿨습니다.
+        이어서 말한 스레드에는 되물음과 정정도 섞여 있고, 답이 맞았는지는 따로 재지 않았습니다.
+      </p>
+    </div>
+
+    <div class="design">
+      <div>
+        <h3 class="design-title">설계 요점</h3>
+        <ol class="points">
+          <li class="point">
+            <span class="point-n pn-policy"><i aria-hidden="true"></i>01</span>
+            <h4>말뜻은 모델이, 실행 허용은 코드가</h4>
+            <p>사람의 답이 승인인지는 모델이 읽습니다. 도구를 실행해도 되는지는 코드가 정하는데, 누가·언제 말했는지, 이미 실행했는지, 운영 DB 라면 예상 비용 같은 사실만 봅니다.</p>
+            <button type="button" class="see" data-seek="call">예시에서 정책 검사 보기<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+          </li>
+          <li class="point">
+            <span class="point-n pn-thread"><i aria-hidden="true"></i>02</span>
+            <h4>스레드 하나에 세션 하나</h4>
+            <p>Slack 스레드마다 에이전트 세션을 하나씩 붙였습니다. 그 스레드의 말·리액션·편집을 모두 읽고, 답할지와 할 일은 모델이 정합니다.</p>
+            <button type="button" class="see" data-seek="start">예시를 처음부터 보기<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+          </li>
+          <li class="point">
+            <span class="point-n pn-tools"><i aria-hidden="true"></i>03</span>
+            <h4>정해 둔 도구만, 외부에 영향을 주는 일은 초안 먼저</h4>
+            <p>세션은 목록에 있는 도구만 씁니다. 티켓 생성처럼 외부에 영향을 주는 일을 부탁받으면 초안을 먼저 올리고, 사람이 답한 뒤에 실행합니다.</p>
+            <button type="button" class="see" data-seek="ask">예시에서 초안 단계 보기<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+          </li>
+        </ol>
+      </div>
+      <figure class="fig">
+        <a class="fig-link" href="assets/policy-flow.png" target="_blank" rel="noopener">
+          <img src="assets/policy-flow.png" width="1400" height="2286" loading="lazy" decoding="async"
+               alt="티켓 만들어 줘 요청이 실행되기까지의 흐름. 모델이 티켓 도구를 바로 부르면 정책 함수가 봇이 올린 글이 없다는 이유로 거부하고, 모델이 초안을 스레드에 올린 뒤 사람이 답하면 같은 도구 호출이 허용되어 티켓이 만들어진다.">
+          <span class="fig-open" aria-hidden="true">그림 전체 보기</span>
+          <span class="sr-only">(원본 크기로 새 탭에서 열기)</span>
+        </a>
+        <figcaption>"티켓 만들어 줘"가 실행되기까지. 그림을 누르면 원본 크기로 볼 수 있습니다.</figcaption>
+      </figure>
+    </div>
+
+    <div class="series">
+      <h3 class="series-title">블로그 시리즈</h3>
+      <p>
+        1편은 처음 만든 봇 이야기입니다. Claude Code 헤드리스 모드로 백엔드·안드로이드·iOS·웹 네 저장소의 코드를 읽고 답했습니다.
+        2편은 15주 운영 기록과, 기능이 늘면서 구조를 다시 짠 과정을 다룹니다.
+      </p>
+      <div class="actions">
+        <a class="btn btn-ink" href="https://medium.com/@gosmdochee/%EC%82%AC%EB%82%B4-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EC%9E%AC%EC%84%A4%EA%B3%84%ED%95%9C-%EC%9D%B4%EC%95%BC%EA%B8%B0-2%ED%8E%B8-9f76459b6b5a" target="_blank" rel="noopener noreferrer">2편 · 재설계한 이야기<span class="sr-only">(새 탭)</span></a>
+        <a class="btn btn-line" href="https://medium.com/@gosmdochee/%ED%8C%8C%ED%8A%B8-%EA%B2%BD%EA%B3%84%EB%A5%BC-%EB%84%98%EB%8A%94-%EC%BD%94%EB%93%9C-%EC%A7%88%EB%AC%B8%EC%97%90-%EB%8B%B5%ED%95%98%EB%8A%94-%EC%82%AC%EB%82%B4-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EB%A7%8C%EB%93%A4%EA%B8%B0%EA%B9%8C%EC%A7%80-1%ED%8E%B8-5f566069f38a" target="_blank" rel="noopener noreferrer">1편 · 처음 만든 봇<span class="sr-only">(새 탭)</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 다른 작업물 ═══ -->
+<section class="sec" id="works" aria-labelledby="works-title">
+  <div class="wrap">
+    <p class="kicker">다른 작업물</p>
+    <h2 id="works-title">에이전트 밖에서 만든 것들</h2>
+    <p class="lead">일하는 방식 자체를 도구로 만들어 두려는 습관이 남긴 작업물입니다.</p>
+    <div class="works-grid">
+      <a class="work" href="https://github.com/kunsanglee/ai-ready" target="_blank" rel="noopener noreferrer" aria-label="ai-ready 저장소 보기(새 탭)">
+        <span class="work-kind">Open Source · Plugin</span>
+        <h3>ai-ready</h3>
+        <p>
+          감사(audit) → 적용(apply) → 무인 검증을 하나의 Claude Code 플러그인으로 묶은 도구입니다.
+          AI 코딩 도구가 프로젝트 규칙을 준비된 대로 따르게 하는 준비 작업을 자동화합니다.
+        </p>
+        <span class="work-go">저장소 보기<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="work" href="https://maeil-mail.kr" target="_blank" rel="noopener noreferrer" aria-label="매일메일 서비스 보기(새 탭)">
+        <span class="work-kind">Service</span>
+        <h3>매일메일</h3>
+        <p>
+          개발자 면접 질문을 매일 메일로 받아 볼 수 있는 서비스입니다.
+          만드는 데 참여했고, 예습·복습 루틴을 만드는 가장 단순한 형태라고 생각합니다.
+        </p>
+        <span class="work-go">서비스 보기<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 글 ═══ -->
+<section class="sec" id="writing" aria-labelledby="writing-title">
+  <div class="wrap">
+    <p class="kicker">글</p>
+    <h2 id="writing-title">만든 것을 글로 정리합니다</h2>
+    <p class="lead">성공담보다 판단의 근거를 적으려 노력합니다. 어떤 선택지를 검토했고 왜 골랐는지를 글의 중심에 둡니다.</p>
+    <ul class="writing-list">
+      <li>
+        <a class="writing-item" href="https://medium.com/@gosmdochee/%EC%82%AC%EB%82%B4-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EC%9E%AC%EC%84%A4%EA%B3%84%ED%95%9C-%EC%9D%B4%EC%95%BC%EA%B8%B0-2%ED%8E%B8-9f76459b6b5a" target="_blank" rel="noopener noreferrer">
+          <div>
+            <p class="writing-meta">Medium · 시리즈 2편</p>
+            <h3>사내 AI 에이전트를 재설계한 이야기 2편</h3>
+          </div>
+          <svg class="writing-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <span class="sr-only">(새 탭)</span>
+        </a>
+      </li>
+      <li>
+        <a class="writing-item" href="https://medium.com/@gosmdochee/%ED%8C%8C%ED%8A%B8-%EA%B2%BD%EA%B3%84%EB%A5%BC-%EB%84%98%EB%8A%94-%EC%BD%94%EB%93%9C-%EC%A7%88%EB%AC%B8%EC%97%90-%EB%8B%B5%ED%95%98%EB%8A%94-%EC%82%AC%EB%82%B4-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EB%A7%8C%EB%93%A4%EA%B8%B0%EA%B9%8C%EC%A7%80-1%ED%8E%B8-5f566069f38a" target="_blank" rel="noopener noreferrer">
+          <div>
+            <p class="writing-meta">Medium · 2026.06 · 14분 분량 · 시리즈 1편</p>
+            <h3>파트 경계를 넘는 코드 질문에 답하는 사내 AI 에이전트를 만들기까지</h3>
+          </div>
+          <svg class="writing-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <span class="sr-only">(새 탭)</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══ 연결 ═══ -->
+<section class="sec contact" id="contact" aria-labelledby="contact-title">
+  <div class="wrap">
+    <p class="kicker">연결</p>
+    <h2 id="contact-title">코드가 말하게 하는 개발자</h2>
+    <p class="lead">작업물이나 글을 통해 이야기를 나누고 싶다면 언제든 연락 주세요.</p>
+    <div class="actions">
+      <a class="btn btn-ink" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only">(새 탭)</span></a>
+      <a class="btn btn-line" href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<span class="sr-only">(새 탭)</span></a>
+    </div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© 2026 이건상</span>
+    <a href="https://github.com/kunsanglee/kunsanglee.github.io" target="_blank" rel="noopener noreferrer">이 페이지의 소스<span class="sr-only">(새 탭)</span></a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var reduceMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var reduce = reduceMq.matches;
+
+  /* ── 재현 데모: 시간 vt 하나로 화면 전체를 다시 그린다 ── */
+  var demo = document.querySelector("[data-demo]");
+  var card = demo.querySelector(".demo-card");
+  var win = demo.querySelector("[data-window]");
+  var thread = demo.querySelector("[data-thread]");
+  var panel = demo.querySelector("[data-panel]");
+  var scan = demo.querySelector(".scan");
+  var cap = demo.querySelector("[data-caption]");
+  var bar = demo.querySelector("[data-progress]");
+  var btnToggle = demo.querySelector('[data-act="toggle"]');
+  var btnReplay = demo.querySelector('[data-act="replay"]');
+  var btnLens = demo.querySelector('[data-act="lens"]');
+  var summary = cap.textContent;
+
+  var E = {};
+  Array.prototype.forEach.call(thread.children, function (li) { E[li.getAttribute("data-step")] = li; });
+  function q(sel, el) { return (el || demo).querySelector(sel); }
+  var typeEl = { q: q("[data-type]", E.q), ask: q("[data-type]", E.ask), ok: q("[data-type]", E.ok) };
+  var streamEl = { a: q("[data-stream]", E.a), draft: q("[data-stream]", E.draft), done: q("[data-stream]", E.done) };
+  Object.keys(typeEl).forEach(function (k) { typeEl[k].setAttribute("data-full", typeEl[k].textContent); });
+  Object.keys(streamEl).forEach(function (k) { streamEl[k].setAttribute("data-full", streamEl[k].textContent); });
+  var eyes = q("[data-eyes]", E.q), status = q("[data-status]", E.a);
+  var refs = E.a.querySelectorAll("[data-ref]");
+  var draftCard = q("[data-draft]", E.draft), chip = q("[data-chip]", E.done);
+  var chks = panel.querySelectorAll("[data-chk]");
+  var vals = panel.querySelectorAll("[data-v]");
+  var lpTitle = q("[data-lp-title]", panel), lpNote = q("[data-lp-note]", panel), verdict = q("[data-verdict]", panel);
+
+  var T = {
+    q: 300, qType: [400, 1500], eyesOn: 1650, a: 1900, statusEnd: 3000, eyesOff: 3700,
+    aStream: [3050, 3700], ref1: 3800, ref2: 4000,
+    ask: 4800, askType: [4900, 5600],
+    draft: 6200, draftStream: [6300, 6600], draftCard: 6700,
+    ok: 7700, okType: [7800, 8600],
+    call: 9100, lensOn: 9500, panel: 9800, c1: 10300, c2: 10900, c3: 11500, note: 12000, verdict: 12400, lensOff: 14000,
+    check: 14200, exec: 14700, done: 15300, doneStream: [15400, 15700], doneChip: 15800,
+    end: 16400
+  };
+  var STEP_AT = { q: T.q, a: T.a, ask: T.ask, draft: T.draft, ok: T.ok, call: T.call, check: T.check, exec: T.exec, done: T.done };
+  var CAPS = [
+    [0, "동료가 코드 질문을 올립니다."],
+    [T.a, "에이전트가 앱과 서버 저장소의 코드를 읽습니다."],
+    [T.eyesOff, "근거 파일 경로와 줄 번호를 붙여 답합니다."],
+    [T.ask, "이번에는 외부에 영향을 주는 일을 부탁합니다."],
+    [T.draft, "실행하기 전에 초안을 먼저 올립니다."],
+    [T.ok, "사람의 답이 승인인지는 모델이 읽습니다."],
+    [T.call, "도구를 실행하기 직전에 코드가 검사합니다."],
+    [T.lensOn, "코드는 누가·언제 썼는지와 실행 기록만 봅니다."],
+    [T.note, "글의 내용은 보지 않고, 순서와 실행 기록으로 허용합니다."],
+    [T.check, "티켓을 만들고 실행 기록을 한 줄 남깁니다."],
+    [T.done, "같은 호출이 다시 오면 실행 기록을 보고 거부합니다."]
+  ];
+  var TIME = { a: "14:03:48", draft: "14:05:31", done: "14:06:24", q: "14:02:10", ask: "14:05:02", ok: "14:06:14" };
+
+  var vt = 0, playing = false, raf = 0, last = 0;
+  var userPaused = false, holds = {}, lensOverride = null, prevLens = false, anim = false;
+
+  function on(el, cls, v) { if (el.classList.contains(cls) !== v) el.classList.toggle(cls, v); }
+  function setText(el, s) { if (el.textContent !== s) el.textContent = s; }
+  function frac(t, a, b) { return t <= a ? 0 : t >= b ? 1 : (t - a) / (b - a); }
+
+  function factsAt(t) {
+    var self = null, human = null;
+    ["a", "draft", "done"].forEach(function (k) { if (t >= STEP_AT[k]) self = k; });
+    ["q", "ask", "ok"].forEach(function (k) { if (t >= STEP_AT[k]) human = k; });
+    return { self: self, human: human, receipts: t >= T.exec ? 1 : 0 };
+  }
+
+  function render(t) {
+    Object.keys(STEP_AT).forEach(function (k) { on(E[k], "on", t >= STEP_AT[k]); });
+    [["q", T.qType], ["ask", T.askType], ["ok", T.okType]].forEach(function (p) {
+      var el = typeEl[p[0]], full = el.getAttribute("data-full");
+      var n = Math.round(full.length * frac(t, p[1][0], p[1][1]));
+      setText(el, full.slice(0, n));
+      on(E[p[0]], "typing", t >= p[1][0] - 120 && t < p[1][1] + 250);
+    });
+    [["a", T.aStream], ["draft", T.draftStream], ["done", T.doneStream]].forEach(function (p) {
+      var el = streamEl[p[0]], words = el.getAttribute("data-full").split(" ");
+      var n = Math.ceil(words.length * frac(t, p[1][0], p[1][1]));
+      setText(el, words.slice(0, n).join(" "));
+    });
+    on(eyes, "on", t >= T.eyesOn && t < T.eyesOff);
+    on(status, "on", t >= T.a && t < T.statusEnd);
+    on(refs[0], "on", t >= T.ref1);
+    on(refs[1], "on", t >= T.ref2);
+    on(draftCard, "on", t >= T.draftCard);
+    on(chip, "on", t >= T.doneChip);
+
+    var scripted = t >= T.lensOn && t < T.lensOff;
+    var lens = lensOverride === null ? scripted : lensOverride;
+    on(card, "lens", lens);
+    btnLens.setAttribute("aria-pressed", lens ? "true" : "false");
+    if (lens && !prevLens && playing) { scan.classList.remove("go"); void scan.offsetWidth; scan.classList.add("go"); }
+    prevLens = lens;
+
+    var final = t >= T.end;
+    var showPanel = lens && ((scripted && t >= T.panel) || final);
+    on(panel, "on", showPanel);
+    var hlSelf = null, hlHuman = null;
+    if (showPanel && scripted) {
+      lpTitle.textContent = "정책 검사 · 티켓 만들기 직전";
+      var marks = [t >= T.c1, t >= T.c2, t >= T.c3];
+      chks.forEach(function (li, i) { on(li, "ok", marks[i]); on(li, "no", false); });
+      setText(vals[0], TIME.draft); setText(vals[1], TIME.ok); setText(vals[2], "0줄");
+      on(lpNote, "on", t >= T.note);
+      setText(verdict, "허용"); on(verdict, "deny", false); on(verdict, "on", t >= T.verdict);
+      if (t >= T.c1) hlSelf = "draft";
+      if (t >= T.c2) hlHuman = "ok";
+    } else if (showPanel) {
+      var f = factsAt(t);
+      var c1 = f.self !== null;
+      var c2 = c1 && f.human !== null && TIME[f.human] > TIME[f.self];
+      var c3 = f.receipts === 0;
+      lpTitle.textContent = "같은 호출이 지금 다시 오면 · 정책 검사";
+      [c1, c2, c3].forEach(function (v, i) { on(chks[i], "ok", v); on(chks[i], "no", !v); });
+      setText(vals[0], f.self ? TIME[f.self] : "없음");
+      setText(vals[1], f.human ? "사람 " + TIME[f.human] : "없음");
+      setText(vals[2], f.receipts + "줄");
+      on(lpNote, "on", true);
+      var ok = c1 && c2 && c3;
+      setText(verdict, ok ? "허용" : "거부"); on(verdict, "deny", !ok); on(verdict, "on", true);
+      hlSelf = f.self; hlHuman = f.human;
+    }
+    ["a", "draft", "done", "q", "ask", "ok"].forEach(function (k) { on(E[k], "hl", lens && (k === hlSelf || k === hlHuman)); });
+
+    var c = CAPS[0][1];
+    for (var i = 0; i < CAPS.length; i++) { if (t >= CAPS[i][0]) c = CAPS[i][1]; }
+    if (!anim) c = summary;
+    setText(cap, c);
+    bar.style.transform = "scaleX(" + Math.min(1, t / T.end).toFixed(4) + ")";
+  }
+
+  function targetScroll() {
+    var max = Math.max(0, thread.offsetHeight - win.clientHeight), target = max;
+    if (anim) {
+      var kids = thread.children, last = null;
+      for (var i = kids.length - 1; i >= 0; i--) { if (kids[i].classList.contains("on")) { last = kids[i]; break; } }
+      if (last) {
+        var next = last.nextElementSibling;
+        var bottom = last.offsetTop + last.offsetHeight + (next ? next.offsetHeight : 0) + 12;
+        target = bottom - win.clientHeight;
+      } else target = 0;
+    }
+    if (panel.classList.contains("on")) {
+      var hl = thread.querySelectorAll(".entry.hl");
+      if (hl.length) {
+        var under = hl[0].offsetTop - (panel.offsetTop + panel.offsetHeight + 6);
+        var lastHl = hl[hl.length - 1], f = lastHl.querySelector(".fact");
+        var need = lastHl.offsetTop + f.offsetTop + f.offsetHeight + 6 - win.clientHeight;
+        target = Math.max(need, Math.min(target, under));
+      }
+    }
+    return Math.min(max, Math.max(0, target));
+  }
+  function edge() {
+    on(win, "scrolled", win.scrollTop > 1);
+    on(win, "more", win.scrollTop + win.clientHeight < win.scrollHeight - 1);
+  }
+  /* 창이 스레드보다 길면 정책 검사 판이 남는 자리를 차지하도록 스레드를 그만큼 내린다 */
+  var shift = -1;
+  function place() {
+    var s = 0;
+    if (panel.classList.contains("on")) {
+      var room = win.clientHeight - thread.offsetHeight;
+      if (room > 0) s = Math.min(room, panel.offsetTop + panel.offsetHeight);
+    }
+    s = Math.round(s);
+    if (s !== shift) { shift = s; thread.style.transform = s ? "translateY(" + s + "px)" : ""; }
+  }
+  function follow(instant) {
+    place();
+    var target = targetScroll();
+    var cur = win.scrollTop;
+    if (instant || Math.abs(target - cur) < 1) win.scrollTop = target;
+    else win.scrollTop = cur + (target - cur) * 0.2;
+    edge();
+  }
+  win.addEventListener("scroll", edge, { passive: true });
+
+  function setState() {
+    var ended = vt >= T.end;
+    on(card, "is-ended", ended && !playing);
+    on(card, "is-paused", !playing && !ended);
+    btnToggle.setAttribute("aria-label", playing ? "일시정지" : ended ? "처음부터 다시 재생" : "재생");
+    on(win, "can-scroll", !playing && !root.classList.contains("folding"));
+  }
+
+  function frame(now) {
+    raf = 0;
+    if (!playing) return;
+    vt += Math.min(now - last, 64);
+    last = now;
+    if (vt >= T.end) {
+      vt = T.end; render(vt); follow(true);
+      playing = false; setState();
+      return;
+    }
+    render(vt); follow(false);
+    raf = requestAnimationFrame(frame);
+  }
+  function held() { return Object.keys(holds).some(function (k) { return holds[k]; }); }
+  function play() {
+    if (playing || held()) return;
+    if (vt >= T.end) seek(0);
+    playing = true; last = performance.now(); setState();
+    if (!raf) raf = requestAnimationFrame(frame);
+  }
+  function pause() {
+    playing = false;
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    setState();
+  }
+  function seek(t) {
+    vt = t;
+    card.classList.add("instant");
+    render(vt); follow(true);
+    void card.offsetWidth;
+    card.classList.remove("instant");
+    setState();
+  }
+  function hold(reason, v) {
+    holds[reason] = v;
+    if (v && playing) pause();
+    else if (!v && !held() && !userPaused && anim && vt < T.end) play();
+  }
+
+  btnToggle.addEventListener("click", function () {
+    if (playing) { userPaused = true; pause(); return; }
+    userPaused = false; lensOverride = null; play();
+  });
+  btnReplay.addEventListener("click", function () {
+    userPaused = false; lensOverride = null;
+    seek(0); if (anim) play();
+  });
+  btnLens.addEventListener("click", function () {
+    var now = card.classList.contains("lens");
+    lensOverride = !now;
+    if (playing) { userPaused = true; pause(); }
+    render(vt); place();
+    win.scrollTo({ top: targetScroll(), behavior: reduce ? "auto" : "smooth" });
+    edge();
+  });
+
+  function startStatic() {
+    anim = false;
+    root.classList.remove("anim");
+    btnToggle.hidden = true; btnReplay.hidden = true;
+    pause(); seek(T.end);
+  }
+
+  var fold = !reduce && window.innerHeight >= 560;
+  if (fold) root.classList.add("fold");
+
+  if (reduce) {
+    startStatic();
+  } else {
+    anim = true;
+    root.classList.add("anim");
+    seek(0);
+    var started = false;
+    var go = function () { if (!started) { started = true; play(); } };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(go, 150); });
+    setTimeout(go, 900);
+    document.addEventListener("visibilitychange", function () { hold("hidden", document.hidden); });
+  }
+  reduceMq.addEventListener && reduceMq.addEventListener("change", function (e) {
+    if (e.matches) { reduce = true; root.classList.remove("fold", "folding"); startStatic(); }
+  });
+
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (!playing) follow(true); });
+  var lastW = window.innerWidth;
+  window.addEventListener("resize", function () {
+    if (window.innerWidth === lastW) return;
+    lastW = window.innerWidth;
+    if (!playing) follow(true);
+  });
+
+  /* ── 스크롤하면 스레드를 접는다 ── */
+  var hero = document.getElementById("top");
+  var head = demo.querySelector(".demo-head");
+  var measured = false, ticking = false, lastP = -1;
+
+  function measure() {
+    var wr = win.getBoundingClientRect();
+    var list = Array.prototype.filter.call(thread.children, function (e) { return !anim || e.classList.contains("on"); });
+    list.forEach(function (e, i) {
+      var r = e.getBoundingClientRect();
+      var dy = (12 + i * 9) - (r.top - wr.top);
+      var sy = 5 / Math.max(r.height, 5);
+      e.style.setProperty("--dy", dy.toFixed(1) + "px");
+      e.style.setProperty("--sy", sy.toFixed(4));
+    });
+    card.style.setProperty("--fold-h", (head.offsetHeight + 12 + list.length * 9 + 16) + "px");
+    measured = true;
+  }
+  function updateFold() {
+    ticking = false;
+    if (!fold || reduce) return;
+    var y = window.scrollY || window.pageYOffset;
+    var p = Math.max(0, Math.min(1, y / (window.innerHeight * 0.42)));
+    if (p === lastP) return;
+    if (p > 0 && !measured) measure();
+    lastP = p;
+    hero.style.setProperty("--p", p.toFixed(4));
+    on(root, "folding", p > 0);
+    if (p === 0) measured = false;
+    hold("fold", p > 0.001);
+    setState();
+    hero.style.visibility = y > window.innerHeight * 1.8 ? "hidden" : "";
+  }
+  if (fold) {
+    window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(updateFold); } }, { passive: true });
+    window.addEventListener("resize", function () { measured = false; lastP = -1; updateFold(); });
+    updateFold();
+  }
+
+  /* 설계 요점에서 예시의 해당 장면으로 */
+  var SEEK = { call: T.call - 300, start: 0, ask: T.ask - 200 };
+  Array.prototype.forEach.call(document.querySelectorAll("[data-seek]"), function (b) {
+    b.addEventListener("click", function () {
+      var t = SEEK[b.getAttribute("data-seek")];
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      var tries = 0;
+      (function wait() {
+        if ((window.scrollY || 0) < 2 || tries++ > 90) {
+          userPaused = false; lensOverride = null;
+          seek(t); play();
+          btnToggle.focus({ preventScroll: true });
+        } else requestAnimationFrame(wait);
+      })();
+    });
+  });
+
+  /* ── 운영 기록 숫자 ── */
+  var units = document.querySelector("[data-units]");
+  if (units) {
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < 235; i++) { var u = document.createElement("i"); u.style.setProperty("--i", i); frag.appendChild(u); }
+    units.appendChild(frag);
+  }
+  var counters = Array.prototype.slice.call(document.querySelectorAll("[data-count]"));
+  function finishNumbers() {
+    counters.forEach(function (el) { el.textContent = el.getAttribute("data-count"); });
+    if (units) { units.classList.remove("wait"); }
+  }
+  if (reduce || !("IntersectionObserver" in window)) {
+    finishNumbers();
+  } else {
+    var record = document.querySelector(".record");
+    counters.forEach(function (el) { el.setAttribute("aria-hidden", "false"); });
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        io.disconnect();
+        var t0 = performance.now();
+        (function tick(now) {
+          var k = Math.min(1, (now - t0) / 1100), e = 1 - Math.pow(1 - k, 3);
+          counters.forEach(function (el) { el.textContent = String(Math.round(Number(el.getAttribute("data-count")) * e)); });
+          if (k < 1) requestAnimationFrame(tick); else finishNumbers();
+        })(t0);
+        if (units) { units.classList.remove("wait"); units.classList.add("go"); }
+      });
+    }, { rootMargin: "0px 0px -20% 0px" });
+    io.observe(record);
+  }
+
+  /* ── 내비게이션 ── */
+  var nav = document.getElementById("nav");
+  var links = {};
+  Array.prototype.forEach.call(document.querySelectorAll(".nav-links a"), function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  function mark(id) {
+    Object.keys(links).forEach(function (k) {
+      if (k === id) links[k].setAttribute("aria-current", "location"); else links[k].removeAttribute("aria-current");
+    });
+  }
+  function onScrollNav() {
+    var y = window.scrollY || 0;
+    on(nav, "is-scrolled", y > 8);
+    var probe = y + window.innerHeight * 0.4, cur = null;
+    Object.keys(links).forEach(function (k) { var s = document.getElementById(k); if (s && s.getBoundingClientRect().top + y <= probe) cur = k; });
+    if (y + window.innerHeight >= document.documentElement.scrollHeight - 2) cur = "contact";
+    mark(cur);
+  }
+  window.addEventListener("scroll", onScrollNav, { passive: true });
+  onScrollNav();
+})();
+</script>
+</body>
+</html>
