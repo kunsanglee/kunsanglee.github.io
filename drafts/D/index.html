@@ -586,6 +586,12 @@ legend{padding:0}
   .row{grid-template-columns:190px minmax(0,1fr) minmax(0,1.15fr) 48px;align-items:center;padding:34px 0}
   .rows-w .row{grid-template-columns:190px minmax(0,1fr) 48px}
   .row .arr{justify-self:end}
+  /* 작업물이 하나뿐이라 제목과 항목을 나란히 두고, 항목은 위아래로 쌓는다 */
+  .works-one{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:80px;align-items:end}
+  .works-one .rows-l{margin-top:0}
+  .works-one .row{grid-template-columns:minmax(0,1fr) 48px;align-items:start;padding:28px 0 30px}
+  .works-one .row>*{grid-column:1}
+  .works-one .row .arr{grid-column:2;grid-row:1/span 3;align-self:center}
 }
 .w-meta{font-size:13px;font-weight:600;line-height:1.5;color:var(--on-paper-mute);transition:color .35s}
 .rows-w .row h3{font-size:clamp(21px,2.4vw,30px);line-height:1.38;letter-spacing:-.035em;font-weight:760}
@@ -989,10 +995,10 @@ footer a{display:inline-flex;align-items:center;min-height:44px;color:var(--on-i
 
 <!-- 작업물 -->
 <section class="paper sec" id="works" aria-labelledby="works-title" data-nav="light" data-sec="works" style="padding-top:clamp(40px,6vw,80px)">
-  <div class="wrap">
+  <div class="wrap works-one">
     <div class="rv">
       <p class="kicker">다른 작업물</p>
-      <h2 id="works-title">에이전트 밖에서 만든 것들</h2>
+      <h2 id="works-title">에이전트 밖에서 만든 도구</h2>
       <p class="lead" style="margin-top:16px;max-width:52ch">일하는 방식 자체를 도구로 만들어 두려는 습관이 남긴 작업물입니다.</p>
     </div>
     <ul class="rows-l">
@@ -1001,12 +1007,6 @@ footer a{display:inline-flex;align-items:center;min-height:44px;color:var(--on-i
         <h3>ai-ready</h3>
         <p>감사(audit) → 적용(apply) → 무인 검증을 하나의 Claude Code 플러그인으로 묶은 도구입니다. AI 코딩 도구가 프로젝트 규칙을 준비된 대로 따르게 하는 준비 작업을 자동화합니다.</p>
         <span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="sr">저장소 보기(새 탭)</span>
-      </a></li>
-      <li class="rv"><a class="row" href="https://maeil-mail.kr" target="_blank" rel="noopener noreferrer" data-peek="maeil-mail.kr ↗">
-        <span class="kind">Service</span>
-        <h3>매일메일</h3>
-        <p>개발자 면접 질문을 매일 메일로 받아 볼 수 있는 서비스입니다. 만드는 데 참여했고, 예습·복습 루틴을 만드는 가장 단순한 형태라고 생각합니다.</p>
-        <span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="sr">서비스 보기(새 탭)</span>
       </a></li>
     </ul>
   </div>
