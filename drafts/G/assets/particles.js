@@ -1,6 +1,6 @@
 /* Kunsang Lee · 입자 이야기. drafts/F 의 입자 엔진(WebGL2 변환 피드백, 스프링, curl 노이즈, 잔상·블룸)을 바탕으로
-   원근 카메라 비행·피사계 심도·혜성 꼬리를 더했다. 스크롤한 위치의 장면을 한 번 연출한 뒤 멈추고,
-   저절로 넘어가거나 되풀이하지 않는다. */
+   원근 카메라 비행·피사계 심도·혜성 꼬리를 더했다. 장면 진행은 스크롤 위치에 묶여 있다. 맨 위에서 열고 손대지 않으면
+   페이지를 한 번 저절로 장면 9 까지 내리고, 사용자가 스크롤하려는 입력을 하면 그 자리에서 손에 넘긴다. 되풀이하지 않는다. */
 (() => {
 'use strict';
 
@@ -114,10 +114,10 @@ vec3 curl(vec3 p){
   return cross(g1, g2);
 }`;
 
-/* 모드: 0 흩어짐 1 모이기·멈춤 2 동료 원(장면 2) 3 말뜻(장면 3) 4 기억 성운(장면 4) 5 언제든(장면 5)
-   6 띠(장면 6) 7 리뷰(장면 7) 8 은하(본문 뒤) 9 구조물(장면 8) 10 함께(장면 9).
-   역할은 aAux2.x, 장면 시간은 uPhaseT. uArr 는 자리·혜성·카드처럼 CPU 가 매 프레임 정하는 위치를 싣는다 */
-const SIM_VS = `#version 300 es
+/* 모드: 0 흩어짐 1 모이기·멈춤(이름) 2 동료 고리 3 말뜻 4 신경망 5 자리에 없어도 6 아낀 30분 7 리뷰 8 은하(본문 뒤) 9 폴더 10 연락.
+   장면 2~9 에서 0번부터 PB 개는 늘 에이전트(역할 20), 사람은 역할 21, 먼지는 29, 쓰지 않는 입자는 30.
+   uPhaseT 는 스크롤에 묶인 장면 진행 시간, uRT 는 장면에 들어온 뒤 흐른 실제 시간(모양이 모이는 속도에만 쓴다) */
+const SIM_HEAD = `#version 300 es
 precision highp float;
 layout(location=0) in vec4 aPos;
 layout(location=1) in vec4 aVel;
@@ -128,13 +128,15 @@ layout(location=5) in vec4 aMeta;
 layout(location=6) in vec4 aAux;
 layout(location=7) in vec4 aAux2;
 layout(location=8) in vec4 aSeed;
-uniform float uDt, uTime, uPhaseT;
+uniform float uDt, uTime, uPhaseT, uRT, uSnap, uForm;
 uniform int uMode;
+uniform ivec2 uKeep;   // particles in [x, y) carry over from the last scene: no fade-in, no spring ramp
+uniform float uAgKeep; // 1 when the agent comes straight from the last story scene: it keeps its full spring
 uniform float uK, uZeta, uRamp, uStagger, uNoise, uNoiseFreq, uDrag, uVmax, uKick, uKickR, uKickShell, uAspect, uColRate;
 uniform vec2 uContain;
 uniform vec3 uWind, uKickC, uKickBias, uEye, uCamR, uCamU, uCamF;
-uniform vec4 uP, uQ, uS, uT, uU, uG, uPointer;
-uniform vec4 uArr[32];
+uniform vec4 uP, uQ, uS, uT, uU, uG, uPointer, uAg, uAgV;
+uniform vec4 uArr[64];
 uniform mat4 uVP;
 out vec4 vPos;
 out vec4 vVel;
@@ -143,9 +145,11 @@ ${NOISE}
 float eInOut(float s){ s = clamp(s, 0.0, 1.0); return s < 0.5 ? 4.0*s*s*s : 1.0 - pow(-2.0*s + 2.0, 3.0) * 0.5; }
 float eOut(float s){ s = 1.0 - clamp(s, 0.0, 1.0); return 1.0 - s*s*s; }
 float sm1(float x){ x = clamp(x, 0.0, 1.0); return x*x*(3.0 - 2.0*x); }
+float sq(float x){ return x * x; }
 vec2 rot(vec2 v, float a){ float c = cos(a); float s = sin(a); return vec2(c*v.x - s*v.y, s*v.x + c*v.y); }
 vec3 sphereDir(vec2 s){ float z = s.x*2.0 - 1.0; float a = s.y*6.2831853; float r = sqrt(max(0.0, 1.0 - z*z)); return vec3(cos(a)*r, sin(a)*r, z); }
 vec3 bez(vec3 a, vec3 b, vec3 c, float t){ float u = 1.0 - t; return u*u*a + 2.0*u*t*b + t*t*c; }
+vec3 bb(vec2 l){ return uCamR * l.x + uCamU * l.y; }
 vec3 cloud(vec3 p, float swirl){
   vec3 q = p * vec3(0.62, 1.0, 1.5);
   float r = length(q);
@@ -169,495 +173,533 @@ vec3 galaxy(vec4 sd, float t){
   g.xy = rot(g.xy, uP.y);
   return g + uQ.xyz;
 }
-// 장면 6 의 띠: 가로(uG.x = 0)면 왼쪽에서 오른쪽으로, 세로면 위에서 아래로 흐른다
-vec3 ribbonAt(float s, float t){
-  float w = uQ.y * (0.6 * sin(s * 1.7 - t * 0.9) + 0.4 * sin(s * 0.63 + t * 0.5));
-  float zz = 0.12 * sin(s * 1.2 + t * 0.4);
-  return uG.x < 0.5 ? vec3(s, uQ.z + w, zz) : vec3(uQ.z + w, -s, zz);
-}
+// flowing position along a beam: u runs 0 -> 1 and starts over; returns true when it starts over this step
+bool wrapped(float u, float u0){ return abs(u - u0) > 0.5; }
+struct St { vec3 p; vec3 v; vec3 goal; vec3 gv; float k; float z; float brT; vec2 ct; float cw; float tw; float flash; vec3 acc; bool jump; };
 
+// 20: the agent, a cream ball with a white core, the same size on screen in every scene
+void agentRole(inout St s){
+  s.goal = uAg.xyz + aTgt.xyz * uAgV.w;
+  s.gv = uAgV.xyz;
+  s.k = 320.0; s.z = 0.86;
+  s.brT *= uAg.w;
+  s.tw = 0.45;
+}
+// 21: a person, an amber ball. uArr[s] = (place, on), uArr[8 + s] = (away, glow, size).
+// away turns the ball into a thin empty circle at the brightness of the ring line
+void personRole(inout St s, float form){
+  int i = int(aAux.x + 0.5);
+  vec4 S = uArr[i];
+  vec4 X = uArr[8 + i];
+  float sc = X.z > 0.0 ? X.z : 1.0;
+  float ab = clamp(X.x, 0.0, 1.0);
+  vec3 circ = bb(aAux.yz) * sc + vec3(0.0, 0.0, aTgt.z * 0.1);
+  s.goal = S.xyz + mix(aTgt.xyz * sc, circ, ab * aAux.w);
+  s.k = 170.0 * max(form, 0.04); s.z = 0.82;
+  float on = S.w * form;
+  s.brT = mix(aTgt.w * (1.0 + X.y), 0.075 * aAux.w, ab) * on;
+  s.cw = mix(aTCol.z + 0.45 * X.y, 0.02, ab);
+  s.ct = mix(aTCol.xy, vec2(0.5, 0.25), ab);
+}
+void dustRole(inout St s, float form){
+  s.goal = aTgt.xyz + vec3(sin(uTime * 0.11 + aSeed.x * 6.28), cos(uTime * 0.09 + aSeed.y * 6.28), sin(uTime * 0.07 + aSeed.z * 6.28)) * 0.04;
+  s.brT *= form;
+  s.k = 12.0;
+}
+`;
+
+/* 02 · 동료 고리: 사람 일곱 + 합류하는 에이전트, 부른 사람의 말풍선, 코드베이스·데이터베이스, 빛줄기, 티켓·PR 카드 */
+const SIM_M2 = `
+void m2(inout St s, float t, float form, float dt){
+  float role = aAux2.x;
+  if (role < 2.5) {                       // the faint circle the seats sit on
+    s.brT *= form * sm1((uRT - 0.1 - aAux2.y * 0.6) / 0.4);
+  } else if (role < 3.5) {                // code forest: branches grow from the root
+    float vis = sm1((uS.x - aAux2.y) / 0.12);
+    s.goal = mix(aAux.xyz, aTgt.xyz, vis);
+    s.brT *= vis * (1.0 + 1.1 * uS.w * aMeta.x) * (1.0 - uP.x);
+    s.k = 90.0;
+  } else if (role < 4.5) {                // database cylinder
+    float vis = sm1((uS.y - aAux2.y) / 0.2);
+    s.goal = mix(aAux.xyz, aTgt.xyz, vis);
+    s.brT *= vis * (1.0 + 0.9 * uS.w * aMeta.x) * (1.0 - uP.x);
+    s.k = 90.0;
+  } else if (role < 5.5) {                // light beams from the agent to the forest and the database
+    vec3 a = uAg.xyz;
+    vec3 e = uArr[16 + int(aAux.x + 0.5)].xyz;
+    float u = fract(aSeed.x + uTime * 1.25);
+    float u0 = fract(aSeed.x + (uTime - dt) * 1.25);
+    vec3 d = e - a;
+    vec3 side = normalize(cross(d, vec3(0.0, 0.0, 1.0)) + vec3(1e-4));
+    s.goal = a + d * (u * uS.z) + side * (aSeed.y - 0.5) * 0.012 + vec3(0.0, 0.0, (aSeed.z - 0.5) * 0.012);
+    if (wrapped(u, u0)) s.jump = true;
+    s.gv = d * uS.z * 1.25;
+    s.k = 400.0; s.z = 0.9;
+    s.brT *= uS.w * step(0.002, uS.z) * (0.55 + 0.45 * (1.0 - u));
+    s.tw = 0.6;
+  } else if (role < 6.5) {                // fragments: pulled to the agent, sent to the caller, folded into cards
+    vec3 src = aAux.xyz;
+    float dl = aAux.w;
+    vec3 a = uAg.xyz;
+    vec3 c = uQ.xyz;
+    vec3 j = aSeed.xyz - 0.5;
+    float srcVis = aAux2.z < 0.5 ? sm1((uS.x - 0.35) / 0.3) : sm1((uS.y - 0.3) / 0.3);
+    float tp = t - uG.x - dl;
+    float ta = t - uG.y - dl * 0.3;
+    float tf = t - uG.z - aMeta.w * 0.25;
+    if (tp < 0.0) {
+      s.goal = src;
+      s.brT *= srcVis * 0.85 * (1.0 - uP.x);
+      s.k = 90.0;
+    } else if (tp < 0.6) {
+      float e = eInOut(tp / 0.6);
+      s.goal = bez(src, mix(src, a, 0.5) + vec3(0.0, 0.16, 0.12), a + j * 0.05, e);
+      s.k = 260.0; s.z = 0.85;
+      s.ct = mix(aTCol.xy, vec2(0.95, 0.0), e); s.cw = 0.45; s.tw = 1.0;
+    } else if (ta < 0.0) {
+      vec2 o = rot(j.xy, uTime * 3.0 + aSeed.w * 6.0) * 0.08;
+      s.goal = a + vec3(o, j.z * 0.08);
+      s.k = 140.0;
+      s.ct = vec2(0.95, 0.0); s.cw = 0.5; s.tw = 0.8;
+    } else if (ta < 0.55) {
+      float e = eInOut(ta / 0.55);
+      s.goal = bez(a + j * 0.08, mix(a, c, 0.5) + vec3(0.0, 0.22, 0.05), c + j * 0.07, e);
+      s.k = 260.0; s.z = 0.85;
+      s.ct = vec2(0.95, 0.0); s.cw = 0.55; s.tw = 1.0;
+    } else if (tf < 0.0) {
+      s.goal = c + j * 0.08;
+      s.k = 150.0;
+      s.ct = vec2(0.8, 0.0); s.cw = 0.45; s.tw = 0.6;
+    } else {
+      vec4 C = uArr[18 + int(aAux2.y + 0.5)];
+      float e = sm1(tf / 0.5);
+      s.goal = mix(c + j * 0.08, C.xyz + aTgt.xyz * C.w, e);
+      s.k = mix(150.0, 240.0, e); s.z = 0.85;
+      s.ct = vec2(0.92, 0.0); s.cw = mix(0.45, 0.3, e); s.tw = 1.0;
+    }
+  } else if (role < 7.5) {                // the caller's speech bubble, grown out of the caller
+    float vis = sm1((uQ.w - aAux2.y) / 0.18);
+    s.goal = mix(uQ.xyz, uArr[20].xyz + aTgt.xyz, vis);
+    s.brT *= vis * uArr[20].w;
+    s.k = 140.0;
+  } else {
+    s.brT = 0.0; s.k = 10.0;
+  }
+}
+`;
+
+/* 03 · 말뜻: 장면 2 의 말풍선은 테두리를 둔 채 글줄만 엉키고, 에이전트를 지나며 체크가 붙은 할 일 카드가 되어
+   선의 틈 하나로 지나간다. 뒤따르는 흐린 카드 둘도 같은 틈으로 지나간다.
+   카드 c: uArr[16 + c] = (가운데, 크기), uArr[20 + c] = (엉킴, 카드로 바뀜, 체크, 보임) */
+const SIM_M3 = `
+void m3(inout St s, float t, float form){
+  float role = aAux2.x;
+  if (role < 2.5) {                       // the ring line from scene 2, fading out
+    s.brT *= form * (1.0 - uP.y);
+  } else if (role < 3.5) {                // a bubble that becomes a to-do card
+    int c = int(aAux2.y + 0.5);
+    vec4 C = uArr[16 + c];
+    vec4 M = uArr[20 + c];
+    float part = aAux2.z;
+    float tg = M.x, mo = M.y;
+    vec3 j = aSeed.xyz - 0.5;
+    vec2 wob = vec2(sin(uTime * 2.3 + aSeed.x * 31.0), cos(uTime * 1.9 + aSeed.y * 27.0)) * 0.012;
+    vec2 bub = aAux.xy;
+    vec2 tang = aAux.zw + wob;
+    vec2 loc;
+    float b = aTgt.w;
+    if (part < 0.5) {                     // the frame keeps its shape until it becomes the card's frame
+      loc = mix(bub, aTgt.xy, eInOut(mo));
+      s.ct = mix(vec2(0.5, 0.0), aTCol.xy, mo);
+      s.cw = mix(0.06 + 0.1 * aMeta.x, aTCol.z, mo);
+    } else {                              // the words tangle, then settle into the card's lines and the check
+      vec2 w1 = mix(bub, tang, tg);
+      float mo2 = sm1((mo - 0.1 - aSeed.w * 0.3) / 0.6);
+      loc = mix(w1, aTgt.xy, mo2);
+      s.ct = mix(vec2(0.5, 0.0), aTCol.xy, mo2);
+      s.cw = mix(0.05, aTCol.z, mo2);
+      if (part > 1.5) {                   // the check mark draws along its stroke once the card has formed
+        float drawn = sm1((M.z - aAux2.w) / 0.08);
+        b *= mix(1.0 - mo2, 1.3, drawn);
+        s.cw = mix(s.cw, 0.5, drawn);
+      }
+    }
+    s.goal = C.xyz + vec3(loc * C.w, aTgt.z + j.z * 0.02 * (1.0 - mo));
+    s.k = mix(110.0, 230.0, mo) * max(form, 0.04); s.z = 0.84;
+    s.brT = b * M.w * form;
+    s.tw = 0.35;
+  } else if (role < 4.5) {                // the thin line with one gap; it draws from the left
+    float vis = sm1((uP.x - aAux.x) / 0.06);
+    s.brT *= vis * form;
+    s.goal = aTgt.xyz + vec3(0.0, (aSeed.y - 0.5) * 0.004, 0.0);
+    s.k = 120.0;
+  } else {
+    s.brT = 0.0; s.k = 10.0;
+  }
+}
+`;
+
+/* 04 · 신경망: 작은 말풍선이 날아와 신경세포(핵 + 휘어 갈라지는 가지)로 자란다. 에이전트가 카드를 안고 한 세포에 닿으면
+   신호가 가지를 따라 달리고 틈에서 불꽃이 튀며 뜻이 가까운 한 무리만 켜진다. 신호는 다시 가지를 타고 에이전트로 모인다.
+   세포 입자: aMeta.xyz = 핵, aMeta.w = 태어나는 때, aAux = (세포, 켜지는 때, 가져오는 신호가 지나는 때, 자라는 지연),
+   aAux2 = (역할, 가지 위 위치, 길 위인가, 작은 말풍선 각도) */
+const SIM_M4 = `
+void m4(inout St s, float t, float form){
+  float role = aAux2.x;
+  vec3 j = aSeed.xyz - 0.5;
+  if (role < 2.5) {                       // a neuron: nucleus and branches
+    vec3 cj = aMeta.xyz;
+    float aj = aMeta.w;
+    if (t < aj) {                         // still a small speech bubble flying in
+      float fly = (t - (aj - 1.3)) / 1.3;
+      float e = 0.5 - 0.5 * cos(3.14159265 * clamp(fly, 0.0, 1.0));
+      vec3 c = bez(cj + uQ.xyz, cj + uS.xyz, cj, e);
+      float ang = aAux2.w * 6.2831853;
+      vec2 o = vec2(cos(ang) * 0.072, sin(ang) * 0.046);
+      if (aSeed.w < 0.14) o = mix(vec2(-0.028, -0.044), vec2(-0.05, -0.082), aSeed.z);
+      s.goal = c + bb(o * uP.x);
+      s.k = 260.0; s.z = 0.85;
+      s.brT = 0.62 * step(aSeed.y, 0.32) * sm1(fly * 3.0) * form;
+      s.ct = vec2(0.5, 0.0); s.cw = 0.12; s.tw = 0.15;
+    } else {
+      float g = sm1((t - aj - aAux.w) / 0.22);
+      s.goal = mix(cj, aTgt.xyz, g) + j * 0.004;
+      float lit = sm1((t - aAux.y) / 0.14);
+      float fr = exp(-sq((t - aAux.y) / 0.06)) * step(-0.2, t - aAux.y);
+      float fr2 = exp(-sq((t - aAux.z) / 0.06));
+      float path = aAux2.z;
+      float g0 = sm1((t - aj) / 0.12);
+      s.brT = (aTgt.w * (1.0 + 1.9 * lit + 1.2 * path * uP.w) + 1.7 * fr + 1.5 * fr2) * max(g, 0.25 * g0) * form;
+      s.brT *= 1.0 - 0.42 * uP.w * (1.0 - lit) * (1.0 - path);   // once the signal is back, the cells that stayed dark step back
+      s.cw = aTCol.z + 0.35 * lit + 0.75 * max(fr, fr2);
+      s.ct = mix(aTCol.xy, vec2(0.62, 0.0), lit);
+      s.k = 150.0; s.z = 0.85;
+    }
+  } else if (role < 3.5) {                // the to-do card the agent carries in
+    vec4 C = uArr[16];
+    s.goal = uAg.xyz + C.xyz + bb(aTgt.xy * C.w);
+    s.gv = uAgV.xyz;
+    s.k = 280.0; s.z = 0.86;
+    s.brT *= uP.z * form;
+  } else if (role < 4.5) {                // sparks where a signal jumps the gap between two branch tips
+    float ts = aAux.w;
+    float e = eOut((t - ts) / 0.32);
+    vec3 d = sphereDir(aSeed.xy) * (0.35 + 0.65 * aSeed.z);
+    s.goal = aAux.xyz + d * 0.07 * e;
+    s.k = 500.0; s.z = 0.9;
+    s.brT = 2.2 * exp(-max(t - ts, 0.0) * 5.5) * step(ts, t) * step(t, ts + 1.2);
+    s.ct = vec2(0.75, 0.0); s.cw = 0.7; s.tw = 0.6;
+  } else if (role < 5.5) {                // the glowing path from the lit cells to the agent
+    float u = aAux2.y;
+    vec3 P = bez(uArr[17].xyz, uArr[18].xyz, uAg.xyz, u);
+    s.goal = P + bb(j.xy * 0.012);
+    s.k = 300.0; s.z = 0.88;
+    float vis = sm1((uP.y - u) / 0.06);
+    float fr = exp(-sq((t - (uArr[19].x + u * uArr[19].y)) / 0.06));
+    s.brT = (aTgt.w * (0.8 + 1.2 * uP.w) + 1.6 * fr) * vis * form;
+    s.cw = 0.3 + 0.6 * fr; s.ct = vec2(0.66, 0.0);
+  } else {
+    s.brT = 0.0; s.k = 10.0;
+  }
+}
+`;
+
+/* 05 · 자리에 없어도: 고리(사람 여섯 + 가운데 에이전트), 고리 밖에서 묻는 사람, 밤과 초승달,
+   빈 원 앞에서 멈춘 질문 말풍선과 "입력 중" 점 셋, 말풍선을 받아 묻는 사람에게 가는 답 빛줄기 */
+const SIM_M5 = `
+void m5(inout St s, float t, float form){
+  float role = aAux2.x;
+  vec3 j = aSeed.xyz - 0.5;
+  if (role < 2.5) {                       // the faint ring line
+    s.brT *= form * uP.x;
+  } else if (role < 3.5) {                // the crescent moon
+    s.goal = uArr[16].xyz + aTgt.xyz;
+    s.brT *= uArr[16].w * form;
+    s.k = 120.0;
+  } else if (role < 4.5) {                // the question bubble
+    vec4 C = uArr[17];
+    vec4 M = uArr[18];
+    s.goal = mix(C.xyz + aTgt.xyz * C.w, uAg.xyz + j * 0.03, eInOut(M.y));
+    s.brT *= M.x * (1.0 - 0.92 * sm1(M.y * 1.4)) * form;
+    s.k = mix(220.0, 300.0, M.y); s.z = 0.86;
+    s.tw = 0.3;
+  } else if (role < 5.5) {                // typing dots
+    int d = int(aAux2.y + 0.5);
+    vec4 B = uArr[20];
+    float on = d == 0 ? B.x : d == 1 ? B.y : B.z;
+    s.goal = uArr[19].xyz + aTgt.xyz;
+    s.brT *= on * uArr[19].w * form;
+    s.k = 200.0;
+  } else if (role < 6.5) {                // the answer: a beam from the agent to the asker that stays as a thin line
+    vec3 a = uArr[21].xyz;
+    vec3 e = uArr[22].xyz;
+    float u = aAux2.y;
+    float head = uP.y;
+    vec3 d = e - a;
+    vec3 side = normalize(cross(d, vec3(0.0, 0.0, 1.0)) + vec3(1e-4));
+    s.goal = a + d * u + side * j.y * 0.006;
+    s.k = 260.0; s.z = 0.88;
+    float vis = sm1((head - u) / 0.04);
+    float hd = exp(-sq((u - head) / 0.07)) * step(head, 1.02) * step(0.001, head);
+    s.brT = (aTgt.w * (0.55 + 0.9 * uP.z) + 1.6 * hd) * vis * form;
+    s.cw = 0.35 + 0.5 * hd; s.ct = vec2(0.9, 0.0); s.tw = 0.2;
+  } else {
+    s.brT = 0.0; s.k = 10.0;
+  }
+}
+`;
+
+/* 06 · 아낀 30분: 초승달이 지고, 바늘 없는 시계판 하나, 일하는 사람 하나, 떨어진 자리의 에이전트.
+   질문 말풍선 셋을 에이전트가 받아 낼 때마다 그 빛이 시계로 흘러가 12시부터 60도씩 채우고, 반이 차면 "30분" 이 남는다.
+   uArr[16] 달, [17] 부채꼴 셋의 채움, [18 + b] 말풍선 (가운데, 크기), [21 + b] (보임, 받음, 시계로), [24 + b] 부채꼴 가운데와 퍼짐 */
+const SIM_M6 = `
+void m6(inout St s, float t, float form){
+  float role = aAux2.x;
+  vec3 j = aSeed.xyz - 0.5;
+  if (role < 2.5) {                       // the crescent sets
+    s.goal = uArr[16].xyz + aTgt.xyz;
+    s.brT *= uArr[16].w * form;
+    s.k = 120.0;
+  } else if (role < 3.5) {                // the clock face: rim and twelve ticks, drawn around from twelve
+    s.brT *= sm1((uP.x - aAux2.y) / 0.08) * form;
+    s.k = 150.0;
+  } else if (role < 4.5) {                // the three ten-minute sectors
+    int k = int(aAux2.y + 0.5);
+    vec4 F = uArr[17];
+    float fill = k == 0 ? F.x : k == 1 ? F.y : F.z;
+    float lit = sm1((fill - aAux2.z) * 9.0);
+    s.goal = aTgt.xyz + j * 0.004;
+    s.brT *= lit * form * (0.9 + 0.1 * sin(uTime * 2.0 + aSeed.x * 6.28));
+    s.k = 150.0;
+  } else if (role < 5.5) {                // questions: the agent catches them away from the person, and their light runs into the clock
+    int b = int(aAux2.y + 0.5);
+    vec4 C = uArr[18 + b];
+    vec4 M = uArr[21 + b];
+    vec4 K = uArr[24 + b];
+    vec3 held = uAg.xyz + j * 0.035;
+    vec3 g1 = mix(C.xyz + aTgt.xyz * C.w, held, eInOut(M.y));
+    float go = eInOut((M.z - aSeed.w * 0.35) / 0.65);
+    vec2 sp = rot(vec2(K.w * sqrt(aSeed.y), 0.0), aSeed.x * 6.2831853);
+    s.goal = mix(g1, K.xyz + vec3(sp, 0.0), go);
+    s.k = mix(240.0, 340.0, max(M.y, go)); s.z = 0.86;
+    s.brT *= M.x * (1.0 - 0.5 * sm1(M.y * 1.4)) * (1.0 - sm1((go - 0.65) / 0.35)) * form;
+    s.ct = mix(s.ct, vec2(0.62, 0.0), go); s.cw = mix(s.cw, 0.4, go);
+    s.tw = 0.5;
+  } else if (role < 6.5) {                // "30 min" in particle letters
+    float e = sm1((t - uP.y - aMeta.w * 0.35) / 0.45);
+    s.goal = mix(aAux.xyz, aTgt.xyz, e);
+    s.brT *= e * form;
+    s.k = mix(60.0, 200.0, e); s.z = 0.85;
+  } else {
+    s.brT = 0.0; s.k = 10.0;
+  }
+}
+`;
+
+/* 07 · 리뷰: 에이전트가 줄을 써 내려가며 코드 페이지가 생기고, 리뷰 댓글 조각이 달린다. 승인한 사람(호박 공)이
+   승인한 조각만 체크가 붙은 규칙 줄로 굳고, 나머지는 흐린 테두리로 남는다. 끝에 에이전트가 규칙 줄을 따라 지나간다.
+   조각 f: uArr[16 + f] = (가운데, 보임), uArr[21 + f] = (규칙 줄로 바뀜, 탈락, 빛남, 체크) */
+const SIM_M7 = `
+void m7(inout St s, float t, float form){
+  float role = aAux2.x;
+  if (role < 2.5) {                       // the code page: each line runs out of the agent's margin to the right
+    float dtw = t - aAux2.y;
+    float w = sm1(dtw / 0.06);
+    float hd = aAux2.z * exp(-sq(dtw / 0.06)) * step(0.0, dtw);
+    s.brT = (s.brT * w * (1.0 - 0.45 * uP.x) + 1.3 * hd) * form;
+    s.cw += 0.6 * hd;
+    s.goal = aTgt.xyz;
+    s.k = 200.0;
+  } else if (role < 3.5) {                // review comments that become rules or stay as faint outlines
+    int f = int(aAux2.y + 0.5);
+    vec4 F = uArr[16 + f];
+    vec4 M = uArr[21 + f];
+    float part = aAux2.z;
+    float mo = eInOut(M.x);
+    vec2 loc = mix(aAux.xy, aTgt.xy, mo);
+    s.goal = F.xyz + vec3(loc, aTgt.z);
+    s.k = 220.0; s.z = 0.85;
+    float b = aTgt.w * F.w;
+    if (part < 0.5) b *= mix(1.0, 0.32, M.y);
+    else if (part < 1.5) b *= 1.0 - M.y;
+    else b *= sm1((M.w - aAux2.w) / 0.08) * step(0.5, M.x) * 1.3;
+    b *= 1.0 + 1.3 * M.z;
+    s.brT = b * form;
+    s.cw = mix(aTCol.z, 0.02, M.y) + 0.4 * M.z;
+    s.ct = part > 1.5 ? vec2(0.5, 0.0) : mix(aTCol.xy, vec2(0.45, 0.3), M.y);
+    s.tw = 0.3;
+  } else {
+    s.brT = 0.0; s.k = 10.0;
+  }
+}
+`;
+
+/* 08 · 폴더: 엉킨 코드 줄 덩어리가 풀려 탭 달린 폴더 아홉 개가 되고, 에이전트들이 제 폴더로 들어가 일한다.
+   주인공이 옆 폴더 벽을 넘으면 벽 면이 번쩍이고 물결이 퍼져 닿고, 잠시 뒤 돌아온다. 넘은 벽에는 주황 테두리가 남는다.
+   폴더 입자: aMeta.xyz = 덩어리 속 자리, aMeta.w = 순서, aAux = (폴더, 넘은 벽, 부분, -), uArr[24 + f] = (빛남, 정리되는 때) */
+const SIM_M9 = `
+void m9(inout St s, float t, float form){
+  float role = aAux2.x;
+  if (role < 2.5 || (role > 3.5 && role < 4.5)) {   // folders, and the face of the wall that gets crossed
+    int f = int(aAux.x + 0.5);
+    vec4 FU = uArr[24 + f];
+    float e = sm1((t - FU.y - aMeta.w * 0.4) / 0.55);
+    vec3 wob = vec3(sin(uTime * 1.3 + aSeed.x * 17.0), cos(uTime * 1.1 + aSeed.y * 13.0), sin(uTime * 0.9 + aSeed.z * 11.0)) * 0.02;
+    s.goal = mix(aMeta.xyz + wob, aTgt.xyz, e);
+    s.k = mix(70.0, 170.0, e) * max(form, 0.04); s.z = 0.82;
+    float part = aAux.z;
+    float b = aTgt.w;
+    if (part > 0.5 && part < 1.5) {       // code stripes glow while an agent works in the folder
+      b *= 1.0 + 1.7 * FU.x;
+      s.cw = aTCol.z + 0.45 * FU.x;
+    }
+    s.ct = mix(vec2(0.1, 0.0), aTCol.xy, e);
+    if (role > 3.5) {
+      float fl = uP.x;
+      if (part > 3.5) {                   // the wall's outline: flashes, then stays thin clay
+        b = b * (1.0 + 3.5 * fl) + 1.7 * uP.y * e;
+        s.ct = mix(s.ct, vec2(0.0, 0.0), uP.y);
+        s.cw = mix(s.cw, 0.0, uP.y) + 0.6 * fl;
+      } else {                            // the wall face itself
+        b = b * e + 1.25 * fl + 0.07 * uP.y * e;   // the outline carries the mark; the face keeps only a trace of clay
+        s.ct = mix(s.ct, vec2(0.0, 0.0), 0.85 * uP.y);
+        s.cw = aTCol.z + 0.7 * fl;
+      }
+      s.flash = fl * 0.9 * step(part, 3.5);
+    }
+    s.brT = b * max(form, 0.05) * (0.35 + 0.65 * e);
+  } else if (role < 3.5) {                // the other agents: smaller and dimmer than the hero
+    int i = int(aAux.x + 0.5);
+    vec4 A = uArr[16 + i];
+    s.goal = A.xyz + aTgt.xyz * A.w;
+    s.gv = uArr[20 + i].xyz;
+    s.k = 300.0; s.z = 0.86;
+    s.brT *= uArr[20 + i].w * form;
+    s.tw = 0.4;
+  } else if (role < 5.5) {                // the test's ripple: thin rings grow from the crossing to the hero
+    float lag = aSeed.y < 0.62 ? 0.0 : 0.07;
+    float rr2 = max(uQ.w - lag, 0.0);
+    float a = aSeed.x * 6.2831853;
+    s.goal = uQ.xyz + (uCamR * cos(a) + uCamU * sin(a)) * rr2 + aAux.xyz * 0.004;
+    s.brT *= uP.z * (lag > 0.0 ? 0.55 : 1.0) * step(0.001, rr2);
+    s.ct = vec2(0.2, 0.0); s.cw = 0.22;
+    s.k = 900.0; s.z = 0.95;
+    s.tw = 0.2;
+  } else {
+    s.brT = 0.0; s.k = 10.0;
+  }
+}
+`;
+
+/* 09 · 연락: 입자가 모여 이름이 되고, 에이전트는 연락처 옆에 머문다. 링크를 가리키면 그쪽으로 빛줄기를 뻗는다 */
+const SIM_M10 = `
+void m10(inout St s, float t, float form, float dt){
+  float role = aAux2.x;
+  if (role < 2.5) {                       // the name
+    s.k = 150.0 * max(form, 0.04); s.z = 0.8;
+    s.brT *= form;
+  } else if (role < 3.5) {                // the beam toward the link under the pointer
+    vec3 a = uAg.xyz;
+    vec3 e = uArr[16].xyz;
+    float u = fract(aSeed.x + uTime * 1.3);
+    float u0 = fract(aSeed.x + (uTime - dt) * 1.3);
+    vec3 d = e - a;
+    vec3 side = normalize(cross(d, vec3(0.0, 0.0, 1.0)) + vec3(1e-4));
+    s.goal = a + d * (u * uP.y) + side * (aSeed.y - 0.5) * 0.01;
+    if (wrapped(u, u0)) s.jump = true;
+    s.gv = d * uP.y * 1.3;
+    s.k = 400.0; s.z = 0.9;
+    s.brT *= uP.x * (0.55 + 0.45 * (1.0 - u));
+    s.tw = 0.6;
+  } else {
+    s.brT = 0.0; s.k = 10.0;
+  }
+}
+`;
+
+const SIM_MAIN = `
 void main(){
-  vec3 p = aPos.xyz;
-  vec3 v = aVel.xyz;
+  St s;
+  s.p = aPos.xyz; s.v = aVel.xyz;
   float br = aPos.w;
   vec4 col = aCol;
-  vec3 tgt = aTgt.xyz;
+  s.goal = aTgt.xyz; s.gv = vec3(0.0); s.k = 0.0; s.z = 0.8; s.brT = aTgt.w;
+  s.ct = aTCol.xy; s.cw = aTCol.z; s.tw = aTCol.w; s.flash = 0.0; s.acc = vec3(0.0); s.jump = false;
   float dt = uDt;
-  float brT = aTgt.w;
-  vec2 ct = aTCol.xy;
-  float cw = aTCol.z;
-  float tw = aTCol.w;
-  float flash = 0.0;
-  float wf = 0.0;
   float t = uPhaseT;
-  vec3 acc = vec3(0.0);
   vec3 nz = vec3(0.0);
-  if (uNoise > 0.0) nz = curl(p * uNoiseFreq + vec3(0.0, 0.0, uTime * 0.12)) * uNoise;
+  if (uNoise > 0.0) nz = curl(s.p * uNoiseFreq + vec3(0.0, 0.0, uTime * 0.12)) * uNoise;
 
   if (uKick > 0.0) {
     float loc = uKickR > 0.0 ? 0.15 : 1.0;
-    vec3 d = p - uKickC;
+    vec3 d = s.p - uKickC;
     d.xy += (aSeed.xy - 0.5) * 0.6 * loc;
     d.z += (aSeed.z - 0.5) * 0.9 * loc;
     float f = uKickR > 0.0 ? exp(-dot(d, d) / (uKickR * uKickR)) : 1.0;
     vec3 dir = mix(normalize(d + vec3(1e-4)), sphereDir(aSeed.zw), uKickShell);
     float mag = mix(0.35 + 0.9 * aSeed.w, 0.86 + 0.28 * aSeed.x, uKickShell);
-    v = v * (1.0 - 0.6 * uKickShell * f) + (dir * uKick * mag + uKickBias * (0.4 + 0.9 * aSeed.y)) * f;
+    s.v = s.v * (1.0 - 0.6 * uKickShell * f) + (dir * uKick * mag + uKickBias * (0.4 + 0.9 * aSeed.y)) * f;
   }
 
-  vec3 goal = tgt;
-  vec3 gv = vec3(0.0);
-  float k = 0.0;
-  float z = 0.8;
-  float role = aAux2.x;
   bool sprung = true;
-
+  float role = aAux2.x;
   if (uMode == 0) {                       // free: swirling curl-noise cloud
-    acc += nz + cloud(p, uP.w) + uWind;
-    v += acc * dt;
-    v *= exp(-uDrag * dt);
+    s.acc += nz + cloud(s.p, uP.w) + uWind;
+    s.v += s.acc * dt;
+    s.v *= exp(-uDrag * dt);
     sprung = false;
   } else if (uMode == 1) {                // assemble / hold: spring to target
     float delay = aMeta.w * uStagger + aSeed.x * uP.x;
     float a = sm1((uPhaseT - delay) / uRamp);
     float kk = uK * a;
-    acc += (tgt - p) * kk - v * (2.0 * uZeta * sqrt(kk) + uDrag * (1.0 - a)) + nz * (1.0 - 0.9 * a) + cloud(p, 1.5) * (1.0 - a) * uP.y;
-    v += acc * dt;
+    s.acc += (aTgt.xyz - s.p) * kk - s.v * (2.0 * uZeta * sqrt(kk) + uDrag * (1.0 - a)) + nz * (1.0 - 0.9 * a) + cloud(s.p, 1.5) * (1.0 - a) * uP.y;
+    s.v += s.acc * dt;
     sprung = false;
-  } else if (uMode == 2) {                // 02 colleague ring: join, call, look up, answer, fold into cards
-    float form = sm1((t - aMeta.w * 0.7) / 0.8);
-    k = 110.0 * max(form, 0.04); z = 0.78;
-    if (role < 0.5) {                     // a person
-      int s = int(aAux.x + 0.5);
-      vec4 S = uArr[s];
-      goal = S.xyz + tgt;
-      float glow = clamp(S.w - 1.0, 0.0, 1.5);
-      brT *= form * min(S.w, 1.0) * (1.0 + 0.9 * glow);
-      cw = mix(cw, 0.75, glow * 0.6);
-    } else if (role < 1.5) {              // the new light
-      goal = uT.xyz + tgt * uT.w;
-      gv = uU.xyz;
-      k = 160.0; z = 0.82;
-      brT *= uU.w;
-      tw = 1.0;
-    } else if (role < 2.5) {              // the faint circle the seats sit on
-      brT *= sm1((t - 0.25 - aAux2.y * 0.9) / 0.4);
-    } else if (role < 3.5) {              // code forest: branches grow from the root
-      float vis = sm1((uS.x - aAux2.y) / 0.12);
-      goal = mix(aAux.xyz, tgt, vis);
-      brT *= vis * (1.0 + 1.1 * uS.w * aMeta.x) * (1.0 - uP.x);
-      k = 90.0;
-    } else if (role < 4.5) {              // database cylinder
-      float vis = sm1((uS.y - aAux2.y) / 0.2);
-      goal = mix(aAux.xyz, tgt, vis);
-      brT *= vis * (1.0 + 0.9 * uS.w * aMeta.x) * (1.0 - uP.x);
-      k = 90.0;
-    } else if (role < 5.5) {              // light beams from the new light to the forest and the database
-      vec3 a = uT.xyz;
-      vec3 e = uArr[10 + int(aAux.x + 0.5)].xyz;
-      float u = fract(aSeed.x + t * 1.25);
-      float u0 = fract(aSeed.x + (t - dt) * 1.25);
-      vec3 d = e - a;
-      vec3 side = normalize(cross(d, vec3(0.0, 0.0, 1.0)) + vec3(1e-4));
-      goal = a + d * (u * uS.z) + side * (aSeed.y - 0.5) * 0.012 + vec3(0.0, 0.0, (aSeed.z - 0.5) * 0.012);
-      if (u < u0) { p = goal; v = vec3(0.0); }
-      gv = d * uS.z * 1.25;
-      k = 400.0; z = 0.9;
-      brT *= uS.w * step(0.002, uS.z) * (0.55 + 0.45 * (1.0 - u));
-      tw = 0.6;
-    } else if (role < 6.5) {              // fragments: pulled to the light, sent to the caller, folded into cards
-      vec3 src = aAux.xyz;
-      float dl = aAux.w;
-      vec3 a = uT.xyz;
-      vec3 c = uQ.xyz;
-      vec3 j = aSeed.xyz - 0.5;
-      float srcVis = aAux2.z < 0.5 ? sm1((uS.x - 0.35) / 0.3) : sm1((uS.y - 0.3) / 0.3);
-      float tp = t - uG.x - dl;
-      float ta = t - uG.y - dl * 0.3;
-      float tf = t - uG.z - aMeta.w * 0.25;
-      if (tp < 0.0) {
-        goal = src;
-        brT *= srcVis * 0.85;
-        k = 90.0;
-      } else if (tp < 0.6) {
-        float e = eInOut(tp / 0.6);
-        goal = bez(src, mix(src, a, 0.5) + vec3(0.0, 0.16, 0.12), a + j * 0.05, e);
-        k = 260.0; z = 0.85;
-        ct = mix(aTCol.xy, vec2(0.95, 0.0), e); cw = 0.45; tw = 1.0;
-      } else if (ta < 0.0) {
-        vec2 o = rot(j.xy, t * 3.0 + aSeed.w * 6.0) * 0.08;
-        goal = a + vec3(o, j.z * 0.08);
-        k = 140.0;
-        ct = vec2(0.95, 0.0); cw = 0.5; tw = 0.8;
-      } else if (ta < 0.55) {
-        float e = eInOut(ta / 0.55);
-        goal = bez(a + j * 0.08, mix(a, c, 0.5) + vec3(0.0, 0.22, 0.05), c + j * 0.07, e);
-        k = 260.0; z = 0.85;
-        ct = vec2(0.95, 0.0); cw = 0.55; tw = 1.0;
-      } else if (tf < 0.0) {
-        goal = c + j * 0.08;
-        k = 150.0;
-        ct = vec2(0.8, 0.0); cw = 0.45; tw = 0.6;
-      } else {
-        vec4 C = uArr[8 + int(aAux2.y + 0.5)];
-        float e = sm1(tf / 0.5);
-        goal = mix(c + j * 0.08, C.xyz + tgt * C.w, e);
-        k = mix(150.0, 240.0, e); z = 0.85;
-        brT *= 1.0 - uG.w;
-        ct = vec2(0.92, 0.0); cw = mix(0.45, 0.3, e); tw = 1.0;
-      }
-    } else if (role < 7.5) {              // the caller's speech bubble
-      float vis = sm1((uQ.w - aAux2.y) / 0.18);
-      goal = mix(uQ.xyz, uArr[12].xyz + tgt, vis);
-      brT *= vis;
-      k = 120.0;
-    } else {                              // dust
-      goal = tgt + vec3(sin(uTime * 0.11 + aSeed.x * 6.28), cos(uTime * 0.09 + aSeed.y * 6.28), sin(uTime * 0.07 + aSeed.z * 6.28)) * 0.04;
-      brT *= sm1(t / 1.2);
-      k = 12.0;
-    }
-    acc += nz * (1.0 - form) * 0.8;
-  } else if (uMode == 3) {                // 03 meaning: a tangled bubble becomes a checked card that passes one straight line
-    k = 150.0; z = 0.8;
-    if (role < 1.5) {                     // words (0) and the frame (1)
-      float e = sm1((t - uP.x - aAux2.y * 0.55) / uP.y);
-      vec3 j = aSeed.xyz - 0.5;
-      vec3 wob = vec3(sin(t * 2.3 + aSeed.x * 31.0), cos(t * 1.9 + aSeed.y * 27.0), sin(t * 1.6 + aSeed.z * 19.0)) * 0.035;
-      vec3 loc = mix(aAux.xyz + wob * uP.w, tgt, e);
-      goal = uQ.xyz + loc * uQ.w;
-      gv = uU.xyz;
-      k = mix(45.0, 230.0, e); z = mix(0.55, 0.86, e);
-      ct = mix(vec2(0.22 + 0.18 * aSeed.w, 0.65), aTCol.xy, e);
-      cw = mix(0.05, aTCol.z, e);
-      tw = mix(0.35, 0.1, e);
-      brT *= mix(0.8, 1.0, e) * uT.y;
-      acc += nz * (1.0 - e) * 0.3;
-      float cross1 = exp(-pow((p.y - uS.x) / 0.016, 2.0)) * uG.x;
-      flash = brT * 2.0 * cross1;
-      wf = 0.7 * cross1;
-    } else if (role < 2.5) {              // the check mark, drawn stroke by stroke
-      float vis = sm1((uP.z - aAux2.y) / 0.06);
-      goal = uQ.xyz + mix(aAux.xyz, tgt, vis) * uQ.w;
-      gv = uU.xyz;
-      k = 240.0; z = 0.86;
-      brT *= vis * uT.y;
-      tw = 0.1;
-      float cross1 = exp(-pow((p.y - uS.x) / 0.016, 2.0)) * uG.x;
-      flash = brT * 1.6 * cross1;
-    } else if (role < 3.5) {              // the straight line: no noise, no wobble
-      float vis = sm1((uS.w - aAux2.y) / 0.05);
-      float hit = exp(-pow((tgt.x - uS.y) / 0.05, 2.0)) * uS.z;
-      brT *= vis * (1.0 + 2.6 * hit);
-      cw = max(cw, 0.75 * hit);
-      k = 420.0; z = 0.96;
-      nz = vec3(0.0);
-    } else if (role < 4.5) {              // two later cards that pass the same point
-      int f = int(aAux.x + 0.5);
-      vec4 C = uArr[f];
-      goal = C.xyz + tgt * C.w;
-      gv = uArr[2 + f].yzw;
-      k = 220.0; z = 0.86;
-      brT *= uArr[2 + f].x;
-      tw = 0.2;
-      float cross1 = exp(-pow((p.y - uS.x) / 0.016, 2.0));
-      flash = brT * 1.8 * cross1;
-    } else if (role < 5.5) {              // what is left of the ring
-      int s = int(aAux.x + 0.5);
-      goal = uArr[4 + s].xyz + tgt;
-      brT *= uT.x;
-      k = 60.0;
-    } else {
-      goal = tgt + vec3(sin(uTime * 0.11 + aSeed.x * 6.28), cos(uTime * 0.09 + aSeed.y * 6.28), 0.0) * 0.05;
-      brT *= uT.z;
-      k = 10.0;
-    }
-  } else if (uMode == 4) {                // 04 memory: a 3D cloud of past messages; points light where they are and join up
-    k = 60.0; z = 0.8;
-    if (role < 0.5) {                     // past messages
-      float form = sm1((t - aMeta.w * 0.9) / 1.0);
-      k = mix(3.0, 46.0, form);
-      brT *= mix(0.25, 1.0, form) * (0.8 + 0.2 * sin(uTime * (0.6 + aSeed.y * 1.4) + aSeed.x * 40.0));
-      acc += nz * 0.5 * (1.0 - form);
-    } else if (role < 1.5) {              // the points that light up, in order, without moving
-      float ti = uP.z + aAux.x * uP.w;
-      float tau = t - ti;
-      float on = sm1(tau / 0.12);
-      float form = sm1((t - 0.3) / 1.0);
-      k = mix(3.0, 60.0, form);
-      float core = aAux.y;
-      brT = aTgt.w * mix(core * 0.32 * form, 1.0 + 2.4 * exp(-max(tau, 0.0) * 3.0), on);
-      ct = mix(ct, vec2(0.95, 0.0), on);
-      cw = mix(cw, core > 0.5 ? 0.85 : 0.35, on);
-    } else if (role < 2.5) {              // thin lines between lit points, drawn from one to the next
-      float dr = clamp((t - (uP.z + aAux.w * uP.w) + uS.x) / uS.x, 0.0, 1.0);
-      goal = mix(aAux.xyz, tgt, aAux2.y);
-      float vis = sm1((dr - aAux2.y) / 0.05);
-      brT *= vis;
-      k = 90.0;
-      flash = brT * 1.6 * exp(-pow((dr - aAux2.y) / 0.04, 2.0)) * step(dr, 0.999);
-    } else {                              // the to-do card turns into the question star and falls in
-      float c = uP.x;
-      vec3 cardPos = uT.xyz + aAux.xyz * uT.w;
-      vec3 star = uQ.xyz + uCamR * tgt.x + uCamU * tgt.y + uCamF * tgt.z;
-      goal = mix(cardPos, star, eInOut(c));
-      gv = uU.xyz * c;
-      k = 230.0; z = 0.85;
-      brT *= mix(1.0, uQ.w, c);
-      ct = mix(vec2(0.9, 0.0), aTCol.xy, c);
-      cw = mix(0.35, aTCol.z, c);
-      tw = 1.0;
-    }
-  } else if (uMode == 5) {                // 05 anytime: a 24-hour dial sweeps day to night to the weekend; one light stays on
-    float form = sm1((t - aMeta.w * 0.8) / 0.9);
-    k = 100.0 * max(form, 0.04); z = 0.8;
-    if (role < 0.5) {                     // night sky
-      k = mix(3.0, 30.0, form);
-      brT *= mix(0.3, 1.0, form) * (0.7 + 0.3 * sin(uTime * (0.5 + aSeed.y * 1.7) + aSeed.x * 50.0));
-      acc += nz * 0.4 * (1.0 - form);
-    } else if (role < 1.5) {              // a person: goes dark when their day ends
-      int s = int(aAux.x + 0.5);
-      vec4 S = uArr[s];
-      goal = S.xyz + tgt;
-      float on = S.w;
-      brT *= form * mix(0.01, 1.0, on);
-      ct = mix(vec2(0.04, 0.55), aTCol.xy, on);
-      cw = mix(0.0, cw, on);
-    } else if (role < 2.5) {              // the agent's light
-      goal = uArr[7].xyz + tgt;
-      brT *= form * (1.0 + 1.6 * uT.z);
-      cw = max(cw, 0.6 * uT.z);
-    } else if (role < 3.5) {              // the faint circle
-      brT *= form;
-    } else if (role < 4.5) {              // dial band: bright only in weekday working hours
-      float h = aAux.x;
-      float ang = h / 24.0 * 6.2831853;
-      goal = uQ.xyz + vec3(sin(ang), cos(ang), 0.0) * aAux.y * uQ.w + vec3(0.0, 0.0, tgt.z);
-      float work = step(9.0, h) * (1.0 - step(19.0, h)) * (1.0 - uP.y);
-      float da = mod(uP.x - ang + 62.831853, 6.2831853);
-      brT *= uP.z * mix(0.16, 1.0, work);
-      flash = brT * 2.2 * exp(-da * 5.0) * step(0.02, uT.w);
-      ct = mix(vec2(0.06, 0.45), vec2(0.5, 0.05), work);
-      cw = mix(0.0, 0.18, work);
-      k = 120.0;
-    } else if (role < 5.5) {              // hour ticks
-      float ang = aAux.x / 24.0 * 6.2831853;
-      goal = uQ.xyz + vec3(sin(ang), cos(ang), 0.0) * aAux.y * uQ.w;
-      float da = mod(uP.x - ang + 62.831853, 6.2831853);
-      brT *= uP.z;
-      flash = brT * (1.0 + 2.5 * exp(-da * 3.0)) * step(0.02, uT.w) * step(da, 1.5);
-      k = 140.0;
-    } else if (role < 6.5) {              // the hand
-      vec2 d = vec2(sin(uP.x), cos(uP.x));
-      goal = uQ.xyz + vec3(d * aAux.x * 0.9 * uQ.w + vec2(d.y, -d.x) * aAux.y, aAux.z);
-      gv = vec3(vec2(d.y, -d.x) * aAux.x * 0.9 * uQ.w * uG.x, 0.0);
-      brT *= uP.z * 0.5;
-      ct = vec2(0.55, 0.0); cw = 0.1; tw = 0.3;
-      k = 320.0; z = 0.9;
-    } else if (role < 7.5) {              // the question comet
-      goal = uS.xyz + tgt;
-      gv = uU.xyz;
-      brT *= uS.w;
-      k = 300.0; z = 0.85;
-      tw = 1.0;
-    } else if (role < 8.5) {              // the answer, straight back out
-      float u = clamp(uT.x - aAux.w * 0.45, 0.0, 1.0);
-      goal = mix(uArr[7].xyz, uG.yzw, u) + (aSeed.xyz - 0.5) * 0.02;
-      brT *= uT.y * step(0.0005, u) * (1.0 - 0.5 * u);
-      k = 320.0; z = 0.86;
-      tw = 1.0;
-    } else if (role < 9.5) {              // the week under the dial: today glows; from Saturday midnight the weekend pair stays lit
-      float d = aAux.x;
-      float we = step(4.5, d) * clamp(uP.w - 4.0, 0.0, 1.0);
-      float today = exp(-pow((d - uP.w) / 0.45, 2.0));
-      goal = uQ.xyz + tgt * uQ.w;
-      brT *= uP.z * (0.28 + 0.9 * today + 1.3 * we);
-      ct = mix(aTCol.xy, vec2(0.34, 0.05), we);
-      cw = 0.4 * today + 0.12 * we;
-      k = 120.0;
-    } else {
-      goal = tgt;
-      brT *= form;
-      k = 10.0;
-    }
-  } else if (uMode == 6) {                // 06 one unbroken ribbon; the light catches questions; the ribbon winds into text
-    k = 120.0; z = 0.8;
-    if (role < 0.5) {
-      float L = uQ.w;
-      float sp = uQ.x;
-      float u = fract(aAux.x + t * sp);
-      float u0 = fract(aAux.x + (t - dt) * sp);
-      float s = -L + 2.0 * L * u;
-      vec3 c = ribbonAt(s, t);
-      float twist = s * 2.2 + t * 1.3 + aAux.z * 2.1;
-      vec2 o = vec2(cos(twist), sin(twist)) * aAux.y * uP.z;
-      vec3 rp = c + (uG.x < 0.5 ? vec3(0.0, o.x, o.y) : vec3(o.x, 0.0, o.y));
-      float taper = sm1((L - abs(s)) / 0.4);
-      float e = sm1((t - uS.x - aAux2.y * uS.y) / uS.z);
-      vec3 d = rp - tgt;
-      goal = tgt + vec3(rot(d.xy, e * 2.6), d.z) * (1.0 - e);
-      if (e < 0.001 && u < u0) { p = goal; v = vec3(0.0); }
-      float form = sm1((t - aMeta.w * 0.5) / 0.7);
-      k = mix(8.0, 160.0, max(form, e)); z = 0.82;
-      brT *= mix(taper, 1.0, e) * max(form, 0.1);
-      ct = mix(vec2(0.42 + 0.16 * aSeed.w, 0.05), aTCol.xy, e);
-      cw = mix(0.08 + 0.25 * step(0.92, abs(aAux.y)), aTCol.z, e);
-      tw = mix(0.7, aTCol.w, e);
-      acc += nz * 0.6 * (1.0 - form);
-    } else if (role < 1.5) {              // the agent's light
-      goal = uT.xyz + tgt * uT.w;
-      gv = uU.xyz;
-      k = 200.0; z = 0.84;
-      brT *= uU.w;
-      tw = 1.0;
-    } else if (role < 2.5) {              // incoming questions
-      vec4 C = uArr[int(aAux.x + 0.5)];
-      goal = C.xyz + tgt * (0.4 + 0.6 * C.w);
-      gv = uArr[4 + int(aAux.x + 0.5)].xyz;
-      k = 260.0; z = 0.85;
-      brT *= C.w;
-      tw = 1.0;
-    } else {
-      goal = tgt;
-      brT *= 1.0 - 0.6 * sm1(t / 1.5);
-      k = 10.0;
-    }
-  } else if (uMode == 7) {                // 07 review: the ribbon was one line of code; approved pieces stack into a checked rule list
-    k = 140.0; z = 0.8;
-    if (role < 1.5) {                     // code page (the line from scene 06 is role 0)
-      float vis = role < 0.5 ? 1.0 : sm1((uP.x - aAux2.y) / 0.25);
-      goal = vec3(uQ.xy, 0.0) + tgt * uQ.z;
-      brT *= vis * (role < 0.5 ? uQ.w : mix(1.0, 0.55, uP.y));
-      k = role < 0.5 ? mix(30.0, 200.0, sm1(t / 0.8)) : 120.0;
-      if (role < 0.5) tw = mix(0.08, aTCol.w, sm1((t - 2.0) / 0.5));
-      acc += nz * (1.0 - sm1(t / 0.8)) * 0.6;
-    } else if (role < 2.5) {              // review comments and doc lines
-      int f = int(aAux2.z + 0.5);
-      vec4 C = uArr[f];
-      vec4 S = uArr[8 + f];
-      vec4 Rw = uArr[16 + f];
-      vec3 rowLoc = aAux.yzw;
-      float ap = sm1(S.x);
-      goal = mix(C.xyz + tgt, Rw.xyz + rowLoc, ap) + vec3(0.0, -0.22 * S.y * S.y, 0.0);
-      brT *= C.w * (1.0 - S.y) * (1.0 + 2.0 * S.z);
-      ct = mix(aTCol.xy, vec2(0.93, 0.0), ap);
-      ct = mix(ct, vec2(0.5, 0.0), S.z);
-      cw = mix(aTCol.z, 0.32, ap) + 0.4 * S.z;
-      tw = mix(aTCol.w, 0.4, ap);
-      k = mix(120.0, 220.0, ap);
-      acc += nz * S.y * 1.2;
-    } else if (role < 3.5) {              // check marks on approved rows
-      int f = int(aAux2.z + 0.5);
-      float dr = sm1((uArr[8 + f].x - 0.6 - aAux2.y * 0.35) / 0.08);
-      goal = uArr[16 + f].xyz + tgt;
-      brT *= dr * uArr[f].w;
-      k = 240.0;
-    } else if (role < 4.5) {              // the person's approval light
-      goal = uT.xyz + tgt;
-      gv = uU.xyz;
-      brT *= uT.w;
-      k = 220.0; z = 0.85;
-      tw = 1.0;
-    } else {
-      goal = tgt;
-      brT *= 0.5;
-      k = 10.0;
-    }
   } else if (uMode == 8) {                // galaxy: a turning spiral disk behind the reading sections
-    goal = galaxy(aSeed, uTime);
-    k = uS.x; z = 0.9;
+    s.goal = galaxy(aSeed, uTime);
+    s.k = uS.x; s.z = 0.9;
     nz *= 0.35;
     float rr = pow(aSeed.x, 1.35);
     float hue = fract(aSeed.w * 7.31 + aSeed.y * 3.17);
-    ct = vec2(hue < 0.45 ? 0.08 : hue < 0.8 ? 0.5 : 0.95, sm1(rr * 1.6) * 0.8);
-    cw = 0.55 * (1.0 - sm1(rr * 2.2));
-    tw = 0.3;
-    brT = (0.55 + 0.45 * aSeed.w) * (1.0 - 0.45 * rr) * uS.y;
-    acc += nz;
-  } else if (uMode == 9) {                // 08 a small city of nine boxes; one comet crosses a wall and is called back
-    float form = sm1((t - aMeta.w * 1.1) / 0.8);
-    k = mix(4.0, 150.0, form); z = 0.8;
-    if (role < 2.5) {                     // edges, faces, base
-      float wall = aAux.y * uP.y, wl = sm1(wall * 2.2);
-      brT = role < 0.5 ? brT * max(form, 0.05) * (1.0 + 0.9 * wall) : max(brT * max(form, 0.05), uP.w * wall);
-      ct = mix(ct, vec2(0.0, 0.0), wl);
-      cw = mix(cw, 0.0, wl);
-      acc += nz * 0.5 * (1.0 - form);
-    } else if (role < 3.5) {              // agent comets, each working inside its own box
-      vec4 C = uArr[int(aAux.x + 0.5)];
-      goal = C.xyz + tgt;
-      gv = uArr[8 + int(aAux.x + 0.5)].xyz;
-      brT *= C.w * form;
-      k = 300.0; z = 0.86;
-      tw = 1.0;
-      float hit = aAux.x > 4.5 ? uP.x : 0.0;
-      flash = brT * 1.5 * hit;
-    } else if (role < 4.5) {              // the notice: two thin rings that grow from the crossing point to the comet
-      float lag = aSeed.y < 0.62 ? 0.0 : 0.07;
-      float rr2 = max(uQ.w - lag, 0.0);
-      float a = aSeed.x * 6.2831853;
-      goal = uQ.xyz + (uCamR * cos(a) + uCamU * sin(a)) * rr2 + aAux.xyz * 0.004;
-      brT *= uP.z * (lag > 0.0 ? 0.55 : 1.0) * step(0.001, rr2);
-      ct = vec2(0.2, 0.0); cw = 0.22;
-      k = 900.0; z = 0.95;
-      tw = 0.2;
-    } else {
-      brT *= form * 0.8;
-      k = mix(3.0, 20.0, form);
-    }
-  } else if (uMode == 10) {               // 09 the ring again, one seat empty; the words open from it; a small signature
-    float form = sm1((t - aMeta.w * 0.8) / 0.9);
-    k = 110.0 * max(form, 0.04); z = 0.8;
-    if (role < 1.5) {                     // people and the agent
-      int s = int(aAux.x + 0.5);
-      goal = uArr[s].xyz + tgt;
-      brT *= form * uArr[s].w;
-      acc += nz * 0.6 * (1.0 - form);
-    } else if (role < 2.5) {              // the empty seat: a thin open circle
-      goal = uT.xyz + tgt;
-      brT *= uT.w * (0.85 + 0.15 * sin(uTime * 1.6 + aAux2.y * 6.28));
-    } else if (role < 3.5) {              // petals that open from the empty seat, then gather into the signature
-      float b = (t - uP.x - aMeta.w * 0.45) / 1.15;
-      float g = (t - uP.y - aMeta.w * 0.55) / 0.9;
-      vec3 seat = uT.xyz;
-      vec3 sig = uQ.xyz + (uCamR * tgt.x + uCamU * tgt.y) * uQ.w;
-      vec3 j = aSeed.xyz - 0.5;
-      if (b < 0.0) {
-        goal = seat + j * 0.03;
-        brT = 0.0;
-        k = 60.0;
-      } else if (g < 0.0) {
-        float e = eOut(min(b, 1.0));
-        float a = aSeed.x * 6.2831853;
-        vec3 top = uS.xyz + vec3(cos(a) * (0.2 + 0.7 * aSeed.y) * uS.w, (aSeed.z - 0.5) * 0.12 * uS.w, sin(a) * 0.15);
-        vec3 mid = seat + vec3(cos(a) * 0.45 * uS.w, (0.05 + 0.08 * aSeed.w) * uS.w, sin(a) * 0.2);
-        goal = bez(seat, mid, top, e);
-        brT *= step(aSeed.z, 0.55) * sm1(b * 4.0) * mix(0.95, 0.2, sm1((b - 0.35) / 0.65));
-        k = 90.0; z = 0.75;
-        ct = vec2(mix(0.5, 0.9, aSeed.y), 0.1); cw = 0.35; tw = 0.22;
-      } else {
-        float e = sm1(g);
-        goal = sig;
-        k = mix(20.0, 230.0, e); z = 0.86;
-        brT *= mix(0.6, 1.15, e);
-        ct = vec2(0.5, 0.0); cw = mix(0.3, aTCol.z, e); tw = 0.3;
-      }
-    } else if (role < 4.5) {              // the faint circle
-      brT *= form;
-    } else {
-      goal = tgt + vec3(sin(uTime * 0.11 + aSeed.x * 6.28), cos(uTime * 0.09 + aSeed.y * 6.28), 0.0) * 0.04;
-      brT *= form;
-      k = 10.0;
-    }
+    s.ct = vec2(hue < 0.45 ? 0.08 : hue < 0.8 ? 0.5 : 0.95, sm1(rr * 1.6) * 0.8);
+    s.cw = 0.55 * (1.0 - sm1(rr * 2.2));
+    s.tw = 0.3;
+    s.brT = (0.55 + 0.45 * aSeed.w) * (1.0 - 0.45 * rr) * uS.y;
+    s.acc += nz;
+  } else if (uMode == 11) {               // the cut between scenes 7 and 8: all but the agent stay put and go dark
+    if (role > 19.5 && role < 20.5) agentRole(s);
+    else { s.goal = s.p; s.gv = vec3(0.0); s.k = 40.0; s.z = 1.0; s.brT = 0.0; }
+  } else {
+    bool keep = gl_VertexID >= uKeep.x && gl_VertexID < uKeep.y;
+    float form = keep ? 1.0 : sm1((uRT - aMeta.w * uStagger) / uForm);
+    s.k = 120.0 * max(form, 0.04);
+    if (role > 19.5 && role < 20.5) agentRole(s);
+    else if (role > 20.5 && role < 21.5) personRole(s, form);
+    else if (role > 28.5 && role < 29.5) dustRole(s, form);
+    else if (role > 29.5) { s.brT = 0.0; s.k = 8.0; }
+    else if (uMode == 2) m2(s, t, form, dt);
+    else if (uMode == 3) m3(s, t, form);
+    else if (uMode == 4) m4(s, t, form);
+    else if (uMode == 5) m5(s, t, form);
+    else if (uMode == 6) m6(s, t, form);
+    else if (uMode == 7) m7(s, t, form);
+    else if (uMode == 9) m9(s, t, form);
+    else if (uMode == 10) m10(s, t, form, dt);
+    s.acc += nz * (1.0 - form) * 0.8;
   }
 
   if (sprung) {
-    float ra = sm1(uPhaseT / uRamp);
-    acc += spring(p, v, goal, gv, k * max(ra, 0.04), z) + nz * 0.6 * (1.0 - ra);
-    v += acc * dt;
+    bool held = (gl_VertexID >= uKeep.x && gl_VertexID < uKeep.y) || (uAgKeep > 0.5 && role > 19.5 && role < 20.5);
+    float ra = held ? 1.0 : sm1(uRT / uRamp);
+    s.acc += spring(s.p, s.v, s.goal, s.gv, s.k * max(ra, 0.04), s.z) + nz * 0.6 * (1.0 - ra);
+    s.v += s.acc * dt;
   }
+  if (s.jump) { s.p = s.goal; s.v = s.gv; }
+  // the cut: everything jumps to its new place; the agent jumps to the same spot on screen and stays lit
+  if (uSnap > 0.5) { bool ag = role > 19.5 && role < 20.5; s.p = s.goal; s.v = ag ? s.gv : vec3(0.0); if (!ag) br = 0.0; }
 
   if (uPointer.w > 0.0) {
-    vec4 clip = uVP * vec4(p, 1.0);
+    vec4 clip = uVP * vec4(s.p, 1.0);
     if (clip.w > 0.05) {
       vec2 ndc = clip.xy / clip.w;
       vec2 d = (ndc - uPointer.xy) * vec2(uAspect, 1.0);
@@ -665,28 +707,28 @@ void main(){
       if (r < uPointer.z) {
         float f = 1.0 - r / uPointer.z;
         vec3 push = uCamR * (d.x / max(r, 1e-4)) + uCamU * (d.y / max(r, 1e-4));
-        v += push * f * f * uPointer.w * dt;
+        s.v += push * f * f * uPointer.w * dt;
       }
     }
   }
-  if (uVmax > 0.0) { float sp = length(v); if (sp > uVmax) v *= uVmax / sp; }
-  p += v * dt;
-  vec3 de = p - uEye;
+  if (uVmax > 0.0) { float sp = length(s.v); if (sp > uVmax) s.v *= uVmax / sp; }
+  s.p += s.v * dt;
+  vec3 de = s.p - uEye;
   float dl = length(de);
-  if (dl < 0.22) p = uEye + de / max(dl, 1e-4) * 0.22;
-  if (brT < 0.002) br *= exp(-dt * 9.0);
-  br += (brT - br) * (1.0 - exp(-dt * 5.0));
-  br = max(br, flash);
+  if (dl < 0.22) s.p = uEye + de / max(dl, 1e-4) * 0.22;
+  if (s.brT < 0.002) br *= exp(-dt * 9.0);
+  br += (s.brT - br) * (1.0 - exp(-dt * 5.0));
+  br = max(br, s.flash);
   float cr = 1.0 - exp(-dt * uColRate);
-  col.xy += (ct - col.xy) * cr;
-  col.z += (cw - col.z) * cr;
-  col.w += (tw - col.w) * cr;
-  col.z = max(col.z, wf);
-  vPos = vec4(p, br);
-  vVel = vec4(v, 0.0);
+  col.xy += (s.ct - col.xy) * cr;
+  col.z += (s.cw - col.z) * cr;
+  col.w += (s.tw - col.w) * cr;
+  vPos = vec4(s.p, br);
+  vVel = vec4(s.v, 0.0);
   vCol = col;
 }`;
 
+const SIM_VS = SIM_HEAD + SIM_M2 + SIM_M3 + SIM_M4 + SIM_M5 + SIM_M6 + SIM_M7 + SIM_M9 + SIM_M10 + SIM_MAIN;
 const SIM_FS = `#version 300 es
 precision mediump float;
 out vec4 o;
@@ -708,8 +750,8 @@ layout(location=8) in vec4 aSeed;
 uniform mat4 uVP;
 uniform float uPx, uFocus, uTime, uBright, uWhite, uJitter, uPulse, uPulseT, uPulseGap, uDof, uVar, uMaxPx, uShift;
 uniform vec4 uMask;
-uniform float uMaskA, uTopA;
-uniform int uRMode;
+uniform float uMaskA, uTopA, uFixB;
+uniform int uRMode, uFixEnd;
 uniform vec3 uClay, uAmber, uCream;
 out vec3 vCol;
 out float vSoft;
@@ -744,7 +786,7 @@ void main(){
   vec3 col = mix(base, uCream, hl);
   float dof = 1.0 + uDof * min(abs(w - uFocus) / uFocus, 2.5);
   float size = uPx * (uFocus / w) * (0.72 + 0.56 * aSeed.z) * (1.0 + 1.3 * soft) * dof;
-  float b = aPos.w * uBright * (1.0 + glow * 1.5 + min(speed * 0.06, 0.4));
+  float b = aPos.w * (gl_VertexID < uFixEnd ? uFixB : uBright) * (1.0 + glow * 1.5 + min(speed * 0.06, 0.4));
   float ps = clamp(size, 1.0, uMaxPx);
   b *= clamp(pow(uPx / ps, 1.85), 0.004, 1.5);
   b *= smoothstep(0.18, 0.5, w / uFocus);
@@ -779,7 +821,8 @@ layout(location=1) in vec4 aVel;
 layout(location=2) in vec4 aCol;
 layout(location=8) in vec4 aSeed;
 uniform mat4 uVP;
-uniform float uPx, uFocus, uBright, uTail, uGain, uMaxLen, uVar, uWhite, uLenK, uShift;
+uniform float uPx, uFocus, uBright, uTail, uGain, uMaxLen, uVar, uWhite, uLenK, uShift, uFixB, uAgMax;
+uniform int uFixEnd, uAgEnd;
 uniform vec2 uView;
 uniform vec4 uMask;
 uniform float uMaskA, uTopA;
@@ -794,6 +837,7 @@ void main(){
   vec3 v = aVel.xyz;
   float speed = length(v);
   float L = min(speed * uTail * aCol.w, uMaxLen);
+  if (gl_InstanceID < uAgEnd) L = min(L, uAgMax);   // the agent keeps a short tail, never a comet
   vec3 head = aPos.xyz;
   vec3 tail = head - (speed > 1e-4 ? v / speed : vec3(0.0)) * L;
   vec4 ch = uVP * vec4(head, 1.0);
@@ -811,7 +855,7 @@ void main(){
   if (vis < 0.5 || dl < 1.5) c = vec4(4.0, 4.0, 0.0, 1.0);
   gl_Position = c;
   vec3 col = mix(pal(aCol.x - uShift + (aSeed.y - 0.5) * uVar), uCream, clamp(aCol.z + uWhite + 0.15, 0.0, 1.0));
-  float b = aPos.w * uBright * uGain * (1.0 - 0.55 * clamp(aCol.y, 0.0, 1.0)) * (1.0 - tailEnd) * min(1.0, smoothstep(0.2, 1.4, speed));
+  float b = aPos.w * (gl_InstanceID < uFixEnd ? uFixB : uBright) * uGain * (1.0 - 0.55 * clamp(aCol.y, 0.0, 1.0)) * (1.0 - tailEnd) * min(1.0, smoothstep(0.2, 1.4, speed));
   b *= pow(clamp(28.0 / max(dl, 1.0), 0.0, 1.0), uLenK);
   b *= smoothstep(0.18, 0.5, ch.w / uFocus);
   vec2 mq = abs((ch.xy / max(ch.w, 0.06) - uMask.xy) / uMask.zw);
@@ -908,6 +952,7 @@ uniform sampler2D uScene;
 uniform sampler2D uBloom;
 uniform sampler2D uAvg;
 uniform float uExposure, uBloomStr, uAspect, uDim, uFlash, uKey, uAEPow;
+uniform vec2 uBgM;
 out vec4 o;
 float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 void main(){
@@ -920,6 +965,8 @@ void main(){
   vec2 q = (vUv - vec2(0.5, 0.54)) * vec2(uAspect, 1.0);
   float g = smoothstep(1.3, 0.0, length(q));
   vec3 bg = mix(vec3(0.014, 0.011, 0.009), vec3(0.068, 0.050, 0.039), g);
+  bg *= uBgM.x;
+  bg += vec3(0.030, 0.016, 0.004) * uBgM.y * g;
   bg += vec3(1.0, 0.80, 0.58) * uFlash * g * g * 0.1;
   vec3 outc = 1.0 - (1.0 - bg) * (1.0 - m);
   outc += (hash(gl_FragCoord.xy) - 0.5) / 255.0;
@@ -1330,13 +1377,12 @@ function gauss(rand) { return Math.sqrt(-2 * Math.log(1 - 0.9999 * rand())) * Ma
 function curLang() { return root.lang === 'en' ? 'en' : 'ko'; }
 function fxWord(key) { const d = window.__I18N_DICT, t = d && d[curLang()]; return (t && t[key]) || ''; }
 
-/* 장면마다 같은 번호의 입자를 같은 역할에 쓴다. 그래야 앞 장면의 끝 모양이 다음 장면의 시작 모양이 된다.
-   에이전트 빛 → 사람 여섯 → 말풍선·할 일 카드·질문 별 → 띠·코드 한 줄 → 나머지 */
-const PB = Math.round(N * 0.032);
-const I_AG = 0, I_PP = PB, I_CD = 7 * PB, N_CD = Math.round(N * 0.07);
-const I_RB = I_CD + N_CD, N_RB = Math.round(N * 0.3);
-const I_RS = I_RB + N_RB, N_RS = N - I_RS;
 
+/* 장면마다 같은 번호의 입자를 같은 역할에 쓴다. 0번부터 PB 개는 늘 에이전트, 그다음 PB 개씩 일곱은 사람 자리,
+   I_SC 부터는 장면마다 다른 그림에 쓴다 */
+const PB = Math.round(N * 0.032);
+const I_AG = 0, I_PP = PB, I_SC = 8 * PB, N_SC = N - I_SC;
+const AGS = () => layout === 'tall' ? 0.05 : 0.058;
 /* 그림 자리: 기본 카메라에서 z = 0 평면 위, 머리글 아래부터 가장 긴 장면 설명 위까지 */
 let GEO = null;
 // where an element of a fixed caption sits once its entrance transitions end (offsets ignore transforms)
@@ -1349,7 +1395,8 @@ function geo() {
   const tall = layout === 'tall', H = innerHeight;
   // the header's children (on phones .brand has no box of its own)
   const hb = ['.top .mark', '.top .links', '.top .lang'].map(s => document.querySelector(s)).filter(Boolean).map(e => e.getBoundingClientRect().bottom).filter(v => v > 0);
-  const topPx = (hb.length ? Math.max(...hb) : 100) + 14;
+  // phones keep one more line free under the header for the auto-play notice
+  const topPx = (hb.length ? Math.max(...hb) : 100) + 14 + (tall ? 14 : 0);
   let capTop = H * 0.8;
   for (let i = 1; i < 8; i++) {
     const c = caps[i];
@@ -1407,7 +1454,6 @@ function take(n, rand, fn) {
   for (let k = 0; k < n; k++) fn(k, S.x[k], S.y[k], S.a[k], S.edge[k]);
   return S;
 }
-
 // 01 · 이름 하나만 입자 글자로
 function nameShape(rand) {
   const tall = layout === 'tall';
@@ -1426,26 +1472,6 @@ function nameShape(rand) {
   sh.area = S.area;
   sh.center = [(b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2, 0];
   return sh;
-}
-
-/* ---------------------------------------------------- 02 · 동료 원 */
-function g2() {
-  const g = geo(), T = g.tall;
-  const ring = T ? { c: [0, g.cy + 0.06, 0], r: 0.28, s: 0.05 } : { c: [0, g.cy - 0.04, 0], r: 0.32, s: 0.058 };
-  const at = a => [ring.c[0] + Math.cos(a) * ring.r, ring.c[1] + Math.sin(a) * ring.r, 0];
-  const seat7 = k => at(Math.PI / 2 + k * TAU / 7);          // seat 0 at the top is the agent's
-  const seat6 = k => at(Math.PI / 2 + (k + 0.5) * TAU / 6);   // six people before the agent joins
-  const caller = 5;                                            // person 5 sits at seat7(6), upper right
-  const cp = seat7(caller + 1);
-  const bubble = T ? { c: [cp[0] + 0.32, cp[1] + 0.22, 0.03], w: 0.5, h: 0.2 } : { c: [cp[0] + 0.28, cp[1] + 0.3, 0.03], w: 0.46, h: 0.2 };
-  const forest = T ? { x0: -0.86, x1: 0.86, y0: g.y1 - 0.56, y1: g.y1 - 0.04, rowH: 0.066 } : { x0: -g.w / 2 + 0.02, x1: -0.6, y0: g.cy - 0.5, y1: g.cy + 0.5, rowH: 0.08 };
-  const db = T ? { c: [0, g.y0 + 0.27, 0], R: 0.32, H: 0.3 } : { c: [1.2, g.cy - 0.06, 0], R: 0.2, H: 0.46 };
-  const cs = T ? 0.9 : 1;
-  const cards = T ? [[0.56, cp[1] - 0.2, 0.08], [0.56, cp[1] - 0.44, 0.08]] : [[bubble.c[0] + 0.05, cp[1] + 0.03, 0.08], [bubble.c[0] + 0.05, cp[1] - 0.21, 0.08]];
-  // where the beams reach: the near side of the forest and the top of the database
-  const fA = T ? [0, forest.y0 + 0.02, 0] : [forest.x1 - 0.04, (forest.y0 + forest.y1) / 2, 0];
-  const dA = T ? [0, db.c[1] + db.H / 2 + 0.02, 0] : [db.c[0] - db.R * 0.6, db.c[1] + db.H / 2, 0];
-  return { T, ring, seat7, seat6, caller, cp, bubble, forest, db, cs, cards, fA, dA };
 }
 // a file tree: rows of nodes with indentation, joined by elbow lines
 function treeRows(rows, rand) {
@@ -1517,45 +1543,154 @@ function drawCard(kind, w, h) {
   }
   sx.setTransform(1, 0, 0, 1, 0, 0);
 }
-function ringShape(rand) {
-  const G = g2(), T = G.T, sh = newShape('ring');
-  blob(sh, I_AG, PB, rand, G.ring.s, 0.95, 0.6, 1.05, 1);
-  for (let p = 0; p < 6; p++) blob(sh, I_PP + p * PB, PB, rand, G.ring.s, 0.5, 0.12, 0.95, 0, i => { sh.aux[i * 4] = p; });
+// the to-do card parts in local coordinates: frame, words and the check mark's stroke
+function cardParts(w, h) {
+  const cb = { x: -w / 2 + h * 0.3, s: h * 0.26 };
+  const tx = cb.x + cb.s * 0.5 + h * 0.2, tw = w / 2 - tx - h * 0.18;
+  const bars = [[tx, h * 0.17, tw * 0.62], [tx, 0, tw], [tx, -h * 0.17, tw * 0.48]];
+  const check = [[cb.x - cb.s * 0.3, cb.s * 0.02], [cb.x - cb.s * 0.06, -cb.s * 0.26], [cb.x + cb.s * 0.36, cb.s * 0.34]];
+  return { cb, bars, check };
+}
+function drawTodo(w, h, part) {
+  const P = cardParts(w, h);
+  worldSpace();
+  sx.strokeStyle = '#fff'; sx.fillStyle = '#fff';
+  if (part === 'frame') {
+    sx.lineWidth = w > 0.7 ? 0.0105 : 0.008; roundRect(-w / 2, -h / 2, w, h, Math.min(0.04, h * 0.14)); sx.stroke();
+    sx.lineWidth = 0.007; sx.strokeRect(P.cb.x - P.cb.s / 2, -P.cb.s / 2, P.cb.s, P.cb.s);
+  } else if (part === 'words') {
+    const bh = h * 0.07;
+    P.bars.forEach(b => { roundRect(b[0], b[1] - bh / 2, b[2], bh, bh / 2); sx.fill(); });
+  }
+  sx.setTransform(1, 0, 0, 1, 0, 0);
+  return P;
+}
+// points along a polyline with the fraction along it
+function alongPoly(pts, n, rand, jit) {
+  const L = [];
+  let tot = 0;
+  for (let k = 1; k < pts.length; k++) { const l = Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]); L.push(l); tot += l; }
+  const out = [];
+  for (let m = 0; m < n; m++) {
+    let r = (m + rand()) / n * tot, k = 0;
+    const d = r;
+    while (k < L.length - 1 && r > L[k]) { r -= L[k]; k++; }
+    const u = L[k] ? r / L[k] : 0;
+    out.push([pts[k][0] + (pts[k + 1][0] - pts[k][0]) * u + (rand() - 0.5) * jit, pts[k][1] + (pts[k + 1][1] - pts[k][1]) * u + (rand() - 0.5) * jit, d / tot]);
+  }
+  return out;
+}
+// a ball of loose scribbles: where the words sit while the request is still tangled
+function scribbles(n, rand, R) {
+  const curves = [];
+  for (let c = 0; c < 9; c++) curves.push([rand() * TAU, 1 + rand() * 2.2, rand() * TAU, 1 + rand() * 2.6, rand() * TAU, 0.6 + 0.4 * rand(), 0.6 + 0.4 * rand()]);
+  const out = [];
+  for (let m = 0; m < n; m++) {
+    const C = curves[(rand() * curves.length) | 0], s = rand() * TAU;
+    const x = Math.sin(C[1] * s + C[0]) * R * C[5] + Math.sin(3.1 * s + C[4]) * R * 0.18;
+    const y = Math.sin(C[3] * s + C[2]) * R * 0.62 * C[6] + Math.cos(2.3 * s + C[0]) * R * 0.12;
+    out.push([x + (rand() - 0.5) * 0.012, y + (rand() - 0.5) * 0.012, (rand() - 0.5) * R * 0.5]);
+  }
+  return out;
+}
 
-  // the caller's speech bubble, grown out of the caller
-  {
-    const B = G.bubble, w = B.w, h = B.h, r = 0.05;
-    const tip = [(G.cp[0] - B.c[0]) * 0.66, (G.cp[1] - B.c[1]) * 0.66];
-    clearBox(); worldSpace();
-    const x = -w / 2, y = -h / 2;
+/* 에이전트와 사람: 장면 2 고리의 크기 그대로. 사람 입자 셋 중 하나는 자리를 비울 때 얇은 빈 원으로 간다 */
+function agentInto(sh, rand) { blob(sh, I_AG, PB, rand, AGS(), 0.95, 0.6, 1.05, 20); }
+function personInto(sh, slot, rand) {
+  const r = AGS() * 1.05;
+  blob(sh, I_PP + slot * PB, PB, rand, AGS(), 0.5, 0.12, 0.95, 21, (i, k) => {
+    const a = rand() * TAU;
+    set4(sh.aux, i, slot, Math.cos(a) * r, Math.sin(a) * r, k % 3 === 0 ? 1 : 0);
+  });
+}
+function hideRange(sh, i0, i1) { for (let i = i0; i < i1; i++) { sh.aux2[i * 4] = 30; sh.tgt[i * 4 + 3] = 0; } }
+
+/* 질문 말풍선: 호박색 테두리 + 꼬리 + 글줄 둘. 장면 2·3·5·6 이 모두 이 모양을 쓴다.
+   tip 은 말풍선 가운데에서 본 꼬리 끝 */
+function bubbleTip(w, h, flip) { return [(flip ? 1 : -1) * w * 0.36, -h * 0.9]; }
+function drawBubble(w, h, tip, part, lw) {
+  worldSpace();
+  const x = -w / 2, y = -h / 2, r = Math.min(0.05, h * 0.28);
+  const left = tip[0] < 0;
+  const b0 = left ? x + w * 0.14 : x + w * 0.7, b1 = left ? x + w * 0.3 : x + w * 0.86;
+  if (part === 'frame') {
     sx.beginPath();
     sx.moveTo(x + r, y);
-    sx.lineTo(x + w * 0.16, y); sx.lineTo(tip[0], tip[1]); sx.lineTo(x + w * 0.3, y);
+    sx.lineTo(b0, y); sx.lineTo(tip[0], tip[1]); sx.lineTo(b1, y);
     sx.lineTo(x + w - r, y); sx.arcTo(x + w, y, x + w, y + r, r);
     sx.lineTo(x + w, y + h - r); sx.arcTo(x + w, y + h, x + w - r, y + h, r);
     sx.lineTo(x + r, y + h); sx.arcTo(x, y + h, x, y + h - r, r);
     sx.lineTo(x, y + r); sx.arcTo(x, y, x + r, y, r);
     sx.closePath();
-    sx.fillStyle = 'rgba(255,255,255,0.1)'; sx.fill();
-    sx.strokeStyle = '#fff'; sx.lineWidth = 0.008; sx.stroke();
-    sx.fillStyle = 'rgba(255,255,255,0.75)';
-    roundRect(x + w * 0.1, h * 0.12, w * 0.74, h * 0.13, h * 0.065); sx.fill();
-    roundRect(x + w * 0.1, -h * 0.2, w * 0.48, h * 0.13, h * 0.065); sx.fill();
-    sx.setTransform(1, 0, 0, 1, 0, 0);
-    const dmax = Math.hypot(w, h) + Math.hypot(tip[0], tip[1]);
-    take(N_CD, rand, (k, px, py, a, e) => {
-      const i = I_CD + k;
-      put(sh, i, px, py, (rand() - 0.5) * 0.01, 0.62 + 0.3 * a, 0.62, 0, e ? 0.42 : 0.16, 0.3);
-      set4(sh.aux2, i, 7, Math.hypot(px - tip[0], py - tip[1]) / dmax, 0, 0);
-      sh.meta[i * 4 + 3] = rand();
-    });
+    sx.fillStyle = 'rgba(255,255,255,0.06)'; sx.fill();
+    sx.strokeStyle = '#fff'; sx.lineWidth = lw; sx.stroke();
+  } else {
+    sx.fillStyle = '#fff';
+    roundRect(x + w * 0.13, h * 0.08, w * 0.7, h * 0.15, h * 0.075); sx.fill();
+    roundRect(x + w * 0.13, -h * 0.24, w * 0.44, h * 0.15, h * 0.075); sx.fill();
+  }
+  sx.setTransform(1, 0, 0, 1, 0, 0);
+}
+// sampled bubble points: frame first, then the two text lines. Each point: [x, y, b, edge, part(0 frame / 1 text)]
+function bubblePts(n, rand, w, h, tip) {
+  const lw = layout === 'tall' ? 0.011 : 0.0075;
+  const nF = Math.round(n * 0.58), out = [];
+  clearBox(); drawBubble(w, h, tip, 'frame', lw);
+  take(nF, rand, (k, x, y, a, e) => out.push([x, y, a > 0.4 ? 0.7 + 0.3 * a : 0.25, e, 0]));
+  clearBox(); drawBubble(w, h, tip, 'text', lw);
+  take(n - nF, rand, (k, x, y, a) => out.push([x, y, 0.55 + 0.3 * a, 0, 1]));
+  return out;
+}
+// one bubble into particles [i0, i0 + n): amber outline, slightly brighter text
+function bubbleInto(sh, i0, n, rand, w, h, tip, role, each) {
+  const P = bubblePts(n, rand, w, h, tip);
+  for (let k = 0; k < n; k++) {
+    const i = i0 + k, q = P[k];
+    put(sh, i, q[0], q[1], (rand() - 0.5) * 0.008, q[2], 0.5, 0, q[4] ? 0.1 : 0.05 + 0.1 * q[3], 0.3);
+    sh.aux2[i * 4] = role;
+    sh.meta[i * 4 + 3] = rand();
+    if (each) each(i, k, q);
+  }
+  return P;
+}
+
+/* ---------------------------------------------------- 02 · 동료 고리 */
+function g2() {
+  const g = geo(), T = g.tall;
+  const ring = T ? { c: [0, g.cy + 0.06, 0], r: 0.28 } : { c: [0, g.cy - 0.04, 0], r: 0.32 };
+  const at = a => [ring.c[0] + Math.cos(a) * ring.r, ring.c[1] + Math.sin(a) * ring.r, 0];
+  const seat8 = k => at(Math.PI / 2 + k * TAU / 8);          // seat 0 at the top is the agent's; no seat is left empty
+  const seat7 = k => at(Math.PI / 2 + (k + 0.5) * TAU / 7);  // seven people before the agent joins
+  const caller = 6;                                           // person 6 sits at seat8(7), upper right
+  const cp = seat8(caller + 1);
+  const bubble = T ? { c: [cp[0] + 0.32, cp[1] + 0.22, 0.03], w: 0.5, h: 0.2 } : { c: [cp[0] + 0.28, cp[1] + 0.3, 0.03], w: 0.46, h: 0.2 };
+  bubble.tip = [(cp[0] - bubble.c[0]) * 0.66, (cp[1] - bubble.c[1]) * 0.66];
+  const forest = T ? { x0: -0.86, x1: 0.86, y0: g.y1 - 0.56, y1: g.y1 - 0.04, rowH: 0.066 } : { x0: -g.w / 2 + 0.02, x1: -0.6, y0: g.cy - 0.5, y1: g.cy + 0.5, rowH: 0.08 };
+  const db = T ? { c: [0, g.y0 + 0.27, 0], R: 0.32, H: 0.3 } : { c: [1.2, g.cy - 0.06, 0], R: 0.2, H: 0.46 };
+  const cs = T ? 0.9 : 1;
+  const cards = T ? [[0.56, cp[1] - 0.2, 0.08], [0.56, cp[1] - 0.44, 0.08]] : [[bubble.c[0] + 0.05, cp[1] + 0.03, 0.08], [bubble.c[0] + 0.05, cp[1] - 0.21, 0.08]];
+  const fA = T ? [0, forest.y0 + 0.02, 0] : [forest.x1 - 0.04, (forest.y0 + forest.y1) / 2, 0];
+  const dA = T ? [0, db.c[1] + db.H / 2 + 0.02, 0] : [db.c[0] - db.R * 0.6, db.c[1] + db.H / 2, 0];
+  return { T, ring, seat8, seat7, caller, cp, bubble, forest, db, cs, cards, fA, dA };
+}
+function ringShape(rand) {
+  const G = g2(), T = G.T, sh = newShape('ring');
+  agentInto(sh, rand);
+  for (let p = 0; p < 7; p++) personInto(sh, p, rand);
+  let i = I_SC;
+
+  // the caller's question: an amber bubble that grows out of the caller (aux2.y = distance from the tail tip)
+  {
+    const B = G.bubble, nB = NB2();
+    const dmax = Math.hypot(B.w, B.h) + Math.hypot(B.tip[0], B.tip[1]);
+    bubbleInto(sh, i, nB, rng(BUB_SEED), B.w, B.h, B.tip, 7, (ii, k, q) => { sh.aux2[ii * 4 + 1] = Math.hypot(q[0] - B.tip[0], q[1] - B.tip[1]) / dmax; });
+    i += nB;
   }
 
-  // code forest (file trees) and the database, in the ribbon range
-  const nFo = Math.round(N_RB * 0.6), nDb = N_RB - nFo;
+  // code forest (file trees) and the database
+  const nRB = Math.round(N * 0.3), nFo = Math.round(nRB * 0.6), nDb = nRB - nFo;
   const F = G.forest, nt = 3, tw = (F.x1 - F.x0) / nt;
   const leaves = [];
-  let i = I_RB;
   for (let t = 0; t < nt; t++) {
     const ytop = F.y1 - (T ? 0 : [0, 0.08, 0.03][t]);
     const plan = treePlan(F.x0 + t * tw + 0.02, ytop, tw - 0.03, (ytop - F.y0) * (T ? 1 : [1, 0.9, 0.96][t]), F.rowH, rand);
@@ -1612,9 +1747,8 @@ function ringShape(rand) {
     });
   }
 
-  // the rest: the faint circle, beams, fragments that become the answer and the cards, dust
+  // the faint circle, beams, fragments that become the answer and the cards, dust
   const nCir = Math.round(N * 0.025), nBeam = Math.round(N * 0.06), nFrag = Math.round(N * 0.08);
-  i = I_RS;
   circleLine(sh, i, nCir, rand, G.ring.c, G.ring.r, 2); i += nCir;
   for (let k = 0; k < nBeam; k++, i++) {
     put(sh, i, G.ring.c[0], G.ring.c[1], 0, 0.5, 0.85, 0, 0.35, 0.6);
@@ -1632,636 +1766,857 @@ function ringShape(rand) {
     sh.tcol[i * 4] = fromDb ? 0.8 : 0.85;
     sh.meta[i * 4 + 3] = rand();
   }
-  dust(sh, i, N - i, rand, 8);
+  dust(sh, i, N - i, rand, 29);
 
   sh.G = G;
   const F2 = G.forest;
   sh.anchors.code = T ? [0, F2.y1 + 0.02, 0] : [(F2.x0 + F2.x1) / 2, F2.y1 + 0.06, 0];
   sh.anchors.db = T ? [G.db.c[0] + G.db.R + 0.04, G.db.c[1], 0] : [G.db.c[0], G.db.c[1] + G.db.H / 2 + 0.12, 0];
-  sh.labelAlign = T ? { db: 'left', ticket: 'left', pr: 'left' } : { ticket: 'left', pr: 'left' };
+  // the ring's own label sits below the ring, clear of the forest, the cards and the caller's bubble
+  sh.anchors.team = [G.ring.c[0], G.ring.c[1] - G.ring.r - (T ? 0.13 : 0.12), 0];
+  sh.labelAlign = T ? { db: 'left', ticket: 'left', pr: 'left', agent: 'right' } : { ticket: 'left', pr: 'left', agent: 'right' };
   sh.area = T ? 0.5 : 0.55;
   return sh;
 }
 
 /* ---------------------------------------------------- 03 · 말뜻 */
+// scene 3 takes over scene 2's bubble as it is: the same particles with the same layout
+const BUB_SEED = 4242, NB2 = () => Math.round(N * 0.06);
 function g3() {
   const g = geo(), T = g.tall, G2 = g2();
-  const card = T ? { w: 0.84, h: 0.4 } : { w: 0.62, h: 0.3 };
-  const P1 = T ? [0, g.y1 - 0.42, 0.02] : [0, g.cy + 0.36, 0.02];
-  const lineY = T ? g.cy + 0.12 : g.cy - 0.03;
-  const P2 = T ? [0, g.y0 + 0.36, 0.02] : [0, g.y0 + 0.24, 0.02];
-  return { T, card, P1, P2, lineY, start: G2.bubble.c, lx0: -halfW - 0.4, lx1: halfW + 0.4, G2 };
-}
-// the to-do card parts in local coordinates: frame, words and the check mark's stroke
-function cardParts(w, h) {
-  const cb = { x: -w / 2 + h * 0.3, s: h * 0.26 };
-  const tx = cb.x + cb.s * 0.5 + h * 0.2, tw = w / 2 - tx - h * 0.18;
-  const bars = [[tx, h * 0.17, tw * 0.62], [tx, 0, tw], [tx, -h * 0.17, tw * 0.48]];
-  const check = [[cb.x - cb.s * 0.3, cb.s * 0.02], [cb.x - cb.s * 0.06, -cb.s * 0.26], [cb.x + cb.s * 0.36, cb.s * 0.34]];
-  return { cb, bars, check };
-}
-function drawTodo(w, h, part) {
-  const P = cardParts(w, h);
-  worldSpace();
-  sx.strokeStyle = '#fff'; sx.fillStyle = '#fff';
-  if (part === 'frame') {
-    sx.lineWidth = w > 0.7 ? 0.0105 : 0.008; roundRect(-w / 2, -h / 2, w, h, Math.min(0.04, h * 0.14)); sx.stroke();
-    sx.lineWidth = 0.007; sx.strokeRect(P.cb.x - P.cb.s / 2, -P.cb.s / 2, P.cb.s, P.cb.s);
-  } else if (part === 'words') {
-    const bh = h * 0.07;
-    P.bars.forEach(b => { roundRect(b[0], b[1] - bh / 2, b[2], bh, bh / 2); sx.fill(); });
-  }
-  sx.setTransform(1, 0, 0, 1, 0, 0);
-  return P;
-}
-// points along a polyline with the fraction along it
-function alongPoly(pts, n, rand, jit) {
-  const L = [];
-  let tot = 0;
-  for (let k = 1; k < pts.length; k++) { const l = Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]); L.push(l); tot += l; }
-  const out = [];
-  for (let m = 0; m < n; m++) {
-    let r = (m + rand()) / n * tot, k = 0;
-    const d = r;
-    while (k < L.length - 1 && r > L[k]) { r -= L[k]; k++; }
-    const u = L[k] ? r / L[k] : 0;
-    out.push([pts[k][0] + (pts[k + 1][0] - pts[k][0]) * u + (rand() - 0.5) * jit, pts[k][1] + (pts[k + 1][1] - pts[k][1]) * u + (rand() - 0.5) * jit, d / tot]);
-  }
-  return out;
-}
-// a ball of loose scribbles: where the words sit while the request is still tangled
-function scribbles(n, rand, R) {
-  const curves = [];
-  for (let c = 0; c < 9; c++) curves.push([rand() * TAU, 1 + rand() * 2.2, rand() * TAU, 1 + rand() * 2.6, rand() * TAU, 0.6 + 0.4 * rand(), 0.6 + 0.4 * rand()]);
-  const out = [];
-  for (let m = 0; m < n; m++) {
-    const C = curves[(rand() * curves.length) | 0], s = rand() * TAU;
-    const x = Math.sin(C[1] * s + C[0]) * R * C[5] + Math.sin(3.1 * s + C[4]) * R * 0.18;
-    const y = Math.sin(C[3] * s + C[2]) * R * 0.62 * C[6] + Math.cos(2.3 * s + C[0]) * R * 0.12;
-    out.push([x + (rand() - 0.5) * 0.012, y + (rand() - 0.5) * 0.012, (rand() - 0.5) * R * 0.5]);
-  }
-  return out;
+  const card = T ? { w: 0.74, h: 0.36 } : { w: 0.46, h: 0.22 };
+  const A = G2.seat8(0);
+  const Cc = [0, A[1] - (T ? 0.55 : 0.33), 0.02];
+  const lineY = Cc[1] - card.h / 2 - (T ? 0.25 : 0.15);
+  const Ce = [0, lineY - card.h / 2 - (T ? 0.12 : 0.07), 0.02];
+  const gap = { x: 0, w: card.w + (T ? 0.16 : 0.12) };
+  const lx0 = -g.w / 2 + 0.02, lx1 = g.w / 2 - (T ? 0.3 : 0.42);
+  const B = G2.bubble;
+  return { T, card, A, Cc, Ce, lineY, gap, lx0, lx1, Bs: B.c, bw: B.w, bh: B.h, tip: B.tip, G2 };
 }
 function meaningShape(rand) {
-  const G = g3(), T = G.T, sh = newShape('meaning');
-  const { w, h } = G.card;
-  const kb = T ? 2.0 : 1;
-  // the ring stays where it was and dims: people and the agent keep their blobs
-  blob(sh, I_AG, PB, rand, G.G2.ring.s, 0.95, 0.6, 1.0, 5, i => { sh.aux[i * 4] = 6; });
-  for (let p = 0; p < 6; p++) blob(sh, I_PP + p * PB, PB, rand, G.G2.ring.s, 0.5, 0.12, 0.95, 5, i => { sh.aux[i * 4] = p; });
-
-  // the hero card: frame, words and check, all from the bubble's particles
-  const nFrame = Math.round(N_CD * 0.3), nCheck = Math.round(N_CD * 0.1), nWords = N_CD - nFrame - nCheck;
-  const tang = scribbles(nFrame + nWords, rand, T ? 0.26 : 0.21);
-  let i = I_CD, ti = 0;
-  clearBox(); drawTodo(w, h, 'words');
-  take(nWords, rand, (k, px, py, a) => {
-    const s = tang[ti++];
-    put(sh, i, px, py, (rand() - 0.5) * 0.01, (0.62 + 0.3 * a) * kb, 0.8, 0, T ? 0.3 : 0.2, 0.3);
-    set4(sh.aux, i, s[0], s[1], s[2], 0);
-    set4(sh.aux2, i, 0, (px + w / 2) / w, 0, 0);
-    sh.meta[i * 4 + 3] = rand();
-    i++;
+  const G = g3(), G2 = G.G2, T = G.T, sh = newShape('meaning');
+  agentInto(sh, rand);
+  for (let p = 0; p < 7; p++) personInto(sh, p, rand);
+  let i = I_SC;
+  const W = G.card.w, H = G.card.h;
+  // three cards: the clear one and two faint ones behind it
+  const counts = [NB2(), Math.round(N * 0.035), Math.round(N * 0.035)];
+  const R = Math.min(G.bw / 2.6, G.bh * 0.55);
+  counts.forEach((n, c) => {
+    const bub = bubblePts(n, c === 0 ? rng(BUB_SEED) : rand, G.bw, G.bh, G.tip);
+    const bF = bub.filter(q => q[4] === 0), bT = bub.filter(q => q[4] === 1);
+    const nF = bF.length, nCk = Math.round(bT.length * 0.28), nW = bT.length - nCk;
+    clearBox(); const P = drawTodo(W, H, 'frame'); const cF = sample(nF, rand);
+    clearBox(); drawTodo(W, H, 'words'); const cW = sample(nW, rand);
+    const ck = alongPoly(P.check, nCk, rand, 0.006);
+    const sc = scribbles(bT.length, rand, R);
+    const dim = c === 0 ? 1 : 0.42;
+    for (let k = 0; k < nF; k++, i++) {
+      const e = cF.edge[k];
+      put(sh, i, cF.x[k], cF.y[k], -0.05 * c, (0.62 + 0.38 * cF.a[k]) * (e ? 1.1 : 1) * dim, 0.82, 0.05, e ? 0.32 : 0.14, 0.3);
+      set4(sh.aux, i, bF[k][0], bF[k][1], bF[k][0], bF[k][1]);
+      set4(sh.aux2, i, 3, c, 0, 0);
+      sh.meta[i * 4] = bF[k][3];
+      sh.meta[i * 4 + 3] = rand();
+    }
+    for (let k = 0; k < bT.length; k++, i++) {
+      const isCk = k >= nW, q = bT[k], s2 = sc[k];
+      if (isCk) {
+        const p = ck[k - nW];
+        put(sh, i, p[0], p[1], -0.05 * c + 0.004, 1.0 * dim, 0.55, 0, 0.35, 0.3);
+        set4(sh.aux2, i, 3, c, 2, p[2]);
+      } else {
+        const m = k;
+        put(sh, i, cW.x[m], cW.y[m], -0.05 * c, (0.55 + 0.3 * cW.a[m]) * dim, 0.78, 0.05, 0.12, 0.3);
+        set4(sh.aux2, i, 3, c, 1, 0);
+      }
+      set4(sh.aux, i, q[0], q[1], s2[0] * 1.35, s2[1]);
+      sh.meta[i * 4 + 3] = rand();
+    }
   });
-  clearBox(); drawTodo(w, h, 'frame');
-  take(nFrame, rand, (k, px, py, a) => {
-    const s = tang[ti++];
-    put(sh, i, px, py, (rand() - 0.5) * 0.01, (0.72 + 0.25 * a) * kb, 0.92, 0, 0.42, 0.3);
-    set4(sh.aux, i, s[0], s[1], s[2], 0);
-    set4(sh.aux2, i, 1, (px + w / 2) / w, 0, 0);
-    sh.meta[i * 4 + 3] = rand();
-    i++;
-  });
-  const P = cardParts(w, h);
-  alongPoly(P.check, nCheck, rand, 0.007).forEach(q => {
-    put(sh, i, q[0], q[1], 0.01, T ? 1.4 : 1.0, 0.98, 0, 0.75, 0.3);
-    set4(sh.aux, i, P.check[0][0], P.check[0][1], 0.01, 0);
-    set4(sh.aux2, i, 2, q[2], 0, 0);
-    i++;
-  });
-
-  // the straight line: no noise and no wobble; it draws outward from the point every card crosses
-  const nLine = Math.round(N_RB * 0.16), nEcho = Math.round(N_RB * 0.16);
-  i = I_RB;
-  for (let k = 0; k < nLine; k++, i++) {
-    const x = G.lx0 + (G.lx1 - G.lx0) * (k + rand()) / nLine;
-    const spot = Math.exp(-x * x / 0.0018);
-    put(sh, i, x, G.lineY + (rand() - 0.5) * 0.004, 0, 0.42 + 0.7 * spot, 0.9, 0, 0.45 + 0.4 * spot, 0.1);
-    set4(sh.aux2, i, 3, Math.abs(x) / G.lx1, 0, 0);
-  }
-  // two later cards that cross at the same point
-  const es = 0.62;
-  for (let f = 0; f < 2; f++) {
-    const n = f === 0 ? Math.round(nEcho / 2) : nEcho - Math.round(nEcho / 2);
-    clearBox(); drawTodo(w * es, h * es, 'frame'); drawTodo(w * es, h * es, 'words');
-    worldSpace(); sx.strokeStyle = '#fff'; sx.lineWidth = 0.007;
-    const Pe = cardParts(w * es, h * es);
-    sx.beginPath(); sx.moveTo(Pe.check[0][0], Pe.check[0][1]); sx.lineTo(Pe.check[1][0], Pe.check[1][1]); sx.lineTo(Pe.check[2][0], Pe.check[2][1]); sx.stroke();
-    sx.setTransform(1, 0, 0, 1, 0, 0);
-    take(n, rand, (k, px, py, a, e) => {
-      put(sh, i, px, py, 0, (0.55 + 0.3 * a) * kb, 0.88, 0, e ? 0.4 : 0.15, 0.4);
-      set4(sh.aux, i, f, 0, 0, 0);
+  // the thin line with one gap, drawn from the left; small ticks mark the gap's edges
+  {
+    const n = Math.round(N * 0.04), g0 = G.gap.x - G.gap.w / 2, g1 = G.gap.x + G.gap.w / 2;
+    const span = (G.lx1 - G.lx0) - G.gap.w;
+    for (let k = 0; k < n; k++, i++) {
+      let x, y = G.lineY + (rand() - 0.5) * 0.004, b = 0.5;
+      if (k < n * 0.1) {                   // the two edge ticks
+        const side = k % 2 ? g1 : g0;
+        x = side + (rand() - 0.5) * 0.004; y = G.lineY + (rand() - 0.5) * (T ? 0.07 : 0.05); b = 0.75;
+      } else {
+        const u = rand() * span;
+        x = G.lx0 + u; if (x > g0) x += G.gap.w;
+      }
+      put(sh, i, x, y, 0, b, 0.2, 0.05, 0.08, 0.2);
+      set4(sh.aux, i, (x - G.lx0) / (G.lx1 - G.lx0), 0, 0, 0);
       sh.aux2[i * 4] = 4;
-      i++;
-    });
-  }
-  dust(sh, i, I_RS - i, rand, 6, 0.8);
-  dust(sh, I_RS, N - I_RS, rand, 6, 0.8);
-  sh.G = G;
-  sh.area = T ? 0.42 : 0.46;
-  return sh;
-}
-
-/* ---------------------------------------------------- 04 · 기억 */
-function g4() {
-  const g = geo(), T = g.tall;
-  const c = [0.05, g.cy, -1.35];
-  const star = [0.04, g.cy + 0.04, -1.2];
-  return { T, c, star, R: T ? [1.5, 2.6, 2.3] : [2.7, 1.5, 2.3] };
-}
-function memoryShape(rand) {
-  const G = g4(), T = G.T, G3 = g3(), sh = newShape('memory');
-  const cardSh = getShape('meaning');
-  // the to-do card turns into the question star; aux keeps each particle's spot on the card
-  const nStar = N_CD;
-  for (let k = 0; k < nStar; k++) {
-    const i = I_CD + k, o = i * 4;
-    const core = k < nStar * 0.62;
-    let lx, ly;
-    if (core) { const r = 0.012 * Math.sqrt(-2 * Math.log(1 - 0.995 * rand())), a = rand() * TAU; lx = Math.cos(a) * r; ly = Math.sin(a) * r; }
-    else { const arm = (rand() * 4) | 0, d = Math.pow(rand(), 1.6) * 0.17, a = arm * Math.PI / 2 + Math.PI / 4 * 0; lx = Math.cos(a) * d + (rand() - 0.5) * 0.004; ly = Math.sin(a) * d + (rand() - 0.5) * 0.004; }
-    put(sh, i, lx, ly, 0, core ? 1.1 : 0.7, 0.97, 0, core ? 0.9 : 0.5, 0.6);
-    set4(sh.aux, i, cardSh.tgt[o], cardSh.tgt[o + 1], cardSh.tgt[o + 2], 0);
-    sh.aux2[o] = 3;
-  }
-  // past conversations: thousands of points with depth, in clumps and loose threads
-  const clumps = [];
-  for (let c = 0; c < 9; c++) clumps.push([G.c[0] + (rand() - 0.5) * G.R[0] * 1.4, G.c[1] + (rand() - 0.5) * G.R[1] * 1.3, G.c[2] + (rand() - 0.5) * G.R[2] * 1.4, 0.18 + rand() * 0.4]);
-  // the points that light up, in order of distance from the star; they are ordinary points until then
-  const nNode = 18, perNode = Math.round(N * 0.0011), nLine = Math.round(N * 0.07);
-  const nodes = [];
-  const spreadX = T ? 0.75 : 1.15, spreadY = T ? 1.0 : 0.6;
-  for (let k = 0; k < nNode; k++) {
-    const a = k * 2.39996 + (rand() - 0.5) * 0.5, rr = 0.2 + 0.85 * Math.sqrt((k + 0.6) / nNode);
-    nodes.push([G.star[0] + Math.cos(a) * rr * spreadX, G.star[1] + Math.sin(a) * rr * spreadY, G.star[2] + (rand() - 0.5) * 0.7]);
-  }
-  nodes.sort((p, q) => Math.hypot(p[0] - G.star[0], (p[1] - G.star[1]) * 1.2, p[2] - G.star[2]) - Math.hypot(q[0] - G.star[0], (q[1] - G.star[1]) * 1.2, q[2] - G.star[2]));
-  const edges = nodes.map((p, k) => {
-    let best = G.star, bd = Math.hypot(p[0] - G.star[0], p[1] - G.star[1], p[2] - G.star[2]) * (k < 3 ? 0.5 : 1.15);
-    for (let j = 0; j < k; j++) { const q = nodes[j], d = Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]); if (d < bd) { bd = d; best = q; } }
-    return [best, p, k];
-  });
-  let i = 0;
-  const others = [];
-  for (let k = 0; k < N; k++) if (k < I_CD || k >= I_CD + N_CD) others.push(k);
-  let oi = 0;
-  for (let k = 0; k < nNode; k++) {
-    for (let m = 0; m < perNode; m++) {
-      i = others[oi++];
-      const p = nodes[k];
-      put(sh, i, p[0] + gauss(rand) * 0.006, p[1] + gauss(rand) * 0.006, p[2] + gauss(rand) * 0.006, 0.9, 0.55 + 0.2 * rand(), 0, 0.2, 0.2);
-      set4(sh.aux, i, k / (nNode - 1), m < perNode * 0.5 ? 1 : 0, 0, 0);
-      sh.aux2[i * 4] = 1;
       sh.meta[i * 4 + 3] = rand();
     }
   }
-  sh.lineStart = [];
-  const segLen = edges.map(e => Math.hypot(e[0][0] - e[1][0], e[0][1] - e[1][1], e[0][2] - e[1][2]));
-  const totLen = segLen.reduce((a, b) => a + b, 0);
-  edges.forEach((e, k) => {
-    const n = Math.max(20, Math.round(nLine * segLen[k] / totLen));
-    for (let m = 0; m < n && oi < others.length; m++) {
-      i = others[oi++];
-      const u = (m + rand()) / n;
-      put(sh, i, e[1][0], e[1][1], e[1][2], 0.32, 0.8, 0, 0.3, 0.2);
-      set4(sh.aux, i, e[0][0], e[0][1], e[0][2], k / (nNode - 1));
-      set4(sh.aux2, i, 2, u, 0, 0);
+  const nCir = Math.round(N * 0.02);
+  circleLine(sh, i, nCir, rand, G2.ring.c, G2.ring.r, 2); i += nCir;
+  dust(sh, i, N - i, rand, 29, 0.8);
+  sh.G = G;
+  sh.anchors.gate = [G.lx1 + 0.04, G.lineY, 0];
+  sh.labelAlign = { gate: 'left' };
+  sh.area = T ? 0.42 : 0.4;
+  return sh;
+}
+
+/* ---------------------------------------------------- 04 · 신경망 */
+const v3 = {
+  sub: (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]],
+  add: (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]],
+  mul: (a, s) => [a[0] * s, a[1] * s, a[2] * s],
+  len: a => Math.hypot(a[0], a[1], a[2]),
+  norm: a => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; },
+  cross: (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]],
+  lerp: (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t],
+  bez: (a, b, c, t) => { const u = 1 - t; return [u * u * a[0] + 2 * u * t * b[0] + t * t * c[0], u * u * a[1] + 2 * u * t * b[1] + t * t * c[1], u * u * a[2] + 2 * u * t * b[2] + t * t * c[2]]; }
+};
+// a unit vector perpendicular to d, turned by angle a around d
+function perpOf(d, a) {
+  const up = Math.abs(d[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+  const p = v3.norm(v3.cross(d, up)), q = v3.cross(d, p);
+  return v3.add(v3.mul(p, Math.cos(a)), v3.mul(q, Math.sin(a)));
+}
+const S4 = { touch: 2.4, tau: 0.22, gapT: 0.08, hop2: 0.26, tau2: 0.1, gap: 0.04 };
+function g4() {
+  const g = geo(), T = g.tall, r = rng(4242);
+  const K = T ? 18 : 22;
+  const box = T ? { x: 0.8, y0: g.cy - 1.0, y1: g.cy + 0.95, z0: -1.5, z1: 0.2 } : { x: 1.5, y0: g.cy - 0.55, y1: g.cy + 0.6, z0: -1.6, z1: 0.25 };
+  const minD = T ? 0.4 : 0.45;
+  const cells = [];
+  for (let tries = 0; cells.length < K && tries < 8000; tries++) {
+    const c = [(r() * 2 - 1) * box.x, mix(box.y0, box.y1, r()), mix(box.z0, box.z1, r())];
+    if (cells.every(o => v3.len(v3.sub(o, c)) > minD)) cells.push(c);
+  }
+  const n = cells.length, d = (a, b) => v3.len(v3.sub(cells[a], cells[b]));
+  // each cell reaches its nearest three or four cells; the links are shared both ways
+  const nb = cells.map(() => new Set());
+  for (let j = 0; j < n; j++) {
+    const o = [...Array(n).keys()].filter(k => k !== j).sort((a, b) => d(j, a) - d(j, b));
+    const want = 3 + (r() < 0.4 ? 1 : 0);
+    for (let m = 0; m < want; m++) { const k = o[m]; if (nb[j].size < 5 && nb[k].size < 5) { nb[j].add(k); nb[k].add(j); } }
+  }
+  // the cell the agent touches sits near the middle, a little deep
+  const aim = [0.08, g.cy + 0.02, -0.45];
+  let E = 0;
+  for (let j = 1; j < n; j++) if (v3.len(v3.sub(cells[j], aim)) < v3.len(v3.sub(cells[E], aim))) E = j;
+  // the lit group: cells close in meaning, reached in at most two hops
+  const maxC = T ? 5 : 6, L = new Array(n).fill(999), parent = new Array(n).fill(-1), depth = new Array(n).fill(-1);
+  const hop = 2 * S4.tau + S4.gapT;
+  L[E] = S4.touch; depth[E] = 0;
+  const q = [E];
+  let size = 1;
+  while (q.length) {
+    const j = q.shift();
+    if (depth[j] >= 2) continue;
+    for (const k of [...nb[j]].sort((a, b) => d(j, a) - d(j, b))) {
+      if (depth[k] >= 0 || size >= maxC) continue;
+      depth[k] = depth[j] + 1; parent[k] = j; L[k] = L[j] + hop; size++; q.push(k);
+    }
+  }
+  const inC = depth.map(x => x >= 0);
+  const D = Math.max(...depth);
+  const lastLit = Math.max(...L.filter(x => x < 900));
+  const F0 = lastLit + 0.2;
+  const Fn = depth.map(x => x >= 0 ? F0 + (D - x) * S4.hop2 : 999);
+  const FE = Fn[E];
+  const A0 = [0, g.cy + (T ? 0.25 : 0.12), 0.45];
+  const toA = v3.norm(v3.sub(A0, cells[E]));
+  const touchAt = v3.add(cells[E], v3.mul(toA, T ? 0.085 : 0.095));
+  const back = v3.add(v3.add(cells[E], v3.mul(toA, T ? 0.42 : 0.38)), [T ? -0.1 : -0.16, T ? 0.12 : 0.1, 0]);
+  const pathCtrl = v3.add(v3.lerp(cells[E], back, 0.5), v3.mul(perpOf(v3.norm(v3.sub(back, cells[E])), 1.1), 0.09));
+  const src = T ? [-1.1, 0.6, 0.35] : [-1.6, 0.32, 0.4], ctrl = T ? [-0.6, 0.4, 0.2] : [-0.8, 0.26, 0.2];
+  // cells are born left to right, all within the first 1.4 s
+  const byX = [...Array(n).keys()].sort((a, b) => cells[a][0] - cells[b][0]);
+  const born = new Array(n);
+  byX.forEach((j, m) => { born[j] = 0.15 + 1.2 * m / Math.max(1, n - 1); });
+  return { T, cells, n, nb, E, L, parent, depth, inC, D, Fn, FE, A0, touchAt, back, pathCtrl, src, ctrl, born, lastLit };
+}
+function memoryShape(rand) {
+  const G = g4(), T = G.T, sh = newShape('memory');
+  agentInto(sh, rand);
+  // the to-do card the agent carries in, made of the same particles as the clear card in scene 3
+  const nCard = Math.round(N * 0.05);
+  {
+    const W = T ? 0.74 : 0.46, H = T ? 0.36 : 0.22;
+    clearBox(); drawTodo(W, H, 'frame'); const F = sample(Math.round(nCard * 0.62), rand);
+    clearBox(); const P = drawTodo(W, H, 'words'); const Wd = sample(nCard - F.x.length, rand);
+    let i = I_SC;
+    for (let k = 0; k < F.x.length; k++, i++) { put(sh, i, F.x[k], F.y[k], 0, F.edge[k] ? 0.95 : 0.6, 0.82, 0.05, F.edge[k] ? 0.32 : 0.14, 0.3); sh.aux2[i * 4] = 3; sh.meta[i * 4 + 3] = rand(); }
+    const ck = alongPoly(P.check, Math.round(Wd.x.length * 0.25), rand, 0.006);
+    for (let k = 0; k < Wd.x.length; k++, i++) {
+      if (k < ck.length) put(sh, i, ck[k][0], ck[k][1], 0.004, 1.0, 0.55, 0, 0.35, 0.3);
+      else put(sh, i, Wd.x[k], Wd.y[k], 0, 0.6, 0.78, 0.05, 0.12, 0.3);
+      sh.aux2[i * 4] = 3; sh.meta[i * 4 + 3] = rand();
+    }
+  }
+  // index ranges left for the network: the people's range, then everything after the card
+  const nDust = Math.round(N * 0.06), nPath = Math.round(N * 0.025), nSpark = Math.round(N * 0.02);
+  const ranges = [[I_PP, I_SC], [I_SC + nCard, N - nDust - nPath - nSpark]];
+  let ri = 0, ii = ranges[0][0];
+  const next = () => { while (ri < ranges.length && ii >= ranges[ri][1]) { ri++; if (ri < ranges.length) ii = ranges[ri][0]; } return ri < ranges.length ? ii++ : -1; };
+  const total = (ranges[0][1] - ranges[0][0]) + (ranges[1][1] - ranges[1][0]);
+
+  // branches: from each cell toward each neighbour, stopping short so the two tips leave a small gap; each forks once
+  const segs = [];   // [cell, toward (or -1), a, b, c, u0, u1, kind]  kind 0 main, 1 twig
+  const r2 = rng(777);
+  const tipOf = (j, k) => { const a = G.cells[j], b = G.cells[k], dd = v3.sub(b, a), l = v3.len(dd); return v3.add(a, v3.mul(dd, 0.5 - S4.gap / 2 / l)); };
+  for (let j = 0; j < G.n; j++) {
+    const c = G.cells[j];
+    const ends = [...G.nb[j]].map(k => [k, tipOf(j, k)]);
+    const free = 1 + (r2() < 0.5 ? 1 : 0);
+    for (let f = 0; f < free; f++) ends.push([-1, v3.add(c, v3.mul(v3.norm([r2() - 0.5, r2() - 0.5, r2() - 0.5]), 0.13 + 0.08 * r2()))]);
+    for (const [k, tip] of ends) {
+      const dd = v3.sub(tip, c), l = v3.len(dd), dn = v3.norm(dd);
+      const bend = v3.mul(perpOf(dn, r2() * TAU), l * (0.16 + 0.14 * r2()));
+      const mid = v3.add(v3.lerp(c, tip, 0.5), bend);
+      segs.push([j, k, c, mid, tip, 0, 1, 0, l]);
+      // level two: twigs splay off along the way
+      for (const u0 of [0.42, 0.68]) {
+        const p0 = v3.bez(c, mid, tip, u0), p1 = v3.bez(c, mid, tip, u0 + 0.02);
+        const tg = v3.norm(v3.sub(p1, p0));
+        for (const sgn of [-1, 1]) {
+          if (r2() < 0.35) continue;
+          const side = perpOf(tg, r2() * TAU);
+          const dir = v3.norm(v3.add(v3.mul(tg, 0.75), v3.mul(side, 0.66 * sgn)));
+          const tl = l * (0.18 + 0.12 * r2());
+          const e = v3.add(p0, v3.mul(dir, tl));
+          const m2 = v3.add(v3.lerp(p0, e, 0.5), v3.mul(perpOf(dir, r2() * TAU), tl * 0.25));
+          segs.push([j, k, p0, m2, e, u0, u0 + 0.3, 1, tl]);
+        }
+      }
+    }
+  }
+  const lenSum = segs.reduce((a, s) => a + s[8] * (s[7] ? 0.8 : 1), 0);
+  const nNuc = Math.round(total * 0.13), perNuc = Math.floor(nNuc / G.n);
+  const nBr = total - perNuc * G.n;
+  const nucR = T ? 0.034 : 0.03;
+  const writeNeuron = (i, p, j, u, lit, fet, path, base, temp, soft, white, delay) => {
+    put(sh, i, p[0], p[1], p[2], base, temp, soft, white, 0.2);
+    set4(sh.meta, i, G.cells[j][0], G.cells[j][1], G.cells[j][2], G.born[j]);
+    set4(sh.aux, i, j, lit, fet, delay);
+    set4(sh.aux2, i, 2, u, path, rand());
+  };
+  for (let j = 0; j < G.n; j++) {
+    const c = G.cells[j];
+    for (let m = 0; m < perNuc; m++) {
+      const i = next(); if (i < 0) break;
+      const dd = sdir(rand), rr = nucR * Math.pow(rand(), 0.6);
+      const p = v3.add(c, v3.mul(dd, rr));
+      writeNeuron(i, p, j, 0, G.L[j], G.Fn[j], G.inC[j] ? 1 : 0, 0.55 + 0.4 * (1 - rr / nucR), 0.35, 0.15, 0.25 * (1 - rr / nucR), 0.03);
+    }
+  }
+  let made = 0;
+  segs.forEach((s, si) => {
+    const [j, k, a, b, c, u0, u1, kind, l] = s;
+    const cnt = si === segs.length - 1 ? nBr - made : Math.round(nBr * l * (kind ? 0.8 : 1) / lenSum);
+    made += cnt;
+    const inc = G.inC[j], toParent = k >= 0 && k === G.parent[j], toChild = k >= 0 && G.parent[k] === j;
+    const onTree = inc && (toParent || toChild);
+    for (let m = 0; m < cnt; m++) {
+      const i = next(); if (i < 0) return;
+      const v = rand(), p = v3.bez(a, b, c, v), u = kind ? u0 + (u1 - u0) * v : v;
+      const jit = v3.mul([rand() - 0.5, rand() - 0.5, rand() - 0.5], 0.006);
+      let lit = 999, fet = 999;
+      if (inc) {
+        lit = toParent && !kind ? G.L[j] - S4.tau * u : G.L[j] + S4.tau * u;
+        if (onTree && !kind) fet = toParent ? G.Fn[j] + S4.tau2 * u : G.Fn[j] - S4.tau2 * u;
+      }
+      const base = kind ? 0.2 : 0.26 * (1 - 0.35 * v);
+      writeNeuron(i, v3.add(p, jit), j, u, lit, fet, onTree && !kind ? 1 : 0, base, 0.28, 0.3, 0.04, 0.05 + u * 0.38);
     }
   });
-  while (oi < others.length) {
-    i = others[oi++];
-    let x, y, z;
-    const r = rand();
-    if (r < 0.55) { const c = clumps[(rand() * clumps.length) | 0]; x = c[0] + gauss(rand) * c[3]; y = c[1] + gauss(rand) * c[3] * 0.7; z = c[2] + gauss(rand) * c[3]; }
-    else { const d = sdir(rand), rr = Math.cbrt(rand()); x = G.c[0] + d[0] * rr * G.R[0]; y = G.c[1] + d[1] * rr * G.R[1]; z = G.c[2] + d[2] * rr * G.R[2]; }
-    const warm = rand();
-    put(sh, i, x, y, z, 0.3 + 0.35 * rand(), warm < 0.5 ? 0.12 + 0.2 * rand() : 0.4 + 0.3 * rand(), 0.1 + 0.3 * rand(), 0.05 * rand(), 0.15);
-    sh.aux2[i * 4] = 0;
+  // anything the rounding left over joins the nearest nucleus
+  for (let i = next(); i >= 0; i = next()) { const j = (rand() * G.n) | 0; writeNeuron(i, G.cells[j], j, 0, G.L[j], G.Fn[j], 0, 0.3, 0.35, 0.15, 0.1, 0.03); }
+
+  // sparks at the gaps the signal jumps, and smaller ones when the signal comes back
+  let i = N - nDust - nPath - nSpark;
+  {
+    const edges = [];
+    for (let k = 0; k < G.n; k++) if (G.parent[k] >= 0) edges.push([G.parent[k], k]);
+    const per = Math.floor(nSpark / Math.max(1, edges.length * 2));
+    edges.forEach(([j, k]) => {
+      const mid = v3.lerp(G.cells[j], G.cells[k], 0.5);
+      for (let m = 0; m < per * 2; m++, i++) {
+        const back = m >= per * 1.3;
+        put(sh, i, mid[0], mid[1], mid[2], 1, 0.7, 0, 0.6, 0.5);
+        set4(sh.aux, i, mid[0], mid[1], mid[2], back ? G.Fn[k] + S4.tau2 + 0.03 : G.L[j] + S4.tau + S4.gapT / 2);
+        sh.aux2[i * 4] = 4;
+        sh.meta[i * 4 + 3] = rand();
+      }
+    });
+    for (; i < N - nDust - nPath; i++) { sh.aux2[i * 4] = 30; sh.tgt[i * 4 + 3] = 0; }
+  }
+  for (let k = 0; k < nPath; k++, i++) {
+    put(sh, i, 0, 0, 0, 0.62, 0.66, 0.05, 0.25, 0.3);
+    sh.aux2[i * 4] = 5; sh.aux2[i * 4 + 1] = (k + rand()) / nPath;
     sh.meta[i * 4 + 3] = rand();
   }
+  // faint depth behind and around the network
+  for (; i < N; i++) {
+    const p = [(rand() - 0.5) * 4.2, G.cells[0][1] * 0 + geo().cy + (rand() - 0.5) * (T ? 3.6 : 2.2), -2.6 + rand() * 3.0];
+    put(sh, i, p[0], p[1], p[2], 0.08 + 0.12 * rand(), 0.2 + 0.6 * rand(), 0.6, 0, 0.1);
+    sh.aux2[i * 4] = 29; sh.meta[i * 4 + 3] = rand();
+  }
   sh.G = G;
-  sh.card = { c: G3.P2 };
-  sh.nodes = nodes;
-  sh.anchors.past = nodes[nNode - 1];
-  // the label goes beside whichever lit point lands in the free part of the screen
-  sh.anchorPick = { past: nodes };
-  sh.labelAlign = { past: 'left' };
-  sh.labelOff = { past: [12, -12] };
-  sh.area = T ? 0.9 : 1.1;
+  // the label goes on a dark cell that is on screen when it appears
+  sh.anchorPick = { past: G.cells.map((c, j) => [j, c]).filter(([j]) => !G.inC[j]).map(([, c]) => [c[0], c[1] + (T ? 0.1 : 0.075), c[2]]) };
+  sh.area = T ? 0.9 : 0.85;
   return sh;
 }
 
-/* ---------------------------------------------------- 05 · 언제든 */
+/* ---------------------------------------------------- 05 · 자리에 없어도 */
 function g5() {
   const g = geo(), T = g.tall;
-  // on a wide screen the dial is drawn at 90% and sits a little higher, so the week fits between it and the caption
-  const ring = T ? { c: [0, g.cy + 0.04, 0], r: 0.4, s: 0.055 } : { c: [0, g.cy + 0.044, 0], r: 0.3, s: 0.055 };
-  const dialR = T ? 0.84 : 0.62, dialK = T ? 1 : 0.9;
-  const seat7 = k => { const a = Math.PI / 2 + k * TAU / 7; return [ring.c[0] + Math.cos(a) * ring.r, ring.c[1] + Math.sin(a) * ring.r, 0]; };
-  const from = T ? [-1.45, g.cy + 0.6, 0.4] : [-2.1, g.cy + 0.5, 0.4];
-  const week = T ? { y: -(dialR + 0.3), sp: 0.12, gap: 0.09, bw: 0.024, bh: 0.11 } : { y: -(dialR + 0.21), sp: 0.075, gap: 0.05, bw: 0.016, bh: 0.06 };
-  return { T, ring, dialR, dialK, dialC: [ring.c[0], ring.c[1], -0.28], seat7, from, week };
+  const C = T ? [0.16, g.cy + 0.12, 0] : [0.32, g.cy - 0.03, 0];
+  const r = T ? 0.4 : 0.36;
+  const seat = k => [C[0] + Math.cos(Math.PI / 2 + k * TAU / 6) * r, C[1] + Math.sin(Math.PI / 2 + k * TAU / 6) * r, 0];
+  const knower = 1;
+  const kp = seat(knower);
+  const asker = T ? [-0.6, g.cy - 0.66, 0] : [-1.0, g.cy - 0.15, 0];
+  const bw = T ? 0.4 : 0.34, bh = T ? 0.17 : 0.15;
+  const stop = [kp[0] - (T ? 0.17 : 0.25), kp[1] + (T ? 0.21 : 0.15), 0.02];
+  const tip = [(kp[0] - stop[0]) * 0.55, (kp[1] - stop[1]) * 0.55];
+  const take = [C[0] + (kp[0] - C[0]) * 0.52, C[1] + (kp[1] - C[1]) * 0.52, 0.02];
+  const moon = T ? { c: [0.6, g.y1 - 0.32, -0.1], R: 0.13 } : { c: [1.12, g.y1 - 0.22, -0.1], R: 0.13 };
+  const dotGap = T ? 0.03 : 0.024, dotR = T ? 0.01 : 0.008;
+  return { T, C, r, seat, knower, kp, asker, bw, bh, stop, tip, take, moon, dotGap, dotR };
 }
-function anytimeShape(rand) {
-  const G = g5(), T = G.T, sh = newShape('anytime');
-  blob(sh, I_AG, PB, rand, G.ring.s, 0.95, 0.6, 1.05, 2);
-  for (let p = 0; p < 6; p++) blob(sh, I_PP + p * PB, PB, rand, G.ring.s, 0.5, 0.12, 0.95, 1, i => { sh.aux[i * 4] = p; });
-  let i = I_RS;
-  const nCir = Math.round(N * 0.02), nBand = Math.round(N * 0.12), nTick = Math.round(N * 0.024), nHand = Math.round(N * 0.03);
-  const nComet = Math.round(N * 0.012), nAns = Math.round(N * 0.035);
-  circleLine(sh, i, nCir, rand, G.ring.c, G.ring.r, 3, 0.12); i += nCir;
-  for (let k = 0; k < nBand; k++, i++) {
-    const h = (k + rand()) / nBand * 24;
-    put(sh, i, 0, 0, (rand() - 0.5) * 0.04, 0.5 + 0.3 * rand(), 0.5, 0.05, 0.1, 0.4);
-    set4(sh.aux, i, h, G.dialR + (rand() - 0.5) * 0.035 + gauss(rand) * 0.006, 0, 0);
-    sh.aux2[i * 4] = 4;
+function moonInto(sh, i0, n, rand, M, role) {
+  clearBox(); worldSpace();
+  sx.fillStyle = '#fff';
+  sx.beginPath(); sx.arc(0, 0, M.R, 0, TAU); sx.fill();
+  sx.globalCompositeOperation = 'destination-out';
+  sx.beginPath(); sx.arc(M.R * 0.42, M.R * 0.28, M.R * 0.9, 0, TAU); sx.fill();
+  sx.globalCompositeOperation = 'source-over';
+  sx.setTransform(1, 0, 0, 1, 0, 0);
+  take(n, rand, (k, x, y, a, e) => {
+    const i = i0 + k;
+    put(sh, i, x, y, (rand() - 0.5) * 0.01, (e ? 0.85 : 0.5) * (0.6 + 0.4 * a), 0.85, 0.1, e ? 0.4 : 0.2, 0.1);
+    sh.aux2[i * 4] = role; sh.meta[i * 4 + 3] = rand();
+  });
+}
+function awayShape(rand) {
+  const G = g5(), T = G.T, sh = newShape('away');
+  agentInto(sh, rand);
+  for (let p = 0; p < 7; p++) personInto(sh, p, rand);
+  let i = I_SC;
+  const nCir = Math.round(N * 0.025);
+  circleLine(sh, i, nCir, rand, G.C, G.r, 2, 0.13); i += nCir;
+  const nMoon = Math.round(N * 0.04);
+  moonInto(sh, i, nMoon, rand, G.moon, 3); i += nMoon;
+  const nB = Math.round(N * 0.045);
+  bubbleInto(sh, i, nB, rand, G.bw, G.bh, G.tip, 4); i += nB;
+  const nDot = Math.round(N * 0.012);
+  for (let k = 0; k < nDot; k++, i++) {
+    const d = k % 3, dd = sdir(rand), rr = G.dotR * Math.sqrt(rand());
+    put(sh, i, (d - 1) * G.dotGap + dd[0] * rr, dd[1] * rr, 0.01, 0.9, 0.6, 0.05, 0.35, 0.1);
+    sh.aux2[i * 4] = 5; sh.aux2[i * 4 + 1] = d; sh.meta[i * 4 + 3] = rand();
   }
-  for (let k = 0; k < nTick; k++, i++) {
-    const hr = k % 24, big = hr % 6 === 0;
-    put(sh, i, 0, 0, 0, big ? 0.8 : 0.5, 0.6, 0, big ? 0.4 : 0.15, 0.2);
-    set4(sh.aux, i, hr, G.dialR + 0.05 + rand() * (big ? 0.07 : 0.035), 0, 0);
-    sh.aux2[i * 4] = 5;
+  const nBeam = Math.round(N * 0.03);
+  for (let k = 0; k < nBeam; k++, i++) {
+    put(sh, i, G.C[0], G.C[1], 0, 0.5, 0.9, 0, 0.35, 0.3);
+    sh.aux2[i * 4] = 6; sh.aux2[i * 4 + 1] = (k + rand()) / nBeam; sh.meta[i * 4 + 3] = rand();
   }
-  for (let k = 0; k < nHand; k++, i++) {
-    const u = Math.pow(rand(), 0.8);
-    put(sh, i, 0, 0, 0, 0.7 + 0.3 * u, 0.8, 0, 0.3 + 0.4 * u, 0.6);
-    set4(sh.aux, i, u, (rand() - 0.5) * 0.006 * (1.3 - u), (rand() - 0.5) * 0.01, 0);
-    sh.aux2[i * 4] = 6;
-  }
-  for (let k = 0; k < nComet; k++, i++) {
-    const r = 0.016 * Math.sqrt(-2 * Math.log(1 - 0.99 * rand())), d = sdir(rand);
-    put(sh, i, d[0] * r, d[1] * r, d[2] * r, 1.0, 0.55, 0, 0.5, 1.0);
-    sh.aux2[i * 4] = 7;
-  }
-  for (let k = 0; k < nAns; k++, i++) {
-    put(sh, i, 0, 0, 0, 0.75, 0.95, 0, 0.55, 0.9);
-    set4(sh.aux, i, 0, 0, 0, rand());
-    sh.aux2[i * 4] = 8;
-  }
-  // the week under the dial: five weekday ticks, a gap, then the weekend pair. No numbers or letters
-  {
-    const W = G.week, nWeek = Math.round(N * 0.02), xs = [];
-    for (let d = 0; d < 7; d++) xs.push(d * W.sp + (d > 4 ? W.gap : 0));
-    const mid = (xs[0] + xs[6]) / 2;
-    for (let k = 0; k < nWeek; k++, i++) {
-      const d = k % 7;
-      put(sh, i, xs[d] - mid + (rand() - 0.5) * W.bw, W.y + (rand() - 0.5) * W.bh, (rand() - 0.5) * 0.01, 0.6, d > 4 ? 0.12 : 0.5, 0, 0.1, 0.2);
-      set4(sh.aux, i, d, 0, 0, 0);
-      sh.aux2[i * 4] = 9;
-    }
-  }
-  // the night sky the nebula turns into
-  const g = geo();
-  for (; i < N; i++) {
-    const z = -0.8 - rand() * 3.0, sc = 1 + (-z) * 0.37;
-    put(sh, i, (rand() - 0.5) * 2.3 * halfW * sc, g.cy + (rand() - 0.5) * 2.1 * halfH * sc, z, 0.14 + 0.32 * Math.pow(rand(), 2), rand() < 0.6 ? 0.2 + 0.2 * rand() : 0.7 + 0.3 * rand(), 0.2, 0.08 * rand(), 0.1);
-    sh.aux2[i * 4] = 0;
-    sh.meta[i * 4 + 3] = rand();
-  }
-  for (let k = I_CD; k < I_RS; k++) {
-    const z = -0.8 - rand() * 3.0, sc = 1 + (-z) * 0.37;
-    put(sh, k, (rand() - 0.5) * 2.3 * halfW * sc, g.cy + (rand() - 0.5) * 2.1 * halfH * sc, z, 0.14 + 0.32 * Math.pow(rand(), 2), rand() < 0.6 ? 0.2 + 0.2 * rand() : 0.7 + 0.3 * rand(), 0.2, 0.08 * rand(), 0.1);
-    sh.aux2[k * 4] = 0;
-    sh.meta[k * 4 + 3] = rand();
-  }
+  dust(sh, i, N - i, rand, 29, 0.7);
   sh.G = G;
-  sh.area = T ? 0.42 : 0.5;
+  sh.area = T ? 0.42 : 0.4;
   return sh;
 }
 
-/* ---------------------------------------------------- 06 · 하루 30분 */
-function g6() {
-  const g = geo(), T = g.tall;
-  return {
-    T, y: T ? g.cy - 0.22 : g.cy - 0.17, L: halfW + 0.35, amp: T ? 0.1 : 0.085, tube: T ? 0.04 : 0.042,
-    text: T ? { cy: g.cy + 0.12, maxW: 1.64, lineH: 0.6 } : { cy: g.cy + 0.08, maxW: 1.8, lineH: 0.64 },
-    post: T ? [0, g.cy + 0.48, 0.06] : [-0.05, g.cy + 0.3, 0.06],
-    side: T ? [0.66, g.cy + 0.62, 0.06] : [1.12, g.cy + 0.5, 0.06]
+// hands out particle indices from [start, end) ranges in order; -1 when they run out
+function cursor(ranges) {
+  let r = 0, i = ranges.length ? ranges[0][0] : 0;
+  const next = () => {
+    while (r < ranges.length && i >= ranges[r][1]) { r++; if (r < ranges.length) i = ranges[r][0]; }
+    return r < ranges.length ? i++ : -1;
   };
+  next.left = () => { let n = 0; for (let k = r; k < ranges.length; k++) n += ranges[k][1] - (k === r ? Math.max(i, ranges[k][0]) : ranges[k][0]); return n; };
+  return next;
 }
-function ribbonShape(rand) {
-  const G = g6(), T = G.T, sh = newShape('ribbon');
-  blob(sh, I_AG, PB, rand, T ? 0.05 : 0.055, 0.95, 0.6, 1.05, 1);
-  clearBox();
-  drawText(fxWord('fx.30') || '30분', { cy: G.text.cy, maxW: G.text.maxW, lineH: G.text.lineH });
-  const S = sample(N_RB, rand);
-  const b = bounds(S.x, S.y, N_RB);
-  for (let k = 0; k < N_RB; k++) {
-    const i = I_RB + k, e = S.edge[k];
-    put(sh, i, S.x[k], S.y[k], (rand() - 0.5) * 0.03, (0.62 + 0.38 * S.a[k]) * (e ? 1.15 : 1), 0.56, 0, e ? 0.45 : 0.12, 0.5);
-    // flow phase, offset across the tube, twist; the winding runs along the ribbon
-    const ph = (k + rand()) / N_RB;
-    const off = Math.sqrt(rand()) * (rand() < 0.5 ? -1 : 1);
-    set4(sh.aux, i, ph, off, rand() * TAU, 0);
-    set4(sh.aux2, i, 0, 0.15 * ((S.x[k] - b.x0) / (b.x1 - b.x0)) + 0.85 * ((ph + 0.35) % 1), 0, 0);
-    sh.meta[i * 4] = e;
+// the crescent keeps the same particles from scene 5 to scene 6
+const MOON0 = () => I_SC + Math.round(N * 0.025), MOONN = () => Math.round(N * 0.04);
+const dirDeg = a => [Math.cos(a * Math.PI / 180), Math.sin(a * Math.PI / 180), 0];
+
+/* ---------------------------------------------------- 06 · 아낀 30분 */
+function g6() {
+  const g = geo(), T = g.tall, G5 = g5();
+  let C, R, txt, P, rr, ang;
+  if (T) {
+    R = Math.min(0.44, g.h * 0.17);
+    C = [0, g.y1 - R - 0.12, 0];
+    txt = { c: [0, C[1] - R - 0.3, 0], w: 1.0, h: 0.26 };
+    P = [-0.2, g.y0 + 0.36, 0]; rr = 0.4; ang = [128, 96, 64];
+  } else {
+    R = Math.min(0.42, g.h * 0.33);
+    C = [0.3, g.cy + 0.02, 0];
+    txt = { c: [1.13, g.cy + 0.02, 0], w: 0.56, h: 0.26 };
+    P = [-0.85, g.cy - 0.32, 0]; rr = 0.42; ang = [118, 92, 62];
+  }
+  const I = ang.map(a => v3.add(P, v3.mul(dirDeg(a), rr)));
+  const S = ang.map(a => v3.add(P, v3.mul(dirDeg(a), T ? 0.7 : 0.8)));
+  const A0 = v3.add(P, v3.mul(dirDeg(ang[1] + 6), rr * 0.82));
+  const secC = [0, 1, 2].map(k => { const a = (60 - 60 * k) * Math.PI / 180; return [C[0] + Math.cos(a) * R * 0.52, C[1] + Math.sin(a) * R * 0.52, 0.01]; });
+  const bw = T ? 0.36 : 0.3, bh = T ? 0.16 : 0.13;
+  return { T, C, R, txt, P, rr, ang, I, S, A0, secC, bw, bh, moon: G5.moon };
+}
+function clockShape(rand) {
+  const G = g6(), T = G.T, sh = newShape('clock');
+  agentInto(sh, rand);
+  personInto(sh, 0, rand);
+  const m0 = MOON0(), mn = MOONN();
+  moonInto(sh, m0, mn, rand, G.moon, 2);
+  const next = cursor([[2 * PB, m0], [m0 + mn, N]]);
+  // the six empty seats of scene 5 become the clock: rim and twelve ticks first, then the three ten-minute sectors
+  const nRim = Math.round(N * 0.05), nTick = Math.round(N * 0.024);
+  for (let k = 0; k < nRim; k++) {
+    const i = next(), a = rand() * TAU, r = G.R * (1 + (rand() - 0.5) * 0.014);
+    put(sh, i, G.C[0] + Math.cos(a) * r, G.C[1] + Math.sin(a) * r, (rand() - 0.5) * 0.01, 0.5, 0.86, 0.05, 0.16, 0.15);
+    set4(sh.aux2, i, 3, ((Math.PI / 2 - a) % TAU + TAU) % TAU / TAU, 0, 0);
     sh.meta[i * 4 + 3] = rand();
   }
-  // incoming questions, three of them
-  const nQ = Math.round(N_CD * 0.14);
-  let i = I_CD;
-  for (let q = 0; q < 3; q++) {
-    for (let m = 0; m < nQ; m++, i++) {
-      const r = 0.016 * Math.sqrt(-2 * Math.log(1 - 0.99 * rand())), d = sdir(rand);
-      put(sh, i, d[0] * r, d[1] * r, d[2] * r, 1.0, 0.55, 0, 0.45, 1.0);
-      set4(sh.aux, i, q, 0, 0, 0);
-      sh.aux2[i * 4] = 2;
+  for (let k = 0; k < nTick; k++) {
+    const i = next(), m = k % 12, a = Math.PI / 2 - m * TAU / 12, major = m % 3 === 0;
+    const r = G.R * mix(major ? 0.78 : 0.86, 0.95, rand()), wj = (rand() - 0.5) * 0.008;
+    put(sh, i, G.C[0] + Math.cos(a) * r - Math.sin(a) * wj, G.C[1] + Math.sin(a) * r + Math.cos(a) * wj, 0, major ? 0.9 : 0.62, 0.9, 0.02, 0.3, 0.15);
+    set4(sh.aux2, i, 3, m / 12, 0, 0);
+    sh.meta[i * 4 + 3] = rand();
+  }
+  const nSec = Math.round(N * 0.042);
+  for (let s = 0; s < 3; s++) {
+    for (let k = 0; k < nSec; k++) {
+      const i = next(), rim = rand() < 0.22, u = rand(), a = (90 - 60 * s - 60 * u) * Math.PI / 180;
+      const r = rim ? G.R * 0.9 * (1 - 0.03 * rand()) : G.R * 0.9 * Math.sqrt(rand());
+      put(sh, i, G.C[0] + Math.cos(a) * r, G.C[1] + Math.sin(a) * r, (rand() - 0.5) * 0.01, rim ? 0.8 : 0.4 + 0.22 * rand(), 0.6, 0.25, rim ? 0.2 : 0.06, 0.15);
+      set4(sh.aux2, i, 4, s, u, 0);
+      sh.meta[i * 4 + 3] = rand();
     }
   }
-  dust(sh, i, I_RB - i, rand, 3, 0.7);
-  dust(sh, I_PP, I_CD - I_PP, rand, 3, 0.7);
-  dust(sh, I_RS, N - I_RS, rand, 3, 0.7);
+  // three questions; the tail points at the person they are meant for
+  const nB = Math.round(N * 0.03);
+  for (let b = 0; b < 3; b++) {
+    const d = v3.norm(v3.sub(G.P, G.I[b]));
+    const tip = [d[0] * G.bh * 1.25, Math.min(d[1] * G.bh * 1.25, -G.bh * 0.85)];
+    const ids = [];
+    for (let k = 0; k < nB; k++) ids.push(next());
+    const P = bubblePts(nB, rand, G.bw, G.bh, tip);
+    ids.forEach((i, k) => {
+      const q = P[k];
+      put(sh, i, q[0], q[1], (rand() - 0.5) * 0.008, q[2], 0.5, 0, q[4] ? 0.1 : 0.05 + 0.1 * q[3], 0.3);
+      set4(sh.aux2, i, 5, b, 0, 0);
+      sh.meta[i * 4 + 3] = rand();
+    });
+  }
+  // "30분" in particle letters, gathering out of a loose cloud where it will stand
+  {
+    const nT = Math.round(N * 0.07);
+    clearBox();
+    drawText(fxWord('fx.30') || '30분', { cx: G.txt.c[0], cy: G.txt.c[1], maxW: G.txt.w, lineH: G.txt.h });
+    const S = sample(nT, rand), b = bounds(S.x, S.y, nT);
+    for (let k = 0; k < nT; k++) {
+      const i = next(), e = S.edge[k], dd = sdir(rand), rr = 0.08 + 0.22 * rand();
+      put(sh, i, S.x[k], S.y[k], (rand() - 0.5) * 0.02, (0.6 + 0.4 * S.a[k]) * (e ? 1.12 : 1), 0.66, 0, e ? 0.4 : 0.14, 0.3);
+      set4(sh.aux, i, S.x[k] + dd[0] * rr, S.y[k] + dd[1] * rr, dd[2] * rr, 0);
+      sh.aux2[i * 4] = 6;
+      sh.meta[i * 4 + 3] = (S.x[k] - b.x0) / Math.max(1e-3, b.x1 - b.x0);
+    }
+  }
+  const rest = [];
+  for (let i = next(); i >= 0; i = next()) rest.push(i);
+  rest.forEach((i, k) => { dust(sh, i, 1, rand, 29, 0.6); });
   sh.G = G;
-  sh.text = b;
-  sh.area = S.area * 1.15 + 0.12;
+  sh.fixEnd = 2 * PB;
+  sh.area = T ? 0.4 : 0.42;
   return sh;
 }
 
 /* ---------------------------------------------------- 07 · 리뷰 */
+const APPROVED = [0, 2, 3];
 function g7() {
   const g = geo(), T = g.tall;
+  let page, frag, ap, rows;
   if (T) {
-    const top = g.y1 - 0.04;
-    return {
-      T, page: { x0: -0.84, x1: 0.84, y1: top, pitch: 0.075, n: 7, hi: 3 },
-      frag: [[-0.42, g.cy + 0.5], [0.42, g.cy + 0.42], [-0.42, g.cy + 0.22], [0.42, g.cy + 0.14], [-0.42, g.cy - 0.06], [0.42, g.cy - 0.14]],
-      fw: 0.62, fh: 0.12,
-      list: { x: 0, y0: g.y0 + 0.12, pitch: 0.14, w: 1.2 }, from: [1.4, g.cy + 0.4, 0]
-    };
+    page = { x0: -0.74, x1: 0.2, top: g.y1 - 0.4, n: 8, pitch: 0.1, bh: 0.022 };
+    frag = { x: 0.6, w: 0.54, h: 0.14, lines: [0, 2, 3, 5, 7] };
+    const pb = page.top - page.n * page.pitch;
+    ap = [0, pb - 0.2, 0];
+    rows = { x: 0.06, w: 1.36, h: 0.11, pitch: 0.17, y0: pb - 0.48 };
+  } else {
+    page = { x0: -1.24, x1: -0.16, top: g.y1 - 0.06, n: 9, pitch: Math.min(0.112, (g.h - 0.16) / 9), bh: 0.019 };
+    frag = { x: 0.2, w: 0.46, h: 0.125, lines: [0, 2, 4, 5, 7] };
+    ap = [0.66, g.cy + 0.06, 0];
+    rows = { x: 1.1, w: 0.6, h: 0.1, pitch: 0.16, y0: g.cy + 0.22 };
   }
-  return {
-    T, page: { x0: -g.w / 2 + 0.04, x1: -0.42, y1: g.cy + 0.5, pitch: 0.11, n: 9, hi: 4 },
-    frag: [[0.08, g.cy + 0.44], [0.46, g.cy + 0.27], [0.06, g.cy + 0.1], [0.46, g.cy - 0.07], [0.08, g.cy - 0.24], [0.46, g.cy - 0.41]],
-    fw: 0.34, fh: 0.11,
-    list: { x: 0.74, y0: g.cy - 0.3, pitch: 0.16, w: 0.56 }, from: [2.3, g.cy + 0.1, 0]
-  };
+  const lineY = k => page.top - (k + 0.5) * page.pitch;
+  const fragC = frag.lines.map(k => [frag.x, lineY(k), 0.02]);
+  const rowC = [0, 1, 2].map(k => [rows.x, rows.y0 - k * rows.pitch, 0.02]);
+  // desktop reads the rules from the bottom up so the agent arrives under them without crossing the approver
+  return { T, page, frag, ap, rows, lineY, fragC, rowC, readUp: !T };
 }
-const APPROVED = [1, 2, 4];
+const S7 = { w0: 1.0, w1: 2.1, line: 0.36, frag: 1.95, fragGap: 0.12, fragDur: 0.75, ap: 2.35, appr: [2.75, 3.15, 3.55], apDur: 0.65, reject: 3.85, go: 3.75, read0: 4.55, readDur: 1.0, dim: 5.3 };
+// when each line of the page is written: [start, duration]. The agent moves down the left margin and each line runs out of it to the right
+function writeTimes(G) {
+  const n = G.page.n, span = S7.w1 - S7.w0;
+  return Array.from({ length: n }, (_, k) => [S7.w0 + span * k / n, S7.line]);
+}
+// the agent reads the rules in one pass down the column of checkboxes; when it passes row k
+function rowPass(G, k) {
+  const RW = G.rows, top = G.rowC[0][1] + RW.h * 0.5 + 0.1, bot = G.rowC[2][1] - RW.h * 0.5 - 0.1;
+  const u = (top - G.rowC[k][1]) / (top - bot);
+  return S7.read0 + S7.readDur * (G.readUp ? 1 - u : u);
+}
+// a review comment: an outlined slip with a bar down its left side and two lines of text; a rule row: a checkbox, its check and one line
+function drawComment(w, h, part) {
+  worldSpace();
+  const x = -w / 2, y = -h / 2;
+  sx.strokeStyle = '#fff'; sx.fillStyle = '#fff';
+  if (part === 'frame') {
+    sx.lineWidth = layout === 'tall' ? 0.009 : 0.0065;
+    roundRect(x, y, w, h, Math.min(0.02, h * 0.18)); sx.stroke();
+    sx.fillRect(x + w * 0.05, y + h * 0.2, Math.max(0.008, w * 0.018), h * 0.6);
+  } else {
+    const bh = h * 0.13;
+    roundRect(x + w * 0.13, h * 0.1, w * 0.72, bh, bh / 2); sx.fill();
+    roundRect(x + w * 0.13, -h * 0.24, w * 0.48, bh, bh / 2); sx.fill();
+  }
+  sx.setTransform(1, 0, 0, 1, 0, 0);
+}
+function rowParts(w, h) {
+  const cb = { x: -w / 2 + h * 0.55, s: h * 0.5 };
+  const check = [[cb.x - cb.s * 0.32, cb.s * 0.02], [cb.x - cb.s * 0.06, -cb.s * 0.28], [cb.x + cb.s * 0.38, cb.s * 0.36]];
+  return { cb, check, tx: cb.x + cb.s * 0.5 + h * 0.35 };
+}
+function drawRow(w, h, part) {
+  const P = rowParts(w, h);
+  worldSpace();
+  sx.strokeStyle = '#fff'; sx.fillStyle = '#fff';
+  if (part === 'frame') {
+    sx.lineWidth = layout === 'tall' ? 0.009 : 0.0065;
+    roundRect(-w / 2, -h / 2, w, h, Math.min(0.02, h * 0.2)); sx.stroke();
+    sx.strokeRect(P.cb.x - P.cb.s / 2, -P.cb.s / 2, P.cb.s, P.cb.s);
+  } else {
+    const bh = h * 0.16;
+    roundRect(P.tx, -bh / 2, w / 2 - P.tx - h * 0.3, bh, bh / 2); sx.fill();
+  }
+  sx.setTransform(1, 0, 0, 1, 0, 0);
+  return P;
+}
 function reviewShape(rand) {
   const G = g7(), T = G.T, sh = newShape('review');
-  const pg = G.page;
-  // code tokens on each line of the page
-  const lines = [];
-  for (let j = 0; j < pg.n; j++) {
-    const y = pg.y1 - (j + 0.5) * pg.pitch, ind = [0, 1, 1, 2, 2, 1, 2, 1, 0][j % 9] * 0.05;
-    const toks = [];
-    let x = pg.x0 + ind;
-    const maxX = pg.x1 - (j === pg.hi ? 0 : rand() * 0.3);
-    while (x < maxX - 0.04) { const tw = Math.min(maxX - x, 0.04 + rand() * 0.16); toks.push([x, tw]); x += tw + 0.018; }
-    lines.push({ y, toks });
-  }
-  const drawLine = L => { const bh = T ? 0.02 : 0.024; L.toks.forEach(t => { roundRect(t[0], L.y - bh / 2, t[1], bh, bh / 2); sx.fill(); }); };
-  // the ribbon becomes the highlighted line
-  clearBox(); worldSpace(); sx.fillStyle = '#fff'; drawLine(lines[pg.hi]); sx.setTransform(1, 0, 0, 1, 0, 0);
-  take(N_RB, rand, (k, px, py, a) => {
-    const i = I_RB + k;
-    put(sh, i, px, py, (rand() - 0.5) * 0.01, 0.4 + 0.2 * a, 0.62, 0, 0.3, 0.3);
-    sh.aux2[i * 4] = 0;
-  });
-  // the rest of the page, which appears around it
-  const nPage = Math.round(N * 0.1);
-  let i = I_RS;
-  clearBox(); worldSpace(); sx.fillStyle = '#fff'; lines.forEach((L, j) => { if (j !== pg.hi) drawLine(L); }); sx.setTransform(1, 0, 0, 1, 0, 0);
-  take(nPage, rand, (k, px, py, a) => {
-    put(sh, i, px, py, (rand() - 0.5) * 0.01, 0.55 + 0.25 * a, 0.35, 0, 0.06, 0.2);
-    set4(sh.aux2, i, 1, Math.abs(py - lines[pg.hi].y) / (pg.pitch * pg.n * 0.5), 0, 0);
-    i++;
-  });
-  // review fragments: doc lines (cream) and comments (clay); each has a row shape it takes when approved
-  const nFr = Math.round(N * 0.024), rowW = G.list.w, rowH = 0.07;
-  const drawFrag = f => {
-    const doc = f % 2 === 0, w = G.fw, h = G.fh;
-    worldSpace();
-    sx.fillStyle = 'rgba(255,255,255,0.1)'; roundRect(-w / 2, -h / 2, w, h, 0.02); sx.fill();
-    sx.strokeStyle = '#fff'; sx.lineWidth = 0.006; roundRect(-w / 2, -h / 2, w, h, 0.02); sx.stroke();
-    sx.fillStyle = 'rgba(255,255,255,0.75)';
-    if (doc) {
-      roundRect(-w / 2 + 0.03, h * 0.12, w * 0.7, h * 0.14, h * 0.07); sx.fill();
-      roundRect(-w / 2 + 0.03, -h * 0.22, w * 0.5, h * 0.14, h * 0.07); sx.fill();
-    } else {
-      sx.beginPath(); sx.arc(-w / 2 + h * 0.36, 0, h * 0.18, 0, TAU); sx.fill();
-      roundRect(-w / 2 + h * 0.7, h * 0.08, w * 0.58, h * 0.14, h * 0.07); sx.fill();
-      roundRect(-w / 2 + h * 0.7, -h * 0.22, w * 0.4, h * 0.14, h * 0.07); sx.fill();
-    }
-    sx.setTransform(1, 0, 0, 1, 0, 0);
-  };
-  const drawRow = () => {
-    worldSpace();
-    sx.fillStyle = '#fff';
-    roundRect(-rowW / 2 + 0.085, -rowH * 0.12, rowW * 0.66, rowH * 0.24, rowH * 0.12); sx.fill();
-    sx.strokeStyle = '#fff'; sx.lineWidth = 0.006;
-    sx.strokeRect(-rowW / 2, -rowH * 0.32, rowH * 0.64, rowH * 0.64);
-    sx.setTransform(1, 0, 0, 1, 0, 0);
-  };
-  clearBox(); drawRow();
-  const rowS = sample(nFr, rand);
-  for (let f = 0; f < 6; f++) {
-    clearBox(); drawFrag(f);
-    const fs = sample(nFr, rand);
-    for (let k = 0; k < nFr; k++, i++) {
-      const doc = f % 2 === 0;
-      put(sh, i, fs.x[k], fs.y[k], (rand() - 0.5) * 0.01, 0.6 + 0.3 * fs.a[k], doc ? 0.78 : 0.2, 0, fs.edge[k] ? (doc ? 0.3 : 0.12) : 0.05, 0.45);
-      set4(sh.aux, i, 0, rowS.x[k], rowS.y[k], 0);
-      set4(sh.aux2, i, 2, 0, f, 0);
+  agentInto(sh, rand);
+  personInto(sh, 0, rand);
+  const next = cursor([[2 * PB, N]]);
+  // the page the agent writes: a faint outline, then lines of code tokens, each written left to right
+  const pg = G.page, wt = writeTimes(G), r2 = rng(707);
+  {
+    const nO = Math.round(N * 0.03);
+    const px0 = pg.x0 - 0.06, px1 = pg.x1 + 0.06, py1 = pg.top + 0.03, py0 = pg.top - pg.n * pg.pitch - 0.03;
+    const per = 2 * ((px1 - px0) + (py1 - py0));
+    for (let k = 0; k < nO; k++) {
+      const i = next();
+      let d = rand() * per, x, y;
+      if (d < px1 - px0) { x = px0 + d; y = py1; }
+      else if ((d -= px1 - px0) < py1 - py0) { x = px1; y = py1 - d; }
+      else if ((d -= py1 - py0) < px1 - px0) { x = px1 - d; y = py0; }
+      else { d -= px1 - px0; x = px0; y = py0 + d; }
+      put(sh, i, x, y, -0.01, 0.22, 0.4, 0.3, 0.03, 0.1);
+      set4(sh.aux2, i, 2, 0.15 + 0.3 * rand(), 0, 0);
+      sh.meta[i * 4 + 3] = rand();
     }
   }
-  // check marks drawn on the approved rows
-  const nCk = Math.round(N * 0.004), cbx = -rowW / 2 + rowH * 0.32;
-  APPROVED.forEach(f => {
-    alongPoly([[cbx - rowH * 0.2, 0], [cbx - rowH * 0.04, -rowH * 0.18], [cbx + rowH * 0.24, rowH * 0.22]], nCk, rand, 0.005).forEach(q => {
-      put(sh, i, q[0], q[1], 0.01, 1.0, 0.98, 0, 0.75, 0.3);
-      set4(sh.aux2, i, 3, q[2], f, 0);
-      i++;
-    });
+  const toks = [];
+  let lv = 0;
+  for (let k = 0; k < pg.n; k++) {
+    lv = k === 0 ? 0 : clamp(lv + (r2() < 0.35 ? 1 : r2() < 0.6 ? -1 : 0), 0, 2);
+    let x = pg.x0 + lv * 0.07;
+    const end = pg.x1 - (0.05 + 0.3 * r2()) * (pg.x1 - pg.x0) * 0.6;
+    while (x < end) {
+      const w = Math.min(end - x, 0.04 + 0.13 * r2());
+      if (w > 0.02) toks.push([k, x, w, r2() < 0.3]);
+      x += w + 0.028;
+    }
+  }
+  const tokLen = toks.reduce((a, t) => a + t[2], 0);
+  const nTok = Math.round(N * 0.17);
+  let made = 0;
+  toks.forEach((t, ti) => {
+    const [k, x, w, hi] = t, y = G.lineY(k);
+    const cnt = ti === toks.length - 1 ? nTok - made : Math.round(nTok * w / tokLen);
+    made += cnt;
+    for (let m = 0; m < cnt; m++) {
+      const i = next(), px = x + rand() * w, py = y + (rand() - 0.5) * pg.bh;
+      put(sh, i, px, py, (rand() - 0.5) * 0.01, hi ? 0.75 : 0.55, hi ? 0.45 : 0.22, 0.05, hi ? 0.14 : 0.06, 0.2);
+      set4(sh.aux2, i, 2, wt[k][0] + wt[k][1] * (px - pg.x0) / (pg.x1 - pg.x0), 1, 0);
+      sh.meta[i * 4 + 3] = rand();
+    }
   });
-  // the person's approval: one amber light, from the people range
-  blob(sh, I_PP, PB, rand, T ? 0.04 : 0.045, 0.5, 0.3, 1.1, 4);
-  dust(sh, I_PP + PB, I_RB - I_PP - PB, rand, 5, 0.6);
-  dust(sh, I_AG, PB, rand, 5, 0.6);
-  dust(sh, i, N - i, rand, 5, 0.6);
+  // five review comments; approved ones turn into checked rule rows
+  const nF = Math.round(N * 0.032), F = G.frag, RW = G.rows;
+  for (let f = 0; f < 5; f++) {
+    const nFr = Math.round(nF * 0.56), nCk = Math.round(nF * 0.1), nTx = nF - nFr - nCk;
+    clearBox(); drawComment(F.w, F.h, 'frame'); const cf = sample(nFr, rand);
+    clearBox(); drawComment(F.w, F.h, 'text'); const ct = sample(nTx, rand);
+    clearBox(); const RP = drawRow(RW.w, RW.h, 'frame'); const rf = sample(nFr, rand);
+    clearBox(); drawRow(RW.w, RW.h, 'text'); const rt = sample(nTx, rand);
+    const ck = alongPoly(RP.check, nCk, rand, 0.005);
+    for (let k = 0; k < nFr; k++) {
+      const i = next(), e = rf.edge[k] || cf.edge[k];
+      put(sh, i, rf.x[k], rf.y[k], 0, e ? 0.9 : 0.62, 0.62, 0.05, e ? 0.24 : 0.1, 0.2);
+      set4(sh.aux, i, cf.x[k], cf.y[k], 0, 0);
+      set4(sh.aux2, i, 3, f, 0, 0);
+      sh.meta[i * 4 + 3] = rand();
+    }
+    for (let k = 0; k < nTx; k++) {
+      const i = next();
+      put(sh, i, rt.x[k], rt.y[k], 0, 0.62 + 0.25 * rt.a[k], 0.7, 0.05, 0.12, 0.2);
+      set4(sh.aux, i, ct.x[k], ct.y[k], 0, 0);
+      set4(sh.aux2, i, 3, f, 1, 0);
+      sh.meta[i * 4 + 3] = rand();
+    }
+    for (let k = 0; k < nCk; k++) {
+      const i = next(), p = ck[k];
+      put(sh, i, p[0], p[1], 0.004, 1.0, 0.55, 0, 0.35, 0.2);
+      set4(sh.aux, i, p[0], p[1], 0, 0);
+      set4(sh.aux2, i, 3, f, 2, p[2]);
+      sh.meta[i * 4 + 3] = rand();
+    }
+  }
+  for (let i = next(); i >= 0; i = next()) dust(sh, i, 1, rand, 29, 0.7);
   sh.G = G;
-  sh.lines = lines;
-  sh.rowS = { w: rowW, h: rowH };
-  const L = G.list;
-  sh.anchors.rules = [L.x - rowW / 2, L.y0 + 2 * L.pitch + rowH * 0.5 + (T ? 0.07 : 0.06), 0];
-  sh.anchors.review = T ? [-0.84, G.frag[0][1] + 0.12, 0] : [G.frag[0][0] - G.fw / 2, G.frag[0][1] + 0.12, 0];
-  sh.labelAlign = { rules: 'left', review: 'left' };
-  sh.area = T ? 0.44 : 0.5;
+  sh.fixEnd = 2 * PB;
+  const f0 = G.fragC[0];
+  sh.anchors.review = [f0[0] + F.w / 2 + 0.03, f0[1] + F.h * 0.55, 0];
+  sh.anchors.ok = T ? [G.ap[0] + 0.12, G.ap[1], 0] : [G.ap[0], G.ap[1] - 0.15, 0];
+  sh.anchors.rules = T ? [RW.x - RW.w / 2, G.rowC[0][1] + RW.h / 2 + 0.07, 0] : [RW.x + RW.w / 2, G.rowC[0][1] + RW.h / 2 + 0.07, 0];
+  sh.labelAlign = T ? { review: 'right', ok: 'left', rules: 'left' } : { review: 'right', rules: 'right' };
+  sh.area = T ? 0.5 : 0.5;
   return sh;
 }
 
-/* ---------------------------------------------------- 08 · 아홉 칸 */
+/* ---------------------------------------------------- 08 · 폴더 */
+const CROSS = 7, INTO = 8;                 // the hero works in the front middle folder and crosses into the front right one
 function g8() {
   const g = geo(), T = g.tall;
-  const s = T ? 0.31 : 0.3, gap = T ? 0.085 : 0.08;
-  const H = [0.34, 0.52, 0.3, 0.44, 0.66, 0.4, 0.28, 0.48, 0.36];
+  const w = T ? 0.3 : 0.34, d = T ? 0.24 : 0.26, gx = T ? 0.16 : 0.26, gz = T ? 0.3 : 0.32;
+  const ground = T ? g.cy - 0.42 : g.cy - 0.3;
   const boxes = [];
   for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) {
-    const k = r * 3 + c;
-    boxes.push({ x: (c - 1) * (s + gap), z: (r - 1) * (s + gap), w: s, d: s, h: H[k] * (T ? 1.18 : 1) });
+    const f = r * 3 + c;
+    const hb = (T ? 0.33 : 0.35) + 0.025 * [0, 1, -1, 1, -1, 0, -1, 0, 1][f];
+    boxes.push({ f, r, c, x: (c - 1) * (w + gx), z: (r - 1) * (d + gz), w, d, hb, hf: hb * 0.48 });
   }
-  return { T, s, gap, boxes, ground: T ? g.cy - 0.32 : g.cy - 0.3 };
+  const B = boxes[CROSS];
+  const wallX = B.x + B.w / 2;
+  const lump = [0, ground + 0.32, 0.05], lumpR = T ? 0.42 : 0.48;
+  return { T, boxes, ground, w, d, wallX, lump, lumpR };
 }
-// the comets: which box each works in; comet 5 works in a front box and crosses into the box on its right
-const CROSS = 7, INTO = 8;
-const COMET_BOX = [0, 2, 3, 5, 4, CROSS];
-function cityShape(rand) {
-  const G = g8(), T = G.T, sh = newShape('city');
-  const nEdge = Math.round(N * 0.42), nFace = Math.round(N * 0.2), nBase = Math.round(N * 0.08);
-  const nCom = Math.round(N * 0.008), nRip = Math.round(N * (T ? 0.05 : 0.036));
-  const y0 = G.ground;
-  const cross = CROSS, into = INTO;
-  const edgesOf = B => {
-    const x0 = B.x - B.w / 2, x1 = B.x + B.w / 2, z0 = B.z - B.d / 2, z1 = B.z + B.d / 2, y1 = y0 + B.h;
-    const P = [[x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1], [x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1]];
-    return [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]].map(e => [P[e[0]], P[e[1]]]);
+// a point on a folder in its own frame: x across, y up from the ground, z from back (-d/2) to front (+d/2)
+function folderEdges(B) {
+  const x0 = -B.w / 2, x1 = B.w / 2, zb = -B.d / 2, zf = B.d / 2, hb = B.hb, hf = B.hf;
+  const tabW = B.w * 0.4, tabH = 0.05;
+  return [
+    // back panel and its tab
+    [[x0, 0, zb], [x1, 0, zb]], [[x1, 0, zb], [x1, hb, zb]], [[x0, 0, zb], [x0, hb + tabH, zb]],
+    [[x0, hb + tabH, zb], [x0 + tabW - 0.03, hb + tabH, zb]], [[x0 + tabW - 0.03, hb + tabH, zb], [x0 + tabW, hb, zb]], [[x0 + tabW, hb, zb], [x1, hb, zb]],
+    // front panel
+    [[x0, 0, zf], [x1, 0, zf]], [[x0, 0, zf], [x0, hf, zf]], [[x1, 0, zf], [x1, hf, zf]], [[x0, hf, zf], [x1, hf, zf]],
+    // sides: bottom and the sloping top edge
+    [[x0, 0, zb], [x0, 0, zf]], [[x1, 0, zb], [x1, 0, zf]], [[x0, hb, zb], [x0, hf, zf]], [[x1, hb, zb], [x1, hf, zf]]
+  ];
+}
+function scribble3(n, rand, c, R) {
+  const curves = [];
+  for (let k = 0; k < 14; k++) curves.push([1 + rand() * 2.4, rand() * TAU, 1 + rand() * 2.0, rand() * TAU, 1 + rand() * 2.6, rand() * TAU, 0.55 + 0.45 * rand()]);
+  const out = [];
+  for (let m = 0; m < n; m++) {
+    const C = curves[(rand() * curves.length) | 0], s = rand() * TAU, r = R * C[6];
+    out.push([c[0] + Math.sin(C[0] * s + C[1]) * r, c[1] + Math.sin(C[2] * s + C[3]) * r * 0.55, c[2] + Math.sin(C[4] * s + C[5]) * r * 0.8]);
+  }
+  return out;
+}
+function folderShape(rand) {
+  const G = g8(), T = G.T, sh = newShape('folders');
+  agentInto(sh, rand);
+  const next = cursor([[PB, N]]);
+  const nF = Math.round(N * 0.068);
+  const lumpAll = scribble3(nF * 9 + Math.round(N * 0.05), rand, G.lump, G.lumpR);
+  let li = 0;
+  const writeF = (i, B, p, b, temp, soft, white, part, order) => {
+    put(sh, i, B.x + p[0], G.ground + p[1], B.z + p[2], b, temp, soft, white, 0.2);
+    const L = lumpAll[li++ % lumpAll.length];
+    set4(sh.meta, i, L[0], L[1], L[2], order);
+    set4(sh.aux, i, B.f, 0, part, 0);
   };
-  // the wall between box 4 and box 5 flashes: it is x = right side of box 4
-  const wallX = G.boxes[cross].x + G.boxes[cross].w / 2;
-  const onWall = (x, k) => (k === cross && Math.abs(x - wallX) < 0.004) || (k === into && Math.abs(x - (G.boxes[into].x - G.boxes[into].w / 2)) < 0.004) ? 1 : 0;
-  const lens = [];
-  G.boxes.forEach((B, k) => edgesOf(B).forEach(e => lens.push([e, k, Math.hypot(e[1][0] - e[0][0], e[1][1] - e[0][1], e[1][2] - e[0][2])])));
-  const totL = lens.reduce((a, b) => a + b[2], 0);
-  let i = 0;
-  for (let m = 0; m < nEdge; m++, i++) {
-    let r = rand() * totL, q = 0;
-    while (q < lens.length - 1 && r > lens[q][2]) { r -= lens[q][2]; q++; }
-    const [e, k] = lens[q], u = rand();
-    const x = e[0][0] + (e[1][0] - e[0][0]) * u, y = e[0][1] + (e[1][1] - e[0][1]) * u, z = e[0][2] + (e[1][2] - e[0][2]) * u;
-    put(sh, i, x + (rand() - 0.5) * 0.004, y + (rand() - 0.5) * 0.004, z + (rand() - 0.5) * 0.004, 0.8, 0.56 + 0.26 * (k % 3) / 2, 0, 0.24, 0.2);
-    set4(sh.aux, i, k, onWall(e[0][0], k) && onWall(e[1][0], k) ? 1 : 0, 0, 0);
-    sh.aux2[i * 4] = 0;
-    sh.meta[i * 4 + 3] = (k / 9) * 0.85 + rand() * 0.1;
-  }
-  // faint faces; the top face a little brighter
-  const faceArea = G.boxes.map(B => 2 * (B.w + B.d) * B.h + B.w * B.d);
-  const totA = faceArea.reduce((a, b) => a + b, 0);
-  for (let m = 0; m < nFace; m++, i++) {
-    let r = rand() * totA, k = 0;
-    while (k < 8 && r > faceArea[k]) { r -= faceArea[k]; k++; }
-    const B = G.boxes[k], side = rand() * (2 * (B.w + B.d) * B.h + B.w * B.d);
-    let x, y, z, wall = 0;
-    if (side < B.w * B.d) { x = B.x + (rand() - 0.5) * B.w; z = B.z + (rand() - 0.5) * B.d; y = y0 + B.h; }
-    else {
-      const f = (rand() * 4) | 0, u = rand() - 0.5;
-      y = y0 + rand() * B.h;
-      if (f === 0) { x = B.x - B.w / 2; z = B.z + u * B.d; } else if (f === 1) { x = B.x + B.w / 2; z = B.z + u * B.d; }
-      else if (f === 2) { z = B.z - B.d / 2; x = B.x + u * B.w; } else { z = B.z + B.d / 2; x = B.x + u * B.w; }
-      wall = (k === cross && f === 1) || (k === into && f === 0) ? 1 : 0;
+  const seg = (a, b, u) => [mix(a[0], b[0], u), mix(a[1], b[1], u), mix(a[2], b[2], u)];
+  G.boxes.forEach(B => {
+    const E = folderEdges(B), lens = E.map(e => Math.hypot(e[1][0] - e[0][0], e[1][1] - e[0][1], e[1][2] - e[0][2])), tot = lens.reduce((a, b) => a + b, 0);
+    const nE = Math.round(nF * 0.46), nS = Math.round(nF * 0.32), nFill = nF - nE - nS;
+    for (let k = 0; k < nE; k++) {
+      let r = rand() * tot, e = 0;
+      while (e < E.length - 1 && r > lens[e]) { r -= lens[e]; e++; }
+      const p = seg(E[e][0], E[e][1], r / lens[e]);
+      p[0] += (rand() - 0.5) * 0.004; p[1] += (rand() - 0.5) * 0.004;
+      const i = next(); writeF(i, B, p, e < 6 ? 0.7 : 0.58, 0.55, 0.05, 0.1, 0, rand() * 0.5);
+      sh.aux2[i * 4] = 2;
     }
-    put(sh, i, x, y, z, y > y0 + B.h - 0.001 ? 0.22 : 0.13, 0.45 + 0.4 * rand(), 0.3, 0.05, 0.1);
-    set4(sh.aux, i, k, wall, 0, 0);
-    sh.aux2[i * 4] = 1;
-    sh.meta[i * 4 + 3] = (k / 9) * 0.85 + rand() * 0.1;
+    // code stripes on the inside of the back panel, above the front panel so they show
+    const rows = 5, top = B.hb * 0.86, bot = B.hf * 1.12, rh = (top - bot) / (rows - 1);
+    const r3 = rng(900 + B.f * 7);
+    const bars = [];
+    for (let k = 0; k < rows; k++) { const ind = (r3() < 0.4 ? 1 : 0) * 0.04; bars.push([-B.w / 2 + 0.04 + ind, top - k * rh, (B.w - 0.08 - ind) * (0.45 + 0.5 * r3())]); }
+    const bl = bars.reduce((a, b) => a + b[2], 0);
+    for (let k = 0; k < nS; k++) {
+      let r = rand() * bl, m = 0;
+      while (m < bars.length - 1 && r > bars[m][2]) { r -= bars[m][2]; m++; }
+      const p = [bars[m][0] + r, bars[m][1] + (rand() - 0.5) * 0.012, -B.d / 2 + 0.006];
+      const i = next(); writeF(i, B, p, 0.62, 0.6, 0.05, 0.1, 1, 0.4 + 0.5 * rand());
+      sh.aux2[i * 4] = 2;
+    }
+    // a faint fill on the two side walls and the floor
+    for (let k = 0; k < nFill; k++) {
+      const s = rand(), u = rand(), v = rand();
+      let p;
+      if (s < 0.6) { const z = mix(-B.d / 2, B.d / 2, u), h = mix(B.hb, B.hf, u); p = [(s < 0.3 ? -1 : 1) * B.w / 2, v * h, z]; }
+      else p = [mix(-B.w / 2, B.w / 2, u), 0.002, mix(-B.d / 2, B.d / 2, v)];
+      const i = next(); writeF(i, B, p, 0.16, 0.45, 0.4, 0.02, 2, 0.2 + 0.6 * rand());
+      sh.aux2[i * 4] = 2;
+    }
+  });
+  // the wall the hero crosses: its face, then its outline (which stays clay)
+  {
+    const B = G.boxes[CROSS], nW = Math.round(N * 0.022), nO = Math.round(N * 0.014);
+    for (let k = 0; k < nW; k++) {
+      const u = rand(), v = rand(), z = mix(-B.d / 2, B.d / 2, u), h = mix(B.hb, B.hf, u);
+      const i = next(); writeF(i, B, [B.w / 2 + 0.003, v * h, z], 0.14, 0.3, 0.3, 0.05, 3, rand());
+      sh.aux2[i * 4] = 4;
+    }
+    const E = [[[0, 0, -1], [0, 0, 1]], [[0, 0, 1], [0, 1, 1]], [[0, 1, 1], [0, 1, -1]], [[0, 1, -1], [0, 0, -1]]];
+    for (let k = 0; k < nO; k++) {
+      const e = E[(rand() * 4) | 0], u = rand();
+      const zz = mix(e[0][2], e[1][2], u), up = mix(e[0][1], e[1][1], u);
+      const z = zz * B.d / 2, h = mix(B.hb, B.hf, (zz + 1) / 2) * up;
+      const i = next(); writeF(i, B, [B.w / 2 + 0.004, h, z], 0.5, 0.05, 0.05, 0.1, 4, rand());
+      sh.aux2[i * 4] = 4;
+    }
   }
-  // a sheet on the crossed wall, dark until the comet goes through it
-  const nWall = Math.round(N * (T ? 0.05 : 0.026)), WB = G.boxes[cross];
-  for (let m = 0; m < nWall; m++, i++) {
-    put(sh, i, wallX, y0 + rand() * WB.h, WB.z + (rand() - 0.5) * WB.d, 0.02, 0.9, 0, 0.6, 0.1);
-    set4(sh.aux, i, cross, 1, 0, 0);
-    sh.aux2[i * 4] = 1;
-    sh.meta[i * 4 + 3] = (cross / 9) * 0.85 + rand() * 0.1;
-  }
-  // the ground: a fine grid under the city
-  const span = 1.5 * (G.s + G.gap) + 0.25;
-  for (let m = 0; m < nBase; m++, i++) {
-    const along = rand() * 2 - 1, which = (rand() * 9) | 0, horiz = rand() < 0.5;
-    const v = (which / 8 * 2 - 1) * span;
-    const x = horiz ? along * span : v, z = horiz ? v : along * span;
-    put(sh, i, x, y0 - 0.002, z, 0.16 * (1 - 0.5 * Math.abs(along)), 0.3, 0.2, 0, 0.1);
-    sh.aux2[i * 4] = 2;
-    sh.meta[i * 4 + 3] = rand() * 0.6;
-  }
-  for (let c = 0; c < 6; c++) {
-    for (let m = 0; m < nCom; m++, i++) {
-      const r = 0.012 * Math.sqrt(-2 * Math.log(1 - 0.99 * rand())), d = sdir(rand);
-      put(sh, i, d[0] * r, d[1] * r, d[2] * r, 1.0, 0.9, 0, 0.55, 1.0);
-      set4(sh.aux, i, c, 0, 0, 0);
+  // the other agents: smaller and dimmer than the hero
+  const nA = Math.round(N * 0.011);
+  for (let a = 0; a < 4; a++) {
+    const ids = [];
+    for (let k = 0; k < nA; k++) ids.push(next());
+    for (let k = 0; k < nA; k++) {
+      const i = ids[k], size = AGS() * 0.58, halo = rand() < 0.25;
+      const r = halo ? size * (0.8 + 0.8 * rand()) : size * 0.4 * Math.sqrt(-2 * Math.log(1 - 0.995 * rand()));
+      const dd = sdir(rand);
+      put(sh, i, dd[0] * r, dd[1] * r, dd[2] * r * 0.7, halo ? 0.25 : 0.55, 0.92, halo ? 0.5 : 0.1, 0.3, 0.25);
+      set4(sh.aux, i, a, 0, 0, 0);
       sh.aux2[i * 4] = 3;
+      sh.meta[i * 4 + 3] = rand();
     }
   }
-  // the notice: a thin shell that grows from the crossing point
-  for (let m = 0; m < nRip; m++, i++) {
-    const d = sdir(rand);
-    put(sh, i, 0, 0, 0, 1.0, 0.2, 0, 0.22, 0.2);
-    set4(sh.aux, i, d[0], d[1], d[2], 0);
-    sh.aux2[i * 4] = 4;
+  // the test's ripple
+  const nR = Math.round(N * 0.03);
+  for (let k = 0; k < nR; k++) {
+    const i = next(), dd = sdir(rand);
+    put(sh, i, 0, 0, 0, 0.75, 0.2, 0.2, 0.2, 0.2);
+    set4(sh.aux, i, dd[0], dd[1], dd[2], 0);
+    sh.aux2[i * 4] = 5;
+    sh.meta[i * 4 + 3] = rand();
   }
-  dust(sh, i, N - i, rand, 5, 0.7);
+  for (let i = next(); i >= 0; i = next()) dust(sh, i, 1, rand, 29, 0.6);
   sh.G = G;
-  sh.wallX = wallX;
-  sh.area = T ? 0.7 : 0.8;
+  sh.fixEnd = PB;
+  sh.anchorPick = { folder: [0, 1, 2, 3, 5].map(f => { const B = G.boxes[f]; return [B.x - B.w / 2 + B.w * 0.2, G.ground + B.hb + 0.1, B.z - B.d / 2]; }) };
+  sh.area = T ? 0.55 : 0.6;
   return sh;
 }
 
-/* ---------------------------------------------------- 09 · 함께 */
+/* ---------------------------------------------------- 09 · 연락 */
 function g9() {
-  const g = geo(), T = g.tall, H = innerHeight;
-  const cap = caps[8];
-  const toY = px => (H / 2 - px) / pxPerUnit;
-  let titleY = g.y0 - 0.1, sigY = g.y0 - 0.3, capTopY = g.y0;
-  if (cap) {
-    const t = cap.querySelector('h2'), s = cap.querySelector('.sig');
-    if (t) { const r = settledRect(cap, t); titleY = toY((r.top + r.bottom) / 2); capTopY = toY(r.top); }
-    if (s) { const r = settledRect(cap, s); sigY = toY((r.top + r.bottom) / 2); }
+  const g = geo(), T = g.tall, W = innerWidth, H = innerHeight;
+  const toW = (px, py) => [(px - W / 2) / pxPerUnit, (H / 2 - py) / pxPerUnit, 0];
+  const c = caps[8];
+  let capTop = H * 0.68;
+  const btns = [];
+  if (c) {
+    const r = settledRect(c, c);
+    if (r.height) capTop = r.top;
+    c.querySelectorAll('.cta a').forEach(a => {
+      let rr;
+      if (a.offsetParent === c) rr = settledRect(c, a);
+      else { const b = a.getBoundingClientRect(), cb = c.getBoundingClientRect(), s = settledRect(c, c); rr = { left: b.left - cb.left + s.left, top: b.top - cb.top + s.top, width: b.width, height: b.height }; }
+      const p0 = toW(rr.left, rr.top), p1 = toW(rr.left + rr.width, rr.top + rr.height);
+      btns.push({ x0: p0[0], x1: p1[0], y1: p0[1], y0: p1[1], el: a });
+    });
   }
-  const top = g.y1;
-  const r = T ? 0.36 : 0.3, s = T ? 0.05 : 0.055;
-  const cy = Math.min(top - r - 0.12, (top + capTopY) / 2 + 0.04);
-  const ring = { c: [0, cy, 0], r, s };
-  // eight seats: the agent at the top, the empty one at the bottom nearest the words
-  const seat = k => { const a = Math.PI / 2 + k * TAU / 8; return [Math.cos(a) * r, cy + Math.sin(a) * r, 0]; };
-  return { T, ring, seat, empty: 4, titleY, sigY, capTopY, sigH: T ? 0.16 : 0.085 };
+  const top = g.y1, bot = (H / 2 - (capTop - 24)) / pxPerUnit;
+  const name = { cy: (top + bot) / 2 + (T ? 0.05 : 0.04), maxW: T ? 1.72 : 2.5, lineH: T ? Math.min(0.42, (top - bot) * 0.3) : Math.min(0.54, (top - bot) * 0.5) };
+  let ag = [0, bot - 0.1, 0];
+  if (btns.length) {
+    const L = btns[btns.length - 1], y = (btns[0].y0 + btns[0].y1) / 2;
+    ag = T ? [L.x1 - 0.06, btns[0].y1 + 0.13, 0.02] : [L.x1 + 0.14, y, 0.02];
+  }
+  return { T, name, btns, ag, top, bot };
 }
-function togetherShape(rand) {
-  const G = g9(), T = G.T, sh = newShape('together');
-  blob(sh, I_AG, PB, rand, G.ring.s, 0.95, 0.6, 1.05, 1, i => { sh.aux[i * 4] = 0; });
-  const people = [1, 2, 3, 5, 6, 7];
-  for (let p = 0; p < 6; p++) blob(sh, I_PP + p * PB, PB, rand, G.ring.s, 0.5, 0.12, 0.95, 0, i => { sh.aux[i * 4] = people[p]; });
-  let i = I_RS;
-  const nSeat = Math.round(N * 0.018), nSig = Math.round(N * 0.055), nCir = Math.round(N * 0.02);
-  for (let k = 0; k < nSeat; k++, i++) {
-    const a = rand() * TAU, rr = G.ring.s * (1.05 + 0.08 * gauss(rand));
-    put(sh, i, Math.cos(a) * rr, Math.sin(a) * rr, (rand() - 0.5) * 0.01, 0.42, 0.62, 0.1, 0.2, 0.1);
-    set4(sh.aux2, i, 2, a / TAU, 0, 0);
-  }
-  // the signature, small, sampled once and kept for both languages
+function contactShape(rand) {
+  const G = g9(), T = G.T, sh = newShape('contact');
+  agentInto(sh, rand);
+  const next = cursor([[PB, N]]);
+  const nName = Math.round(N * 0.68);
   clearBox();
-  drawText('Kunsang Lee', { cy: 0, maxW: 2.0, lineH: 0.5, weight: 760 });
-  const S = sample(nSig, rand);
-  const b = bounds(S.x, S.y, nSig);
-  const sc = G.sigH / (b.y1 - b.y0);
-  for (let k = 0; k < nSig; k++, i++) {
-    put(sh, i, (S.x[k] - (b.x0 + b.x1) / 2) * sc, (S.y[k] - (b.y0 + b.y1) / 2) * sc, 0, (0.62 + 0.38 * S.a[k]) * (S.edge[k] ? 1.15 : 1) * (T ? 1.55 : 1), 0.5, 0, S.edge[k] ? 0.42 : 0.1, 0.45);
-    sh.aux2[i * 4] = 3;
-    sh.meta[i * 4 + 3] = (S.x[k] - b.x0) / (b.x1 - b.x0) * 0.7 + rand() * 0.3;
+  drawText('Kunsang Lee', { cy: G.name.cy, maxW: G.name.maxW, lineH: G.name.lineH });
+  const S = sample(nName, rand), b = bounds(S.x, S.y, nName);
+  for (let k = 0; k < nName; k++) {
+    const i = next(), e = S.edge[k];
+    put(sh, i, S.x[k], S.y[k], (rand() - 0.5) * 0.04, (0.6 + 0.4 * S.a[k]) * (e ? 1.15 : 1), 0.5, 0, e ? 0.42 : 0.1, 0.45);
+    sh.aux2[i * 4] = 2;
+    sh.meta[i * 4 + 3] = (S.x[k] - b.x0) / (b.x1 - b.x0) * 0.7 + rand() * 0.2;
   }
-  circleLine(sh, i, nCir, rand, G.ring.c, G.ring.r, 4, 0.12); i += nCir;
-  dust(sh, i, N - i, rand, 5, 0.7);
-  dust(sh, I_CD, I_RS - I_CD, rand, 5, 0.7);
+  // a faint line of light around each contact link
+  const nH = Math.round(N * 0.05), per = Math.floor(nH / Math.max(1, G.btns.length));
+  // the links are pills, so the line follows a pill a little outside each one
+  G.btns.forEach(B => {
+    const pad = 0.01, x0 = B.x0 - pad, x1 = B.x1 + pad, y0 = B.y0 - pad, y1 = B.y1 + pad;
+    const r = (y1 - y0) / 2, cy = (y0 + y1) / 2, w = Math.max(0, x1 - x0 - 2 * r), arc = Math.PI * r, L = 2 * w + 2 * arc;
+    for (let k = 0; k < per; k++) {
+      let d = rand() * L, x, y;
+      if (d < w) { x = x0 + r + d; y = y1; }
+      else if ((d -= w) < arc) { const a = Math.PI / 2 - d / r; x = x1 - r + r * Math.cos(a); y = cy + r * Math.sin(a); }
+      else if ((d -= arc) < w) { x = x1 - r - d; y = y0; }
+      else { d -= w; const a = -Math.PI / 2 - d / r; x = x0 + r + r * Math.cos(a); y = cy + r * Math.sin(a); }
+      const i = next();
+      put(sh, i, x, y, 0, 0.22, 0.62, 0.3, 0.05, 0.1);
+      sh.aux2[i * 4] = 2;
+      sh.meta[i * 4 + 3] = 0.7 + 0.3 * rand();
+    }
+  });
+  const nBeam = Math.round(N * 0.03);
+  for (let k = 0; k < nBeam; k++) {
+    const i = next();
+    put(sh, i, G.ag[0], G.ag[1], 0, 0.6, 0.9, 0, 0.35, 0.5);
+    sh.aux2[i * 4] = 3;
+    sh.meta[i * 4 + 3] = rand();
+  }
+  for (let i = next(); i >= 0; i = next()) dust(sh, i, 1, rand, 29, 0.5);
   sh.G = G;
-  sh.sigW = (b.x1 - b.x0) * sc;
-  sh.area = T ? 0.4 : 0.46;
+  sh.fixEnd = PB;
+  sh.area = S.area * 1.15;
   return sh;
 }
 
-const BUILD = { name: nameShape, ring: ringShape, meaning: meaningShape, memory: memoryShape, anytime: anytimeShape, ribbon: ribbonShape, review: reviewShape, city: cityShape, together: togetherShape };
-const SEEDS = { name: 11, ring: 23, meaning: 37, memory: 41, anytime: 53, ribbon: 59, review: 61, city: 67, together: 71 };
+/* ---------------------------------------------------- registry */
+const BUILD = { name: nameShape, ring: ringShape, meaning: meaningShape, memory: memoryShape, away: awayShape, clock: clockShape, review: reviewShape, folders: folderShape, contact: contactShape };
+const SEEDS = { name: 11, ring: 23, meaning: 37, memory: 41, away: 53, clock: 59, review: 61, folders: 67, contact: 71 };
+const FIXEND = { name: 0, ring: 8 * PB, meaning: 8 * PB, memory: PB, away: 8 * PB, clock: 2 * PB, review: 2 * PB, folders: PB, contact: PB };
 const cache = new Map();
 let curShape = null, warmTimer = 0, fontsReady = false;
 function getShape(key) {
   let s = cache.get(key);
-  if (!s) { s = BUILD[key](rng(SEEDS[key])); cache.set(key, s); }
+  if (!s) { s = BUILD[key](rng(SEEDS[key])); if (s.fixEnd === undefined) s.fixEnd = FIXEND[key]; cache.set(key, s); }
   return s;
 }
 // build the other shapes one per timeout so no single frame pays for all of them
@@ -2294,30 +2649,32 @@ function rebuildShapes() {
 }
 
 /* -------------------------------------------------------------- director */
-const FREE = 0, ASSEMBLE = 1, RING = 2, MEANING = 3, MEMORY = 4, ANYTIME = 5, RIBBON = 6, REVIEW = 7, GALAXY = 8, CITY = 9, TOGETHER = 10;
-const R_PLAIN = 0;
+const FREE = 0, ASSEMBLE = 1, RING = 2, MEANING = 3, MEMORY = 4, AWAY = 5, CLOCK = 6, REVIEW = 7, GALAXY = 8, FOLDERS = 9, CONTACT = 10, CUT = 11;
 const U = {
-  mode: 0, phaseT: 0, K: 0, zeta: 0.7, ramp: 0.8, stagger: 0, noise: 0, noiseFreq: 0.85, drag: 1.2, vmax: 0,
+  mode: 0, phaseT: 0, rt: 0, snap: 0, form: 0.8, K: 0, zeta: 0.7, ramp: 0.8, stagger: 0, noise: 0, noiseFreq: 0.85, drag: 1.2, vmax: 0,
   kick: 0, kickR: 0, kickShell: 0, colRate: 2.5, arrN: 0,
   contain: new Float32Array(2), wind: new Float32Array(3), kickC: new Float32Array(3), kickBias: new Float32Array(3),
-  P: new Float32Array(4), Q: new Float32Array(4), S: new Float32Array(4), T: new Float32Array(4), V: new Float32Array(4), G: new Float32Array(4)
+  P: new Float32Array(4), Q: new Float32Array(4), S: new Float32Array(4), T: new Float32Array(4), V: new Float32Array(4), G: new Float32Array(4),
+  Ag: new Float32Array(4), AgV: new Float32Array(4)
 };
-// per-frame positions the CPU decides (seats, comets, cards); uploaded as uArr
-const ARR = new Float32Array(32 * 4);
+// per-frame positions the CPU decides (people, bubbles, cards, folders); uploaded as uArr
+const ARR = new Float32Array(64 * 4);
 const R = {
   mode: 0, jitter: 0, white: 0.04, gain: 1, bright: 1, brightGoal: 1, trail: 0, bloom: 1, exposure: 1, pulse: 0, pulseT: 0, pulseGap: 0.12,
-  dim: 1, dof: 0.6, tail: 0.045, vari: 0.1, maskA: 0.6, lenK: 0.55, shift: 0, topA: 0
+  dim: 1, dof: 0.6, tail: 0.045, vari: 0.1, maskA: 0.6, lenK: 0.55, shift: 0, topA: 0, bg0: 1, bg1: 0, fixEnd: 0, par: 1
 };
 function resetUniforms() {
-  U.mode = FREE; U.phaseT = 0; U.K = 0; U.zeta = 0.7; U.ramp = 0.8; U.stagger = 0; U.noise = 0; U.noiseFreq = 0.85;
-  U.drag = 1.2; U.vmax = 0; U.kick = 0; U.kickR = 0; U.kickShell = 0; U.colRate = 2.5; U.arrN = 0;
+  U.mode = FREE; U.phaseT = 0; U.rt = 0; U.snap = 0; U.form = 0.8; U.K = 0; U.zeta = 0.7; U.ramp = 0.8; U.stagger = 0; U.noise = 0; U.noiseFreq = 0.85;
+  U.drag = 1.2; U.vmax = 0; U.kick = 0; U.kickR = 0; U.kickShell = 0; U.colRate = 2.5; U.arrN = 0; U.keep0 = 0; U.keep1 = 0;
   U.contain[0] = 0.75; U.contain[1] = 8.0; U.wind.fill(0); U.kickBias.fill(0);
   U.P.fill(0); U.Q.fill(0); U.S.fill(0); U.T.fill(0); U.V.fill(0); U.G.fill(0);
-  R.mode = R_PLAIN; R.jitter = 0; R.white = 0.04; R.gain = 1; R.trail = 0; R.bloom = 1; R.exposure = 1;
+  U.Ag.fill(0); U.AgV.fill(0); U.AgV[3] = 1;
+  ARR.fill(0);
+  R.mode = 0; R.jitter = 0; R.white = 0.04; R.gain = 1; R.trail = 0; R.bloom = 1; R.exposure = 1;
   R.pulse = 0; R.pulseT = 0; R.pulseGap = 0.12; R.dim = 1; R.dof = 0.6; R.tail = 0.045; R.vari = 0.1;
-  R.maskA = 0.6; R.lenK = 0.55; R.shift = 0; R.topA = 0;
+  R.maskA = 0.6; R.lenK = 0.55; R.shift = 0; R.topA = 0; R.bg0 = 1; R.bg1 = 0; R.fixEnd = curShape ? curShape.fixEnd || 0 : 0; R.par = 1;
 }
-function free(noise, drag) { U.mode = FREE; U.noise = noise * 0.6; U.drag = drag * 1.3; U.noiseFreq = 0.7; U.P[3] = 1.5; }
+function free(noise, drag) { U.mode = FREE; U.noise = noise * 0.6; U.drag = drag * 1.3; U.noiseFreq = 0.7; U.P[3] = 1.5; R.fixEnd = 0; }
 function assemble(K, zeta, ramp, stagger, jit, noise) {
   U.mode = ASSEMBLE; U.K = K; U.zeta = zeta; U.ramp = ramp; U.stagger = stagger; U.P[0] = jit;
   U.noise = noise * 0.65; U.drag = 1.2; U.vmax = 5.5;
@@ -2325,6 +2682,13 @@ function assemble(K, zeta, ramp, stagger, jit, noise) {
 function hold() {
   U.mode = ASSEMBLE; U.phaseT = 99; U.K = 90; U.zeta = 0.72; U.ramp = 1; U.noise = 0.12; U.drag = 0;
   R.jitter = 0.0022;
+}
+// the shared settings of a story scene
+function story(mode, T, rt, o) {
+  U.mode = mode; U.phaseT = T; U.rt = rt;
+  U.form = o.form || 0.8; U.stagger = o.stagger === undefined ? 0.35 : o.stagger; U.ramp = o.ramp || 0.6;
+  U.noise = o.noise === undefined ? 0.4 : o.noise; U.noiseFreq = o.nf || 0.9; U.colRate = o.col || 2.6;
+  R.tail = o.tail || 0.05; R.jitter = o.jit || 0.0008;
 }
 
 /* 흩어짐: 입자에 한 번 속도를 더하고, 화면을 잠깐 밝히고, 카메라를 흔든다 */
@@ -2359,385 +2723,432 @@ function vel(f, t) { const a = f(t), b = f(t + 0.02); return [(b[0] - a[0]) / 0.
 const pulse = (t, t0, k) => t < t0 ? 0 : Math.exp(-(t - t0) * k);
 const win = (t, a, b, ra, rb) => sm((t - a) / ra) * (1 - sm((t - b) / rb));
 const dist3 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+// a travel easing whose top speed is only about 1.6x the average, so a moving agent never shoots
+const glide = x => 0.5 - 0.5 * Math.cos(Math.PI * clamp(x, 0, 1));
 // keyframes [[time, [x, y, z]], ...], eased between each pair
 function track(keys, t) {
   if (t <= keys[0][0]) return keys[0][1];
   for (let i = 1; i < keys.length; i++) {
-    if (t <= keys[i][0]) { const a = keys[i - 1], b = keys[i]; return L3(a[1], b[1], inOut((t - a[0]) / Math.max(1e-3, b[0] - a[0]))); }
+    if (t <= keys[i][0]) { const a = keys[i - 1], b = keys[i]; return L3(a[1], b[1], glide((t - a[0]) / Math.max(1e-3, b[0] - a[0]))); }
   }
   return keys[keys.length - 1][1];
 }
-// the shape a scene needs, even before it is the current one (camera functions run every frame)
+// the shape a scene needs, even before it is the current one
 const shapeOf = key => (curShape && curShape.key === key ? curShape : getShape(key));
 
+/* 에이전트와 사람. 에이전트는 어느 장면에서나 화면에서 같은 크기로 보이도록, 카메라에서 떨어진 만큼 키운다 */
+function depthScale(p) {
+  const dx = p[0] - cam.eye[0], dy = p[1] - cam.eye[1], dz = p[2] - cam.eye[2];
+  return clamp((dx * cam.fwd[0] + dy * cam.fwd[1] + dz * cam.fwd[2]) / dist, 0.3, 3);
+}
+function agent(f, t, glow = 1, size = 1) {
+  const p = f(t), v = vel(f, t);
+  set4v(U.Ag, p[0], p[1], p[2], glow);
+  set4v(U.AgV, v[0], v[1], v[2], size * depthScale(p));
+  return p;
+}
+// slot s: place, on; away turns the person into a thin empty circle; glow brightens them
+function person(s, p, on, away = 0, glow = 0, size = 1) { arr(s, p, on); arr4(8 + s, away, glow, size, 0); }
+
 /* ---------------------------------------------------- 02 · 동료 */
-const S2 = { j0: 0.8, j1: 2.2, call: 2.9, grow: 3.4, beam: 3.9, pull: 4.6, ans: 5.9, fold: 6.9, out: 9.0 };
-function lightPath2(G, t) {
-  const top = G.seat7(0);
-  const from = G.T ? [1.35, top[1] + 1.0, 0.4] : [halfW + 0.45, top[1] + 0.5, 0.4];
-  const ctrl = G.T ? [0.75, top[1] + 0.75, 0.3] : [1.15, top[1] + 0.62, 0.3];
-  return B3(from, ctrl, top, inOut((t - S2.j0) / (S2.j1 - S2.j0)));
+const S2 = { j0: 0.3, j1: 1.5, call: 1.7, grow: 2.0, beam: 2.6, pull: 3.0, ans: 3.8, fold: 4.4 };
+function joinPath2(G) {
+  const top = G.seat8(0);
+  // the agent comes down into its seat from close by, so it never streaks across the screen
+  const from = G.T ? [0.5, top[1] + 0.4, 0.1] : [0.62, top[1] + 0.3, 0.1];
+  const ctrl = G.T ? [0.32, top[1] + 0.34, 0.06] : [0.4, top[1] + 0.27, 0.06];
+  return t => B3(from, ctrl, top, glide((t - S2.j0) / (S2.j1 - S2.j0)));
 }
-function cardPath2(G, k, t) {
-  const c = G.cards[k], go = inOut((t - S2.out - k * 0.12) / 1.0);
-  return [c[0] + go * (G.T ? 1.5 : 1.9), c[1] + go * 0.1, c[2]];
-}
-function ringFrame(t) {
+function ringFrame(t, rt) {
   const sh = curShape, G = sh.G;
-  U.mode = RING; U.phaseT = t; U.ramp = 0.6; U.noise = 0.45; U.noiseFreq = 0.9; U.colRate = 3;
-  // the six make room as the light arrives
-  const jn = sm((t - (S2.j1 - 0.75)) / 0.8);
-  for (let p = 0; p < 6; p++) {
-    const glow = p === G.caller ? 1.1 * win(t, S2.call, S2.ans + 0.7, 0.25, 0.6) : 0;
-    arr(p, L3(G.seat6(p), G.seat7(p + 1), jn), 1 + glow);
+  story(RING, t, rt, { form: 0.7, stagger: 0.3, ramp: 0.6, noise: 0.45, col: 3 });
+  // the seven make room as the agent arrives; nobody's seat is left empty
+  const jn = sm((t - (S2.j1 - 0.7)) / 0.8);
+  for (let p = 0; p < 7; p++) {
+    const glow = p === G.caller ? 1.0 * win(t, S2.call, S2.ans + 0.7, 0.25, 0.6) : 0;
+    person(p, L3(G.seat7(p), G.seat8(p + 1), jn), 1, 0, glow);
   }
-  const lp = lightPath2(G, t), lv = vel(tt => lightPath2(G, tt), t);
   const arrive = pulse(t, S2.j1, 3.2);
-  set4v(U.T, lp[0], lp[1], lp[2], 1 + 0.12 * arrive);
-  set4v(U.V, lv[0], lv[1], lv[2], sm((t - S2.j0) / 0.3) * (1 + 0.9 * arrive + 0.5 * win(t, S2.beam, S2.fold, 0.2, 0.4)));
-  set4v(U.Q, G.cp[0], G.cp[1], G.cp[2], 1.2 * sm((t - S2.call - 0.15) / 0.5));
-  arr(12, G.bubble.c, 1);
+  agent(joinPath2(G), t, sm((t - S2.j0 + 0.05) / 0.3) * (1 + 0.5 * arrive + 0.45 * win(t, S2.beam, S2.fold, 0.2, 0.4)), 1 + 0.12 * arrive);
+  // the caller's words grow out of the caller as a small amber bubble; it stays for scene 3 to take over
+  set4v(U.Q, G.cp[0], G.cp[1], G.cp[2], 1.25 * sm((t - S2.call - 0.1) / 0.5));
+  arr(20, G.bubble.c, 1 - 0.25 * sm((t - S2.fold) / 0.6));
   U.S[0] = 1.15 * sm((t - S2.grow) / 0.8);
   U.S[1] = 1.05 * sm((t - S2.grow - 0.1) / 0.7);
   U.S[2] = sm((t - S2.beam) / 0.45);
   U.S[3] = win(t, S2.beam, S2.ans + 0.2, 0.2, 0.5);
-  arr(10, G.fA, 1); arr(11, G.dA, 1);
+  arr(16, G.fA, 1); arr(17, G.dA, 1);
   // once the answer is back, the code and the database drop to 30% so the two cards read
   U.P[0] = 0.7 * sm((t - S2.fold) / 0.6);
-  set4v(U.G, S2.pull, S2.ans, S2.fold, sm((t - S2.out - 0.35) / 0.6));
-  for (let k = 0; k < 2; k++) arr(8 + k, cardPath2(G, k, t), 1);
-  R.trail = t < 0.7 ? 0.8 : (t > S2.j0 && t < S2.j1 + 0.3) || (t > S2.pull && t < S2.out + 1.1) ? 0.62 : 0.4;
+  set4v(U.G, S2.pull, S2.ans, S2.fold, 0);
+  for (let k = 0; k < 2; k++) arr(18 + k, G.cards[k], 1);
+  R.trail = t < S2.j0 ? 0.7 : t < S2.j1 + 0.3 ? 0.46 : t > S2.pull && t < S2.fold + 1.0 ? 0.6 : 0.42;
   R.tail = 0.055; R.jitter = 0.001;
 }
 
 /* ---------------------------------------------------- 03 · 말뜻 */
-const S3 = { move: 1.4, untangle: 2.2, check: 3.4, down: 3.9, downDur: 0.95, echo0: 5.2, echoGap: 0.85, echoDur: 1.0 };
-function cardPath3(G, t) {
-  if (t < S3.move) return L3(G.start, G.P1, inOut(t / S3.move));
-  if (t < S3.down) return [G.P1[0], G.P1[1] + 0.008 * Math.sin((t - S3.move) * 2.2), G.P1[2]];
-  return L3(G.P1, G.P2, inOut((t - S3.down) / S3.downDur));
+const S3 = { tg0: 0.5, tg1: 1.3, m0: 1.2, pass: 1.8, m1: 2.4, ck0: 2.4, ck1: 2.8, d0: 2.8, d1: 3.6, e0: 2.9, eGap: 0.42 };
+function cardPath3(G, c) {
+  const stack = [G.Ce[0] + 0.035 * c, G.Ce[1] + 0.03 * c, G.Ce[2]];
+  if (c === 0) return t => track([[S3.m0, G.Bs], [S3.pass, G.A], [S3.m1, G.Cc], [S3.d0, G.Cc], [S3.d1, stack]], t);
+  const t0 = S3.e0 + (c - 1) * S3.eGap;
+  return t => track([[t0, G.Bs], [t0 + 0.42, G.A], [t0 + 0.72, G.Cc], [t0 + 0.8, G.Cc], [t0 + 1.25, stack]], t);
 }
-function echoPath3(G, f, t) {
-  const u = clamp((t - S3.echo0 - f * S3.echoGap) / S3.echoDur, 0, 1);
-  return [0, mix(G.P1[1] + 0.06, G.lineY - 0.16, u), 0.02];
-}
-function meaningFrame(t) {
-  const sh = curShape, G = sh.G, h = G.card.h;
-  U.mode = MEANING; U.phaseT = t; U.ramp = 0.5; U.noise = 0.4; U.noiseFreq = 1.3; U.colRate = 3;
-  const c = cardPath3(G, t), cv = vel(tt => cardPath3(G, tt), t);
-  set4v(U.Q, c[0], c[1], c[2], mix(0.85, 1, sm(t / S3.move)));
-  set4v(U.V, cv[0], cv[1], cv[2], 0);
-  set4v(U.P, S3.untangle, 0.6, 1.06 * sm((t - S3.check) / 0.35), 1);
-  set4v(U.T, 1 - sm((t - 0.1) / 1.0), 1, 0.8, 0);
-  let hit = t > S3.down ? Math.exp(-Math.pow((c[1] - G.lineY) / (h * 0.5), 2)) : 0;
-  for (let f = 0; f < 2; f++) {
-    const t0 = S3.echo0 + f * S3.echoGap;
-    const e = echoPath3(G, f, t), ev = vel(tt => echoPath3(G, f, tt), t);
-    const b = 0.85 * sm((t - t0) / 0.25) * (1 - sm((G.lineY - e[1]) / 0.11));
-    arr(f, e, 1);
-    arr4(2 + f, b, ev[0], ev[1], ev[2]);
-    hit = Math.max(hit, b * Math.exp(-Math.pow((e[1] - G.lineY) / (h * 0.31), 2)));
+function meaningFrame(t, rt) {
+  const sh = curShape, G = sh.G, G2 = G.G2;
+  story(MEANING, t, rt, { form: 0.6, stagger: 0.25, ramp: 0.5, noise: 0.4, nf: 1.3, col: 3 });
+  U.keep0 = I_SC; U.keep1 = I_SC + NB2();
+  set4v(U.P, 1.1 * sm((t - 0.3) / 0.9), sm((t - 0.1) / 1.0), 0, 0);
+  for (let p = 0; p < 7; p++) person(p, G2.seat8(p + 1), 1 - sm((t - 0.1) / 0.9));
+  for (let c = 0; c < 3; c++) {
+    const f = cardPath3(G, c), p = f(t);
+    arr(16 + c, p, 1);
+    if (c === 0) arr4(20, sm((t - S3.tg0) / (S3.tg1 - S3.tg0)), sm((t - S3.m0 - 0.3) / (S3.m1 - S3.m0 - 0.3)), sm((t - S3.ck0) / (S3.ck1 - S3.ck0)), 1);
+    else {
+      const t0 = S3.e0 + (c - 1) * S3.eGap;
+      arr4(20 + c, sm((t - t0) / 0.25), sm((t - t0 - 0.25) / 0.45), sm((t - t0 - 0.72) / 0.12), sm((t - t0) / 0.2));
+    }
   }
-  set4v(U.S, G.lineY, 0, hit, 1.05 * sm((t - 0.4) / 0.8));
-  U.G[0] = t > S3.down && Math.abs(c[1] - G.lineY) < h * 0.6 ? 1 : 0;
-  const G2 = G.G2;
-  for (let k = 0; k < 7; k++) arr(4 + (k === 0 ? 6 : k - 1), G2.seat7(k), 1);
-  R.trail = t < 1.5 ? 0.6 : 0.4; R.tail = 0.05; R.jitter = 0.0008;
+  // the agent stays at the top seat; it brightens each time a card passes through it
+  const passes = pulse(t, S3.pass, 3.5) + pulse(t, S3.e0 + 0.42, 4) + pulse(t, S3.e0 + S3.eGap + 0.42, 4);
+  agent(() => G.A, t, 1 + 0.6 * passes, 1 + 0.1 * passes);
+  R.trail = t < 1.2 ? 0.55 : 0.42; R.tail = 0.05; R.jitter = 0.0008;
 }
 
-/* ---------------------------------------------------- 04 · 기억 */
-const S4 = { star: 0.15, fall0: 0.85, fall1: 2.3, light: 2.75, span: 2.3 };
-function starPath4(sh, t) { return L3(sh.card.c, sh.G.star, inOut((t - S4.fall0) / (S4.fall1 - S4.fall0))); }
-function memoryFrame(t, u, prev) {
+/* ---------------------------------------------------- 04 · 신경망 */
+function memoryAgent(sh) {
+  const G = sh.G, A3 = g3().A;
+  return t => track([[0, A3], [0.8, G.A0], [S4.touch - 0.05, G.touchAt], [S4.touch + 0.35, G.touchAt], [S4.touch + 1.0, G.back]], t);
+}
+function memoryFrame(t, rt) {
   const sh = curShape, G = sh.G;
-  U.mode = MEMORY; U.phaseT = t; U.ramp = 0.7; U.noise = 0.35; U.noiseFreq = 0.8; U.colRate = 2.4;
-  const c = sm((t - S4.star) / 0.7);
-  const sp = starPath4(sh, t), sv = vel(tt => starPath4(sh, tt), t);
-  const glow = 1 + 1.1 * pulse(t, S4.light - 0.12, 2.0);
-  set4v(U.P, c, 0, S4.light, S4.span);
-  set4v(U.T, sh.card.c[0], sh.card.c[1], sh.card.c[2], 1);
-  set4v(U.Q, sp[0], sp[1], sp[2], 1.2 * glow);
-  set4v(U.V, sv[0], sv[1], sv[2], 0);
-  U.S[0] = 0.3;
-  if (prev < S4.light - 0.12 && t >= S4.light - 0.12) flashE = Math.max(flashE, 0.3);
-  R.trail = t < 2.4 ? 0.62 : 0.42; R.tail = 0.05; R.dof = 1.15; R.jitter = 0.001;
-  R.bloom = 1 + 0.35 * win(t, S4.light, S4.light + S4.span + 0.6, 0.4, 1.0);
+  story(MEMORY, t, rt, { form: 0.5, stagger: 0.2, ramp: 0.7, noise: 0.3, nf: 0.8, col: 2.4 });
+  const fetchDur = 0.42, fetchEnd = G.FE + fetchDur;
+  const swell = pulse(t, fetchEnd, 2.2);
+  const ap = agent(memoryAgent(sh), t, 1 + 0.5 * pulse(t, S4.touch, 3) + 0.9 * swell, 1 + 0.35 * swell);
+  set4v(U.Q, G.src[0], G.src[1], G.src[2], 0);
+  set4v(U.S, G.ctrl[0], G.ctrl[1], G.ctrl[2], 0);
+  set4v(U.P, G.T ? 1.2 : 1, sm((t - (G.FE - 0.55)) / 0.45), 1 - sm((t - S4.touch - 0.15) / 0.45), sm((t - G.FE) / 0.3));
+  // the card rides just in front of the agent, a little up and to the side
+  arr(16, G.T ? [0.0, 0.11, 0.05] : [0.0, 0.12, 0.05], depthScale(ap) * (G.T ? 0.55 : 0.5));
+  arr(17, G.cells[G.E], 1);
+  arr(18, G.pathCtrl, 1);
+  arr4(19, G.FE, fetchDur, 0, 0);
+  if (crossed(S4.touch)) flashE = Math.max(flashE, 0.2);
+  R.trail = t < 1.6 ? 0.34 : 0.45; R.tail = 0.05; R.dof = 1.1; R.jitter = 0.001;
+  R.bloom = 1 + 0.35 * win(t, S4.touch, fetchEnd + 0.6, 0.3, 1.0);
   R.topA = 0.9;
 }
-
-/* ---------------------------------------------------- 05 · 언제든 */
-const S5 = { dial: 0.6, sweep0: 1.6, sweep1: 5.0, h0: 16, h1: 34, off0: 19.2, offGap: 0.85, comet0: 5.35, comet1: 6.05, ans: 6.1 };
-function handH(t) {
-  const s = clamp((t - S5.sweep0) / (S5.sweep1 - S5.sweep0), 0, 1);
-  return S5.h0 + (S5.h1 - S5.h0) * (s - 0.6 * Math.sin(2 * Math.PI * s) / (2 * Math.PI));
-}
-function cometFrom5(G) { return G.from; }
-function cometPath5(G, t) {
-  const a = G.seat7(0), f = cometFrom5(G);
-  const ctrl = [mix(f[0], a[0], 0.55), Math.max(f[1], a[1]) + 0.25, 0.25];
-  return B3(f, ctrl, a, inOut((t - S5.comet0) / (S5.comet1 - S5.comet0)));
-}
-function anytimeFrame(t) {
-  const sh = curShape, G = sh.G;
-  U.mode = ANYTIME; U.phaseT = t; U.ramp = 0.6; U.noise = 0.3; U.noiseFreq = 0.8; U.colRate = 2.2;
-  const h = handH(t), h2 = handH(t + 0.02);
-  const ang = h / 24 * Math.PI * 2;
-  for (let p = 0; p < 6; p++) arr(p, G.seat7(p + 1), 1 - sm((h - (S5.off0 + p * S5.offGap)) / 0.35));
-  arr(7, G.seat7(0), 1);
-  set4v(U.P, ang, sm((h - 30.5) / 2.5), sm((t - S5.dial) / 1.0), 4 + sm((h - 24) / 0.4));
-  set4v(U.Q, G.dialC[0], G.dialC[1], G.dialC[2], G.dialK);
-  U.G[0] = (h2 - h) / 0.02 / 24 * Math.PI * 2;
-  const f = cometFrom5(G);
-  U.G[1] = f[0]; U.G[2] = f[1]; U.G[3] = f[2];
-  const cp = cometPath5(G, t), cv = vel(tt => cometPath5(G, tt), t);
-  set4v(U.S, cp[0], cp[1], cp[2], win(t, S5.comet0, S5.comet1 - 0.05, 0.15, 0.08));
-  set4v(U.V, cv[0], cv[1], cv[2], 0);
-  set4v(U.T, 1.45 * clamp((t - S5.ans) / 0.6, 0, 1), win(t, S5.ans, S5.ans + 1.05, 0.05, 0.45), pulse(t, S5.comet1, 2.4), t > S5.sweep0 - 0.1 && t < S5.sweep1 + 0.25 ? 1 : 0);
-  R.trail = t > S5.comet0 - 0.2 && t < S5.ans + 1.2 ? 0.66 : 0.5; R.tail = 0.06; R.jitter = 0.0008; R.dof = 0.8;
+function memoryCam(t) {
+  const G = shapeOf('memory').G;
+  const c = G.cells[G.E], u = glide((t - 0.5) / 2.2);
+  const f = [mix(0, c[0] * 0.6, u), mix(geo().cy, (c[1] + G.back[1]) / 2, u), mix(0, c[2] * 0.5, u)];
+  return { tx: f[0], ty: f[1] - geo().cy * (1 - u) * 0, tz: f[2], dz: mix(0, -0.42, u), yaw: mix(0, 0.42, u) + 0.12 * sm((t - 3) / 5), pitch: mix(0.02, 0.12, u) };
 }
 
-/* ---------------------------------------------------- 06 · 하루 30분 */
-const S6 = { q: [1.5, 2.6, 3.7], wind: 4.75, windSpan: 1.1, windDur: 1.0 };
-function qSpot6(G, q) {
-  const dx = G.T ? [-0.32, 0.36, -0.06][q] : [-0.42, 0.46, -0.12][q];
-  return [G.post[0] + dx, G.y + (G.T ? 0.24 : 0.2), 0.05];
+/* ---------------------------------------------------- 05 · 자리에 없어도 */
+const S5 = { night: 1.2, off0: 0.6, offGap: 0.16, q0: 1.4, q1: 2.25, dots0: 2.35, dots1: 3.35, go: 3.3, take: 3.6, ans0: 3.8, ans1: 4.3, home: 4.55 };
+function awayAgent(sh) {
+  const G = sh.G, B = shapeOf('memory').G.back;
+  return t => track([[0, B], [0.8, G.C], [S5.go, G.C], [S5.take, G.take], [S5.take + 0.35, G.take], [S5.home, G.C]], t);
 }
-function agentPath6(G, t) {
-  const start = shapeOf('anytime').G.seat7(0);
-  const keys = [[0, start], [1.1, G.post]];
-  S6.q.forEach((tq, q) => { const I = qSpot6(G, q); keys.push([tq, G.post], [tq + 0.5, I], [tq + 0.66, I], [tq + 1.0, G.post]); });
-  keys.push([S6.wind - 0.2, G.post], [S6.wind + 0.6, G.side]);
-  return track(keys, t);
+function bubblePath5(G) {
+  const from = [G.asker[0] + 0.12, G.asker[1] + 0.12, 0.02];
+  const ctrl = [mix(G.asker[0], G.stop[0], 0.5), Math.max(G.asker[1], G.stop[1]) + 0.22, 0.02];
+  return t => B3(from, ctrl, G.stop, glide((t - S5.q0) / (S5.q1 - S5.q0)));
 }
-function qPath6(G, q, t) {
-  const I = qSpot6(G, q), tq = S6.q[q];
-  const from = G.T ? [(q === 1 ? -1 : 1) * (halfW + 0.3), I[1] + 0.5, 0.2] : [I[0] + 1.0 * (q === 1 ? -1 : 1), geo().y1 + 0.55, 0.2];
-  const u = clamp((t - tq + 0.12) / 0.78, 0, 1);
-  return L3(from, I, u * u * (1.6 - 0.6 * u));
-}
-function ribbonFrame(t) {
+function awayFrame(t, rt) {
   const sh = curShape, G = sh.G;
-  U.mode = RIBBON; U.phaseT = t; U.ramp = 0.6; U.noise = 0.35; U.noiseFreq = 1.0; U.colRate = 2.6;
-  set4v(U.Q, 0.085, G.amp, G.y, G.L);
-  U.P[2] = G.tube;
-  set4v(U.S, S6.wind, S6.windSpan, S6.windDur, 0);
-  U.G[0] = 0;
-  const ap = agentPath6(G, t), av = vel(tt => agentPath6(G, tt), t);
+  story(AWAY, t, rt, { form: 0.7, stagger: 0.25, ramp: 0.6, noise: 0.3, nf: 0.8, col: 2.2 });
+  // night falls and a crescent rises
+  const night = sm(t / S5.night);
+  R.bg0 = mix(1, 0.42, night);
+  // the crescent shows once the camera has come back from scene 4, so it rises in place instead of sliding in from the edge
+  const mr = sm((t - 0.8) / 1.2);
+  arr(16, [G.moon.c[0], G.moon.c[1] - 0.35 * (1 - mr), G.moon.c[2]], mr);
+  U.P[0] = 1;
+  // one by one the people go: a thin empty circle stays at each seat. The asker stands outside the ring
+  for (let k = 0; k < 6; k++) person(1 + k, G.seat(k), 1, sm((t - (S5.off0 + S5.offGap * k)) / 0.4));
+  const answered = sm((t - S5.ans1) / 0.3);
+  person(0, G.asker, 1, 0, 0.85 * answered);
+  // the question flies to the empty seat of the one who knows, and waits
+  const bp = bubblePath5(G)(t);
+  arr(17, bp, mix(0.6, 1, sm((t - S5.q0) / (S5.q1 - S5.q0))));
+  const absorb = sm((t - S5.take) / 0.3);
+  arr4(18, sm((t - S5.q0) / 0.15), absorb, 0, 0);
+  // "typing" dots beside the empty circle blink three times, once
+  const toB = v3.norm(v3.sub(G.stop, G.kp));
+  const dc = v3.add(G.kp, v3.mul(toB, AGS() * 1.05 + (G.T ? 0.09 : 0.075)));
+  arr(19, [dc[0], dc[1] - (G.T ? 0.02 : 0.015), 0.02], win(t, S5.dots0 - 0.05, S5.dots1, 0.1, 0.15));
+  const ph = (t - S5.dots0) / ((S5.dots1 - S5.dots0) / 3);
+  const blink = d => (ph < 0 || ph > 3) ? 0.35 : 0.35 + 0.65 * Math.exp(-Math.pow(((ph % 1) - 0.18 - d * 0.24) / 0.11, 2));
+  arr4(20, blink(0), blink(1), blink(2), 0);
+  // the agent takes it and answers the asker with a beam of light that stays as a thin line
+  const ap = agent(awayAgent(sh), t, 1 + 0.6 * pulse(t, S5.take, 3) + 0.25 * win(t, S5.ans0, S5.ans1 + 0.3, 0.1, 0.4));
+  arr(21, ap, 1);
+  arr(22, G.asker, 1);
+  U.P[1] = clamp((t - S5.ans0) / (S5.ans1 - S5.ans0), 0, 1) * 1.04;
+  U.P[2] = 0.55 * sm((t - S5.ans1) / 0.3) + 0.6 * pulse(t, S5.ans1, 2.5);
+  R.trail = t > S5.ans0 - 0.2 && t < S5.ans1 + 0.6 ? 0.6 : 0.48; R.tail = 0.06; R.jitter = 0.0008; R.dof = 0.7;
+  // the network of scene 4 folds down into the ring: keep that first second calm
+  const calm = 1 - sm((rt - 0.4) / 0.8);
+  R.trail = mix(R.trail, 0.25, calm); R.tail = mix(R.tail, 0.01, calm);
+}
+
+/* ---------------------------------------------------- 06 · 아낀 30분 */
+const S6 = { q0: 1.1, qGap: 0.75, fly: 0.75, text: 4.45 };
+const tq6 = b => S6.q0 + S6.qGap * b, tc6 = b => tq6(b) + S6.fly;
+function clockAgent(sh) {
+  const G = sh.G, C5 = g5().C, keys = [[0, C5], [1.2, G.A0]];
+  for (let b = 0; b < 3; b++) keys.push([tc6(b) - 0.22, G.I[b]], [tc6(b) + 0.15, G.I[b]]);
+  keys.push([tc6(2) + 0.9, G.A0]);
+  return t => track(keys, t);
+}
+function clockFrame(t, rt) {
+  const sh = curShape, G = sh.G;
+  story(CLOCK, t, rt, { form: 0.7, stagger: 0.3, ramp: 0.6, noise: 0.3, nf: 0.9, col: 2.4 });
+  // the crescent sets and the morning warms the dark a little
+  const day = sm(t / 1.2);
+  R.bg0 = mix(0.42, 1, day); R.bg1 = 0.9 * sm((t - 0.3) / 1.4);
+  arr(16, [G.moon.c[0], G.moon.c[1] - 0.6 * sm(t / 1.4), G.moon.c[2]], 1 - sm((t - 0.1) / 1.1));
+  set4v(U.P, 1.1 * sm((t - 0.3) / 0.9), S6.text, 0, 0);
+  person(0, G.P, 1, 0, 0.12 + 0.08 * Math.sin(t * 2.2));
+  const fills = [0, 0, 0];
   let caught = 0;
-  S6.q.forEach((tq, q) => {
-    const qp = qPath6(G, q, t), qv = vel(tt => qPath6(G, q, tt), t);
-    arr(q, qp, win(t, tq - 0.12, tq + 0.62, 0.15, 0.06));
-    arr(4 + q, qv, 0);
-    caught += pulse(t, tq + 0.66, 3.0);
-  });
-  set4v(U.T, ap[0], ap[1], ap[2], 1);
-  set4v(U.V, av[0], av[1], av[2], 1 + 0.9 * caught);
-  R.trail = t < 4.6 ? 0.55 : mix(0.55, 0.3, sm((t - 5.6) / 1.2)); R.tail = 0.05; R.jitter = 0.0008;
+  for (let b = 0; b < 3; b++) {
+    const tq = tq6(b), tc = tc6(b);
+    const p = L3(G.S[b], G.I[b], inOut((t - tq) / S6.fly));
+    arr(18 + b, p, 1);
+    arr4(21 + b, sm((t - tq) / 0.15), sm((t - tc) / 0.25), clamp((t - tc - 0.2) / 0.9, 0, 1), 0);
+    arr(24 + b, G.secC[b], G.R * 0.3);
+    fills[b] = 1.12 * sm((t - tc - 0.55) / 0.5);
+    caught += pulse(t, tc, 3.2);
+  }
+  arr4(17, fills[0], fills[1], fills[2], 0);
+  agent(clockAgent(sh), t, 1 + 0.9 * caught, 1 + 0.12 * caught);
+  R.trail = t < 4.4 ? 0.5 : 0.42; R.tail = 0.05; R.jitter = 0.0008;
 }
 
 /* ---------------------------------------------------- 07 · 리뷰 */
-const S7 = { pull0: 0.55, pull1: 2.0, page: 1.25, frag: 2.1, lightIn: 3.4, visits: [3.95, 4.6, 5.25], reject: 5.85, dim: 6.4 };
-function pageView7(sh, t) {
-  const G = sh.G, L = sh.lines[G.page.hi];
-  const xc = (L.toks[0][0] + L.toks[L.toks.length - 1][0] + L.toks[L.toks.length - 1][1]) / 2, yc = L.y;
-  const S0 = G.T ? 2.0 : 2.6, cy0 = shapeOf('ribbon').G.text.cy;
-  const e = inOut((t - S7.pull0) / (S7.pull1 - S7.pull0));
-  const S = mix(S0, 1, e), c = L3([0, cy0, 0], [xc, yc, 0], e);
-  return [c[0] - xc * S, c[1] - yc * S, S];
+function reviewAgent(sh) {
+  const G = sh.G, pg = G.page, n = pg.n, RW = G.rows;
+  const mx = pg.x0 - (G.T ? 0.07 : 0.08), y0 = G.lineY(0), yN = G.lineY(n - 1);
+  const tA = S7.w0, tB = S7.w0 + (S7.w1 - S7.w0) * (n - 1) / n, tR = tB + 1.3;
+  const rest = [pg.x1 + (G.T ? 0.08 : 0.1), yN - (G.T ? 0.1 : 0.02), 0.04];
+  const cbx = RW.x - RW.w / 2 + RW.h * 0.55;
+  const top = [cbx, G.rowC[0][1] + RW.h * 0.5 + 0.1, 0.05], bot = [cbx, G.rowC[2][1] - RW.h * 0.5 - 0.1, 0.05];
+  const from = g6().A0;
+  return t => {
+    if (t < tA) return L3(from, [mx, y0, 0.04], glide(t / tA));
+    if (t < tB) return [mx, mix(y0, yN, (t - tA) / (tB - tA)), 0.04];
+    if (t < tR) return B3([mx, yN, 0.04], [mix(mx, rest[0], 0.5), Math.min(yN, rest[1]) - 0.1, 0.04], rest, glide((t - tB) / (tR - tB)));
+    if (t < S7.go) return rest;
+    const a = G.readUp ? bot : top, z = G.readUp ? top : bot;
+    if (t < S7.read0) {
+      const ctl = G.readUp ? [mix(rest[0], a[0], 0.5), Math.min(rest[1], a[1]) - 0.08, 0.05] : [mix(rest[0], a[0], 0.55), Math.max(rest[1], a[1]) + 0.08, 0.05];
+      return B3(rest, ctl, a, glide((t - S7.go) / (S7.read0 - S7.go)));
+    }
+    return L3(a, z, clamp((t - S7.read0) / S7.readDur, 0, 1));
+  };
 }
-function lightPath7(sh, t) {
-  const G = sh.G, g = geo();
-  const pts = APPROVED.map(f => [G.frag[f][0], G.frag[f][1] + G.fh * 0.5 + 0.07, 0.05]);
-  const start = G.T ? [-1.35, G.frag[0][1] + 0.35, 0.1] : [-0.15, g.y1 + 0.35, 0.1];
-  const exit = G.T ? [1.35, g.y1 + 0.2, 0.1] : [0.6, g.y1 + 0.4, 0.1];
-  const v = S7.visits;
-  return track([[S7.lightIn, start], [v[0], pts[0]], [v[0] + 0.25, pts[0]], [v[1], pts[1]], [v[1] + 0.25, pts[1]], [v[2], pts[2]], [v[2] + 0.35, pts[2]], [v[2] + 1.1, exit]], t);
+function fragPath7(G, f) {
+  const k = APPROVED.indexOf(f), spot = G.fragC[f];
+  const from = [halfW + 0.12, spot[1] + 0.2, 0.1], t0 = S7.frag + f * S7.fragGap;
+  const inPath = t => B3(from, [mix(from[0], spot[0], 0.5), spot[1] + 0.16, 0.06], spot, glide((t - t0) / S7.fragDur));
+  if (k < 0) return inPath;
+  const ta = S7.appr[k], via = [G.ap[0], G.ap[1] + (G.T ? 0.16 : 0.15), 0.04];
+  return t => t < ta ? inPath(t) : B3(spot, via, G.rowC[k], glide((t - ta) / S7.apDur));
 }
-function fragPath7(sh, f, t) {
-  const G = sh.G, to = [G.frag[f][0], G.frag[f][1], 0.02];
-  const u = inOut((t - S7.frag - f * 0.16) / 0.9);
-  return B3(G.from, [mix(G.from[0], to[0], 0.5), to[1] + 0.25, 0.1], to, u);
-}
-function reviewFrame(t) {
-  const sh = curShape, G = sh.G, L = G.list;
-  U.mode = REVIEW; U.phaseT = t; U.ramp = 0.5; U.noise = 0.35; U.noiseFreq = 1.1; U.colRate = 3;
-  const pv = pageView7(sh, t);
-  set4v(U.Q, pv[0], pv[1], pv[2], mix(1.15, 0.8, sm((t - S7.pull1) / 0.6)));
-  set4v(U.P, 1.3 * sm((t - S7.page) / 0.9), sm((t - S7.dim) / 0.8), 0, 0);
-  // portrait: once the unapproved pieces are gone, the finished list rises into the space they left
-  if (sh.liftY === undefined) {
-    const pg = G.page, g = geo();
-    sh.liftY = G.T ? Math.max(0, ((pg.y1 - pg.n * pg.pitch) + g.y0) / 2 - (L.y0 + L.pitch + 0.04)) : 0;
-    sh.rulesBase = sh.anchors.rules ? sh.anchors.rules[1] : 0;
-  }
-  const lift = sh.liftY * sm((t - S7.dim - 0.3) / 1.0);
-  if (sh.anchors.rules) sh.anchors.rules[1] = sh.rulesBase + lift;
-  for (let f = 0; f < 6; f++) {
-    const fp = fragPath7(sh, f, t);
-    arr(f, fp, sm((t - S7.frag - f * 0.16) / 0.3));
-    const k = APPROVED.indexOf(f);
+function reviewFrame(t, rt) {
+  const sh = curShape, G = sh.G;
+  story(REVIEW, t, rt, { form: 0.6, stagger: 0.25, ramp: 0.5, noise: 0.35, nf: 1.1, col: 3 });
+  U.P[0] = sm((t - S7.dim) / 0.6);
+  let apGlow = 0;
+  for (let f = 0; f < 5; f++) {
+    const p = fragPath7(G, f)(t), k = APPROVED.indexOf(f);
+    arr(16 + f, p, sm((t - S7.frag - f * S7.fragGap) / 0.2));
     if (k >= 0) {
-      const tv = S7.visits[k];
-      arr4(8 + f, 1.05 * sm((t - tv - 0.05) / 0.6), 0, pulse(t, tv, 5), 0);
-      arr(16 + f, [L.x, L.y0 + k * L.pitch + lift, 0.02], 1);
+      const ta = S7.appr[k], tr = rowPass(G, k) - 0.08;
+      apGlow += pulse(t, ta, 3.5);
+      arr4(21 + f, sm((t - ta - 0.1) / 0.4), 0, 0.9 * pulse(t, tr + 0.1, 2.4) + 0.3 * sm((t - tr) / 0.2), clamp((t - ta - S7.apDur + 0.05) / 0.3, 0, 1));
     } else {
-      arr4(8 + f, 0, sm((t - S7.reject - f * 0.07) / 0.75), 0, 0);
-      arr(16 + f, fp, 1);
+      const r = APPROVED.length ? [1, 4].indexOf(f) : 0;
+      arr4(21 + f, 0, sm((t - S7.reject - 0.08 * r) / 0.5), 0, 0);
     }
   }
-  const lp = lightPath7(sh, t), lv = vel(tt => lightPath7(sh, tt), t);
-  set4v(U.T, lp[0], lp[1], lp[2], sm((t - S7.lightIn) / 0.3) * (1 - sm((t - S7.visits[2] - 0.55) / 0.5)));
-  set4v(U.V, lv[0], lv[1], lv[2], 0);
-  R.trail = t < 2.2 ? 0.6 : 0.45; R.tail = 0.05; R.jitter = 0.0008;
+  person(0, G.ap, sm((t - S7.ap) / 0.3), 0, 0.9 * apGlow);
+  agent(reviewAgent(sh), t, 1 + 0.35 * win(t, S7.read0 - 0.05, S7.read0 + S7.readDur, 0.1, 0.3));
+  R.trail = t < S7.w1 ? 0.55 : 0.44; R.tail = 0.05; R.jitter = 0.0008;
 }
 
-/* ---------------------------------------------------- 08 · 아홉 칸 */
-const S8 = { comets: 1.6, go: 3.6, home: 5.9 };
-function orbit8(G, c, t) {
-  const B = G.boxes[COMET_BOX[c]], w = t * (0.85 + 0.12 * c) + c * 1.7;
-  return [B.x + Math.sin(w) * B.w * 0.27, G.ground + B.h * (0.38 + 0.22 * Math.sin(w * 0.7 + c)), B.z + Math.cos(w * 1.3) * B.d * 0.27];
+/* ---------------------------------------------------- 08 · 폴더 */
+const S8 = { unravel: 0.3, enter0: 1.5, enter1: 2.1, go: 2.45, arrive: 3.05, stay: 0.95, back: 0.75 };
+const SMALL8 = [1, 3, 5, 6];
+function orbit8(G, f, t, k) {
+  const B = G.boxes[f], w = t * (0.9 + 0.13 * k) + k * 1.7;
+  return [B.x + Math.sin(w) * B.w * 0.24, G.ground + B.hf * 0.8 + 0.04 * Math.sin(w * 0.7 + k), B.z + Math.cos(w * 1.2) * B.d * 0.2];
 }
-// comet 5 works in a front box, crosses into the box on its right, and is called back
 function crossPlan8(sh) {
   if (sh.plan) return sh.plan;
   const G = sh.G, A = G.boxes[CROSS], B = G.boxes[INTO];
-  const P5 = [B.x + B.w * 0.06, G.ground + A.h * 0.46, A.z + 0.02];
-  const start = orbit8(G, 5, S8.go), arriveB = S8.go + 0.95;
-  const mid = [(start[0] + P5[0]) / 2, Math.max(start[1], P5[1]) + 0.05, (start[2] + P5[2]) / 2];
-  const go = t => B3(start, mid, P5, inOut((t - S8.go) / (arriveB - S8.go)));
-  let tc = arriveB;
-  for (let tt = S8.go; tt <= arriveB; tt += 0.005) if (go(tt)[0] >= sh.wallX) { tc = tt; break; }
-  const X = go(tc), tr = arriveB + 0.18;
-  sh.plan = { P5, go, tc, X, tr, speed: dist3(P5, X) / (tr - tc), arriveB };
+  const P5 = [B.x - B.w * 0.12, G.ground + A.hf * 0.85, B.z + 0.02];
+  const start = orbit8(G, CROSS, S8.go, 0);
+  const mid = [(start[0] + P5[0]) / 2, Math.max(start[1], P5[1]) + 0.14, (start[2] + P5[2]) / 2];
+  const go = t => B3(start, mid, P5, glide((t - S8.go) / (S8.arrive - S8.go)));
+  let tc = S8.arrive;
+  for (let tt = S8.go; tt <= S8.arrive; tt += 0.005) if (go(tt)[0] >= G.wallX) { tc = tt; break; }
+  const leave = S8.arrive + S8.stay, home = leave + S8.back;
+  sh.plan = { P5, go, tc, X: go(tc), leave, home };
   return sh.plan;
 }
-function comet5(sh, t) {
+// the camera at a given pose, for one projection; the live camera is put back afterwards
+function poseView(pose, fn) {
+  const keep = {};
+  for (const k of CAMK) { keep[k] = cam[k]; cam[k] = pose[k] || 0; }
+  buildView();
+  const r = fn();
+  for (const k of CAMK) cam[k] = keep[k];
+  buildView();
+  return r;
+}
+// the cut from 7 to 8 keeps the agent where it was on screen: its last spot in scene 7, seen through scene 8's first camera
+function matchSpot8(sh, start) {
+  if (sh.M) return sh.M;
+  const T7 = SCENES[6].Tend, p = reviewAgent(shapeOf('review'))(T7);
+  const s = poseView(SCENES[6].cam(T7), () => project(p[0], p[1], p[2]));
+  sh.M = s ? poseView(foldersCam(0), () => unproject(s[0], s[1])) : start;
+  return sh.M;
+}
+function hero8(sh) {
   const G = sh.G, pl = crossPlan8(sh);
-  if (t < S8.go) return orbit8(G, 5, t);
-  if (t < pl.arriveB) return pl.go(t);
-  if (t < pl.tr) return [pl.P5[0] + (t - pl.arriveB) * 0.05, pl.P5[1], pl.P5[2]];
-  const back = orbit8(G, 5, S8.home), from = [pl.P5[0] + (pl.tr - pl.arriveB) * 0.05, pl.P5[1], pl.P5[2]];
-  return B3(from, [(from[0] + back[0]) / 2, Math.max(from[1], back[1]) + 0.06, (from[2] + back[2]) / 2], back, inOut((t - pl.tr) / (S8.home - pl.tr)));
+  const start = [G.lump[0] + 0.08, G.lump[1] + G.lumpR * 0.8, G.lump[2] + 0.3];
+  const M = matchSpot8(sh, start);
+  const stayAt = t => [pl.P5[0] + 0.03 * Math.sin((t - S8.arrive) * 3), pl.P5[1], pl.P5[2]];
+  return t => {
+    if (t < 1.1) return L3(M, start, glide(t / 1.1));
+    if (t < S8.enter0) return start;
+    if (t < S8.enter1) return L3(start, orbit8(G, CROSS, S8.enter1, 0), glide((t - S8.enter0) / (S8.enter1 - S8.enter0)));
+    if (t < S8.go) return orbit8(G, CROSS, t, 0);
+    if (t < S8.arrive) return pl.go(t);
+    if (t < pl.leave) return stayAt(t);
+    if (t < pl.home) {
+      const from = stayAt(pl.leave), back = orbit8(G, CROSS, pl.home, 0);
+      return B3(from, [(from[0] + back[0]) / 2, Math.max(from[1], back[1]) + 0.14, (from[2] + back[2]) / 2], back, glide((t - pl.leave) / (pl.home - pl.leave)));
+    }
+    return orbit8(G, CROSS, t, 0);
+  };
 }
-function cityFrame(t) {
+function small8(G, k) {
+  const f = SMALL8[k], t0 = S8.enter0 + 0.08 * (k + 1), t1 = S8.enter1 + 0.08 * (k + 1);
+  const a = k * 1.57 + 0.6, start = [G.lump[0] + Math.cos(a) * G.lumpR * 0.6, G.lump[1] + 0.12 * Math.sin(a * 1.3), G.lump[2] + Math.sin(a) * G.lumpR * 0.6];
+  return t => t < t0 ? start : t < t1 ? L3(start, orbit8(G, f, t1, k + 1), glide((t - t0) / (t1 - t0))) : orbit8(G, f, t, k + 1);
+}
+function foldersFrame(t, rt) {
   const sh = curShape, G = sh.G, pl = crossPlan8(sh);
-  U.mode = CITY; U.phaseT = t; U.ramp = 0.8; U.noise = 0.5; U.noiseFreq = 0.9; U.colRate = 7;
-  for (let c = 0; c < 6; c++) {
-    const f = c === 5 ? tt => (tt > S8.home ? orbit8(G, 5, tt) : comet5(sh, tt)) : tt => orbit8(G, c, tt);
-    const p = f(t), v = vel(f, t);
-    arr(c, p, sm((t - S8.comets - c * 0.12) / 0.4));
-    arr(8 + c, v, 0);
+  story(FOLDERS, t, rt, { form: 0.5, stagger: 0.15, ramp: 0.6, noise: 0.45, nf: 0.9, col: 6 });
+  const hero = hero8(sh);
+  const hp = agent(hero, t, 1 + 0.4 * pulse(t, pl.tc, 2.5));
+  const inCross = (t > S8.enter1 - 0.1 && t < S8.go + 0.1) || t > pl.home - 0.1;
+  for (let f = 0; f < 9; f++) {
+    let glow = 0;
+    if (f === CROSS && inCross) glow = 1;
+    if (f === INTO) glow = win(t, S8.arrive - 0.1, pl.leave, 0.15, 0.3);
+    const k = SMALL8.indexOf(f);
+    if (k >= 0) glow = sm((t - S8.enter1 - 0.08 * (k + 1)) / 0.3) * 0.75;
+    arr4(24 + f, glow, S8.unravel + 0.09 * f, 0, 0);
   }
-  const T = G.T;
-  const r = (t > pl.tc ? Math.min(t - pl.tc, pl.tr - pl.tc + 0.1) * pl.speed : 0) * (T ? 1.8 : 1);
-  set4v(U.P, pulse(t, pl.tr, 3.5), pulse(t, pl.tc, T ? 0.75 : 1.25), (t > pl.tc ? 1 : 0) * (1 - sm((t - pl.tr - (T ? 0.3 : 0)) / (T ? 0.5 : 0.4))), T ? 2.4 : 1.15);
-  set4v(U.Q, pl.X[0], pl.X[1], pl.X[2], r);
-  R.trail = t < 1.2 ? 0.7 : 0.5; R.tail = 0.06 + 0.07 * sm((t - S8.go + 0.2) / 0.3) * (1 - sm((t - S8.home) / 0.4)); R.jitter = 0.0008; R.dof = 0.9;
+  for (let k = 0; k < 4; k++) {
+    const f = small8(G, k), p = f(t), v = vel(f, t);
+    arr(16 + k, p, depthScale(p));
+    arr4(20 + k, v[0], v[1], v[2], 0.7 * sm((t - 1.1) / 0.4));
+  }
+  // the test: the wall flashes, keeps a thin clay outline, and a ripple runs from the crossing to the hero
+  const reach = dist3(pl.X, pl.P5) + 0.05;
+  set4v(U.P, pulse(t, pl.tc, 3.2) * (t >= pl.tc ? 1 : 0), sm((t - pl.tc) / 0.3), win(t, pl.tc + 0.05, pl.tc + 0.95, 0.1, 0.35), 0);
+  set4v(U.Q, pl.X[0], pl.X[1], pl.X[2], reach * sm((t - pl.tc - 0.05) / 0.5));
+  R.trail = t < 1.2 ? 0.6 : 0.48; R.tail = 0.06; R.jitter = 0.0008; R.dof = 0.9;
   R.bloom = 1 + 0.5 * pulse(t, pl.tc, 2.5);
-  R.dim = 0.14 + 0.86 * sm(t / 0.8);
+}
+function foldersCam(t) {
+  const G = shapeOf('folders').G, T = G.T;
+  return { yaw: mix(0.5, 0.26, inOut(t / 6)), pitch: T ? 0.36 : 0.3, dz: T ? -0.12 : 0.06, ty: G.ground + (T ? 0.08 : 0.12), tz: 0.05 };
 }
 
-/* ---------------------------------------------------- 09 · 함께 */
-const S9 = { seat: 0.9, bloom: 1.6, reveal: 2.2, gather: 3.6 };
-function togetherFrame(t, u, prev) {
+/* ---------------------------------------------------- 09 · 연락 */
+let linkHover = -1, linkHold = 0;
+const beam9 = { s: 0, r: 0, tgt: [0, 0, 0] };
+function contactFrame(t, rt, dt) {
   const sh = curShape, G = sh.G;
-  U.mode = TOGETHER; U.phaseT = t; U.ramp = 0.6; U.noise = 0.4; U.noiseFreq = 0.9; U.colRate = 2.4;
-  for (let k = 0; k < 8; k++) arr(k, G.seat(k), k === G.empty ? 0 : 1);
-  const es = G.seat(G.empty);
-  set4v(U.T, es[0], es[1], es[2], sm((t - S9.seat) / 0.6));
-  set4v(U.P, S9.bloom, S9.gather, 0, 0);
-  set4v(U.S, 0, G.titleY, 0.04, G.T ? 0.62 : 0.5);
-  set4v(U.Q, 0, G.sigY, 0, 1);
-  if (prev < S9.reveal && t >= S9.reveal && caps[8]) caps[8].classList.add('bloom');
-  R.trail = t > S9.bloom - 0.1 && t < S9.gather + 1.6 ? 0.46 : 0.4; R.tail = 0.04; R.jitter = 0.0009;
-  R.maskA = 0.8;
+  story(CONTACT, t, rt, { form: 0.9, stagger: 0.45, ramp: 0.6, noise: 0.35, col: 2.4 });
+  const from = hero8(shapeOf('folders'))(SCENES[7].Tend);
+  agent(tt => track([[0, from], [1.4, G.ag]], tt), t, 1);
+  // a beam toward the contact link under the pointer or the keyboard focus
+  const B = linkHover >= 0 ? G.btns[linkHover] : null;
+  if (B) beam9.tgt = [(B.x0 + B.x1) / 2, (B.y0 + B.y1) / 2, 0];
+  beam9.s += ((B ? 1 : 0) - beam9.s) * (1 - Math.exp(-dt * 9));
+  beam9.r += ((B ? 1 : 0) - beam9.r) * (1 - Math.exp(-dt * (B ? 6 : 3)));
+  arr(16, beam9.tgt, 1);
+  U.P[0] = beam9.s; U.P[1] = beam9.r;
+  R.trail = 0.4; R.tail = 0.04; R.jitter = 0.0009; R.maskA = 0.8; R.par = 0;
 }
 
-/* 장면마다 단계(steps)와 카메라를 둔다. 카메라 함수는 (장면 시간, 단계 이름)을 받아 목표 자리를 돌려주고,
-   스프링이 그 자리를 따라간다. 마지막 단계는 끝없이 머문다 */
+/* 이름표: 장면의 기준점을 화면 좌표로 옮겨 붙인다. 개수에는 붙이지 않는다 */
+const LABELS = {
+  ring: (sh, t) => {
+    const G = sh.G;
+    sh.anchors.agent = [U.Ag[0] - AGS() * 1.9, U.Ag[1] + AGS() * 0.3, U.Ag[2]];
+    for (let k = 0; k < 2; k++) { const c = G.cards[k]; sh.anchors[k ? 'pr' : 'ticket'] = [c[0] + 0.15 * G.cs + 0.035, c[1], c[2]]; }
+    const low = t > S2.fold + 0.2 ? 'lo' : true;
+    return { agent: t > S2.j0 + 0.25 && t < S2.ans + 0.3, team: t > 0.8, code: t > S2.grow + 0.45 && low, db: t > S2.grow + 0.55 && low, ticket: t > S2.fold + 0.45, pr: t > S2.fold + 0.55 };
+  },
+  meaning: (sh, t) => ({ gate: t > 0.9 }),
+  memory: (sh, t) => ({ past: t > 0.95 }),
+  away: (sh, t) => {
+    const G = sh.G, b = bubblePath5(G)(t);
+    sh.anchors.q = [b[0] + G.bw * 0.5 + 0.02, b[1] + G.bh * 0.55, 0];
+    return { q: t > S5.q0 + 0.1 && t < S5.take + 0.15 };
+  },
+  clock: (sh, t) => {
+    const G = sh.G, p = L3(G.S[0], G.I[0], inOut((t - tq6(0)) / S6.fly));
+    sh.anchors.q = [p[0] + G.bw * 0.5 + 0.02, p[1] + G.bh * 0.55, 0];
+    return { q: t > tq6(0) + 0.1 && t < tc6(0) + 0.15 };
+  },
+  review: (sh, t) => {
+    const G = sh.G, f = G.fragC[1];
+    sh.anchors.review = [f[0] + G.frag.w / 2, f[1] + G.frag.h * 0.5 + 0.05, 0];
+    return { review: t > S7.frag + 0.6, ok: t > S7.ap + 0.25, rules: t > S7.appr[0] + 0.5 };
+  },
+  folders: (sh, t) => {
+    const pl = crossPlan8(sh);
+    sh.anchors.test = [pl.X[0] + 0.02, pl.X[1] + 0.2, pl.X[2]];
+    return { folder: t > 1.3, test: t > pl.tc + 0.1 && t < pl.tc + 1.3 };
+  }
+};
+
+/* 장면마다 이야기 시간(Tend)과 사건이 끝나는 때(ev), 카메라를 둔다. 장면 1과 본문 뒤 은하는 실제 시간으로 돈다 */
 const SCENES = [
-  { key: 'name', story: 3.2, camK: 5, from: { yaw: -0.42, pitch: 0.16, dz: 0.95, roll: 0.22 },
-    cam: () => ({}),
-    steps: [
-      { name: 'chaos', dur: 0.35, gate: () => fontsReady, enter(first) { if (!first) explode(1.6, [0, 0, 0.8]); }, frame() { free(1.5, 0.9); R.trail = 0.86; R.tail = 0.06; } },
-      { name: 'assemble', dur: 1.9, enter() { useShape('name'); }, frame(t, u) { assemble(64, 0.62, 0.62, 0.5, 0.2, 1.2); R.trail = mix(0.86, 0.3, sm(u)); R.tail = mix(0.06, 0.035, u); } },
-      { name: 'hold', dur: Infinity, frame() { hold(); R.trail = 0.25; } }
-    ] },
-  { key: 'ring', story: 10.1, camK: 3.2,
-    cam: t => ({ yaw: mix(-0.1, 0.07, sm(t / 8.5)), pitch: 0.05, dz: 0.02 }),
-    steps: [{ name: 'run', dur: Infinity, enter() { useShape('ring'); }, frame: ringFrame }] },
-  { key: 'meaning', story: 7.1, camK: 3.2,
-    cam: () => ({ pitch: 0.02 }),
-    steps: [{ name: 'run', dur: Infinity, enter() { useShape('meaning'); }, frame: meaningFrame }] },
-  { key: 'memory', story: 7.4, camK: 2.4,
-    cam: t => {
-      const G = shapeOf('memory').G, s = G.star, u = inOut((t - 0.75) / 2.3);
-      return { tx: s[0] * u, ty: s[1] * u, tz: s[2] * u, dz: mix(0, -0.5, u), yaw: mix(0, 0.5, u) + 0.12 * sm((t - 3) / 5), pitch: mix(0.02, 0.13, u) };
-    },
-    steps: [{ name: 'run', dur: Infinity, enter() { useShape('memory'); }, frame: memoryFrame }] },
-  { key: 'anytime', story: 7.2, camK: 2.4,
-    cam: t => ({ yaw: mix(-0.08, 0.06, sm(t / 7)), pitch: 0.09, dz: 0.03 }),
-    steps: [{ name: 'run', dur: Infinity, enter() { useShape('anytime'); }, frame: anytimeFrame }] },
-  { key: 'ribbon', story: 7.6, camK: 2.8,
-    cam: t => ({ yaw: mix(-0.16, 0, sm((t - 3.4) / 2.4)), pitch: mix(0.05, 0, sm((t - 3.4) / 2.4)), dz: 0 }),
-    steps: [{ name: 'run', dur: Infinity, enter() { useShape('ribbon'); }, frame: ribbonFrame }] },
-  { key: 'review', story: 7.4, camK: 3,
-    cam: t => ({ dz: mix(-0.1, 0.03, inOut((t - S7.pull0) / (S7.pull1 - S7.pull0))) }),
-    steps: [{ name: 'run', dur: Infinity, enter() { useShape('review'); }, frame: reviewFrame }] },
-  { key: 'city', story: 8.0, camK: 2.4,
-    cam: (t, st) => {
-      const G = shapeOf('city').G, ty = G.ground + 0.2;
-      if (st === 'scatter') return { yaw: 1.05, pitch: 0.42, dz: 0.3, ty };
-      const T = layout === 'tall';
-      return { yaw: 1.0 - 0.75 * inOut(t / 9.5), pitch: T ? 0.5 : 0.46, dz: mix(0.18, T ? 0.02 : -0.02, sm(t / 3)), ty };
-    },
-    steps: [
-      { name: 'scatter', dur: 0.6, enter() { explode(0.8, [0, 0.2, -0.15], undefined, 0, 0, 0.06); }, frame(t) { free(0.8, 1.5); R.trail = 0.3; R.tail = 0.02; R.dim = 1 - 0.86 * sm(t / 0.22); } },
-      { name: 'build', dur: Infinity, enter() { useShape('city'); }, frame: cityFrame }
-    ] },
-  { key: 'together', story: 5.4, camK: 3,
-    cam: () => ({ yaw: 0.04, pitch: 0.03 }),
-    steps: [{ name: 'run', dur: Infinity, enter() { useShape('together'); }, frame: togetherFrame }] },
-  { key: 'galaxy', story: 1, camK: 2.5,
-    cam: () => ({}),
-    steps: [
-      { name: 'spin', dur: Infinity, frame(t) {
-          const tall = layout === 'tall';
-          U.mode = GALAXY; U.phaseT = t; U.noise = 0.25; U.noiseFreq = 0.8;
-          U.P[0] = 1.08; U.P[1] = -0.42; U.P[2] = tall ? 1.25 : 1.75; U.P[3] = 0.05;
-          U.Q[0] = tall ? 0.1 : 0.55; U.Q[1] = tall ? 0.2 : 0.0; U.Q[2] = -0.7; U.Q[3] = 0.16;
-          U.S[0] = 3.0 * sm(t / 2.5) + 0.3; U.S[1] = 0.62;
-          U.colRate = 1.2;
-          R.trail = 0.55; R.dim = 0.85; R.jitter = 0.0012; R.tail = 0.03;
-        } }
-    ] }
+  { key: 'name', real: true, camK: 5, from: { yaw: -0.42, pitch: 0.16, dz: 0.95, roll: 0.22 }, cam: () => ({}) },
+  { key: 'ring', Tend: 10, ev: 5.0, camK: 3.2, cam: t => ({ yaw: mix(-0.1, 0.07, sm(t / 8.5)), pitch: 0.05, dz: 0.02 }), frame: ringFrame },
+  { key: 'meaning', Tend: 9, ev: 4.5, camK: 3.2, cam: () => ({ pitch: 0.02 }), frame: meaningFrame },
+  { key: 'memory', Tend: 10.2, ev: 5.1, camK: 2.4, cam: t => memoryCam(t), frame: memoryFrame },
+  { key: 'away', Tend: 9.8, ev: 4.9, camK: 2.6, cam: t => ({ yaw: mix(-0.06, 0.05, sm(t / 8)), pitch: 0.05, dz: 0.02 }), frame: awayFrame },
+  { key: 'clock', Tend: 9.8, ev: 4.9, camK: 2.8, cam: () => ({ pitch: 0.02 }), frame: clockFrame },
+  { key: 'review', Tend: 11.2, ev: 5.6, camK: 3, cam: t => ({ dz: mix(-0.06, 0.02, sm(t / 3)) }), frame: reviewFrame },
+  { key: 'folders', Tend: 9.6, ev: 4.8, camK: 2.4, cut: true, cam: t => foldersCam(t), frame: foldersFrame },
+  { key: 'contact', Tend: 3.6, ev: 1.8, camK: 3, cam: () => ({}), frame: contactFrame },
+  { key: 'galaxy', real: true, camK: 2.5, cam: () => ({}) }
 ];
 const GALAXY_I = SCENES.length - 1;
+function galaxyFrame(t) {
+  const tall = layout === 'tall';
+  U.mode = GALAXY; U.phaseT = t; U.noise = 0.25; U.noiseFreq = 0.8;
+  U.P[0] = 1.08; U.P[1] = -0.42; U.P[2] = tall ? 1.25 : 1.75; U.P[3] = 0.05;
+  U.Q[0] = tall ? 0.1 : 0.55; U.Q[1] = tall ? 0.2 : 0.0; U.Q[2] = -0.7; U.Q[3] = 0.16;
+  U.S[0] = 3.0 * sm(t / 2.5) + 0.3; U.S[1] = 0.62;
+  U.colRate = 1.2;
+  R.trail = 0.55; R.dim = 0.85; R.jitter = 0.0012; R.tail = 0.03; R.fixEnd = 0;
+}
 
-let sceneIdx = 0, stepIdx = 0, stepT = 0, sceneT = 0, simTime = 1.0;
-function enterStep(i, first) {
-  stepIdx = i; stepT = 0;
-  const st = SCENES[sceneIdx].steps[i];
-  if (st.enter) st.enter(first);
-}
-function advanceSteps(dt) {
-  const sc = SCENES[sceneIdx];
-  stepT += dt; sceneT += dt;
-  let st = sc.steps[stepIdx];
-  while (stepT >= st.dur && stepIdx < sc.steps.length - 1) {
-    const next = sc.steps[stepIdx + 1];
-    if (st.gate && !st.gate()) { stepT = Math.min(stepT, st.dur); break; }
-    const over = stepT - st.dur;
-    enterStep(stepIdx + 1);
-    stepT = over;
-    st = next;
-  }
-}
-// a tap: a local burst at the point; the springs pull everything back into the same scene
-function scatterAt(px, py) {
-  const w = unproject(px, py);
-  explode(3.0, [0, 0, 0.5], w, 0.7);
-}
 /* ------------------------------------------------------- scroll and UI */
 const sections = [...document.querySelectorAll('.scene')];
 const caps = sections.map(s => s.querySelector('.cap'));
@@ -2748,18 +3159,42 @@ const lblEls = {};
 document.querySelectorAll('.lbl').forEach(el => { lblEls[el.dataset.l] = el; });
 const lblOn = {};
 const lblW = {};
-let waitingFont = false;
 
-function sceneFromScroll() {
-  if (afterEl && afterEl.getBoundingClientRect().top < innerHeight * 0.5) return GALAXY_I;
+/* 장면 진행은 스크롤에 묶는다. 장면 구간 안에서 화면 가운데가 지난 비율 f 로 목표 이야기 시간 Tend × min(f / 0.8, 1) 을 정하고
+   (끝 20% 는 마지막 모양에 머문다. 장면 9 는 본문이 화면에 들어오기 전에 끝나도록 끝 절반), 그리는 시간은 그 목표를 쫓는다. 사건 구간에서는 쫓는 속도에 상한을 두어 휙 넘겨도
+   사건이 보이게 하고, 목표가 한 장면 넘게 앞서거나 뒤처지면 바로 그 장면으로 건너뛴다. 장면 1 과 본문 뒤 은하는 실제 시간으로 돈다 */
+const KCH = 6, VMIN = 0.6, VEV = 1.5, VEVB = 3, VREST = 10, CUT_HOLD = 0.32;
+let sceneIdx = -1, storyT = 0, prevStoryT = 0, rt = 0, realT = 0, simTime = 1.0;
+let cut = null, snapNext = false, manual = false, manualTo = 0, waitingFont = false, nameAt = -1;
+const lastAg = new Float32Array(4), lastAgV = new Float32Array(4);
+let agSpd = 0;
+/* 에이전트는 장면이 바뀌어도 한 빛이다. 장면이 원하는 자리로 미끄러지되 화면 긴 변의 AG_V 배/초보다 빨리 가지 않아 혜성이 되지 않는다 */
+const AG_V = 0.8, agPos = new Float32Array(3);
+let agLive = false, agInit = false;
+const isStory = i => !SCENES[i].real;
+const crossed = a => prevStoryT < a && storyT >= a;
+function scrollTarget() {
+  if (afterEl && afterEl.getBoundingClientRect().top < innerHeight * 0.5) return { i: GALAXY_I, f: 0 };
   const mid = innerHeight * 0.5;
   for (let i = 0; i < sections.length; i++) {
-    if (sections[i].getBoundingClientRect().bottom > mid) return i;
+    const r = sections[i].getBoundingClientRect();
+    if (r.bottom > mid) return { i, f: clamp((mid - r.top) / Math.max(1, r.height), 0, 1) };
   }
-  return sections.length - 1;
+  return { i: sections.length - 1, f: 1 };
+}
+const FULL = i => i === 8 ? 0.5 : 0.8;
+const tgtT = (i, f) => isStory(i) ? SCENES[i].Tend * Math.min(f / FULL(i), 1) : 0;
+const gpos = (i, t) => i + (isStory(i) ? t / SCENES[i].Tend : 0.5);
+function chase(t, tt, sc, dt) {
+  const d = tt - t;
+  if (Math.abs(d) < 1e-5) return tt;
+  const fwd = d > 0, inEv = fwd ? t < sc.ev : t <= sc.ev + 1e-3;
+  const cap = inEv ? (fwd ? VEV : VEVB) : VREST;
+  const step = clamp(Math.abs(d) * KCH, VMIN, cap) * dt;
+  return Math.abs(d) <= step ? tt : t + (fwd ? step : -step);
 }
 // scenes whose particles draw letters wait for Pretendard
-function needsFont(i) { return i === 0 || i === 5 || i === 8; }
+function needsFont(i) { const k = SCENES[i].key; return k === 'name' || k === 'clock' || k === 'contact'; }
 // the caption box of the scene in NDC (centre and half size, with a margin); particles fade inside it
 const capRect = new Float32Array([0, -0.8, 0.5, 0.12]);
 let capTopPx = 1e4;
@@ -2768,7 +3203,7 @@ function measureCap() {
   if (!c || sceneIdx === GALAXY_I) { capRect[1] = -3; return; }
   let r = settledRect(c, c), my = 26;
   capTopPx = r.height ? r.top : 1e4;
-  // the last scene keeps its signature and links outside the box, so only the words are masked
+  // the last scene keeps the contact links outside the box, so only the words are masked
   const h = c.querySelector('h2'), p = c.querySelector('.sub');
   if (sceneIdx === 8 && h && p) {
     const a = settledRect(c, h), b = settledRect(c, p);
@@ -2784,27 +3219,72 @@ function measureCap() {
 }
 function applyCamGoal() {
   const sc = SCENES[sceneIdx];
-  const g = sc.cam(sceneT, sc.steps[stepIdx].name) || {};
+  const g = (isStory(sceneIdx) ? sc.cam(storyT) : sc.cam(realT)) || {};
   for (const k of CAMK) cam.goal[k] = g[k] || 0;
   cam.k = sc.camK || 6;
 }
-function show(i, first) {
-  if (i === sceneIdx && !first) return;
-  sceneIdx = i;
-  sceneT = 0;
-  waitingFont = !fontsReady && needsFont(i) && i !== 0;
-  if (waitingFont) { stepIdx = 0; stepT = 0; } else enterStep(0, first);
+function enter(i, t0, how) {
+  const prev = sceneIdx;
+  agLive = how !== 'show' && how !== 'first' && prev >= 1 && prev < GALAXY_I && isStory(i);
+  if (!agLive) agInit = false;
+  sceneIdx = i; storyT = prevStoryT = t0; rt = 0; realT = 0; nameAt = -1;
+  const sc = SCENES[i];
+  waitingFont = !fontsReady && needsFont(i) && sc.key !== 'name';
+  if (isStory(i) && !waitingFont) useShape(sc.key);
+  if (sc.key === 'name' && how !== 'first') explode(1.6, [0, 0, 0.8]);
+  if (how === 'cut') snapNext = true;
   applyCamGoal();
+  if (how === 'cut' || how === 'show') snapCamera();
   root.classList.toggle('in-sec', i === GALAXY_I);
   root.classList.toggle('at0', i === 0);
   root.classList.toggle('at-end', i === 8);
-  caps.forEach((c2, k) => { if (!c2) return; c2.classList.toggle('on', k === i); if (k !== i) c2.classList.remove('bloom'); });
+  caps.forEach((c, k) => { if (c) c.classList.toggle('on', k === i); });
   measureCap();
   for (const k in lblEls) setLabel(k, false);
   syncUI(true);
 }
-function onScroll() { const i = sceneFromScroll(); if (i !== sceneIdx) show(i); }
-addEventListener('scroll', onScroll, { passive: true });
+// 7 과 8 사이는 컷: 장면 7 의 입자는 그 자리에서 어둠으로 사라지고, 장면 8 은 새 입자로 시작한다
+function go(i, t0) {
+  const a = sceneIdx;
+  if (isStory(a) && isStory(i) && ((a <= 6 && i === 7) || (a === 7 && i <= 6))) {
+    cut = { t: 0, i, T: t0 };
+    for (const k in lblEls) setLabel(k, false);
+    return;
+  }
+  enter(i, t0, 'go');
+}
+function direct(dt) {
+  prevStoryT = storyT;
+  if (cut) {
+    cut.t += dt;
+    if (cut.t >= CUT_HOLD) {
+      // a match cut: the picture changes around the agent, which stays at the same spot on screen
+      const c = cut, sp = project(agPos[0], agPos[1], agPos[2]);
+      cut = null;
+      enter(c.i, c.T, 'cut');
+      if (sp && agInit) { const w = unproject(sp[0], sp[1]); agPos[0] = w[0]; agPos[1] = w[1]; agPos[2] = w[2]; }
+    }
+    return;
+  }
+  if (manual) { if (storyT < manualTo) storyT = Math.min(manualTo, storyT + dt); return; }
+  if (waitingFont) return;
+  const tg = scrollTarget(), i = sceneIdx, sc = SCENES[i];
+  if (tg.i === i) {
+    if (isStory(i)) storyT = chase(storyT, tgtT(i, tg.f), sc, dt);
+    return;
+  }
+  const tt = tgtT(tg.i, tg.f);
+  if (!isStory(i) || tg.i === GALAXY_I) { go(tg.i, tg.i > i ? 0 : tt); return; }
+  if (Math.abs(gpos(tg.i, tt) - gpos(i, storyT)) > 1) { go(tg.i, tg.i > i ? 0 : tt); return; }
+  // the next or previous scene: finish this one in that direction first, so words and picture stay together
+  if (tg.i > i) {
+    storyT = chase(storyT, sc.Tend, sc, dt);
+    if (storyT >= sc.Tend) go(i + 1, 0);
+  } else {
+    storyT = chase(storyT, 0, sc, dt);
+    if (storyT <= 0) go(i - 1, isStory(i - 1) ? SCENES[i - 1].Tend : 0);
+  }
+}
 // scrolling fast stretches the afterimage and pushes the camera forward a little; speed is read per simulation tick
 let lastTickY = scrollY;
 function readScrollSpeed(dt) {
@@ -2812,11 +3292,78 @@ function readScrollSpeed(dt) {
   lastTickY = scrollY;
   if (dy > 0 && dt > 0) warp.v = Math.max(warp.v, Math.min(dy / innerHeight / dt / 2.5, 1));
 }
+// a tab moves the page to the end of that scene and plays it from the start
 navBtns.forEach((b, i) => b.addEventListener('click', () => {
-  const top = sections[i].getBoundingClientRect().top + scrollY;
-  scrollTo({ top: top + 2, behavior: 'instant' });
-  onScroll();
+  apStop();
+  const s = sections[i], r = s.getBoundingClientRect();
+  const y = i === 0 ? 0 : r.top + scrollY + (FULL(i) + 0.02) * r.height - innerHeight * 0.5;
+  scrollTo({ top: Math.max(0, Math.round(y)), behavior: 'instant' });
+  lastTickY = scrollY;
+  cut = null;
+  if (i !== sceneIdx) enter(i, 0, 'go');
 }));
+
+/* 첫 진입 자동 재생: 맨 위에서 열고 아무것도 건드리지 않으면 장면 1 의 이름이 모인 뒤 페이지를 프로그램으로 천천히 내린다.
+   장면 진행은 그대로 스크롤에 묶여 있어 탭과 진행 막대도 함께 움직인다. 장면마다 AP_T 초 동안 이야기 시간을 1배속으로 보여 주고
+   (Tend 를 넘는 몫은 마지막 모양에 머문다) AP_GLIDE 초 동안 다음 장면 첫머리로 미끄러진다. 장면 9 의 마지막 모양에서 한 번 끝나고
+   본문으로 내려가거나 되풀이하지 않는다. 사용자가 직접 넘기려는 입력(휠·트랙패드, 터치로 끌기, 스크롤 키, 스크롤바, 장면 탭·목차 클릭)을
+   하면 그 자리에서 끝나고 다시 켜지지 않는다. 포인터를 움직이거나 입자를 누르는 것, 한/EN 버튼과 연락처 링크는 끝내지 않는다 */
+const AP_T = [0, 9.0, 8.6, 9.0, 9.0, 9.0, 9.6, 11.8, 3.6];
+const AP_PAUSE = 1.2, AP_GLIDE = 0.8, AP_GLIDE0 = 0.9;
+const ap = { on: false, over: CAPTURE ? !qs.has('autoplay') : qs.has('noauto') || !!location.hash, ph: 'wait', i: 0, t: 0, ya: 0, yb: 0, setY: -1, el: 0 };
+const apEase = u => u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+const docY = (i, f) => { const r = sections[i].getBoundingClientRect(); return r.top + scrollY + f * r.height - innerHeight * 0.5; };
+function apStop() {
+  if (ap.over) return;
+  ap.over = true; ap.on = false;
+  root.classList.remove('autoplay');
+}
+function apScroll(y) {
+  scrollTo({ top: Math.max(0, y), behavior: 'instant' });
+  ap.setY = scrollY;
+}
+function autoplay(dt) {
+  if (ap.over) return;
+  if (ap.ph === 'wait') {
+    // a position restored by reload, or any scene other than 1, means the visit did not start at the top
+    if (scrollY > 2 || sceneIdx !== 0) { apStop(); return; }
+    if (!ap.on) { ap.on = true; root.classList.add('autoplay'); }
+    if (nameAt < 0 || realT - nameAt < 1.9 + AP_PAUSE) return;
+    ap.ph = 'glide'; ap.i = 1; ap.t = 0; ap.ya = scrollY; ap.setY = scrollY;
+  }
+  ap.el += dt;
+  // the page moved without us (scrollbar, find in page, keyboard focus, a link): the visitor has taken over
+  if (ap.setY >= 0 && Math.abs(scrollY - ap.setY) > 2) { apStop(); return; }
+  if (ap.ph === 'glide') {
+    ap.t += dt;
+    const u = Math.min(1, ap.t / (ap.i === 1 ? AP_GLIDE0 : AP_GLIDE)), yb = docY(ap.i, 0) + 2;
+    apScroll(ap.ya + (yb - ap.ya) * apEase(u));
+    if (u >= 1) { ap.ph = 'play'; ap.t = 0; ap.yb = yb; }
+    return;
+  }
+  // play: the scene's story time runs at 1x from the moment the director has entered it (after the 7/8 cut, after fonts)
+  if (sceneIdx === ap.i && !cut && !waitingFont) ap.t += dt;
+  const sc = SCENES[ap.i], T = Math.min(ap.t, sc.Tend);
+  apScroll(Math.max(ap.yb, docY(ap.i, FULL(ap.i) * T / sc.Tend)));
+  if (ap.t >= AP_T[ap.i]) {
+    if (ap.i === 8) { ap.over = true; ap.on = false; ap.ph = 'end'; root.classList.remove('autoplay'); return; }
+    ap.ph = 'glide'; ap.i++; ap.t = 0; ap.ya = scrollY;
+  }
+}
+// inputs that mean "I will scroll myself"; scroll events are not read, so the program's own scrolling never counts
+addEventListener('wheel', apStop, { passive: true, capture: true });
+addEventListener('keydown', e => {
+  const k = e.key;
+  if (k === 'ArrowUp' || k === 'ArrowDown' || k === 'PageUp' || k === 'PageDown' || k === 'Home' || k === 'End' || k === 'Escape') apStop();
+  else if ((k === ' ' || k === 'Spacebar') && !(e.target && e.target.closest && e.target.closest('button,input,select,textarea,summary,[contenteditable]'))) apStop();
+}, true);
+let apTouch = null;
+addEventListener('touchstart', e => { const t = e.touches[0]; apTouch = t && e.touches.length === 1 ? [t.clientX, t.clientY] : null; if (e.touches.length > 1) apStop(); }, { passive: true, capture: true });
+addEventListener('touchmove', e => { const t = e.touches[0]; if (!apTouch || !t || Math.hypot(t.clientX - apTouch[0], t.clientY - apTouch[1]) > 6) apStop(); }, { passive: true, capture: true });
+// a press on the scrollbar (classic scrollbars sit outside the client area)
+addEventListener('mousedown', e => { const d = document.documentElement; if (e.clientX >= d.clientWidth || e.clientY >= d.clientHeight) apStop(); }, true);
+document.addEventListener('click', e => { if (e.target && e.target.closest && e.target.closest('a[href^="#"],#tabs button')) apStop(); }, true);
+addEventListener('pagehide', apStop);
 
 let uiScene = -1;
 const barVal = bars.map(() => '');
@@ -2826,28 +3373,14 @@ function syncUI(force) {
     uiScene = sceneIdx;
     navBtns.forEach((b, k) => { if (k === i && sceneIdx !== GALAXY_I) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
   }
-  const prog = sceneIdx === GALAXY_I ? 1 : clamp(sceneT / SCENES[sceneIdx].story, 0, 1);
+  const prog = sceneIdx === GALAXY_I ? 1 : isStory(sceneIdx) ? clamp(storyT / SCENES[sceneIdx].Tend, 0, 1) : clamp(realT / 2.6, 0, 1);
   bars.forEach((b, k) => {
     const v = k === i ? prog.toFixed(3) : k < i ? '1' : '0';
     if (barVal[k] !== v) { barVal[k] = v; b.style.transform = `scaleX(${v})`; }
   });
 }
 
-/* 이름표: 장면의 기준점을 화면 좌표로 옮겨 붙인다. 개수에는 붙이지 않는다 */
-const LABELS = {
-  ring: sh => {
-    const G = sh.G, t = sceneT;
-    for (let k = 0; k < 2; k++) {
-      const c = cardPath2(G, k, t);
-      sh.anchors[k ? 'pr' : 'ticket'] = [c[0] + 0.15 * G.cs + 0.035, c[1], c[2]];
-    }
-    // while the cards are out, the code and database labels dim with their pictures
-    const low = t > S2.fold + 0.2 ? 'lo' : true;
-    return { code: t > S2.grow + 0.45 && low, db: t > S2.grow + 0.55 && low, ticket: t > S2.fold + 0.45 && t < S2.out + 0.3, pr: t > S2.fold + 0.55 && t < S2.out + 0.4 };
-  },
-  memory: () => ({ past: sceneT > S4.light + S4.span + 0.2 }),
-  review: () => ({ review: sceneT > S7.frag + 0.8 && sceneT < S7.reject + 0.2, rules: sceneT > S7.visits[0] + 0.55 })
-};
+/* 이름표: 장면의 기준점을 화면 좌표로 옮겨 붙인다 */
 function setLabel(k, on) {
   if (lblOn[k] === on) return;
   lblOn[k] = on;
@@ -2869,8 +3402,8 @@ function pickAnchor(list) {
 function placeLabels() {
   const sc = SCENES[sceneIdx];
   const fn = LABELS[sc.key];
-  if (!fn || !curShape || curShape.key !== sc.key || waitingFont) return;
-  const want = fn(curShape);
+  if (cut || !fn || !curShape || curShape.key !== sc.key || waitingFont) return;
+  const want = fn(curShape, storyT);
   const align = curShape.labelAlign || {};
   for (const k in want) {
     const el = lblEls[k], pick = curShape.anchorPick && curShape.anchorPick[k];
@@ -2900,6 +3433,18 @@ function placeLabels() {
   }
 }
 
+// 장면 9: 연락처 링크를 가리키거나 포커스가 가면 에이전트가 그쪽으로 빛줄기를 뻗는다
+const ctaLinks = caps[8] ? [...caps[8].querySelectorAll('.cta a')] : [];
+ctaLinks.forEach((a, k) => {
+  const on = () => { linkHover = k; };
+  const off = () => { if (linkHover === k) linkHover = -1; };
+  a.addEventListener('pointerenter', on);
+  a.addEventListener('pointerleave', off);
+  a.addEventListener('pointerdown', on, { passive: true });
+  a.addEventListener('focus', on);
+  a.addEventListener('blur', off);
+});
+
 /* --------------------------------------------------------------- pointer */
 const pointer = { x: 0, y: 0, active: false, down: false, s: 0, r: 0.18, downAt: 0, dx: 0, dy: 0 };
 const pointerU = new Float32Array(4);
@@ -2927,26 +3472,71 @@ addEventListener('pointercancel', () => { pointer.down = false; pointer.active =
 document.addEventListener('mouseout', e => { if (!e.relatedTarget) { pointer.active = false; pointer.down = false; } });
 function updatePointer(dt) {
   const target = pointer.active ? (pointer.down ? 48 : 26) : 0;
-  const rt = pointer.down ? 0.3 : 0.18;
+  const rr = pointer.down ? 0.3 : 0.18;
   const k = 1 - Math.exp(-dt * 10);
   pointer.s += (target - pointer.s) * k;
-  pointer.r += (rt - pointer.r) * k;
+  pointer.r += (rr - pointer.r) * k;
   pointerU[0] = pointer.x; pointerU[1] = pointer.y; pointerU[2] = pointer.r; pointerU[3] = pointer.s > 0.05 ? pointer.s : 0;
-  const px = pointer.active ? pointer.x : 0, py = pointer.active ? pointer.y : 0;
+  const px = pointer.active && R.par ? pointer.x : 0, py = pointer.active && R.par ? pointer.y : 0;
   parallax.x += (px - parallax.x) * (1 - Math.exp(-dt * 2));
   parallax.y += (py - parallax.y) * (1 - Math.exp(-dt * 2));
 }
+// a tap: a local burst at the point; the springs pull everything back into the same scene
+function scatterAt(px, py) {
+  const w = unproject(px, py);
+  explode(3.0, [0, 0, 0.5], w, 0.7);
+}
 
 /* ------------------------------------------------------------ simulation */
+// 01 · 이름: 흩어진 구름이 글꼴이 준비되면 이름으로 모여 멈춘다(실제 시간)
+function nameFrame(t) {
+  if (nameAt < 0) {
+    if (t >= 0.35 && fontsReady) { nameAt = t; useShape('name'); }
+    else { free(1.5, 0.9); R.trail = 0.86; R.tail = 0.06; U.colRate = 0; return; }
+  }
+  const s = t - nameAt, u = clamp(s / 1.9, 0, 1);
+  if (s < 1.9) { assemble(64, 0.62, 0.62, 0.5, 0.2, 1.2); U.phaseT = s; R.trail = mix(0.86, 0.3, sm(u)); R.tail = mix(0.06, 0.035, u); }
+  else { hold(); R.trail = 0.25; }
+}
+function glideAgent(dt) {
+  const w0 = U.Ag[0], w1 = U.Ag[1], w2 = U.Ag[2];
+  if (!agLive || !agInit) { agPos[0] = w0; agPos[1] = w1; agPos[2] = w2; agInit = true; return; }
+  const dx = w0 - agPos[0], dy = w1 - agPos[1], dz = w2 - agPos[2], d = Math.hypot(dx, dy, dz);
+  const want = depthScale([w0, w1, w2]);
+  if (d > 1e-6) {
+    const vmax = AG_V * Math.max(innerWidth, innerHeight) / pxPerUnit * depthScale(agPos);
+    if (d <= vmax * dt) { agPos[0] = w0; agPos[1] = w1; agPos[2] = w2; }
+    else {
+      const k = vmax * dt / d;
+      agPos[0] += dx * k; agPos[1] += dy * k; agPos[2] += dz * k;
+      U.AgV[0] = dx / d * vmax; U.AgV[1] = dy / d * vmax; U.AgV[2] = dz / d * vmax;
+    }
+  }
+  U.Ag[0] = agPos[0]; U.Ag[1] = agPos[1]; U.Ag[2] = agPos[2];
+  U.AgV[3] *= depthScale(agPos) / Math.max(1e-3, want);
+}
 function simulate(dt) {
   resetUniforms();
   const sc = SCENES[sceneIdx];
-  const st = sc.steps[stepIdx];
-  const prevT = stepT;
-  U.phaseT = stepT;
-  if (waitingFont) { free(2.0, 1.25); R.trail = 0.8; }
-  else st.frame(stepT, st.dur === Infinity ? 0 : clamp(stepT / st.dur, 0, 1), prevT - dt);
-  if (sceneIdx === 0 && stepIdx === 0) U.colRate = 0;
+  if (cut) {
+    U.mode = CUT; U.phaseT = storyT; U.rt = rt;
+    U.Ag.set(lastAg); U.AgV.set(lastAgV); U.AgV[0] = U.AgV[1] = U.AgV[2] = 0;
+    R.trail = 0.5; R.fixEnd = PB;
+  } else if (sc.key === 'name') nameFrame(realT);
+  else if (sc.key === 'galaxy') galaxyFrame(realT);
+  else if (waitingFont) { free(2.0, 1.25); R.trail = 0.8; }
+  else {
+    sc.frame(storyT, rt, dt);
+    glideAgent(dt);
+    // a fast agent would leave a comet of afterimages; the faster it moves, the shorter the afterimage of the whole frame
+    if (dt > 0) {
+      const sp = Math.hypot(U.Ag[0] - lastAg[0], U.Ag[1] - lastAg[1], U.Ag[2] - lastAg[2]) / dt;
+      agSpd = sp > 6 ? agSpd : agSpd + (sp - agSpd) * (1 - Math.exp(-dt * 12));
+      R.trail = Math.min(R.trail, clamp(0.56 - 0.13 * agSpd, 0.22, 1));
+    }
+    lastAg.set(U.Ag); lastAgV.set(U.AgV);
+  }
+  if (snapNext) { U.snap = 1; snapNext = false; }
   if (pendingKick) {
     U.kick = pendingKick.mag; U.kickBias.set(pendingKick.bias); U.kickC.set(pendingKick.at); U.kickR = pendingKick.radius; U.kickShell = pendingKick.shell;
     pendingKick = null;
@@ -2954,7 +3544,8 @@ function simulate(dt) {
   const u = simP.u;
   gl.useProgram(simP.p);
   gl.uniform1f(u.uDt, dt); gl.uniform1f(u.uTime, simTime); gl.uniform1f(u.uPhaseT, U.phaseT);
-  gl.uniform1i(u.uMode, U.mode);
+  gl.uniform1f(u.uRT, U.rt); gl.uniform1f(u.uSnap, U.snap); gl.uniform1f(u.uForm, U.form);
+  gl.uniform1i(u.uMode, U.mode); gl.uniform2i(u.uKeep, U.keep0, U.keep1); gl.uniform1f(u.uAgKeep, agLive ? 1 : 0);
   gl.uniform1f(u.uK, U.K); gl.uniform1f(u.uZeta, U.zeta);
   gl.uniform1f(u.uRamp, U.ramp); gl.uniform1f(u.uStagger, U.stagger); gl.uniform1f(u.uNoise, U.noise);
   gl.uniform1f(u.uNoiseFreq, U.noiseFreq); gl.uniform1f(u.uDrag, U.drag); gl.uniform1f(u.uVmax, U.vmax);
@@ -2964,6 +3555,7 @@ function simulate(dt) {
   gl.uniform3fv(u.uKickC, U.kickC); gl.uniform3fv(u.uKickBias, U.kickBias);
   gl.uniform3fv(u.uEye, cam.eye); gl.uniform3fv(u.uCamR, cam.right); gl.uniform3fv(u.uCamU, cam.up); gl.uniform3fv(u.uCamF, cam.fwd);
   gl.uniform4fv(u.uP, U.P); gl.uniform4fv(u.uQ, U.Q); gl.uniform4fv(u.uS, U.S); gl.uniform4fv(u.uT, U.T); gl.uniform4fv(u.uU, U.V); gl.uniform4fv(u.uG, U.G);
+  gl.uniform4fv(u.uAg, U.Ag); gl.uniform4fv(u.uAgV, U.AgV);
   if (U.arrN && u.uArr) gl.uniform4fv(u.uArr, ARR, 0, U.arrN * 4);
   gl.uniform4fv(u.uPointer, pointerU);
   gl.uniformMatrix4fv(u.uVP, false, VP);
@@ -2984,21 +3576,23 @@ function simulate(dt) {
   gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);
   gl.bindVertexArray(null);
   cur = 1 - cur;
-
-  simTime += dt;
-  if (waitingFont) { sceneT += dt; return; }
-  advanceSteps(dt);
+  simTime += dt; rt += dt; realT += dt;
 }
+let bgS0 = 1, bgS1 = 0;
 function tick(dt) {
   updatePointer(dt);
+  autoplay(dt);
   readScrollSpeed(dt);
   warp.s += (warp.v - warp.s) * (1 - Math.exp(-dt * 8));
   warp.v *= Math.exp(-dt * 4);
   flashE *= Math.exp(-dt * 3.2);
   topA += (R.topA - topA) * (1 - Math.exp(-dt * 4));
+  bgS0 += (R.bg0 - bgS0) * (1 - Math.exp(-dt * 3));
+  bgS1 += (R.bg1 - bgS1) * (1 - Math.exp(-dt * 3));
   // particles still in the last scene's shape keep its brightness for a moment instead of jumping to the new shape's level
   R.bright += (R.brightGoal - R.bright) * (1 - Math.exp(-dt * 2.2));
-  applyCamGoal();
+  direct(dt);
+  if (!cut) applyCamGoal();
   stepCamera(dt);
   const n = dt > 1 / 45 ? 2 : 1;
   for (let i = 0; i < n; i++) simulate(dt / n);
@@ -3013,6 +3607,8 @@ function quad(prog, target) {
 }
 function bindTex(unit, tex, loc) { gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(loc, unit); }
 function palette(u) { gl.uniform3fv(u.uClay, CLAY); gl.uniform3fv(u.uAmber, AMBER); gl.uniform3fv(u.uCream, CREAM); }
+// the agent and the people keep one brightness in every scene: the level the ring scene gives them
+const fixBright = () => brightFor({ area: layout === 'tall' ? 0.5 : 0.55 });
 function draw(dt) {
   const src = trail[ti], dst = trail[1 - ti];
   const trailK = Math.max(R.trail, mix(R.trail, 0.93, warp.s));
@@ -3024,7 +3620,8 @@ function draw(dt) {
 
   const px = dpr * clamp(2.3 * Math.sqrt(pxPerUnit / 450), 1.4, 2.9);
   // the scene's own afterimage keeps its glow; the extra afterimage from fast scrolling only smears and never brightens
-  const bright = R.bright * R.gain * (HDR ? 1 : 0.6) * Math.sqrt((1 - R.trail) / 0.75) * (1 - trailK) / Math.max(1 - R.trail, 1e-3);
+  const base = R.gain * (HDR ? 1 : 0.6) * Math.sqrt((1 - R.trail) / 0.75) * (1 - trailK) / Math.max(1 - R.trail, 1e-3);
+  const bright = R.bright * base, fixB = fixBright() * base;
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.ONE, gl.ONE);
   gl.bindFramebuffer(gl.FRAMEBUFFER, dst.fb);
@@ -3035,7 +3632,9 @@ function draw(dt) {
   const s = stP.u;
   gl.uniformMatrix4fv(s.uVP, false, VP);
   gl.uniform1f(s.uPx, px); gl.uniform1f(s.uFocus, cam.focus);
-  gl.uniform1f(s.uBright, bright); gl.uniform1f(s.uTail, R.tail * (1 + 2.2 * warp.s)); gl.uniform1f(s.uGain, 0.3);
+  gl.uniform1f(s.uBright, bright); gl.uniform1f(s.uFixB, fixB); gl.uniform1i(s.uFixEnd, R.fixEnd);
+  gl.uniform1i(s.uAgEnd, PB); gl.uniform1f(s.uAgMax, AGS() * 1.6);
+  gl.uniform1f(s.uTail, R.tail * (1 + 2.2 * warp.s)); gl.uniform1f(s.uGain, 0.3);
   gl.uniform1f(s.uMaxLen, 0.75); gl.uniform1f(s.uVar, R.vari); gl.uniform1f(s.uWhite, R.white);
   // tails stretched by fast scrolling spread the same light over a longer line instead of adding more
   gl.uniform1f(s.uLenK, Math.min(1, R.lenK + 0.35 * warp.s)); gl.uniform1f(s.uShift, R.shift);
@@ -3050,7 +3649,7 @@ function draw(dt) {
   gl.uniform1f(u.uFocus, cam.focus);
   gl.uniform1f(u.uPx, px);
   gl.uniform1f(u.uTime, simTime);
-  gl.uniform1f(u.uBright, bright);
+  gl.uniform1f(u.uBright, bright); gl.uniform1f(u.uFixB, fixB); gl.uniform1i(u.uFixEnd, R.fixEnd);
   gl.uniform1f(u.uWhite, R.white); gl.uniform1f(u.uJitter, R.jitter);
   gl.uniform1f(u.uPulse, R.pulse); gl.uniform1f(u.uPulseT, R.pulseT); gl.uniform1f(u.uPulseGap, R.pulseGap);
   gl.uniform1f(u.uDof, R.dof); gl.uniform1f(u.uVar, R.vari); gl.uniform1f(u.uMaxPx, 26 * dpr); gl.uniform1f(u.uShift, R.shift);
@@ -3095,6 +3694,7 @@ function draw(dt) {
   gl.uniform1f(compP.u.uAspect, aspect);
   gl.uniform1f(compP.u.uDim, R.dim);
   gl.uniform1f(compP.u.uFlash, Math.min(flashE, 1.5));
+  gl.uniform2f(compP.u.uBgM, bgS0, bgS1);
   quad(compP, null);
   gl.bindVertexArray(null);
 }
@@ -3136,7 +3736,7 @@ document.addEventListener('visibilitychange', () => {
   else if (!raf) { last = 0; raf = requestAnimationFrame(loop); }
 });
 let resizeTimer = 0;
-addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { resize(); GEO = null; measureCap(); for (const k in lblW) delete lblW[k]; onScroll(); }, 120); });
+addEventListener('resize', () => { ap.setY = -1; clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { resize(); GEO = null; measureCap(); for (const k in lblW) delete lblW[k]; }, 120); });
 canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); cancelAnimationFrame(raf); raf = 0; });
 canvas.addEventListener('webglcontextrestored', () => location.reload());
 
@@ -3146,12 +3746,12 @@ function fontsDone() {
   fontsReady = true;
   rebuildShapes();
   measureCap();
-  if (waitingFont) { waitingFont = false; sceneT = 0; enterStep(0, true); }
+  if (waitingFont) { waitingFont = false; rt = 0; useShape(SCENES[sceneIdx].key); }
   warmAll(CAPTURE ? 0 : 300);
 }
 function loadFonts() {
   const text = 'Kunsang Lee 이건상 30분 min';
-  const go = () => {
+  const goFonts = () => {
     if (!document.fonts || !document.fonts.load) { fontsDone(); return; }
     const want = Promise.all([
       document.fonts.load(`800 80px "Pretendard Variable"`, text),
@@ -3160,15 +3760,15 @@ function loadFonts() {
     Promise.race([want, new Promise(r => setTimeout(r, 2500))]).then(() => document.fonts.ready).then(fontsDone, fontsDone);
   };
   const link = document.getElementById('font-css');
-  if (!link) { go(); return; }
-  if (link.sheet && link.media === 'all') { go(); return; }
-  link.addEventListener('load', () => setTimeout(go, 0), { once: true });
+  if (!link) { goFonts(); return; }
+  if (link.sheet && link.media === 'all') { goFonts(); return; }
+  link.addEventListener('load', () => setTimeout(goFonts, 0), { once: true });
   link.addEventListener('error', fontsDone, { once: true });
-  setTimeout(() => { if (!fontsReady) go(); }, 2600);
+  setTimeout(() => { if (!fontsReady) goFonts(); }, 2600);
 }
 
 /* ------------------------------------------------------------- language */
-/* 언어를 바꾸면 글 칸의 크기와 장면 6의 글자가 바뀐다. 입자를 한 번 흩은 뒤 새 모양으로 다시 모은다 */
+/* 언어를 바꾸면 글 칸의 크기와 장면 6·9 의 글자가 바뀐다. 입자를 한 번 흩은 뒤 새 모양으로 다시 모은다 */
 addEventListener('fx:lang', () => {
   for (const k in lblW) delete lblW[k];
   rebuildShapes();
@@ -3179,15 +3779,16 @@ addEventListener('fx:lang', () => {
 
 /* ------------------------------------------------------------- start */
 resize();
-const startAt = sceneFromScroll();
-sceneIdx = -1;
-show(startAt, true);
-snapCamera();
-if (SCENES[startAt].from) {
-  // the first visit starts the camera far off and lets it fly in
-  const f = SCENES[startAt].from;
-  for (const k of CAMK) { cam[k] = f[k] || 0; cam.vel[k] = 0; }
-  buildView();
+{
+  const st = scrollTarget();
+  enter(st.i, 0, 'first');
+  snapCamera();
+  if (SCENES[st.i].from) {
+    // the first visit starts the camera far off and lets it fly in
+    const f = SCENES[st.i].from;
+    for (const k of CAMK) { cam[k] = f[k] || 0; cam.vel[k] = 0; }
+    buildView();
+  }
 }
 loadFonts();
 window.__fxStarted = true;
@@ -3196,16 +3797,20 @@ raf = requestAnimationFrame(loop);
 /* ------------------------------------------- hooks for capture and timing */
 window.__story = {
   N, get hdr() { return HDR; },
-  state: () => ({ scene: sceneIdx, key: SCENES[sceneIdx].key, step: SCENES[sceneIdx].steps[stepIdx].name, t: +sceneT.toFixed(3), fonts: fontsReady, layout, lang: root.lang }),
+  state: () => ({ scene: sceneIdx, key: SCENES[sceneIdx].key, t: +storyT.toFixed(3), rt: +rt.toFixed(2), real: +realT.toFixed(2), cut: !!cut, manual, fonts: fontsReady, layout, lang: root.lang,
+    auto: { on: ap.on, over: ap.over, ph: ap.ph, i: ap.i, t: +ap.t.toFixed(2), el: +ap.el.toFixed(2) }, y: scrollY }),
   step(n = 1) { for (let i = 0; i < n; i++) { tick(1 / 60); draw(1 / 60); } placeLabels(); syncUI(false); return this.state(); },
+  // capture: show a scene from its start and play it at its own pace, apart from the scroll
   show(i, fromPose) {
-    show(i, true);
-    snapCamera();
+    manual = true; manualTo = 0; cut = null;
+    enter(i, 0, 'show');
     if (fromPose && SCENES[i].from) { const f = SCENES[i].from; for (const k of CAMK) { cam[k] = f[k] || 0; cam.vel[k] = 0; } buildView(); }
     return this.state();
   },
   runTo(t) {
-    const frames = Math.max(0, Math.round((t - sceneT) * 60));
+    const now = isStory(sceneIdx) ? storyT : realT;
+    const frames = Math.max(0, Math.round((t - now) * 60));
+    manualTo = t;
     const quiet = Math.max(0, frames - 45);
     for (let i = 0; i < quiet; i++) tick(1 / 60);
     clearTrails();
@@ -3214,10 +3819,28 @@ window.__story = {
     syncUI(false);
     return this.state();
   },
+  setT(t) { manual = true; storyT = manualTo = t; return this.state(); },
+  // capture: hand over to scene i the way scrolling does (including the 7/8 cut), then let story time run at 1x
+  chain(i) { manual = true; cut = null; go(i, 0); manualTo = 1e9; return this.state(); },
+  runFor(sec) { const n = Math.round(sec * 60); for (let k = 0; k < n; k++) { tick(1 / 60); draw(1 / 60); } placeLabels(); syncUI(false); return this.state(); },
+  tend(i) { return SCENES[i].Tend || 0; },
+  // measurement: the agent's on-screen speed (CSS px per second) through scene i at 1x
+  agentTrace(i) {
+    this.show(i); manualTo = 1e9;
+    const out = [], n = Math.round((SCENES[i].Tend || 3) * 60);
+    let prev = null;
+    for (let k = 0; k < n; k++) {
+      tick(1 / 60);
+      const p = project(U.Ag[0], U.Ag[1], U.Ag[2]);
+      if (p && prev) out.push([+storyT.toFixed(3), +(Math.hypot(p[0] - prev[0], p[1] - prev[1]) * 60).toFixed(0), +p[0].toFixed(0), +p[1].toFixed(0)]);
+      prev = p;
+    }
+    return out;
+  },
+  auto() { manual = false; return this.state(); },
   warm() { Object.keys(BUILD).forEach(getShape); return cache.size; },
-  brights() { const r = {}; for (const k of Object.keys(BUILD)) r[k] = +brightFor(getShape(k)).toFixed(3); return r; },
+  brights() { const r = {}; for (const k of Object.keys(BUILD)) r[k] = +brightFor(getShape(k)).toFixed(3); r.fix = +fixBright().toFixed(3); return r; },
   geo() { return Object.assign({}, geo()); },
-  cityPlan() { const p = crossPlan8(getShape('city')); return { tc: +p.tc.toFixed(3), tr: +p.tr.toFixed(3), arriveB: +p.arriveB.toFixed(3) }; },
   ae() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, avgT[ai].fb);
     let v;
