@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" id="font-css" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
 <script>
-/* 첫 언어: ?lang= → 기억한 선택 → 브라우저 언어(ko 로 시작하면 한국어, 아니면 영어). 영어면 번역이 끝날 때까지 화면을 감춘다 */
+/* 첫 언어: ?lang= → 기억한 선택 → 브라우저 언어(ko 로 시작하면 한국어, 아니면 영어). 영어면 본문 끝에서 번역을 넣을 때까지 화면을 감춘다 */
 (function (h) {
   h.classList.add("js");
   var q = location.search, L = null, m = /[?&]lang=(ko|en)(?:&|$)/.exec(q);
@@ -33,11 +33,232 @@
   else { try { var s = localStorage.getItem("lang"); if (s === "ko" || s === "en") L = s; } catch (e) {} }
   if (!L) L = /^ko/i.test(navigator.language || "") ? "ko" : "en";
   h.lang = L;
-  if (L === "en") { h.classList.add("pre-en"); setTimeout(function () { h.classList.remove("pre-en"); }, 2500); }
+  if (L === "en") h.classList.add("pre-en");
+  document.addEventListener("DOMContentLoaded", function () { try { if (window.__langInit) window.__langInit(); } finally { h.classList.remove("pre-en"); } });
   var calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (window.WebGL2RenderingContext && !calm && !/[?&]nofx/.test(q)) h.classList.add("fx", "at0");
   setTimeout(function () { if (!window.__fxStarted) h.classList.remove("fx", "at0"); }, 6000);
 })(document.documentElement);
+</script>
+<script>
+/* Kunsang Lee · 한/영 문자열. 페이지의 모든 글은 이 사전 하나에서 나온다. 키 끝이 _h 이면 HTML 로 넣는다 */
+window.__I18N_DICT = {
+  ko: {
+    'doc.title': 'Kunsang Lee — AI 에이전트를 만들고, 그 에이전트가 일하기 좋은 코드 구조를 설계합니다',
+    'ui.skip': '본문으로 건너뛰기',
+    'ui.newtab': '(새 탭)',
+    'ui.home': 'Kunsang Lee, 맨 위로',
+    'ui.links': '연락처',
+    'ui.lang': '언어',
+    'ui.secnav': '본문 구역',
+    'ui.tabs': '이야기 장면',
+    'ui.hint.mouse': '마우스를 움직이면 입자가 밀려나고 · 누르면 흩어집니다 · 스크롤하면 넘어갑니다',
+    'ui.hint.touch': '누르면 흩어집니다 · 스크롤하면 넘어갑니다',
+    'ui.next': '아래에 자세한 내용이 이어집니다',
+
+    'tab.1': 'Kunsang Lee', 'tab.2': '동료', 'tab.3': '말뜻', 'tab.4': '기억', 'tab.5': '언제든',
+    'tab.6': '하루 30분', 'tab.7': '리뷰', 'tab.8': '코드 구조', 'tab.9': '함께',
+
+    's1.t': 'Kunsang Lee',
+    's1.d_h': '<b>이건상</b> · AI 에이전트를 만들고, 그 에이전트가 일하기 좋은 코드 구조를 설계합니다',
+    's2.t': '동료와 같은 에이전트',
+    's2.d': 'Slack 에서 부르면 코드베이스와 데이터베이스를 조회해 근거와 함께 답하고, 티켓과 PR 까지 맡도록 직접 설계했습니다',
+    's3.t': '말뜻을 알아듣는',
+    's3.d': '평소 말투로 부탁하면 모델이 뜻을 읽고 할 일을 고릅니다. 비결정론적인 판단은 모델에, 실행해도 되는지 같은 결정론적인 판단은 코드에 맡겼습니다',
+    's4.t': '기억을 가진 에이전트',
+    's4.d': '에이전트가 듣는 채널의 글을 모두 임베딩으로 쌓아 두고, 뜻이 가까운 지난 대화를 필요할 때 찾아 쓰게 했습니다. 30일 동안 1,111건의 임베딩 비용은 1센트도 되지 않았습니다',
+    's5.t': '언제든, 자리에 없어도',
+    's5.d': '그 일을 아는 사람이 자리에 없어도 답을 받을 수 있게 했습니다. 근무 시간 밖에 올라온 질문 39건도 절반은 99초 안에 첫 답이 달렸습니다',
+    's6.t': '하루 30분, 멈추지 않고',
+    's6.d': '하루 약 30분. 업무 질문이 올 때마다 누군가 확인해 답했다면 들었을 시간입니다. 건당 10분으로 잡으면 15주 동안 약 38시간입니다',
+    's7.t': '리뷰를 바탕으로 발전할 수 있도록',
+    's7.d_h': '<b>ai-ready.</b> 리뷰와 문서로만 권하던 규칙을 자동 검사로 옮기도록 돕는 오픈소스 도구입니다. 바로잡은 실수도 사람이 승인하면 규칙으로 남아 다음 작업의 기준이 됩니다',
+    's8.t': '에이전트가 잘 일할 수 있도록',
+    's8.d_h': '<b>Agent-Friendly Architecture.</b> Cursor 의 Lauren Tan 이 소개한 Dune 프로젝트 문서의 개념을 바탕으로 사내 에이전트 코드에 적용했습니다. 외부 연동 9개는 서비스별 폴더로, 구조 규칙은 테스트 52개로 옮겨 규칙을 어기면 push 전에 바로 알 수 있습니다',
+    's9.t': '다음 에이전트는 함께',
+    's9.d': '만들면서 겪은 일을 나누고 싶습니다',
+    'fx.30': '30분',
+
+    'lbl.code': '코드베이스', 'lbl.db': '데이터베이스', 'lbl.ticket': '티켓', 'lbl.pr': 'PR',
+    'lbl.past': '지난 대화',
+    'lbl.review': '리뷰', 'lbl.rules': '규칙',
+
+    'nav.b1': 'agent-colleague', 'nav.b2': '15주 기록', 'nav.b3': '코드 구조', 'nav.b4': 'ai-ready', 'nav.b5': '글과 연결',
+
+    'b1.k': '대표 작업 · agent-colleague',
+    'b1.t': 'Slack 에서 일하는 사내 AI 에이전트',
+    'b1.l': '처음 만든 봇을 TypeScript 와 Claude Agent SDK 로 다시 설계했습니다. 여기서는 에이전트에게 무엇을 맡기고 무엇을 막았는지, 코드를 어떻게 고치게 했는지를 적었습니다.',
+    'b1.p1.h': '쓰기는 사람이 답한 뒤에',
+    'b1.p1.d': '티켓 생성 같은 쓰기 도구는 봇이 스레드에 글을 올린 뒤 사람이 답했을 때만 실행되고, 실행 기록을 확인해 같은 요청을 두 번 실행하지 않습니다.',
+    'b1.p2.h': '고친 코드는 리뷰를 거쳐서',
+    'b1.p2.d': '격리된 작업 공간에서 구현하고, 수정 권한이 없는 별도 리뷰 세션이 찾은 문제를 반영한 뒤 봇 전용 브랜치에서만 PR 을 엽니다.',
+    'b1.p3.h': '운영 DB 는 좁게',
+    'b1.p3.d': '개인정보 컬럼을 읽지 못하는 계정으로만 조회하고, 쓰기는 거부하며, 실행 계획으로 비용을 재서 무거운 조회는 사람이 답한 뒤에 실행합니다.',
+
+    'b2.t': '15주 동안의 기록',
+    'b2.s1.u': '초', 'b2.s1.sr': '96초', 'b2.s1.l': '첫 답까지 중앙값',
+    'b2.s2.sr': '46%', 'b2.s2.l': '사람이 이어서 말한 스레드',
+    'b2.s3.sr': '83%', 'b2.s3.l': '오류 277개 중 첫 분석이 달린 비율(중앙값 113초, 대부분 재설계 전)',
+    'b2.note': '2026년 6월 10일~9월 22일, 팀 코드 질문 채널(오류 분석 비율은 오류 알림 채널)의 Slack 스레드를 직접 센 사내 운영 기록입니다. 9월 16일에 에이전트를 다시 설계했고, 기간 대부분(235건 중 211건)은 처음 만든 봇이 답했습니다. 이어서 말한 스레드에는 되물음과 정정도 섞여 있고, 답이 맞았는지는 따로 재지 않았습니다. 장면의 38시간은 잡담 9건을 뺀 226건에 건당 10분(처리 5분, 원래 일로 돌아오는 데 5분)을 곱한 값입니다. 묻는 쪽이 기다린 시간은 넣지 않았고, 모두 바로 답했다는 가정이라 실제보다 크게 잡혔을 수 있습니다. 하루 30분은 이 38시간을 기간 중 근무일 약 75일로 나눈 값입니다.',
+
+    'b3.k': 'Agent-Friendly Architecture',
+    'b3.t': '에이전트가 잘 일할 수 있는 코드 구조',
+    'b3.l': 'Cursor 의 Lauren Tan 이 영상에서 소개한 Dune 프로젝트 문서의 "작업자 에이전트가 자주 하는 다섯 가지"를 바탕으로 했습니다. 예외를 목록과 개수로 테스트하고 그 목록을 비운 것은 제가 따로 정했습니다.',
+    'b3.p1': '외부 연결은 시작 파일 두 곳과 운영 스크립트에서만 만들고, 외부 연동 9개는 서비스별 폴더로 모았습니다.',
+    'b3.p2': '구조 규칙은 경계 테스트 52개로 옮겼고(2026-10-05 기준) 예외 목록 6개는 모두 비어 있으며, 비어 있는지도 테스트로 확인합니다.',
+    'b3.p3': '리뷰 에이전트가 찾은 우회 13건과 변형 3건을 테스트 사례로 고정했습니다.',
+    'b3.p4': 'PR 과 push 전에 같은 검사를 돌립니다. 결함이 줄었는지는 재지 않았습니다.',
+
+    'b4.k': 'Open Source · MIT',
+    'b4.t': '리뷰에서 한 말을 다음 작업의 규칙으로',
+    'b4.l': '문서에 적힌 규칙마다 이미 강제되는지 따지고, 사람이 승인한 규칙은 lint·아키텍처 테스트 초안으로 옮겨 문서에는 강제할 수 없는 것만 남기는 오픈소스 도구입니다. 작업 중 바로잡은 실수와 PR 리뷰 댓글도 사람이 승인하면 규칙 초안이나 금지 목록 항목이 됩니다.',
+    'b4.v': '1.x 는 문서를 7개 영역 점수로 매겼는데, 강제하지 않는 문서를 더 쓰는 것이 점수를 올리는 가장 쉬운 길이어서 2.0 에서 점수를 없앴습니다.',
+    'b4.link': 'GitHub 저장소',
+
+    'b5.t': '만들면서 판단한 것을 씁니다',
+    'b5.l': '1편은 처음 만든 봇 이야기입니다. Claude Code 헤드리스 모드로 백엔드·안드로이드·iOS·웹 네 저장소의 코드를 읽고 답했습니다. 2편은 15주 운영 기록과, 기능이 늘면서 구조를 다시 짠 과정을 다룹니다.',
+    'b5.p1.k': 'Medium · 2026.06 · 14분 분량 · 시리즈 1편',
+    'b5.p1.t': '파트 경계를 넘는 코드 질문에 답하는 사내 AI 에이전트를 만들기까지',
+    'b5.p2.k': 'Medium · 시리즈 2편',
+    'b5.p2.t': '사내 AI 에이전트를 재설계한 이야기',
+    'b5.ko': '',
+    'b5.c.t': '에이전트 이야기라면 언제든',
+    'b5.c.l': '만드는 중인 에이전트가 있다면 들려주세요.',
+
+    'foot.c': '© 2026 이건상',
+    'foot.src': '이 페이지의 소스'
+  },
+  en: {
+    'doc.title': 'Kunsang Lee — I build AI agents, and design codebases that are easy for them to work in.',
+    'ui.skip': 'Skip to content',
+    'ui.newtab': '(opens in a new tab)',
+    'ui.home': 'Kunsang Lee, back to top',
+    'ui.links': 'Contact',
+    'ui.lang': 'Language',
+    'ui.secnav': 'Sections',
+    'ui.tabs': 'Story scenes',
+    'ui.hint.mouse': 'Move the pointer to push the particles · click to scatter · scroll to continue',
+    'ui.hint.touch': 'Tap to scatter · scroll to continue',
+    'ui.next': 'More details below',
+
+    'tab.1': 'Kunsang Lee', 'tab.2': 'Teammate', 'tab.3': 'Meaning', 'tab.4': 'Memory', 'tab.5': 'Anytime',
+    'tab.6': '30 min a day', 'tab.7': 'Reviews', 'tab.8': 'Codebase', 'tab.9': 'Together',
+
+    's1.t': 'Kunsang Lee',
+    's1.d_h': 'I build AI agents, and design codebases that are easy for them to work in.',
+    's2.t': 'An agent that works like a teammate',
+    's2.d': 'Mention it in Slack and it digs through the codebase and database, answers with sources, and can file tickets and open pull requests. I designed it end to end.',
+    's3.t': 'It gets what you mean',
+    's3.d': 'Ask the way you\'d ask a colleague. The model does the non-deterministic work of figuring out what you mean; code makes the deterministic call on whether an action is allowed to run.',
+    's4.t': 'It remembers',
+    's4.d': 'Every message in the channels it listens to is embedded and stored, so it can pull up related past conversations when it needs them. Embedding 1,111 messages over 30 days cost under a cent.',
+    's5.t': 'Anytime, even off the clock',
+    's5.d': 'Answers don\'t have to wait for the one person who knows. Of the 39 questions asked before 9 a.m., after 7 p.m., or on weekends, half got a first reply within 99 seconds.',
+    's6.t': '30 minutes a day, uninterrupted',
+    's6.d': 'That\'s roughly the time someone would spend stopping to check and reply to work questions. At 10 minutes a question, it adds up to about 38 hours over 15 weeks.',
+    's7.t': 'Review feedback that sticks',
+    's7.d_h': '<b>ai-ready</b> is an open-source tool that helps move rules out of code reviews and docs and into automated checks. Corrections a person approves become rules that carry into the next task.',
+    's8.t': 'A codebase made for agents',
+    's8.d_h': '<b>Agent-Friendly Architecture</b>, based on a Dune project doc presented by Lauren Tan of Cursor. Each of the agent\'s 9 external integrations lives in its own folder, and the structural rules run as 52 tests, so an agent that breaks a rule finds out before it pushes.',
+    's9.t': 'Let\'s build the next one together',
+    's9.d': 'Always happy to compare notes on building agents',
+    'fx.30': '30 min',
+
+    'lbl.code': 'codebase', 'lbl.db': 'database', 'lbl.ticket': 'ticket', 'lbl.pr': 'PR',
+    'lbl.past': 'past conversations',
+    'lbl.review': 'review', 'lbl.rules': 'rules',
+
+    'nav.b1': 'agent-colleague', 'nav.b2': '15 weeks', 'nav.b3': 'Architecture', 'nav.b4': 'ai-ready', 'nav.b5': 'Writing & contact',
+
+    'b1.k': 'Featured · agent-colleague',
+    'b1.t': 'An in-house AI agent that works in Slack',
+    'b1.l': 'I rebuilt my first bot on TypeScript and the Claude Agent SDK. This part covers what the agent is trusted with, what it\'s kept from doing, and how it changes code.',
+    'b1.p1.h': 'Writes wait for a person',
+    'b1.p1.d': 'Actions like filing a ticket run only after the bot posts in the thread and someone replies, and an action log keeps the same request from running twice.',
+    'b1.p2.h': 'Code changes go through review',
+    'b1.p2.d': 'Changes are built in an isolated workspace, checked by a separate read-only review session, and opened as a PR from a bot-only branch.',
+    'b1.p3.h': 'Production data, narrowly',
+    'b1.p3.d': 'Queries run under an account that can\'t read personal-data columns, writes are refused, and heavy queries (costed from the query plan) wait for a person\'s reply.',
+
+    'b2.t': 'Fifteen weeks of use',
+    'b2.s1.u': 's', 'b2.s1.sr': '96 s', 'b2.s1.l': 'median to first reply',
+    'b2.s2.sr': '46%', 'b2.s2.l': 'of threads had a human follow-up',
+    'b2.s3.sr': '83%', 'b2.s3.l': 'of 277 distinct errors got a first analysis (median 113 s, mostly before the redesign)',
+    'b2.note': 'An internal record from June 10 to September 22, 2026, compiled from Slack threads in the team\'s code-question channel (error-analysis figures come from the alert channel). The agent was redesigned on September 16; most of the period (211 of 235 threads) was answered by the first bot. Follow-ups include clarifying questions and corrections, and whether answers were correct wasn\'t measured separately. The 38 hours: 226 work questions (9 small-talk threads removed) × 10 minutes (5 to handle, 5 to get back to work). The asker\'s waiting time isn\'t counted, and assuming every question would have been answered right away may overstate it. The 30 minutes a day is those 38 hours spread over roughly 75 working days.',
+
+    'b3.k': '',
+    'b3.t': 'Agent-Friendly Architecture',
+    'b3.l': 'Based on the "five habits of worker agents" from the Dune project doc that Lauren Tan of Cursor presented. Testing exceptions as a counted list, and then emptying that list, were my own additions.',
+    'b3.p1': 'External connections are created only in the two entry files and standalone scripts; the 9 integrations each live in their own folder.',
+    'b3.p2': 'Structural rules run as 52 boundary tests (as of 2026-10-05); all 6 exception lists are empty, and a test checks they stay that way.',
+    'b3.p3': '13 workarounds and 3 variants found by a review agent are pinned as test cases.',
+    'b3.p4': 'The same checks run before push and on every PR. Whether this reduced defects hasn\'t been measured.',
+
+    'b4.k': 'Open Source · MIT',
+    'b4.t': 'Turn review notes into rules',
+    'b4.l': 'An open-source tool that checks whether each documented rule is actually enforced, and turns approved rules into lint or architecture-test drafts so docs keep only what can\'t be enforced. Corrections from work sessions and PR review comments become rule drafts or anti-pattern entries once a person approves them.',
+    'b4.v': '1.x scored docs across seven areas. The easiest way to raise the score was to write more unenforced docs, so 2.0 dropped the score.',
+    'b4.link': 'GitHub repository',
+
+    'b5.t': 'Notes from building it',
+    'b5.l': 'Part 1 is about the first bot, which read code across four repos (backend, Android, iOS, web) using Claude Code in headless mode. Part 2 covers fifteen weeks of use and how the structure was rebuilt as features grew.',
+    'b5.p1.k': 'Medium · June 2026 · 14 min read · Part 1',
+    'b5.p1.t': 'Building an in-house AI agent that answers code questions across teams',
+    'b5.p2.k': 'Medium · Part 2',
+    'b5.p2.t': 'How I redesigned our in-house AI agent',
+    'b5.ko': 'Korean',
+    'b5.c.t': 'Happy to talk agents',
+    'b5.c.l': 'Building one? I\'d love to hear about it.',
+
+    'foot.c': '© 2026 Kunsang Lee',
+    'foot.src': 'Source for this page'
+  }
+};
+/* 언어: 정적 HTML 은 한국어다. 고른 언어의 글을 사전에서 넣고 한/EN 버튼을 붙인다. site.js 를 못 받아도 돈다 */
+(function (d, h) {
+  "use strict";
+  var DICT = window.__I18N_DICT || {};
+  function all(s) { return Array.prototype.slice.call(d.querySelectorAll(s)); }
+  function pressed(L) { all(".lang button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === L ? "true" : "false"); }); }
+  function apply(L) {
+    var T = DICT[L] || {};
+    all("[data-i18n]").forEach(function (el) { var k = el.getAttribute("data-i18n"); if (k in T) el.textContent = T[k]; });
+    all("[data-i18n-html]").forEach(function (el) { var k = el.getAttribute("data-i18n-html"); if (k in T) el.innerHTML = T[k]; });
+    all("[data-i18n-attr]").forEach(function (el) {
+      el.getAttribute("data-i18n-attr").split(";").forEach(function (pair) {
+        var i = pair.indexOf(":");
+        if (i < 0) return;
+        var a = pair.slice(0, i).trim(), k = pair.slice(i + 1).trim();
+        if (k in T) el.setAttribute(a, T[k]);
+      });
+    });
+    if (T["doc.title"]) d.title = T["doc.title"];
+    h.lang = L;
+    pressed(L);
+  }
+  function choose(L) {
+    if (L === h.lang) return;
+    apply(L);
+    try { localStorage.setItem("lang", L); } catch (e) {}
+    // 주소에 ?lang= 이 있으면 그 값도 바꿔, 새로 고쳐도 고른 언어로 열리게 한다
+    if (/[?&]lang=/.test(location.search) && history.replaceState) {
+      history.replaceState(null, "", location.pathname + location.search.replace(/([?&]lang=)(ko|en)/, "$1" + L) + location.hash);
+    }
+    var ev;
+    try { ev = new CustomEvent("fx:lang", { detail: L }); } catch (e) { ev = d.createEvent("CustomEvent"); ev.initCustomEvent("fx:lang", false, false, L); }
+    window.dispatchEvent(ev);
+  }
+  var done = false;
+  // 본문 끝의 인라인 한 줄이 HTML 을 다 읽은 즉시 부른다. DOMContentLoaded 는 defer 스크립트를 기다리므로 예비로만 둔다
+  window.__langInit = function () {
+    if (done) return;
+    done = true;
+    try {
+      if (h.lang === "en") apply("en"); else pressed("ko");
+      all(".lang button").forEach(function (b) { b.addEventListener("click", function () { choose(b.getAttribute("data-lang")); }); });
+    } finally { h.classList.remove("pre-en"); }
+  };
+})(document, document.documentElement);
 </script>
 <style>
 :root{
@@ -196,6 +417,7 @@ html:not(.fx) .top{position:absolute}
 .fx .lbls{display:block}
 .lbl{position:absolute;left:0;top:0;font-size:12.5px;font-weight:700;letter-spacing:.03em;line-height:1.3;white-space:nowrap;color:var(--cream);opacity:0;transition:opacity .7s var(--out);will-change:transform,opacity;text-shadow:0 0 14px rgba(10,8,7,.95),0 0 3px rgba(10,8,7,.95)}
 .lbl.on{opacity:1}
+.lbl.on.lo{opacity:.35}
 .lbl.ax{font-size:11.5px;font-weight:600;color:var(--dim)}
 .lbl.a{color:var(--amber)}.lbl.c{color:var(--clay)}.lbl.w{color:var(--cream)}
 .shade{position:fixed;left:0;right:0;bottom:0;height:40vh;z-index:1;pointer-events:none;display:none;background:linear-gradient(180deg,rgba(10,8,7,0),rgba(10,8,7,.5) 55%,rgba(10,8,7,.74));transition:opacity .6s var(--out)}
@@ -267,10 +489,10 @@ footer{position:relative;z-index:3;padding:22px var(--edge) 30px;border-top:1px 
 footer a{color:var(--c2)}
 
 /* 나타나기 */
-.js .rv{opacity:0;transform:translateY(24px);transition:opacity 1s var(--out),transform 1.2s var(--out)}
-.js .rv.in{opacity:1;transform:none}
-.js .rv.d1{transition-delay:.08s}.js .rv.d2{transition-delay:.16s}.js .rv.d3{transition-delay:.24s}
-@media (prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}*{scroll-behavior:auto!important}}
+.rvjs .rv{opacity:0;transform:translateY(24px);transition:opacity 1s var(--out),transform 1.2s var(--out)}
+.rvjs .rv.in{opacity:1;transform:none}
+.rvjs .rv.d1{transition-delay:.08s}.rvjs .rv.d2{transition-delay:.16s}.rvjs .rv.d3{transition-delay:.24s}
+@media (prefers-reduced-motion:reduce){.rvjs .rv{opacity:1;transform:none;transition:none}*{scroll-behavior:auto!important}}
 
 #fps{position:fixed;right:12px;top:110px;z-index:30;font:11px/1.45 ui-monospace,Menlo,monospace;color:#f6ecdf;pointer-events:none;white-space:pre;text-shadow:0 0 4px #000}
 </style>
@@ -315,10 +537,10 @@ footer a{color:var(--c2)}
     </div>
   </section>
 
-  <section class="scene s2" data-s="1" style="--len:1.5" aria-labelledby="s2-t">
+  <section class="scene s2" data-s="1" style="--len:1.65" aria-labelledby="s2-t">
     <div class="cap">
       <h2 class="line" id="s2-t" data-i18n="s2.t">동료와 같은 에이전트</h2>
-      <p class="sub" data-i18n="s2.d">Slack 에서 부르면 코드베이스와 데이터베이스를 조회해 근거와 함께 답하고, 티켓과 PR 까지 맡도록 직접 설계했습니다.</p>
+      <p class="sub" data-i18n="s2.d">Slack 에서 부르면 코드베이스와 데이터베이스를 조회해 근거와 함께 답하고, 티켓과 PR 까지 맡도록 직접 설계했습니다</p>
     </div>
   </section>
 
@@ -332,7 +554,7 @@ footer a{color:var(--c2)}
   <section class="scene s4" data-s="3" style="--len:1.2" aria-labelledby="s4-t">
     <div class="cap">
       <h2 class="line" id="s4-t" data-i18n="s4.t">기억을 가진 에이전트</h2>
-      <p class="sub" data-i18n="s4.d">채널 글을 모두 임베딩으로 쌓아 두고, 뜻이 가까운 지난 대화를 필요할 때 찾아 쓰게 했습니다. 최근 30일 1,111건의 임베딩 비용은 1센트도 되지 않았습니다</p>
+      <p class="sub" data-i18n="s4.d">에이전트가 듣는 채널의 글을 모두 임베딩으로 쌓아 두고, 뜻이 가까운 지난 대화를 필요할 때 찾아 쓰게 했습니다. 30일 동안 1,111건의 임베딩 비용은 1센트도 되지 않았습니다</p>
     </div>
   </section>
 
@@ -389,7 +611,7 @@ footer a{color:var(--c2)}
     <p class="lead rv d1" data-i18n="b1.l">처음 만든 봇을 TypeScript 와 Claude Agent SDK 로 다시 설계했습니다. 여기서는 에이전트에게 무엇을 맡기고 무엇을 막았는지, 코드를 어떻게 고치게 했는지를 적었습니다.</p>
     <ol class="points">
       <li class="pt3 rv"><span class="pt-n" aria-hidden="true">01</span><h3 data-i18n="b1.p1.h">쓰기는 사람이 답한 뒤에</h3><p data-i18n="b1.p1.d">티켓 생성 같은 쓰기 도구는 봇이 스레드에 글을 올린 뒤 사람이 답했을 때만 실행되고, 실행 기록을 확인해 같은 요청을 두 번 실행하지 않습니다.</p></li>
-      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b1.p2.h">고친 코드는 리뷰를 거쳐서</h3><p data-i18n="b1.p2.d">격리된 작업 공간에서 구현하고, 수정 권한이 없는 별도 리뷰 세션이 찾은 문제를 반영한 뒤 봇 전용 브랜치로만 PR 을 엽니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b1.p2.h">고친 코드는 리뷰를 거쳐서</h3><p data-i18n="b1.p2.d">격리된 작업 공간에서 구현하고, 수정 권한이 없는 별도 리뷰 세션이 찾은 문제를 반영한 뒤 봇 전용 브랜치에서만 PR 을 엽니다.</p></li>
       <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b1.p3.h">운영 DB 는 좁게</h3><p data-i18n="b1.p3.d">개인정보 컬럼을 읽지 못하는 계정으로만 조회하고, 쓰기는 거부하며, 실행 계획으로 비용을 재서 무거운 조회는 사람이 답한 뒤에 실행합니다.</p></li>
     </ol>
   </div>
@@ -402,9 +624,9 @@ footer a{color:var(--c2)}
     <ul class="stats">
       <li class="st rv"><p class="st-n"><span class="sr" data-i18n="b2.s1.sr">96초</span><span aria-hidden="true">96</span><span class="u" aria-hidden="true" data-i18n="b2.s1.u">초</span></p><p class="st-l" data-i18n="b2.s1.l">첫 답까지 중앙값</p></li>
       <li class="st rv d1"><p class="st-n"><span class="sr" data-i18n="b2.s2.sr">46%</span><span aria-hidden="true">46</span><span class="u" aria-hidden="true">%</span></p><p class="st-l" data-i18n="b2.s2.l">사람이 이어서 말한 스레드</p></li>
-      <li class="st rv d2"><p class="st-n"><span class="sr" data-i18n="b2.s3.sr">83%</span><span aria-hidden="true">83</span><span class="u" aria-hidden="true">%</span></p><p class="st-l" data-i18n="b2.s3.l">오류 알림 277개 중 첫 분석이 달린 비율(중앙값 113초, 대부분 재설계 전)</p></li>
+      <li class="st rv d2"><p class="st-n"><span class="sr" data-i18n="b2.s3.sr">83%</span><span aria-hidden="true">83</span><span class="u" aria-hidden="true">%</span></p><p class="st-l" data-i18n="b2.s3.l">오류 277개 중 첫 분석이 달린 비율(중앙값 113초, 대부분 재설계 전)</p></li>
     </ul>
-    <p class="note rv" data-i18n="b2.note">2026년 6월 중순~9월 하순, 팀 코드 질문 채널의 Slack 스레드를 직접 센 사내 운영 기록입니다. 9월 중순에 지금 구조로 바꿨습니다. 이어서 말한 스레드에는 되물음과 정정도 섞여 있고, 답이 맞았는지는 따로 재지 않았습니다. 장면의 38시간은 잡담 9건을 뺀 226건에 건당 10분(처리 5분, 원래 일로 돌아오는 데 5분)을 곱한 값입니다. 묻는 쪽이 기다린 시간은 넣지 않았고, 모두 바로 답했다는 가정이라 실제보다 크게 잡혔을 수 있습니다. 기간 대부분(235건 중 211건)은 처음 만든 봇이 답했습니다.</p>
+    <p class="note rv" data-i18n="b2.note">2026년 6월 10일~9월 22일, 팀 코드 질문 채널(오류 분석 비율은 오류 알림 채널)의 Slack 스레드를 직접 센 사내 운영 기록입니다. 9월 16일에 에이전트를 다시 설계했고, 기간 대부분(235건 중 211건)은 처음 만든 봇이 답했습니다. 이어서 말한 스레드에는 되물음과 정정도 섞여 있고, 답이 맞았는지는 따로 재지 않았습니다. 장면의 38시간은 잡담 9건을 뺀 226건에 건당 10분(처리 5분, 원래 일로 돌아오는 데 5분)을 곱한 값입니다. 묻는 쪽이 기다린 시간은 넣지 않았고, 모두 바로 답했다는 가정이라 실제보다 크게 잡혔을 수 있습니다. 하루 30분은 이 38시간을 기간 중 근무일 약 75일로 나눈 값입니다.</p>
   </div>
 </section>
 
@@ -412,9 +634,9 @@ footer a{color:var(--c2)}
   <div class="wrap">
     <p class="kicker rv"><b>03</b><span data-i18n="b3.k">Agent-Friendly Architecture</span></p>
     <h2 id="afa-title" class="rv" data-i18n="b3.t">에이전트가 잘 일할 수 있는 코드 구조</h2>
-    <p class="lead rv d1" data-i18n="b3.l">Cursor 의 Lauren Tan 이 영상에서 소개한 Dune 프로젝트 문서의 "작업자 에이전트가 자주 하는 다섯 가지"를 바탕으로 했습니다. 예외를 목록과 개수로 테스트하고 그 목록을 비운 것은 이 저장소에서 정했습니다.</p>
+    <p class="lead rv d1" data-i18n="b3.l">Cursor 의 Lauren Tan 이 영상에서 소개한 Dune 프로젝트 문서의 "작업자 에이전트가 자주 하는 다섯 가지"를 바탕으로 했습니다. 예외를 목록과 개수로 테스트하고 그 목록을 비운 것은 제가 따로 정했습니다.</p>
     <ol class="facts">
-      <li class="rv"><p data-i18n="b3.p1">외부 연결은 시작 파일 두 곳에서만 만들고, 외부 연동 9개는 서비스별 폴더로 모았습니다.</p></li>
+      <li class="rv"><p data-i18n="b3.p1">외부 연결은 시작 파일 두 곳과 운영 스크립트에서만 만들고, 외부 연동 9개는 서비스별 폴더로 모았습니다.</p></li>
       <li class="rv"><p data-i18n="b3.p2">구조 규칙은 경계 테스트 52개로 옮겼고(2026-10-05 기준) 예외 목록 6개는 모두 비어 있으며, 비어 있는지도 테스트로 확인합니다.</p></li>
       <li class="rv"><p data-i18n="b3.p3">리뷰 에이전트가 찾은 우회 13건과 변형 3건을 테스트 사례로 고정했습니다.</p></li>
       <li class="rv"><p data-i18n="b3.p4">PR 과 push 전에 같은 검사를 돌립니다. 결함이 줄었는지는 재지 않았습니다.</p></li>
@@ -494,8 +716,9 @@ footer a{color:var(--c2)}
   <button type="button" data-i="7"><span class="n">08</span><span class="t" data-i18n="tab.8">코드 구조</span><span class="bar"><i></i></span></button>
   <button type="button" data-i="8"><span class="n">09</span><span class="t" data-i18n="tab.9">함께</span><span class="bar"><i></i></span></button>
 </nav>
-<p class="hint" aria-hidden="true"><span class="mouse" data-i18n="ui.hint.mouse">움직이면 밀려나고 · 누르면 흩어집니다 · 스크롤로 넘깁니다</span><span class="touch" data-i18n="ui.hint.touch">누르면 흩어집니다 · 스크롤로 넘깁니다</span></p>
+<p class="hint" aria-hidden="true"><span class="mouse" data-i18n="ui.hint.mouse">마우스를 움직이면 입자가 밀려나고 · 누르면 흩어집니다 · 스크롤하면 넘어갑니다</span><span class="touch" data-i18n="ui.hint.touch">누르면 흩어집니다 · 스크롤하면 넘어갑니다</span></p>
 <div id="fps" hidden></div>
+<script>window.__langInit && window.__langInit();</script>
 <script src="assets/site.js" defer></script>
 <script src="assets/particles.js" defer></script>
 </body>

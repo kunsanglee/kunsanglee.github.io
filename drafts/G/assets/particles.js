@@ -419,7 +419,7 @@ void main(){
       vec4 S = uArr[s];
       goal = S.xyz + tgt;
       float on = S.w;
-      brT *= form * mix(0.11, 1.0, on);
+      brT *= form * mix(0.01, 1.0, on);
       ct = mix(vec2(0.04, 0.55), aTCol.xy, on);
       cw = mix(0.0, cw, on);
     } else if (role < 2.5) {              // the agent's light
@@ -465,6 +465,15 @@ void main(){
       brT *= uT.y * step(0.0005, u) * (1.0 - 0.5 * u);
       k = 320.0; z = 0.86;
       tw = 1.0;
+    } else if (role < 9.5) {              // the week under the dial: today glows; from Saturday midnight the weekend pair stays lit
+      float d = aAux.x;
+      float we = step(4.5, d) * clamp(uP.w - 4.0, 0.0, 1.0);
+      float today = exp(-pow((d - uP.w) / 0.45, 2.0));
+      goal = uQ.xyz + tgt * uQ.w;
+      brT *= uP.z * (0.28 + 0.9 * today + 1.3 * we);
+      ct = mix(aTCol.xy, vec2(0.34, 0.05), we);
+      cw = 0.4 * today + 0.12 * we;
+      k = 120.0;
     } else {
       goal = tgt;
       brT *= form;
@@ -569,7 +578,7 @@ void main(){
     k = mix(4.0, 150.0, form); z = 0.8;
     if (role < 2.5) {                     // edges, faces, base
       float wall = aAux.y * uP.y, wl = sm1(wall * 2.2);
-      brT = role < 0.5 ? brT * max(form, 0.05) * (1.0 + 0.9 * wall) : max(brT * max(form, 0.05), 1.15 * wall);
+      brT = role < 0.5 ? brT * max(form, 0.05) * (1.0 + 0.9 * wall) : max(brT * max(form, 0.05), uP.w * wall);
       ct = mix(ct, vec2(0.0, 0.0), wl);
       cw = mix(cw, 0.0, wl);
       acc += nz * 0.5 * (1.0 - form);
@@ -699,7 +708,7 @@ layout(location=8) in vec4 aSeed;
 uniform mat4 uVP;
 uniform float uPx, uFocus, uTime, uBright, uWhite, uJitter, uPulse, uPulseT, uPulseGap, uDof, uVar, uMaxPx, uShift;
 uniform vec4 uMask;
-uniform float uMaskA;
+uniform float uMaskA, uTopA;
 uniform int uRMode;
 uniform vec3 uClay, uAmber, uCream;
 out vec3 vCol;
@@ -741,6 +750,7 @@ void main(){
   b *= smoothstep(0.18, 0.5, w / uFocus);
   vec2 mq = abs((clip.xy / w - uMask.xy) / uMask.zw);
   b *= 1.0 - uMaskA * (1.0 - smoothstep(0.78, 1.12, pow(pow(mq.x, 4.0) + pow(mq.y, 4.0), 0.25)));
+  b *= 1.0 - uTopA * smoothstep(0.66, 0.76, clip.y / w);
   gl_PointSize = ps;
   vCol = col * b;
   vSoft = soft;
@@ -772,7 +782,7 @@ uniform mat4 uVP;
 uniform float uPx, uFocus, uBright, uTail, uGain, uMaxLen, uVar, uWhite, uLenK, uShift;
 uniform vec2 uView;
 uniform vec4 uMask;
-uniform float uMaskA;
+uniform float uMaskA, uTopA;
 uniform vec3 uClay, uAmber, uCream;
 out vec3 vCol;
 out float vAcross;
@@ -806,6 +816,7 @@ void main(){
   b *= smoothstep(0.18, 0.5, ch.w / uFocus);
   vec2 mq = abs((ch.xy / max(ch.w, 0.06) - uMask.xy) / uMask.zw);
   b *= 1.0 - uMaskA * (1.0 - smoothstep(0.78, 1.12, pow(pow(mq.x, 4.0) + pow(mq.y, 4.0), 0.25)));
+  b *= 1.0 - uTopA * smoothstep(0.66, 0.76, ch.y / max(ch.w, 0.06));
   vCol = col * b;
   vAcross = side;
 }`;
@@ -1430,7 +1441,7 @@ function g2() {
   const forest = T ? { x0: -0.86, x1: 0.86, y0: g.y1 - 0.56, y1: g.y1 - 0.04, rowH: 0.066 } : { x0: -g.w / 2 + 0.02, x1: -0.6, y0: g.cy - 0.5, y1: g.cy + 0.5, rowH: 0.08 };
   const db = T ? { c: [0, g.y0 + 0.27, 0], R: 0.32, H: 0.3 } : { c: [1.2, g.cy - 0.06, 0], R: 0.2, H: 0.46 };
   const cs = T ? 0.9 : 1;
-  const cards = T ? [[0.56, cp[1] - 0.2, 0.08], [0.56, cp[1] - 0.44, 0.08]] : [[0.66, cp[1] + 0.03, 0.08], [0.66, cp[1] - 0.21, 0.08]];
+  const cards = T ? [[0.56, cp[1] - 0.2, 0.08], [0.56, cp[1] - 0.44, 0.08]] : [[bubble.c[0] + 0.05, cp[1] + 0.03, 0.08], [bubble.c[0] + 0.05, cp[1] - 0.21, 0.08]];
   // where the beams reach: the near side of the forest and the top of the database
   const fA = T ? [0, forest.y0 + 0.02, 0] : [forest.x1 - 0.04, (forest.y0 + forest.y1) / 2, 0];
   const dA = T ? [0, db.c[1] + db.H / 2 + 0.02, 0] : [db.c[0] - db.R * 0.6, db.c[1] + db.H / 2, 0];
@@ -1654,7 +1665,7 @@ function drawTodo(w, h, part) {
   worldSpace();
   sx.strokeStyle = '#fff'; sx.fillStyle = '#fff';
   if (part === 'frame') {
-    sx.lineWidth = 0.008; roundRect(-w / 2, -h / 2, w, h, Math.min(0.04, h * 0.14)); sx.stroke();
+    sx.lineWidth = w > 0.7 ? 0.0105 : 0.008; roundRect(-w / 2, -h / 2, w, h, Math.min(0.04, h * 0.14)); sx.stroke();
     sx.lineWidth = 0.007; sx.strokeRect(P.cb.x - P.cb.s / 2, -P.cb.s / 2, P.cb.s, P.cb.s);
   } else if (part === 'words') {
     const bh = h * 0.07;
@@ -1694,6 +1705,7 @@ function scribbles(n, rand, R) {
 function meaningShape(rand) {
   const G = g3(), T = G.T, sh = newShape('meaning');
   const { w, h } = G.card;
+  const kb = T ? 2.0 : 1;
   // the ring stays where it was and dims: people and the agent keep their blobs
   blob(sh, I_AG, PB, rand, G.G2.ring.s, 0.95, 0.6, 1.0, 5, i => { sh.aux[i * 4] = 6; });
   for (let p = 0; p < 6; p++) blob(sh, I_PP + p * PB, PB, rand, G.G2.ring.s, 0.5, 0.12, 0.95, 5, i => { sh.aux[i * 4] = p; });
@@ -1705,7 +1717,7 @@ function meaningShape(rand) {
   clearBox(); drawTodo(w, h, 'words');
   take(nWords, rand, (k, px, py, a) => {
     const s = tang[ti++];
-    put(sh, i, px, py, (rand() - 0.5) * 0.01, 0.62 + 0.3 * a, 0.8, 0, 0.2, 0.3);
+    put(sh, i, px, py, (rand() - 0.5) * 0.01, (0.62 + 0.3 * a) * kb, 0.8, 0, T ? 0.3 : 0.2, 0.3);
     set4(sh.aux, i, s[0], s[1], s[2], 0);
     set4(sh.aux2, i, 0, (px + w / 2) / w, 0, 0);
     sh.meta[i * 4 + 3] = rand();
@@ -1714,7 +1726,7 @@ function meaningShape(rand) {
   clearBox(); drawTodo(w, h, 'frame');
   take(nFrame, rand, (k, px, py, a) => {
     const s = tang[ti++];
-    put(sh, i, px, py, (rand() - 0.5) * 0.01, 0.72 + 0.25 * a, 0.92, 0, 0.42, 0.3);
+    put(sh, i, px, py, (rand() - 0.5) * 0.01, (0.72 + 0.25 * a) * kb, 0.92, 0, 0.42, 0.3);
     set4(sh.aux, i, s[0], s[1], s[2], 0);
     set4(sh.aux2, i, 1, (px + w / 2) / w, 0, 0);
     sh.meta[i * 4 + 3] = rand();
@@ -1722,7 +1734,7 @@ function meaningShape(rand) {
   });
   const P = cardParts(w, h);
   alongPoly(P.check, nCheck, rand, 0.007).forEach(q => {
-    put(sh, i, q[0], q[1], 0.01, 1.0, 0.98, 0, 0.75, 0.3);
+    put(sh, i, q[0], q[1], 0.01, T ? 1.4 : 1.0, 0.98, 0, 0.75, 0.3);
     set4(sh.aux, i, P.check[0][0], P.check[0][1], 0.01, 0);
     set4(sh.aux2, i, 2, q[2], 0, 0);
     i++;
@@ -1747,7 +1759,7 @@ function meaningShape(rand) {
     sx.beginPath(); sx.moveTo(Pe.check[0][0], Pe.check[0][1]); sx.lineTo(Pe.check[1][0], Pe.check[1][1]); sx.lineTo(Pe.check[2][0], Pe.check[2][1]); sx.stroke();
     sx.setTransform(1, 0, 0, 1, 0, 0);
     take(n, rand, (k, px, py, a, e) => {
-      put(sh, i, px, py, 0, 0.55 + 0.3 * a, 0.88, 0, e ? 0.4 : 0.15, 0.4);
+      put(sh, i, px, py, 0, (0.55 + 0.3 * a) * kb, 0.88, 0, e ? 0.4 : 0.15, 0.4);
       set4(sh.aux, i, f, 0, 0, 0);
       sh.aux2[i * 4] = 4;
       i++;
@@ -1852,11 +1864,13 @@ function memoryShape(rand) {
 /* ---------------------------------------------------- 05 · 언제든 */
 function g5() {
   const g = geo(), T = g.tall;
-  const ring = T ? { c: [0, g.cy + 0.04, 0], r: 0.4, s: 0.055 } : { c: [0, g.cy - 0.02, 0], r: 0.3, s: 0.055 };
-  const dialR = T ? 0.84 : 0.62;
+  // on a wide screen the dial is drawn at 90% and sits a little higher, so the week fits between it and the caption
+  const ring = T ? { c: [0, g.cy + 0.04, 0], r: 0.4, s: 0.055 } : { c: [0, g.cy + 0.044, 0], r: 0.3, s: 0.055 };
+  const dialR = T ? 0.84 : 0.62, dialK = T ? 1 : 0.9;
   const seat7 = k => { const a = Math.PI / 2 + k * TAU / 7; return [ring.c[0] + Math.cos(a) * ring.r, ring.c[1] + Math.sin(a) * ring.r, 0]; };
   const from = T ? [-1.45, g.cy + 0.6, 0.4] : [-2.1, g.cy + 0.5, 0.4];
-  return { T, ring, dialR, dialC: [ring.c[0], ring.c[1], -0.28], seat7, from };
+  const week = T ? { y: -(dialR + 0.3), sp: 0.12, gap: 0.09, bw: 0.024, bh: 0.11 } : { y: -(dialR + 0.21), sp: 0.075, gap: 0.05, bw: 0.016, bh: 0.06 };
+  return { T, ring, dialR, dialK, dialC: [ring.c[0], ring.c[1], -0.28], seat7, from, week };
 }
 function anytimeShape(rand) {
   const G = g5(), T = G.T, sh = newShape('anytime');
@@ -1893,6 +1907,18 @@ function anytimeShape(rand) {
     put(sh, i, 0, 0, 0, 0.75, 0.95, 0, 0.55, 0.9);
     set4(sh.aux, i, 0, 0, 0, rand());
     sh.aux2[i * 4] = 8;
+  }
+  // the week under the dial: five weekday ticks, a gap, then the weekend pair. No numbers or letters
+  {
+    const W = G.week, nWeek = Math.round(N * 0.02), xs = [];
+    for (let d = 0; d < 7; d++) xs.push(d * W.sp + (d > 4 ? W.gap : 0));
+    const mid = (xs[0] + xs[6]) / 2;
+    for (let k = 0; k < nWeek; k++, i++) {
+      const d = k % 7;
+      put(sh, i, xs[d] - mid + (rand() - 0.5) * W.bw, W.y + (rand() - 0.5) * W.bh, (rand() - 0.5) * 0.01, 0.6, d > 4 ? 0.12 : 0.5, 0, 0.1, 0.2);
+      set4(sh.aux, i, d, 0, 0, 0);
+      sh.aux2[i * 4] = 9;
+    }
   }
   // the night sky the nebula turns into
   const g = geo();
@@ -2092,7 +2118,7 @@ const COMET_BOX = [0, 2, 3, 5, 4, CROSS];
 function cityShape(rand) {
   const G = g8(), T = G.T, sh = newShape('city');
   const nEdge = Math.round(N * 0.42), nFace = Math.round(N * 0.2), nBase = Math.round(N * 0.08);
-  const nCom = Math.round(N * 0.008), nRip = Math.round(N * 0.036);
+  const nCom = Math.round(N * 0.008), nRip = Math.round(N * (T ? 0.05 : 0.036));
   const y0 = G.ground;
   const cross = CROSS, into = INTO;
   const edgesOf = B => {
@@ -2139,7 +2165,7 @@ function cityShape(rand) {
     sh.meta[i * 4 + 3] = (k / 9) * 0.85 + rand() * 0.1;
   }
   // a sheet on the crossed wall, dark until the comet goes through it
-  const nWall = Math.round(N * 0.026), WB = G.boxes[cross];
+  const nWall = Math.round(N * (T ? 0.05 : 0.026)), WB = G.boxes[cross];
   for (let m = 0; m < nWall; m++, i++) {
     put(sh, i, wallX, y0 + rand() * WB.h, WB.z + (rand() - 0.5) * WB.d, 0.02, 0.9, 0, 0.6, 0.1);
     set4(sh.aux, i, cross, 1, 0, 0);
@@ -2280,7 +2306,7 @@ const U = {
 const ARR = new Float32Array(32 * 4);
 const R = {
   mode: 0, jitter: 0, white: 0.04, gain: 1, bright: 1, brightGoal: 1, trail: 0, bloom: 1, exposure: 1, pulse: 0, pulseT: 0, pulseGap: 0.12,
-  dim: 1, dof: 0.6, tail: 0.045, vari: 0.1, maskA: 0.6, lenK: 0.55, shift: 0
+  dim: 1, dof: 0.6, tail: 0.045, vari: 0.1, maskA: 0.6, lenK: 0.55, shift: 0, topA: 0
 };
 function resetUniforms() {
   U.mode = FREE; U.phaseT = 0; U.K = 0; U.zeta = 0.7; U.ramp = 0.8; U.stagger = 0; U.noise = 0; U.noiseFreq = 0.85;
@@ -2289,7 +2315,7 @@ function resetUniforms() {
   U.P.fill(0); U.Q.fill(0); U.S.fill(0); U.T.fill(0); U.V.fill(0); U.G.fill(0);
   R.mode = R_PLAIN; R.jitter = 0; R.white = 0.04; R.gain = 1; R.trail = 0; R.bloom = 1; R.exposure = 1;
   R.pulse = 0; R.pulseT = 0; R.pulseGap = 0.12; R.dim = 1; R.dof = 0.6; R.tail = 0.045; R.vari = 0.1;
-  R.maskA = 0.6; R.lenK = 0.55; R.shift = 0;
+  R.maskA = 0.6; R.lenK = 0.55; R.shift = 0; R.topA = 0;
 }
 function free(noise, drag) { U.mode = FREE; U.noise = noise * 0.6; U.drag = drag * 1.3; U.noiseFreq = 0.7; U.P[3] = 1.5; }
 function assemble(K, zeta, ramp, stagger, jit, noise) {
@@ -2302,7 +2328,7 @@ function hold() {
 }
 
 /* 흩어짐: 입자에 한 번 속도를 더하고, 화면을 잠깐 밝히고, 카메라를 흔든다 */
-let pendingKick = null, flashE = 0;
+let pendingKick = null, flashE = 0, topA = 0;
 const shakeR = rng(99);
 function shake(a) {
   cam.vel.roll += (shakeR() - 0.5) * 0.5 * a;
@@ -2345,7 +2371,7 @@ function track(keys, t) {
 const shapeOf = key => (curShape && curShape.key === key ? curShape : getShape(key));
 
 /* ---------------------------------------------------- 02 · 동료 */
-const S2 = { j0: 0.8, j1: 2.2, call: 2.9, grow: 3.4, beam: 3.9, pull: 4.6, ans: 5.9, fold: 6.9, out: 8.2 };
+const S2 = { j0: 0.8, j1: 2.2, call: 2.9, grow: 3.4, beam: 3.9, pull: 4.6, ans: 5.9, fold: 6.9, out: 9.0 };
 function lightPath2(G, t) {
   const top = G.seat7(0);
   const from = G.T ? [1.35, top[1] + 1.0, 0.4] : [halfW + 0.45, top[1] + 0.5, 0.4];
@@ -2376,8 +2402,8 @@ function ringFrame(t) {
   U.S[2] = sm((t - S2.beam) / 0.45);
   U.S[3] = win(t, S2.beam, S2.ans + 0.2, 0.2, 0.5);
   arr(10, G.fA, 1); arr(11, G.dA, 1);
-  // once the answer is back, the code and the database step back so the two cards read
-  U.P[0] = 0.62 * sm((t - S2.fold) / 0.6);
+  // once the answer is back, the code and the database drop to 30% so the two cards read
+  U.P[0] = 0.7 * sm((t - S2.fold) / 0.6);
   set4v(U.G, S2.pull, S2.ans, S2.fold, sm((t - S2.out - 0.35) / 0.6));
   for (let k = 0; k < 2; k++) arr(8 + k, cardPath2(G, k, t), 1);
   R.trail = t < 0.7 ? 0.8 : (t > S2.j0 && t < S2.j1 + 0.3) || (t > S2.pull && t < S2.out + 1.1) ? 0.62 : 0.4;
@@ -2436,6 +2462,7 @@ function memoryFrame(t, u, prev) {
   if (prev < S4.light - 0.12 && t >= S4.light - 0.12) flashE = Math.max(flashE, 0.3);
   R.trail = t < 2.4 ? 0.62 : 0.42; R.tail = 0.05; R.dof = 1.15; R.jitter = 0.001;
   R.bloom = 1 + 0.35 * win(t, S4.light, S4.light + S4.span + 0.6, 0.4, 1.0);
+  R.topA = 0.9;
 }
 
 /* ---------------------------------------------------- 05 · 언제든 */
@@ -2457,8 +2484,8 @@ function anytimeFrame(t) {
   const ang = h / 24 * Math.PI * 2;
   for (let p = 0; p < 6; p++) arr(p, G.seat7(p + 1), 1 - sm((h - (S5.off0 + p * S5.offGap)) / 0.35));
   arr(7, G.seat7(0), 1);
-  set4v(U.P, ang, sm((h - 30.5) / 2.5), sm((t - S5.dial) / 1.0), 0);
-  set4v(U.Q, G.dialC[0], G.dialC[1], G.dialC[2], 1);
+  set4v(U.P, ang, sm((h - 30.5) / 2.5), sm((t - S5.dial) / 1.0), 4 + sm((h - 24) / 0.4));
+  set4v(U.Q, G.dialC[0], G.dialC[1], G.dialC[2], G.dialK);
   U.G[0] = (h2 - h) / 0.02 / 24 * Math.PI * 2;
   const f = cometFrom5(G);
   U.G[1] = f[0]; U.G[2] = f[1]; U.G[3] = f[2];
@@ -2601,8 +2628,9 @@ function cityFrame(t) {
     arr(c, p, sm((t - S8.comets - c * 0.12) / 0.4));
     arr(8 + c, v, 0);
   }
-  const r = t > pl.tc ? Math.min(t - pl.tc, pl.tr - pl.tc + 0.1) * pl.speed : 0;
-  set4v(U.P, pulse(t, pl.tr, 3.5), pulse(t, pl.tc, 1.25), (t > pl.tc ? 1 : 0) * (1 - sm((t - pl.tr) / 0.4)), 0);
+  const T = G.T;
+  const r = (t > pl.tc ? Math.min(t - pl.tc, pl.tr - pl.tc + 0.1) * pl.speed : 0) * (T ? 1.8 : 1);
+  set4v(U.P, pulse(t, pl.tr, 3.5), pulse(t, pl.tc, T ? 0.75 : 1.25), (t > pl.tc ? 1 : 0) * (1 - sm((t - pl.tr - (T ? 0.3 : 0)) / (T ? 0.5 : 0.4))), T ? 2.4 : 1.15);
   set4v(U.Q, pl.X[0], pl.X[1], pl.X[2], r);
   R.trail = t < 1.2 ? 0.7 : 0.5; R.tail = 0.06 + 0.07 * sm((t - S8.go + 0.2) / 0.3) * (1 - sm((t - S8.home) / 0.4)); R.jitter = 0.0008; R.dof = 0.9;
   R.bloom = 1 + 0.5 * pulse(t, pl.tc, 2.5);
@@ -2635,7 +2663,7 @@ const SCENES = [
       { name: 'assemble', dur: 1.9, enter() { useShape('name'); }, frame(t, u) { assemble(64, 0.62, 0.62, 0.5, 0.2, 1.2); R.trail = mix(0.86, 0.3, sm(u)); R.tail = mix(0.06, 0.035, u); } },
       { name: 'hold', dur: Infinity, frame() { hold(); R.trail = 0.25; } }
     ] },
-  { key: 'ring', story: 9.3, camK: 3.2,
+  { key: 'ring', story: 10.1, camK: 3.2,
     cam: t => ({ yaw: mix(-0.1, 0.07, sm(t / 8.5)), pitch: 0.05, dz: 0.02 }),
     steps: [{ name: 'run', dur: Infinity, enter() { useShape('ring'); }, frame: ringFrame }] },
   { key: 'meaning', story: 7.1, camK: 3.2,
@@ -2813,7 +2841,9 @@ const LABELS = {
       const c = cardPath2(G, k, t);
       sh.anchors[k ? 'pr' : 'ticket'] = [c[0] + 0.15 * G.cs + 0.035, c[1], c[2]];
     }
-    return { code: t > S2.grow + 0.45, db: t > S2.grow + 0.55, ticket: t > S2.fold + 0.45 && t < S2.out + 0.3, pr: t > S2.fold + 0.55 && t < S2.out + 0.4 };
+    // while the cards are out, the code and database labels dim with their pictures
+    const low = t > S2.fold + 0.2 ? 'lo' : true;
+    return { code: t > S2.grow + 0.45 && low, db: t > S2.grow + 0.55 && low, ticket: t > S2.fold + 0.45 && t < S2.out + 0.3, pr: t > S2.fold + 0.55 && t < S2.out + 0.4 };
   },
   memory: () => ({ past: sceneT > S4.light + S4.span + 0.2 }),
   review: () => ({ review: sceneT > S7.frag + 0.8 && sceneT < S7.reject + 0.2, rules: sceneT > S7.visits[0] + 0.55 })
@@ -2866,6 +2896,7 @@ function placeLabels() {
       }
     }
     setLabel(k, !!want[k]);
+    el.classList.toggle('lo', want[k] === 'lo');
   }
 }
 
@@ -2964,6 +2995,7 @@ function tick(dt) {
   warp.s += (warp.v - warp.s) * (1 - Math.exp(-dt * 8));
   warp.v *= Math.exp(-dt * 4);
   flashE *= Math.exp(-dt * 3.2);
+  topA += (R.topA - topA) * (1 - Math.exp(-dt * 4));
   // particles still in the last scene's shape keep its brightness for a moment instead of jumping to the new shape's level
   R.bright += (R.brightGoal - R.bright) * (1 - Math.exp(-dt * 2.2));
   applyCamGoal();
@@ -3007,7 +3039,7 @@ function draw(dt) {
   gl.uniform1f(s.uMaxLen, 0.75); gl.uniform1f(s.uVar, R.vari); gl.uniform1f(s.uWhite, R.white);
   // tails stretched by fast scrolling spread the same light over a longer line instead of adding more
   gl.uniform1f(s.uLenK, Math.min(1, R.lenK + 0.35 * warp.s)); gl.uniform1f(s.uShift, R.shift);
-  gl.uniform2f(s.uView, dst.w, dst.h); gl.uniform4fv(s.uMask, capRect); gl.uniform1f(s.uMaskA, R.maskA);
+  gl.uniform2f(s.uView, dst.w, dst.h); gl.uniform4fv(s.uMask, capRect); gl.uniform1f(s.uMaskA, R.maskA); gl.uniform1f(s.uTopA, topA);
   palette(s);
   gl.bindVertexArray(streakVaos[cur]);
   gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, N);
@@ -3022,7 +3054,7 @@ function draw(dt) {
   gl.uniform1f(u.uWhite, R.white); gl.uniform1f(u.uJitter, R.jitter);
   gl.uniform1f(u.uPulse, R.pulse); gl.uniform1f(u.uPulseT, R.pulseT); gl.uniform1f(u.uPulseGap, R.pulseGap);
   gl.uniform1f(u.uDof, R.dof); gl.uniform1f(u.uVar, R.vari); gl.uniform1f(u.uMaxPx, 26 * dpr); gl.uniform1f(u.uShift, R.shift);
-  gl.uniform4fv(u.uMask, capRect); gl.uniform1f(u.uMaskA, R.maskA);
+  gl.uniform4fv(u.uMask, capRect); gl.uniform1f(u.uMaskA, R.maskA); gl.uniform1f(u.uTopA, topA);
   gl.uniform1i(u.uRMode, R.mode);
   palette(u);
   gl.bindVertexArray(vaos[cur]);
