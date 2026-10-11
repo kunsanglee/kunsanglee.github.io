@@ -54,7 +54,7 @@ window.__I18N_DICT = {
     'ui.secnav': '본문 구역',
     'ui.tabs': '이야기 장면',
     'ui.next': '아래에 자세한 내용이 이어집니다',
-    'ui.copied': '이메일 주소를 복사했습니다',
+    'ui.copied': '복사했습니다 · {e}',
 
     'tab.1': 'Kunsang Lee', 'tab.2': '동료 같은 에이전트', 'tab.3': '묻고 찾아 답하기', 'tab.4': '낮 · 대신 답변하기',
     'tab.5': '밤 · 잠든 시간에도', 'tab.6': 'ai-ready', 'tab.7': 'AFA', 'tab.8': 'Contact',
@@ -93,7 +93,7 @@ window.__I18N_DICT = {
     'b2.s1.l': '질문 절반이 첫 답을 받기까지 걸린 시간. 근무 시간 밖에 올라온 39건은 99초였습니다',
     'b2.s2.n_h': '<span class="u u0">하루 약</span>30<span class="u">분</span>', 'b2.s2.sr': '하루 약 30분',
     'b2.s2.l': '업무 질문마다 누군가 하던 일을 멈추고 답했다면 들었을 시간',
-    'b2.note': '2026년 6월 10일~9월 22일, 팀 코드 질문 채널의 Slack 스레드를 직접 센 기록입니다. 이 기간 대부분은 재설계 전의 첫 봇이 답했습니다. 하루 약 30분은 질문 한 건에 10분이 든다고 가정해 낸 추정값이고, 계산 과정은 2편에 적었습니다.',
+    'b2.note': '2026년 6월 10일~9월 22일, 팀 코드 질문 채널의 Slack 스레드를 직접 센 기록입니다. 이 기간 대부분은 재설계 전의 첫 봇이 답했고, 답이 맞았는지는 재지 않았습니다. 하루 약 30분은 모든 질문에 사람이 바로 답했고 한 건에 10분이 든다고 가정한 추정값이라 실제보다 클 수 있습니다. 계산 과정은 2편에 적었습니다.',
 
     'b3.k': 'Open Source · MIT',
     'b3.t': '리뷰와 문서로 권하던 규칙을 자동 검사로',
@@ -101,23 +101,23 @@ window.__I18N_DICT = {
     'b3.p1.h': '점검',
     'b3.p1.d_h': '문서에 적힌 규칙을 하나씩 보고, 이미 검사로 막고 있는지, 검사로 옮길 수 있는지, 옮길 수 없는지 나눕니다. 판단마다 근거가 된 파일을 함께 적습니다.',
     'b3.p2.h': '적용',
-    'b3.p2.d': '사람이 고른 규칙만 팀이 이미 쓰는 lint·아키텍처 테스트 도구의 규칙으로 옮깁니다. 이미 어긴 곳은 따로 묶어 두고 새로 어기는 것만 잡습니다.',
+    'b3.p2.d': '사람이 고른 규칙만 팀이 이미 쓰는 lint·아키텍처 테스트 도구의 규칙 초안으로 옮깁니다. 이미 어긴 곳은 따로 묶어 두고 새로 어기는 것만 잡습니다.',
     'b3.p3.h': '교훈',
-    'b3.p3.d': '작업 중 바로잡은 실수와 PR 리뷰 댓글을 모아, 막을 수 있으면 검사 규칙으로, 막을 수 없으면 이유를 붙여 금지 목록으로 남깁니다. 하나씩 사람의 승인을 받습니다.',
+    'b3.p3.d': '작업 중 바로잡은 실수와 PR 리뷰 댓글을 모아, 막을 수 있으면 검사 규칙 초안을, 막을 수 없으면 이유를 붙인 금지 목록 항목을 만듭니다. 사람이 하나씩 승인한 것만 반영합니다.',
     'b3.link': 'GitHub 저장소',
 
     'b4.k': 'Agent-Friendly Architecture',
     'b4.t': '근처 파일만 보고 고쳐도 깨지지 않게 짠 코드 구조',
     'b4.l': 'AI 코딩 에이전트는 요청 한 줄과 근처 파일 몇 개만 보고 일하고, 가까이 있는 코드를 따라 씁니다. 그렇게 고쳐도 전체가 맞게 돌도록 코드 구조와 자동 검사를 짰습니다. Cursor 의 Lauren Tan 이 영상에서 소개한 Dune 프로젝트 문서를 바탕으로 사내 에이전트 코드에 적용했습니다.',
     'b4.p1.h': '옆 폴더를 따라 만들면 되게',
-    'b4.p1.d': '외부 연동마다 같은 모양의 기능 폴더를 두었습니다. 새 연동은 옆 폴더를 따라 만들면 되고, 세션이나 시작 코드는 고치지 않아도 됩니다.',
+    'b4.p1.d': '외부 연동마다 같은 모양의 기능 폴더를 두었습니다. 새 연동을 붙일 때 세션이나 시작 코드는 고치지 않아도 됩니다.',
     'b4.p2.h': '지켜야 할 규칙은 테스트로',
-    'b4.p2.d': '기능 폴더가 환경 변수·네트워크를 직접 쓰지 못하게 하는 것처럼 지켜야 할 경계를 테스트로 만들었습니다. 규칙을 어기면 push 전에 실패합니다.',
+    'b4.p2.d': '기능 폴더가 환경 변수·네트워크를 직접 쓰지 못하게 하는 것 같은 경계 규칙을 테스트로 만들어 push 전에 돌립니다.',
     'b4.p3.h': '실패하면 고칠 곳을 알려 주게',
-    'b4.p3.d': '테스트가 실패하면 코드를 어디에 둬야 하는지 메시지로 알려 줍니다. 에이전트가 그 메시지를 보고 바로 고칠 수 있게 했습니다.',
+    'b4.p3.d': '경계 테스트의 실패 메시지에 코드를 어디에 둬야 하는지 적어 두어, 에이전트가 그 메시지를 보고 고칠 수 있게 했습니다.',
 
     'b5.t': '만들면서 판단한 것을 씁니다',
-    'b5.l': '1편은 다른 파트의 코드를 확인하려고 매번 담당자를 찾아야 했던 불편에서 시작해, 사람 대신 에이전트에게 물어볼 수 있게 만든 이야기입니다. 2편은 15주 동안 쓰인 기록을 돌아보고, 확인을 넘어 티켓과 PR 같은 일까지 맡길 수 있게 에이전트를 다시 설계한 이야기입니다.',
+    'b5.l': '1편은 다른 파트의 코드를 확인하려고 매번 담당자를 찾아야 했던 불편에서 시작해, 사람 대신 에이전트에게 물어볼 수 있게 만든 이야기입니다. 2편은 15주 동안 얼마나 쓰였는지 돌아보고, 확인을 넘어 티켓과 PR 같은 일까지 맡길 수 있게 에이전트를 다시 설계한 이야기입니다.',
     'b5.p1.k': 'Medium\u00a0· 2026.06\u00a0· 14분\u00a0분량\u00a0· 시리즈\u00a01편',
     'b5.p1.t': '파트 경계를 넘는 코드 질문에 답하는 사내 AI 에이전트를 만들기까지',
     'b5.p2.k': 'Medium\u00a0· 2026.09\u00a0· 32분\u00a0분량\u00a0· 시리즈\u00a02편',
@@ -136,7 +136,7 @@ window.__I18N_DICT = {
     'ui.secnav': 'Sections',
     'ui.tabs': 'Story scenes',
     'ui.next': 'More details below',
-    'ui.copied': 'Email address copied',
+    'ui.copied': 'Copied · {e}',
 
     'tab.1': 'Kunsang Lee', 'tab.2': 'A teammate agent', 'tab.3': 'Ask and find', 'tab.4': 'Day · it steps in',
     'tab.5': 'Night · while asleep', 'tab.6': 'ai-ready', 'tab.7': 'AFA', 'tab.8': 'Contact',
@@ -175,7 +175,7 @@ window.__I18N_DICT = {
     'b2.s1.l': 'time it took for half of all questions to get a first reply; for the 39 asked outside work hours, 99 s',
     'b2.s2.n_h': '<span class="u u0">about</span>30<span class="u">min a day</span>', 'b2.s2.sr': 'About 30 min a day',
     'b2.s2.l': 'the time someone would have spent stopping their own work to answer each work question',
-    'b2.note': 'Counted by hand from Slack threads in the team\'s code-question channel, June 10 to September 22, 2026. For most of that period, the first bot (before the redesign) was answering. About 30 minutes a day is an estimate that assumes 10 minutes per question; Part 2 shows the working.',
+    'b2.note': 'Counted by hand from Slack threads in the team\'s code-question channel, June 10 to September 22, 2026. For most of that period the first bot (before the redesign) was answering, and whether its answers were right wasn\'t measured. About 30 minutes a day is an estimate that assumes someone would have answered every question right away, at 10 minutes each, so it may run high. Part 2 (in Korean) shows the working.',
 
     'b3.k': 'Open Source · MIT',
     'b3.t': 'From review notes and docs to automated checks',
@@ -183,20 +183,20 @@ window.__I18N_DICT = {
     'b3.p1.h': 'Audit',
     'b3.p1.d_h': 'Goes through each rule in the docs and sorts it into already checked, could be checked, or can\'t be checked, citing the file behind each call.',
     'b3.p2.h': 'Apply',
-    'b3.p2.d': 'Turns only the rules a person picks into rules for tools the team already uses, such as lint or architecture tests. Existing violations are set aside so only new ones are caught.',
+    'b3.p2.d': 'Drafts rules only for what a person picks, in tools the team already uses such as lint or architecture tests. Existing violations are set aside so only new ones are caught.',
     'b3.p3.h': 'Lessons',
-    'b3.p3.d': 'Gathers mistakes corrected during work and PR review comments. What a check can catch becomes a rule; what it can\'t goes on an anti-pattern list with the reason. Each one is approved by a person.',
+    'b3.p3.d': 'Gathers mistakes corrected during work and PR review comments. What a check can catch becomes a draft rule; what it can\'t becomes an anti-pattern entry with the reason. Only what a person approves, one at a time, goes in.',
     'b3.link': 'GitHub repository',
 
     'b4.k': '',
     'b4.t': 'Agent-Friendly Architecture',
     'b4.l': 'AI coding agents work from a one-line request and a few nearby files, and they copy the code closest to hand. I shaped the code structure and automated checks so the whole system still holds when they work that way. I applied this to our in-house agent, building on the Dune project doc that Lauren Tan of Cursor presented in a video.',
     'b4.p1.h': 'Follow the folder next door',
-    'b4.p1.d': 'Every external integration lives in a feature folder with the same layout. A new one is built by following the folder next to it, without touching session or startup code.',
+    'b4.p1.d': 'Every external integration lives in a feature folder with the same layout, so adding one doesn\'t mean touching session or startup code.',
     'b4.p2.h': 'Rules live in tests',
-    'b4.p2.d': 'Boundaries, such as feature folders not reaching environment variables or the network directly, are written as tests, so breaking a rule fails before a push.',
+    'b4.p2.d': 'Boundary rules, such as feature folders not reaching environment variables or the network directly, are written as tests that run before every push.',
     'b4.p3.h': 'Failures point to the fix',
-    'b4.p3.d': 'When a test fails, its message says where the code should go, so an agent can fix it from there.',
+    'b4.p3.d': 'Each boundary test\'s failure message says where the code should go, so an agent can act on it.',
 
     'b5.t': 'Notes from building it',
     'b5.l': 'Part 1 starts from having to track someone down whenever I needed to check another team\'s code, and how I built an agent people could ask instead. Part 2 looks back on fifteen weeks of use and how I redesigned the agent so it could take on work such as tickets and pull requests, not just questions.',
@@ -311,7 +311,7 @@ em{font-style:normal}
 .links a,.links button{appearance:none;-webkit-appearance:none;background:none;border:0;margin:0;cursor:pointer;display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.03em;color:var(--dim);text-decoration:none;transition:color .25s,background-color .25s}
 .links .em-short{display:none}
 @media (max-width:400px){.links a,.links button{padding:0 5px}.links{margin-left:-5px}}
-@media (max-width:339px){.links .em-full{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.links .em-short{display:inline}}
+@media (max-width:356px){.links .em-full{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.links .em-short{display:inline}}
 .links a:hover,.links button:hover{color:var(--cream);background:rgba(246,236,223,.06)}
 .lang{display:flex;align-items:center;gap:0;margin:-4px -8px 0 0;text-shadow:0 0 12px rgba(10,8,7,.9)}
 .lang button{appearance:none;-webkit-appearance:none;background:none;border:0;margin:0;cursor:pointer;min-width:40px;min-height:40px;padding:0 9px;border-radius:999px;font-size:12.5px;font-weight:700;letter-spacing:.04em;color:var(--dim);transition:color .25s,background-color .25s}
@@ -353,7 +353,6 @@ html:not(.fx) .top{position:absolute}
 .btn:hover{border-color:rgba(246,236,223,.5);background:rgba(246,236,223,.07)}
 .btn-p{background:var(--cream);color:var(--bg);border-color:var(--cream)}
 .btn-p:hover{background:#fff;border-color:#fff}
-.btn .arw{width:12px;height:12px}
 .next{display:inline-flex;align-items:center;gap:8px;min-height:40px;margin-top:12px;font-size:12.5px;font-weight:600;letter-spacing:.03em;color:var(--dim);text-decoration:none}
 .next:hover{color:var(--cream)}
 
@@ -439,7 +438,6 @@ html:lang(en) .sec h2{max-width:26ch}
 .pt3 h3{font-size:clamp(20px,2.2vw,27px);color:var(--cream)}
 .pt3 p{font-size:clamp(15px,1.15vw,16.5px);line-height:1.8;color:var(--c2);max-width:62ch}
 @media (min-width:900px){.pt3{grid-template-columns:72px minmax(0,1fr) minmax(0,1.25fr);gap:28px;align-items:baseline}.pt3 .pt-n{align-self:start;line-height:calc(clamp(20px,2.2vw,27px) * 1.18)}}
-.facts li p{max-width:70ch}
 
 /* 15주 기록 */
 .stats{margin:clamp(34px,5vw,60px) 0 0;padding:0;list-style:none;display:grid;grid-template-columns:minmax(0,1fr);gap:30px}
@@ -477,7 +475,7 @@ html:lang(en) .sec h2{max-width:26ch}
 .reach .cta{justify-content:flex-start;margin-top:24px}
 #writing{padding-bottom:clamp(90px,12vw,150px)}
 
-.toast{position:fixed;left:50%;top:calc(clamp(14px,3vh,28px) + 44px);z-index:40;margin:0;padding:9px 16px;border-radius:999px;border:1px solid var(--faint);background:rgba(16,13,11,.92);color:var(--cream);font-size:13px;font-weight:600;letter-spacing:.01em;white-space:nowrap;pointer-events:none;opacity:0;transform:translate(-50%,-6px);transition:opacity .25s,transform .25s}
+.toast{position:fixed;left:50%;top:calc(clamp(14px,3vh,28px) + 92px);z-index:40;margin:0;padding:9px 16px;border-radius:999px;border:1px solid var(--faint);background:rgba(16,13,11,.92);color:var(--cream);font-size:13px;font-weight:600;letter-spacing:.01em;white-space:nowrap;pointer-events:none;opacity:0;transform:translate(-50%,-6px);transition:opacity .25s,transform .25s}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* 나타나기 */
@@ -498,7 +496,7 @@ html:lang(en) .sec h2{max-width:26ch}
   <div class="brand">
     <a class="mark" href="#top" aria-label="Kunsang Lee, 맨 위로" data-i18n-attr="aria-label:ui.home">Kunsang Lee</a>
     <ul class="links" aria-label="연락처" data-i18n-attr="aria-label:ui.links">
-      <li><button type="button" class="copy" data-copy="gosmdochee@gmail.com"><span class="em-full">gosmdochee@gmail.com</span><span class="em-short" aria-hidden="true">Email</span></button></li>
+      <li><button type="button" class="copy" data-copy="gosmdochee@gmail.com"><span class="em-full">gosmdochee@gmail.com</span> <span class="em-short">Email</span></button></li>
       <li><a href="https://www.linkedin.com/in/kunsanglee" target="_blank" rel="noopener noreferrer">LinkedIn<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
       <li><a href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
       <li><a href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
@@ -622,7 +620,7 @@ html:lang(en) .sec h2{max-width:26ch}
       <li class="st rv"><p class="st-n"><span class="sr" data-i18n="b2.s1.sr">96초</span><span aria-hidden="true" data-i18n-html="b2.s1.n_h">96<span class="u">초</span></span></p><p class="st-l" data-i18n="b2.s1.l">질문 절반이 첫 답을 받기까지 걸린 시간. 근무 시간 밖에 올라온 39건은 99초였습니다</p></li>
       <li class="st rv d1"><p class="st-n"><span class="sr" data-i18n="b2.s2.sr">하루 약 30분</span><span aria-hidden="true" data-i18n-html="b2.s2.n_h"><span class="u u0">하루 약</span>30<span class="u">분</span></span></p><p class="st-l" data-i18n="b2.s2.l">업무 질문마다 누군가 하던 일을 멈추고 답했다면 들었을 시간</p></li>
     </ul>
-    <p class="note rv" data-i18n="b2.note">2026년 6월 10일~9월 22일, 팀 코드 질문 채널의 Slack 스레드를 직접 센 기록입니다. 이 기간 대부분은 재설계 전의 첫 봇이 답했습니다. 하루 약 30분은 질문 한 건에 10분이 든다고 가정해 낸 추정값이고, 계산 과정은 2편에 적었습니다.</p>
+    <p class="note rv" data-i18n="b2.note">2026년 6월 10일~9월 22일, 팀 코드 질문 채널의 Slack 스레드를 직접 센 기록입니다. 이 기간 대부분은 재설계 전의 첫 봇이 답했고, 답이 맞았는지는 재지 않았습니다. 하루 약 30분은 모든 질문에 사람이 바로 답했고 한 건에 10분이 든다고 가정한 추정값이라 실제보다 클 수 있습니다. 계산 과정은 2편에 적었습니다.</p>
   </div>
 </section>
 
@@ -633,8 +631,8 @@ html:lang(en) .sec h2{max-width:26ch}
     <p class="lead rv d1" data-i18n="b3.l">에이전트는 문서를 읽고도 규칙을 놓칠 수 있지만, CI 에서 실패하는 lint 규칙은 지나칠 수 없습니다. 문서에만 있는 규칙을 도구로 옮길 수 있는지 따지고, 옮길 수 없는 것만 이유와 함께 문서에 남기도록 돕는 오픈소스 도구를 직접 만들었습니다.</p>
     <ol class="points">
       <li class="pt3 rv"><span class="pt-n" aria-hidden="true">01</span><h3 data-i18n="b3.p1.h">점검</h3><p data-i18n-html="b3.p1.d_h">문서에 적힌 규칙을 하나씩 보고, 이미 검사로 막고 있는지, 검사로 옮길 수 있는지, 옮길 수 없는지 나눕니다. 판단마다 근거가 된 파일을 함께 적습니다.</p></li>
-      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b3.p2.h">적용</h3><p data-i18n="b3.p2.d">사람이 고른 규칙만 팀이 이미 쓰는 lint·아키텍처 테스트 도구의 규칙으로 옮깁니다. 이미 어긴 곳은 따로 묶어 두고 새로 어기는 것만 잡습니다.</p></li>
-      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b3.p3.h">교훈</h3><p data-i18n="b3.p3.d">작업 중 바로잡은 실수와 PR 리뷰 댓글을 모아, 막을 수 있으면 검사 규칙으로, 막을 수 없으면 이유를 붙여 금지 목록으로 남깁니다. 하나씩 사람의 승인을 받습니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b3.p2.h">적용</h3><p data-i18n="b3.p2.d">사람이 고른 규칙만 팀이 이미 쓰는 lint·아키텍처 테스트 도구의 규칙 초안으로 옮깁니다. 이미 어긴 곳은 따로 묶어 두고 새로 어기는 것만 잡습니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b3.p3.h">교훈</h3><p data-i18n="b3.p3.d">작업 중 바로잡은 실수와 PR 리뷰 댓글을 모아, 막을 수 있으면 검사 규칙 초안을, 막을 수 없으면 이유를 붙인 금지 목록 항목을 만듭니다. 사람이 하나씩 승인한 것만 반영합니다.</p></li>
     </ol>
     <a class="repo rv" href="https://github.com/kunsanglee/ai-ready" target="_blank" rel="noopener noreferrer"><span data-i18n="b3.link">GitHub 저장소</span><code>kunsanglee/ai-ready</code><svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a>
   </div>
@@ -646,9 +644,9 @@ html:lang(en) .sec h2{max-width:26ch}
     <h2 id="afa-title" class="rv" data-i18n="b4.t">근처 파일만 보고 고쳐도 깨지지 않게 짠 코드 구조</h2>
     <p class="lead rv d1" data-i18n="b4.l">AI 코딩 에이전트는 요청 한 줄과 근처 파일 몇 개만 보고 일하고, 가까이 있는 코드를 따라 씁니다. 그렇게 고쳐도 전체가 맞게 돌도록 코드 구조와 자동 검사를 짰습니다. Cursor 의 Lauren Tan 이 영상에서 소개한 Dune 프로젝트 문서를 바탕으로 사내 에이전트 코드에 적용했습니다.</p>
     <ol class="points">
-      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">01</span><h3 data-i18n="b4.p1.h">옆 폴더를 따라 만들면 되게</h3><p data-i18n="b4.p1.d">외부 연동마다 같은 모양의 기능 폴더를 두었습니다. 새 연동은 옆 폴더를 따라 만들면 되고, 세션이나 시작 코드는 고치지 않아도 됩니다.</p></li>
-      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b4.p2.h">지켜야 할 규칙은 테스트로</h3><p data-i18n="b4.p2.d">기능 폴더가 환경 변수·네트워크를 직접 쓰지 못하게 하는 것처럼 지켜야 할 경계를 테스트로 만들었습니다. 규칙을 어기면 push 전에 실패합니다.</p></li>
-      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b4.p3.h">실패하면 고칠 곳을 알려 주게</h3><p data-i18n="b4.p3.d">테스트가 실패하면 코드를 어디에 둬야 하는지 메시지로 알려 줍니다. 에이전트가 그 메시지를 보고 바로 고칠 수 있게 했습니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">01</span><h3 data-i18n="b4.p1.h">옆 폴더를 따라 만들면 되게</h3><p data-i18n="b4.p1.d">외부 연동마다 같은 모양의 기능 폴더를 두었습니다. 새 연동을 붙일 때 세션이나 시작 코드는 고치지 않아도 됩니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b4.p2.h">지켜야 할 규칙은 테스트로</h3><p data-i18n="b4.p2.d">기능 폴더가 환경 변수·네트워크를 직접 쓰지 못하게 하는 것 같은 경계 규칙을 테스트로 만들어 push 전에 돌립니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b4.p3.h">실패하면 고칠 곳을 알려 주게</h3><p data-i18n="b4.p3.d">경계 테스트의 실패 메시지에 코드를 어디에 둬야 하는지 적어 두어, 에이전트가 그 메시지를 보고 고칠 수 있게 했습니다.</p></li>
     </ol>
   </div>
 </section>
@@ -657,7 +655,7 @@ html:lang(en) .sec h2{max-width:26ch}
   <div class="wrap">
     <p class="kicker rv"><b>05</b></p>
     <h2 id="writing-title" class="rv" data-i18n="b5.t">만들면서 판단한 것을 씁니다</h2>
-    <p class="series rv d1" data-i18n="b5.l">1편은 다른 파트의 코드를 확인하려고 매번 담당자를 찾아야 했던 불편에서 시작해, 사람 대신 에이전트에게 물어볼 수 있게 만든 이야기입니다. 2편은 15주 동안 쓰인 기록을 돌아보고, 확인을 넘어 티켓과 PR 같은 일까지 맡길 수 있게 에이전트를 다시 설계한 이야기입니다.</p>
+    <p class="series rv d1" data-i18n="b5.l">1편은 다른 파트의 코드를 확인하려고 매번 담당자를 찾아야 했던 불편에서 시작해, 사람 대신 에이전트에게 물어볼 수 있게 만든 이야기입니다. 2편은 15주 동안 얼마나 쓰였는지 돌아보고, 확인을 넘어 티켓과 PR 같은 일까지 맡길 수 있게 에이전트를 다시 설계한 이야기입니다.</p>
     <ul class="rows-l">
       <li class="rv"><a class="rowk" hreflang="ko" href="https://medium.com/@gosmdochee/%ED%8C%8C%ED%8A%B8-%EA%B2%BD%EA%B3%84%EB%A5%BC-%EB%84%98%EB%8A%94-%EC%BD%94%EB%93%9C-%EC%A7%88%EB%AC%B8%EC%97%90-%EB%8B%B5%ED%95%98%EB%8A%94-%EC%82%AC%EB%82%B4-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EB%A7%8C%EB%93%A4%EA%B8%B0%EA%B9%8C%EC%A7%80-1%ED%8E%B8-5f566069f38a" target="_blank" rel="noopener noreferrer">
         <span class="kind" data-i18n="b5.p1.k">Medium&nbsp;· 2026.06&nbsp;· 14분&nbsp;분량&nbsp;· 시리즈&nbsp;1편</span>

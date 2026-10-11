@@ -21,21 +21,25 @@
     toast.textContent = msg;
     toast.classList.add("on");
     clearTimeout(t);
-    t = setTimeout(function () { toast.classList.remove("on"); }, 1800);
+    // 숨길 때 비워야 같은 글을 다시 넣었을 때 화면 읽기 프로그램이 또 읽는다
+    t = setTimeout(function () { toast.classList.remove("on"); toast.textContent = ""; }, 2200);
   }
-  function fallback(text) {
-    var a = d.createElement("textarea");
+  function fallback(text, b) {
+    var a = d.createElement("textarea"), ok = false;
     a.value = text; a.setAttribute("readonly", ""); a.style.position = "fixed"; a.style.opacity = "0";
     d.body.appendChild(a); a.select();
-    try { d.execCommand("copy"); } catch (e) {}
+    try { ok = d.execCommand("copy"); } catch (e) {}
     d.body.removeChild(a);
+    b.focus({ preventScroll: true });
+    return ok;
   }
   d.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("button.copy");
     if (!b) return;
     var text = b.getAttribute("data-copy"), dict = window.__I18N_DICT || {}, L = d.documentElement.lang === "en" ? "en" : "ko";
-    var msg = (dict[L] && dict[L]["ui.copied"]) || "Copied";
-    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(function () { say(msg); }, function () { fallback(text); say(msg); });
-    else { fallback(text); say(msg); }
+    var msg = ((dict[L] && dict[L]["ui.copied"]) || "Copied · {e}").replace("{e}", text);
+    function done(ok) { say(ok ? msg : text); }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(fallback(text, b)); });
+    else done(fallback(text, b));
   });
 })();
