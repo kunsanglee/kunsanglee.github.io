@@ -53,13 +53,11 @@ window.__I18N_DICT = {
     'ui.lang': '언어',
     'ui.secnav': '본문 구역',
     'ui.tabs': '이야기 장면',
-    'ui.hint.mouse': '마우스를 움직이면 입자가 밀려나고 · 누르면 흩어집니다 · 스크롤하면 넘어갑니다',
-    'ui.hint.touch': '누르면 흩어집니다 · 스크롤하면 넘어갑니다',
-    'ui.hint.auto': '자동으로 넘어가는 중 · 스크롤하면 직접 넘길 수 있습니다',
     'ui.next': '아래에 자세한 내용이 이어집니다',
+    'ui.copied': '이메일 주소를 복사했습니다',
 
-    'tab.1': 'Kunsang Lee', 'tab.2': '동료 같은 에이전트', 'tab.3': '묻고 찾아 답하기', 'tab.4': '낮 · 대신 받아 답하기',
-    'tab.5': '밤 · 잠든 시간에도', 'tab.6': 'ai-ready', 'tab.7': 'AFA', 'tab.8': '연락',
+    'tab.1': 'Kunsang Lee', 'tab.2': '동료 같은 에이전트', 'tab.3': '묻고 찾아 답하기', 'tab.4': '낮 · 대신 답변하기',
+    'tab.5': '밤 · 잠든 시간에도', 'tab.6': 'ai-ready', 'tab.7': 'AFA', 'tab.8': 'Contact',
 
     's1.t': 'Kunsang Lee',
     's1.d_h': '<b>이건상</b> · AI 에이전트를 만들고, 그 에이전트가 일하기 좋은 코드 구조를 설계합니다',
@@ -74,7 +72,7 @@ window.__I18N_DICT = {
     's6.t': '문서로 권하던 규칙을 검사로',
     's6.d_h': '직접 만든 오픈소스 도구 <b>ai-ready</b> 는 문서로만 권하던 규칙 가운데 막을 수 있는 것을 lint·테스트 같은 검사로 옮깁니다. 리뷰에서 바로잡은 실수도 막을 수 있으면 승인을 거쳐 검사로 옮겨, 같은 지적을 두 번 하지 않아도 됩니다',
     's7.t': '옆 코드만 따라 해도 맞도록',
-    's7.d_h': '<b>Agent-Friendly Architecture.</b> 외부 연동 9개를 같은 틀의 기능 폴더로 나눠 옆 폴더를 따라 만들면 되게 했고, 하면 안 되는 일은 경계 테스트 52개로 옮겨 push 전에 막습니다',
+    's7.d_h': '<b>Agent-Friendly Architecture.</b> 외부 연동마다 같은 틀의 기능 폴더를 두어 옆 폴더를 따라 만들면 되게 했고, 지켜야 할 규칙은 테스트로 옮겨 push 전에 검사합니다',
     's8.t': '에이전트를 만들고 계신가요?',
     's8.d': '만들면서 겪은 일을 나누고 싶습니다',
 
@@ -87,7 +85,7 @@ window.__I18N_DICT = {
     'b1.p1.d': '티켓 생성 같은 쓰기 도구는 봇이 스레드에 글을 올린 뒤 사람이 답했을 때만 실행되고, 실행 기록을 확인해 같은 요청을 두 번 실행하지 않습니다.',
     'b1.p2.h': '고친 코드는 리뷰를 거쳐서',
     'b1.p2.d': '격리된 작업 공간에서 구현하고, 수정 권한이 없는 별도 리뷰 세션이 찾은 문제를 반영한 뒤 봇 전용 브랜치에서만 PR 을 엽니다.',
-    'b1.p3.h': '운영 DB 는 좁게',
+    'b1.p3.h': '운영 DB 는 읽기만, 개인정보는 빼고',
     'b1.p3.d': '개인정보 컬럼을 읽지 못하는 계정으로만 조회하고, 쓰기는 거부하며, 실행 계획으로 비용을 재서 무거운 조회는 사람이 답한 뒤에 실행합니다.',
 
     'b2.t': '15주 동안의 기록',
@@ -95,42 +93,38 @@ window.__I18N_DICT = {
     'b2.s1.l': '질문 절반이 첫 답을 받기까지 걸린 시간. 근무 시간 밖에 올라온 39건은 99초였습니다',
     'b2.s2.n_h': '<span class="u u0">하루 약</span>30<span class="u">분</span>', 'b2.s2.sr': '하루 약 30분',
     'b2.s2.l': '업무 질문마다 누군가 하던 일을 멈추고 답했다면 들었을 시간',
-    'b2.note': '2026년 6월 10일~9월 22일, 팀 코드 질문 채널(오류 분석 비율은 오류 알림 채널)의 Slack 스레드를 직접 센 사내 운영 기록입니다. 9월 16일에 에이전트를 다시 설계했고, 기간 대부분(235건 중 211건)은 처음 만든 봇이 답했습니다. 하루 약 30분은 잡담 9건을 뺀 업무 질문 226건에 건당 10분(처리 5분, 원래 일로 돌아오는 데 5분)을 곱해 15주 약 38시간을 내고, 근무일 75일로 나눈 값입니다. 개발자 시간만 셌고 묻는 쪽이 기다린 시간은 넣지 않았습니다. 건당 10분은 잰 값이 아니라 정한 값이고, 226건 모두 누군가 멈추고 답해야 했을 질문으로 보고 계산했습니다. 사람이 스레드에서 이어 말한 것은 109건(46%)이었습니다. 되물음과 정정도 섞여 있고, 답이 맞았는지는 따로 재지 않았습니다. 오류 알림 채널에서는 오류 277개 중 83% 에 첫 분석이 달렸고, 중앙값은 113초였습니다(대부분 재설계 전).',
+    'b2.note': '2026년 6월 10일~9월 22일, 팀 코드 질문 채널의 Slack 스레드를 직접 센 기록입니다. 이 기간 대부분은 재설계 전의 첫 봇이 답했습니다. 하루 약 30분은 질문 한 건에 10분이 든다고 가정해 낸 추정값이고, 계산 과정은 2편에 적었습니다.',
 
     'b3.k': 'Open Source · MIT',
     'b3.t': '리뷰와 문서로 권하던 규칙을 자동 검사로',
     'b3.l': '에이전트는 문서를 읽고도 규칙을 놓칠 수 있지만, CI 에서 실패하는 lint 규칙은 지나칠 수 없습니다. 문서에만 있는 규칙을 도구로 옮길 수 있는지 따지고, 옮길 수 없는 것만 이유와 함께 문서에 남기도록 돕는 오픈소스 도구를 직접 만들었습니다.',
     'b3.p1.h': '점검',
-    'b3.p1.d_h': '문서의 규칙 문장마다 이미 강제되는지, 싸게 강제할 수 있는지, 강제할 수 없는지, 코드와 어긋났는지 나누고 근거 파일을 적습니다. CI 가 테스트를 실제로 돌리는지, <code>|| true</code> 처럼 실패를 삼키는 줄이 있는지도 봅니다.',
+    'b3.p1.d_h': '문서에 적힌 규칙을 하나씩 보고, 이미 검사로 막고 있는지, 검사로 옮길 수 있는지, 옮길 수 없는지 나눕니다. 판단마다 근거가 된 파일을 함께 적습니다.',
     'b3.p2.h': '적용',
-    'b3.p2.d': '사람이 고른 것만 만듭니다. ArchUnit·eslint·ruff 처럼 팀이 이미 쓰는 도구의 규칙 초안으로 옮기고, 이미 어긴 곳은 기준 파일로 묶어 새 위반만 잡게 합니다.',
+    'b3.p2.d': '사람이 고른 규칙만 팀이 이미 쓰는 lint·아키텍처 테스트 도구의 규칙으로 옮깁니다. 이미 어긴 곳은 따로 묶어 두고 새로 어기는 것만 잡습니다.',
     'b3.p3.h': '교훈',
-    'b3.p3.d': '작업 중 바로잡은 실수와 PR 리뷰 댓글을 모읍니다. 도구로 막을 수 있으면 규칙 초안을, 막을 수 없으면 이유를 붙인 금지 목록 항목을 만들어 하나씩 승인받습니다.',
-    'b3.v': '1.x 는 문서를 7개 영역 점수로 매겼는데, 강제하지 않는 문서를 더 쓰는 것이 점수를 올리는 가장 쉬운 길이어서 2.0 에서 점수를 없앴습니다.',
+    'b3.p3.d': '작업 중 바로잡은 실수와 PR 리뷰 댓글을 모아, 막을 수 있으면 검사 규칙으로, 막을 수 없으면 이유를 붙여 금지 목록으로 남깁니다. 하나씩 사람의 승인을 받습니다.',
     'b3.link': 'GitHub 저장소',
 
     'b4.k': 'Agent-Friendly Architecture',
     'b4.t': '근처 파일만 보고 고쳐도 깨지지 않게 짠 코드 구조',
     'b4.l': 'AI 코딩 에이전트는 요청 한 줄과 근처 파일 몇 개만 보고 일하고, 가까이 있는 코드를 따라 씁니다. 그렇게 고쳐도 전체가 맞게 돌도록 코드 구조와 자동 검사를 짰습니다. Cursor 의 Lauren Tan 이 영상에서 소개한 Dune 프로젝트 문서를 바탕으로 사내 에이전트 코드에 적용했습니다.',
-    'b4.p1': '새 외부 연동은 기능 폴더 하나에 목록 한 줄과 필수 파일 몇 개를 더해 붙이고, 세션·시작 코드는 고치지 않도록 했습니다. 연동 9개를 모두 이 틀에 맞췄습니다. 도구 목록처럼 함께 적어야 할 곳을 빠뜨리면 타입 검사나 테스트가 실패합니다.',
-    'b4.p2': '기능 폴더는 환경 변수·네트워크·시계를 직접 쓰지 못하고, 시작 코드가 넘겨준 것만 씁니다.',
-    'b4.p3': '이런 규칙을 경계 테스트 52개로 옮겼고(2026-10-05 기준), 실패 메시지가 코드를 어디에 둘지 알려 줍니다.',
-    'b4.p4': '적용하면서 예외를 파일마다 개수까지 세어 테스트하게 했고, 2026-10-03 에 남은 예외를 모두 없앴습니다. 그 뒤로는 예외를 새로 두면 테스트가 실패합니다.',
-    'b4.p5_h': 'PR 리뷰에서 찾은, 검사를 피해 가는 방법 13가지(<code>eval</code>, <code>globalThis[\'process\']</code> 등)를 테스트 사례로 고정했습니다.',
-    'b4.p6': 'push 전에 같은 검사를 돌립니다. 결함이 줄었는지는 재지 않았습니다.',
+    'b4.p1.h': '옆 폴더를 따라 만들면 되게',
+    'b4.p1.d': '외부 연동마다 같은 모양의 기능 폴더를 두었습니다. 새 연동은 옆 폴더를 따라 만들면 되고, 세션이나 시작 코드는 고치지 않아도 됩니다.',
+    'b4.p2.h': '지켜야 할 규칙은 테스트로',
+    'b4.p2.d': '기능 폴더가 환경 변수·네트워크를 직접 쓰지 못하게 하는 것처럼 지켜야 할 경계를 테스트로 만들었습니다. 규칙을 어기면 push 전에 실패합니다.',
+    'b4.p3.h': '실패하면 고칠 곳을 알려 주게',
+    'b4.p3.d': '테스트가 실패하면 코드를 어디에 둬야 하는지 메시지로 알려 줍니다. 에이전트가 그 메시지를 보고 바로 고칠 수 있게 했습니다.',
 
     'b5.t': '만들면서 판단한 것을 씁니다',
-    'b5.l': '1편은 처음 만든 봇 이야기입니다. Claude Code 를 헤드리스 모드로 호출해 iOS·안드로이드·웹·백엔드 저장소의 코드를 읽고 답했습니다. 2편은 15주 운영 기록과, 기능이 늘면서 구조를 다시 짠 과정을 다룹니다.',
+    'b5.l': '1편은 다른 파트의 코드를 확인하려고 매번 담당자를 찾아야 했던 불편에서 시작해, 사람 대신 에이전트에게 물어볼 수 있게 만든 이야기입니다. 2편은 15주 동안 쓰인 기록을 돌아보고, 확인을 넘어 티켓과 PR 같은 일까지 맡길 수 있게 에이전트를 다시 설계한 이야기입니다.',
     'b5.p1.k': 'Medium\u00a0· 2026.06\u00a0· 14분\u00a0분량\u00a0· 시리즈\u00a01편',
     'b5.p1.t': '파트 경계를 넘는 코드 질문에 답하는 사내 AI 에이전트를 만들기까지',
     'b5.p2.k': 'Medium\u00a0· 2026.09\u00a0· 32분\u00a0분량\u00a0· 시리즈\u00a02편',
     'b5.p2.t': '사내 AI 에이전트를 재설계한 이야기',
     'b5.ko': '',
     'b5.c.t': '에이전트 이야기라면 언제든',
-    'b5.c.l': '만드는 중인 에이전트가 있다면 들려주세요.',
-
-    'foot.c': '© 2026 이건상',
-    'foot.src': '이 페이지의 소스'
+    'b5.c.l': '만드는 중인 에이전트가 있다면 들려주세요.'
   },
   en: {
     'doc.title': 'Kunsang Lee — I build AI agents, and design codebases that are easy for them to work in.',
@@ -141,10 +135,8 @@ window.__I18N_DICT = {
     'ui.lang': 'Language',
     'ui.secnav': 'Sections',
     'ui.tabs': 'Story scenes',
-    'ui.hint.mouse': 'Move the pointer to push the particles · click to scatter · scroll to continue',
-    'ui.hint.touch': 'Tap to scatter · scroll to continue',
-    'ui.hint.auto': 'Playing on its own · scroll to take over',
     'ui.next': 'More details below',
+    'ui.copied': 'Email address copied',
 
     'tab.1': 'Kunsang Lee', 'tab.2': 'A teammate agent', 'tab.3': 'Ask and find', 'tab.4': 'Day · it steps in',
     'tab.5': 'Night · while asleep', 'tab.6': 'ai-ready', 'tab.7': 'AFA', 'tab.8': 'Contact',
@@ -162,7 +154,7 @@ window.__I18N_DICT = {
     's6.t': 'From written rules to automated checks',
     's6.d_h': '<b>ai-ready</b>, an open-source tool I built, moves the rules that docs only recommended into checks such as lint rules and tests, wherever they can be enforced. Mistakes corrected in review that a check can catch go the same way once approved, so that comment need not be made twice.',
     's7.t': 'Built so following the code next door is enough',
-    's7.d_h': '<b>Agent-Friendly Architecture.</b> The 9 external integrations share one folder layout, so a new one can follow the folder next to it, and what must not happen runs as 52 boundary tests that stop it before a push.',
+    's7.d_h': '<b>Agent-Friendly Architecture.</b> Every external integration shares one folder layout, so a new one can follow the folder next to it, and the rules it must keep run as tests before every push.',
     's8.t': 'Building agents too?',
     's8.d': 'Always happy to compare notes on building agents',
 
@@ -175,7 +167,7 @@ window.__I18N_DICT = {
     'b1.p1.d': 'Actions like filing a ticket run only after the bot posts in the thread and someone replies, and an action log keeps the same request from running twice.',
     'b1.p2.h': 'Code changes go through review',
     'b1.p2.d': 'Changes are built in an isolated workspace, checked by a separate read-only review session, and revised with its findings. PRs are opened only from a bot-only branch.',
-    'b1.p3.h': 'Production data, narrowly',
+    'b1.p3.h': 'Production DB: read-only, no personal data',
     'b1.p3.d': 'Queries run under an account that can\'t read personal-data columns, writes are refused, and heavy queries (costed from the query plan) wait for a person\'s reply.',
 
     'b2.t': 'Fifteen weeks of use',
@@ -183,42 +175,38 @@ window.__I18N_DICT = {
     'b2.s1.l': 'time it took for half of all questions to get a first reply; for the 39 asked outside work hours, 99 s',
     'b2.s2.n_h': '<span class="u u0">about</span>30<span class="u">min a day</span>', 'b2.s2.sr': 'About 30 min a day',
     'b2.s2.l': 'the time someone would have spent stopping their own work to answer each work question',
-    'b2.note': 'An internal record from June 10 to September 22, 2026, compiled from Slack threads in the team\'s code-question channel (error-analysis figures come from the alert channel). The agent was redesigned on September 16; most of the period (211 of 235 threads) was answered by the first bot. About 30 minutes a day: 226 work questions (9 small-talk threads removed) × 10 minutes (5 to handle, 5 to get back to work) gives about 38 hours over 15 weeks, divided by 75 working days. Only the developer\'s time is counted, not the asker\'s wait. The 10 minutes is a set figure, not a measurement, and the count assumes all 226 questions would have needed someone to stop and reply. People followed up in 109 threads (46%). These include follow-up questions and corrections; whether the answers were right wasn\'t measured separately. In the error-alert channel, 83% of 277 errors got a first analysis, with a median of 113 s (mostly before the redesign).',
+    'b2.note': 'Counted by hand from Slack threads in the team\'s code-question channel, June 10 to September 22, 2026. For most of that period, the first bot (before the redesign) was answering. About 30 minutes a day is an estimate that assumes 10 minutes per question; Part 2 shows the working.',
 
     'b3.k': 'Open Source · MIT',
     'b3.t': 'From review notes and docs to automated checks',
     'b3.l': 'An agent can read the docs and still miss a rule, but it can\'t get past a lint rule that fails in CI. I built ai-ready, an open-source tool that works out which documented rules can move into tooling, and leaves in the docs only what can\'t, with the reason.',
     'b3.p1.h': 'Audit',
-    'b3.p1.d_h': 'Sorts each rule in the docs into already enforced, cheap to enforce, can\'t be enforced, or out of sync with the code, citing the file that shows it. It also checks whether CI really runs the tests and flags lines like <code>|| true</code> that swallow failures.',
+    'b3.p1.d_h': 'Goes through each rule in the docs and sorts it into already checked, could be checked, or can\'t be checked, citing the file behind each call.',
     'b3.p2.h': 'Apply',
-    'b3.p2.d': 'Builds only what a person picks — rule drafts for tools the team already uses, such as ArchUnit, eslint or ruff — and baselines existing violations so only new ones are caught.',
+    'b3.p2.d': 'Turns only the rules a person picks into rules for tools the team already uses, such as lint or architecture tests. Existing violations are set aside so only new ones are caught.',
     'b3.p3.h': 'Lessons',
-    'b3.p3.d': 'Gathers mistakes corrected during work and PR review comments. If a tool can block one, it drafts a rule; if not, an anti-pattern entry with the reason. Each is approved one at a time.',
-    'b3.v': '1.x scored docs across seven areas. The easiest way to raise the score was to write more unenforced docs, so 2.0 dropped the score.',
+    'b3.p3.d': 'Gathers mistakes corrected during work and PR review comments. What a check can catch becomes a rule; what it can\'t goes on an anti-pattern list with the reason. Each one is approved by a person.',
     'b3.link': 'GitHub repository',
 
     'b4.k': '',
     'b4.t': 'Agent-Friendly Architecture',
     'b4.l': 'AI coding agents work from a one-line request and a few nearby files, and they copy the code closest to hand. I shaped the code structure and automated checks so the whole system still holds when they work that way. I applied this to our in-house agent, building on the Dune project doc that Lauren Tan of Cursor presented in a video.',
-    'b4.p1': 'A new integration is meant to go in as one feature folder plus a list entry and a few required files, without touching session or startup code; all 9 integrations were brought into this layout. Forget a required entry, such as the tool list, and the type check or tests fail.',
-    'b4.p2': 'Feature folders can\'t reach environment variables, the network or the clock directly; they use only what startup code hands them.',
-    'b4.p3': 'These rules run as 52 boundary tests (as of 2026-10-05), and a failure message says where the code should go.',
-    'b4.p4': 'While applying it, I had exceptions tested per file down to the count, and on 2026-10-03 removed the last of them. Since then, adding one fails a test.',
-    'b4.p5_h': '13 ways around the checks found in pull request review (<code>eval</code>, <code>globalThis[\'process\']</code> and others) are pinned as test cases.',
-    'b4.p6': 'The same checks run before every push. Whether this reduced defects hasn\'t been measured.',
+    'b4.p1.h': 'Follow the folder next door',
+    'b4.p1.d': 'Every external integration lives in a feature folder with the same layout. A new one is built by following the folder next to it, without touching session or startup code.',
+    'b4.p2.h': 'Rules live in tests',
+    'b4.p2.d': 'Boundaries, such as feature folders not reaching environment variables or the network directly, are written as tests, so breaking a rule fails before a push.',
+    'b4.p3.h': 'Failures point to the fix',
+    'b4.p3.d': 'When a test fails, its message says where the code should go, so an agent can fix it from there.',
 
     'b5.t': 'Notes from building it',
-    'b5.l': 'Part 1 is about the first bot, which called Claude Code in headless mode to read code across the iOS, Android, web and backend repos. Part 2 covers fifteen weeks of use and how the structure was rebuilt as features grew.',
+    'b5.l': 'Part 1 starts from having to track someone down whenever I needed to check another team\'s code, and how I built an agent people could ask instead. Part 2 looks back on fifteen weeks of use and how I redesigned the agent so it could take on work such as tickets and pull requests, not just questions.',
     'b5.p1.k': 'Medium\u00a0· June\u00a02026\u00a0· 14\u00a0min\u00a0read\u00a0· Part\u00a01',
     'b5.p1.t': 'Building an in-house AI agent that answers code questions across teams',
     'b5.p2.k': 'Medium\u00a0· September\u00a02026\u00a0· 32\u00a0min\u00a0read\u00a0· Part\u00a02',
     'b5.p2.t': 'How I redesigned our in-house AI agent',
     'b5.ko': 'Korean',
     'b5.c.t': 'Happy to talk agents',
-    'b5.c.l': 'Building one? I\'d love to hear about it.',
-
-    'foot.c': '© 2026 Kunsang Lee',
-    'foot.src': 'Source for this page'
+    'b5.c.l': 'Building one? I\'d love to hear about it.'
   }
 };
 /* 언어: 정적 HTML 은 한국어다. 고른 언어의 글을 사전에서 넣고 한/EN 버튼을 붙인다. site.js 를 못 받아도 돈다 */
@@ -320,8 +308,11 @@ em{font-style:normal}
 .brand{display:flex;flex-direction:column;gap:4px;min-width:0;text-shadow:0 0 14px rgba(10,8,7,.9),0 0 3px rgba(10,8,7,.9)}
 .mark{align-self:flex-start;font-size:15px;font-weight:800;letter-spacing:-.01em;text-decoration:none;color:var(--cream);min-height:28px;display:inline-flex;align-items:center}
 .links{display:flex;flex-wrap:wrap;gap:0;margin:0 0 0 -8px;padding:0;list-style:none}
-.links a{display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.03em;color:var(--dim);text-decoration:none;transition:color .25s,background-color .25s}
-.links a:hover{color:var(--cream);background:rgba(246,236,223,.06)}
+.links a,.links button{appearance:none;-webkit-appearance:none;background:none;border:0;margin:0;cursor:pointer;display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.03em;color:var(--dim);text-decoration:none;transition:color .25s,background-color .25s}
+.links .em-short{display:none}
+@media (max-width:400px){.links a,.links button{padding:0 5px}.links{margin-left:-5px}}
+@media (max-width:339px){.links .em-full{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.links .em-short{display:inline}}
+.links a:hover,.links button:hover{color:var(--cream);background:rgba(246,236,223,.06)}
 .lang{display:flex;align-items:center;gap:0;margin:-4px -8px 0 0;text-shadow:0 0 12px rgba(10,8,7,.9)}
 .lang button{appearance:none;-webkit-appearance:none;background:none;border:0;margin:0;cursor:pointer;min-width:40px;min-height:40px;padding:0 9px;border-radius:999px;font-size:12.5px;font-weight:700;letter-spacing:.04em;color:var(--dim);transition:color .25s,background-color .25s}
 .lang button:hover{color:var(--cream)}
@@ -358,7 +349,7 @@ html:not(.fx) .top{position:absolute}
 .s1{min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center}
 .sig{margin:22px auto 0;font-size:22px;font-weight:760;letter-spacing:-.03em;color:var(--peach)}
 .cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:20px 0 0;padding:0;list-style:none}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px;padding:0 19px;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:.01em;text-decoration:none;border:1px solid var(--faint);color:var(--cream);background:rgba(10,8,7,.35);transition:border-color .25s,background-color .25s,color .25s}
+.btn{appearance:none;-webkit-appearance:none;margin:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px;padding:0 19px;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:.01em;text-decoration:none;border:1px solid var(--faint);color:var(--cream);background:rgba(10,8,7,.35);transition:border-color .25s,background-color .25s,color .25s}
 .btn:hover{border-color:rgba(246,236,223,.5);background:rgba(246,236,223,.07)}
 .btn-p{background:var(--cream);color:var(--bg);border-color:var(--cream)}
 .btn-p:hover{background:#fff;border-color:#fff}
@@ -390,7 +381,8 @@ html:not(.fx) .top{position:absolute}
   .fx .cap .sub{font-size:13.5px;line-height:1.58;margin-top:8px}
   html:lang(en).fx .cap .sub{font-size:13px}
   .fx .cap .btn{min-height:42px;padding:0 12px;font-size:12.5px;gap:5px}
-  .fx .s8 .cta{gap:6px;flex-wrap:nowrap}
+  .fx .s8 .cta{gap:6px;flex-wrap:wrap}
+  .fx .s8 .cta li:first-child{flex:0 0 100%;display:flex;justify-content:center}
 }
 
 /* 장면 번호 탭: 넓으면 이름, 좁으면 번호만 */
@@ -416,19 +408,7 @@ html:not(.fx) .top{position:absolute}
   .tabs button[aria-current="step"]{flex:0 1 auto;width:36px}
   .tabs button[aria-current="step"] .t{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);margin:0}
 }
-.hint{position:fixed;right:var(--edge);bottom:calc(20px + env(safe-area-inset-bottom));z-index:5;margin:0;font-size:11.5px;font-weight:500;letter-spacing:.04em;color:rgba(246,236,223,.74);pointer-events:none;display:none;transition:opacity .5s}
-.fx .hint{display:block;z-index:21;text-shadow:0 0 14px rgba(10,8,7,.9),0 0 3px rgba(10,8,7,.9)}
-.in-sec .hint{opacity:0}
-.hint .touch{display:none}
-.hint .auto{display:none}
-.autoplay .hint .mouse,.autoplay .hint .touch{display:none}
-.autoplay .hint .auto{display:inline}
-@media (hover:none) and (pointer:coarse){.hint .mouse{display:none}.hint .touch{display:inline}}
-.fx.still .hint{display:none}
 .still .cap,.still .cap.on,.still .cap .cta,.still .cap .next{transition:none}
-/* 안내 문구는 모든 폭에서 언어 단추 아래 오른쪽 위에 둔다. 넓은 화면에서 오른쪽 아래에 두면 EN 장면 탭 줄 끝과 겹쳤다(1680~1847px) */
-.hint{bottom:auto;top:calc(clamp(14px,3vh,28px) + 40px);text-align:right}
-@media (max-width:640px){.fx .hint{display:none}.fx.autoplay .hint{display:block;top:calc(clamp(14px,3vh,28px) + 76px);left:var(--edge);right:auto;text-align:left}}
 
 .shade{position:fixed;left:0;right:0;bottom:0;height:40vh;z-index:1;pointer-events:none;display:none;background:linear-gradient(180deg,rgba(10,8,7,0),rgba(10,8,7,.5) 55%,rgba(10,8,7,.74));transition:opacity .6s var(--out)}
 .fx .shade{display:block}
@@ -458,10 +438,7 @@ html:lang(en) .sec h2{max-width:26ch}
 .pt-n{font:500 11.5px/1.8 var(--mono);letter-spacing:.06em;color:var(--amber)}
 .pt3 h3{font-size:clamp(20px,2.2vw,27px);color:var(--cream)}
 .pt3 p{font-size:clamp(15px,1.15vw,16.5px);line-height:1.8;color:var(--c2);max-width:62ch}
-@media (min-width:900px){.pt3{grid-template-columns:72px minmax(0,1fr) minmax(0,1.25fr);gap:28px;align-items:baseline}}
-.facts{margin:14px 0 0;padding:0;list-style:none;border-top:1px solid var(--hair);counter-reset:f}
-.facts li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;padding:20px 0;border-bottom:1px solid var(--hair);font-size:clamp(15px,1.2vw,17px);line-height:1.75;color:var(--c2)}
-.facts li::before{counter-increment:f;content:counter(f,decimal-leading-zero);font:500 11.5px/2.4 var(--mono);letter-spacing:.06em;color:var(--amber)}
+@media (min-width:900px){.pt3{grid-template-columns:72px minmax(0,1fr) minmax(0,1.25fr);gap:28px;align-items:baseline}.pt3 .pt-n{align-self:start;line-height:calc(clamp(20px,2.2vw,27px) * 1.18)}}
 .facts li p{max-width:70ch}
 
 /* 15주 기록 */
@@ -476,7 +453,6 @@ html:lang(en) .sec h2{max-width:26ch}
 @media (min-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 40px}.st-l{max-width:40ch}}
 
 /* ai-ready */
-.verdict{margin-top:clamp(26px,3.6vw,40px);padding:20px 0 20px 20px;border-left:1px solid var(--amber);max-width:66ch;font-size:clamp(15px,1.2vw,17px);line-height:1.8;color:var(--c2)}
 .repo{display:inline-flex;align-items:center;gap:10px;margin-top:26px;min-height:46px;padding:0 18px;border-radius:999px;border:1px solid var(--faint);text-decoration:none;font-size:14px;font-weight:700;color:var(--cream);transition:border-color .25s,background-color .25s}
 .repo:hover{border-color:rgba(246,236,223,.5);background:rgba(246,236,223,.06)}
 .repo code{font:500 12px/1 var(--mono);letter-spacing:.02em;color:var(--dim)}
@@ -500,8 +476,9 @@ html:lang(en) .sec h2{max-width:26ch}
 .reach p{margin-top:14px;font-size:clamp(15px,1.2vw,17px);line-height:1.75;color:var(--c2)}
 .reach .cta{justify-content:flex-start;margin-top:24px}
 #writing{padding-bottom:clamp(90px,12vw,150px)}
-footer{position:relative;z-index:3;padding:22px var(--edge) 30px;border-top:1px solid var(--hair);font-size:12.5px;letter-spacing:.03em;color:var(--dim);display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:space-between;background:var(--bg)}
-footer a{color:var(--c2)}
+
+.toast{position:fixed;left:50%;top:calc(clamp(14px,3vh,28px) + 44px);z-index:40;margin:0;padding:9px 16px;border-radius:999px;border:1px solid var(--faint);background:rgba(16,13,11,.92);color:var(--cream);font-size:13px;font-weight:600;letter-spacing:.01em;white-space:nowrap;pointer-events:none;opacity:0;transform:translate(-50%,-6px);transition:opacity .25s,transform .25s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* 나타나기 */
 .rvjs .rv{opacity:0;transform:translateY(24px);transition:opacity 1s var(--out),transform 1.2s var(--out)}
@@ -521,10 +498,10 @@ footer a{color:var(--c2)}
   <div class="brand">
     <a class="mark" href="#top" aria-label="Kunsang Lee, 맨 위로" data-i18n-attr="aria-label:ui.home">Kunsang Lee</a>
     <ul class="links" aria-label="연락처" data-i18n-attr="aria-label:ui.links">
-      <li><a href="mailto:gosmdochee@gmail.com">Email</a></li>
-      <li><a href="https://www.linkedin.com/in/kunsanglee" target="_blank" rel="noopener noreferrer">LinkedIn<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
-      <li><a href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
-      <li><a href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+      <li><button type="button" class="copy" data-copy="gosmdochee@gmail.com"><span class="em-full">gosmdochee@gmail.com</span><span class="em-short" aria-hidden="true">Email</span></button></li>
+      <li><a href="https://www.linkedin.com/in/kunsanglee" target="_blank" rel="noopener noreferrer">LinkedIn<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+      <li><a href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+      <li><a href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
     </ul>
   </div>
   <nav class="secnav" aria-label="본문 구역" data-i18n-attr="aria-label:ui.secnav">
@@ -591,7 +568,7 @@ footer a{color:var(--c2)}
   <section class="scene s7" data-s="6" style="--len:2.0" aria-labelledby="s7-t">
     <div class="cap">
       <h2 class="line" id="s7-t" data-i18n="s7.t">옆 코드만 따라 해도 맞도록</h2>
-      <p class="sub" data-i18n-html="s7.d_h"><b>Agent-Friendly Architecture.</b> 외부 연동 9개를 같은 틀의 기능 폴더로 나눠 옆 폴더를 따라 만들면 되게 했고, 하면 안 되는 일은 경계 테스트 52개로 옮겨 push 전에 막습니다</p>
+      <p class="sub" data-i18n-html="s7.d_h"><b>Agent-Friendly Architecture.</b> 외부 연동마다 같은 틀의 기능 폴더를 두어 옆 폴더를 따라 만들면 되게 했고, 지켜야 할 규칙은 테스트로 옮겨 push 전에 검사합니다</p>
     </div>
   </section>
 
@@ -601,10 +578,10 @@ footer a{color:var(--c2)}
       <p class="sub" data-i18n="s8.d">만들면서 겪은 일을 나누고 싶습니다</p>
       <p class="sig" aria-hidden="true"><span class="nofx-only">Kunsang Lee</span></p>
       <ul class="cta" aria-label="연락처" data-i18n-attr="aria-label:ui.links">
-        <li><a class="btn btn-p" href="mailto:gosmdochee@gmail.com">Email</a></li>
-        <li><a class="btn" href="https://www.linkedin.com/in/kunsanglee" target="_blank" rel="noopener noreferrer">LinkedIn<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
-        <li><a class="btn" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
-        <li><a class="btn" href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+        <li><button type="button" class="btn btn-p copy" data-copy="gosmdochee@gmail.com">gosmdochee@gmail.com</button></li>
+        <li><a class="btn" href="https://www.linkedin.com/in/kunsanglee" target="_blank" rel="noopener noreferrer">LinkedIn<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+        <li><a class="btn" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+        <li><a class="btn" href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
       </ul>
       <a class="next" href="#work"><span data-i18n="ui.next">아래에 자세한 내용이 이어집니다</span><span aria-hidden="true">↓</span></a>
     </div>
@@ -616,11 +593,11 @@ footer a{color:var(--c2)}
   <button type="button" data-i="0" aria-current="step"><span class="n">01</span><span class="t" data-i18n="tab.1">Kunsang Lee</span><span class="bar"><i></i></span></button>
   <button type="button" data-i="1"><span class="n">02</span><span class="t" data-i18n="tab.2">동료 같은 에이전트</span><span class="bar"><i></i></span></button>
   <button type="button" data-i="2"><span class="n">03</span><span class="t" data-i18n="tab.3">묻고 찾아 답하기</span><span class="bar"><i></i></span></button>
-  <button type="button" data-i="3"><span class="n">04</span><span class="t" data-i18n="tab.4">낮 · 대신 받아 답하기</span><span class="bar"><i></i></span></button>
+  <button type="button" data-i="3"><span class="n">04</span><span class="t" data-i18n="tab.4">낮 · 대신 답변하기</span><span class="bar"><i></i></span></button>
   <button type="button" data-i="4"><span class="n">05</span><span class="t" data-i18n="tab.5">밤 · 잠든 시간에도</span><span class="bar"><i></i></span></button>
   <button type="button" data-i="5"><span class="n">06</span><span class="t" data-i18n="tab.6">ai-ready</span><span class="bar"><i></i></span></button>
   <button type="button" data-i="6"><span class="n">07</span><span class="t" data-i18n="tab.7">AFA</span><span class="bar"><i></i></span></button>
-  <button type="button" data-i="7"><span class="n">08</span><span class="t" data-i18n="tab.8">연락</span><span class="bar"><i></i></span></button>
+  <button type="button" data-i="7"><span class="n">08</span><span class="t" data-i18n="tab.8">Contact</span><span class="bar"><i></i></span></button>
 </nav>
 
 <div class="after">
@@ -632,7 +609,7 @@ footer a{color:var(--c2)}
     <ol class="points">
       <li class="pt3 rv"><span class="pt-n" aria-hidden="true">01</span><h3 data-i18n="b1.p1.h">쓰기는 사람이 답한 뒤에</h3><p data-i18n="b1.p1.d">티켓 생성 같은 쓰기 도구는 봇이 스레드에 글을 올린 뒤 사람이 답했을 때만 실행되고, 실행 기록을 확인해 같은 요청을 두 번 실행하지 않습니다.</p></li>
       <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b1.p2.h">고친 코드는 리뷰를 거쳐서</h3><p data-i18n="b1.p2.d">격리된 작업 공간에서 구현하고, 수정 권한이 없는 별도 리뷰 세션이 찾은 문제를 반영한 뒤 봇 전용 브랜치에서만 PR 을 엽니다.</p></li>
-      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b1.p3.h">운영 DB 는 좁게</h3><p data-i18n="b1.p3.d">개인정보 컬럼을 읽지 못하는 계정으로만 조회하고, 쓰기는 거부하며, 실행 계획으로 비용을 재서 무거운 조회는 사람이 답한 뒤에 실행합니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b1.p3.h">운영 DB 는 읽기만, 개인정보는 빼고</h3><p data-i18n="b1.p3.d">개인정보 컬럼을 읽지 못하는 계정으로만 조회하고, 쓰기는 거부하며, 실행 계획으로 비용을 재서 무거운 조회는 사람이 답한 뒤에 실행합니다.</p></li>
     </ol>
   </div>
 </section>
@@ -645,7 +622,7 @@ footer a{color:var(--c2)}
       <li class="st rv"><p class="st-n"><span class="sr" data-i18n="b2.s1.sr">96초</span><span aria-hidden="true" data-i18n-html="b2.s1.n_h">96<span class="u">초</span></span></p><p class="st-l" data-i18n="b2.s1.l">질문 절반이 첫 답을 받기까지 걸린 시간. 근무 시간 밖에 올라온 39건은 99초였습니다</p></li>
       <li class="st rv d1"><p class="st-n"><span class="sr" data-i18n="b2.s2.sr">하루 약 30분</span><span aria-hidden="true" data-i18n-html="b2.s2.n_h"><span class="u u0">하루 약</span>30<span class="u">분</span></span></p><p class="st-l" data-i18n="b2.s2.l">업무 질문마다 누군가 하던 일을 멈추고 답했다면 들었을 시간</p></li>
     </ul>
-    <p class="note rv" data-i18n="b2.note">2026년 6월 10일~9월 22일, 팀 코드 질문 채널(오류 분석 비율은 오류 알림 채널)의 Slack 스레드를 직접 센 사내 운영 기록입니다. 9월 16일에 에이전트를 다시 설계했고, 기간 대부분(235건 중 211건)은 처음 만든 봇이 답했습니다. 하루 약 30분은 잡담 9건을 뺀 업무 질문 226건에 건당 10분(처리 5분, 원래 일로 돌아오는 데 5분)을 곱해 15주 약 38시간을 내고, 근무일 75일로 나눈 값입니다. 개발자 시간만 셌고 묻는 쪽이 기다린 시간은 넣지 않았습니다. 건당 10분은 잰 값이 아니라 정한 값이고, 226건 모두 누군가 멈추고 답해야 했을 질문으로 보고 계산했습니다. 사람이 스레드에서 이어 말한 것은 109건(46%)이었습니다. 되물음과 정정도 섞여 있고, 답이 맞았는지는 따로 재지 않았습니다. 오류 알림 채널에서는 오류 277개 중 83% 에 첫 분석이 달렸고, 중앙값은 113초였습니다(대부분 재설계 전).</p>
+    <p class="note rv" data-i18n="b2.note">2026년 6월 10일~9월 22일, 팀 코드 질문 채널의 Slack 스레드를 직접 센 기록입니다. 이 기간 대부분은 재설계 전의 첫 봇이 답했습니다. 하루 약 30분은 질문 한 건에 10분이 든다고 가정해 낸 추정값이고, 계산 과정은 2편에 적었습니다.</p>
   </div>
 </section>
 
@@ -655,11 +632,10 @@ footer a{color:var(--c2)}
     <h2 id="air-title" class="rv" data-i18n="b3.t">리뷰와 문서로 권하던 규칙을 자동 검사로</h2>
     <p class="lead rv d1" data-i18n="b3.l">에이전트는 문서를 읽고도 규칙을 놓칠 수 있지만, CI 에서 실패하는 lint 규칙은 지나칠 수 없습니다. 문서에만 있는 규칙을 도구로 옮길 수 있는지 따지고, 옮길 수 없는 것만 이유와 함께 문서에 남기도록 돕는 오픈소스 도구를 직접 만들었습니다.</p>
     <ol class="points">
-      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">01</span><h3 data-i18n="b3.p1.h">점검</h3><p data-i18n-html="b3.p1.d_h">문서의 규칙 문장마다 이미 강제되는지, 싸게 강제할 수 있는지, 강제할 수 없는지, 코드와 어긋났는지 나누고 근거 파일을 적습니다. CI 가 테스트를 실제로 돌리는지, <code>|| true</code> 처럼 실패를 삼키는 줄이 있는지도 봅니다.</p></li>
-      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b3.p2.h">적용</h3><p data-i18n="b3.p2.d">사람이 고른 것만 만듭니다. ArchUnit·eslint·ruff 처럼 팀이 이미 쓰는 도구의 규칙 초안으로 옮기고, 이미 어긴 곳은 기준 파일로 묶어 새 위반만 잡게 합니다.</p></li>
-      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b3.p3.h">교훈</h3><p data-i18n="b3.p3.d">작업 중 바로잡은 실수와 PR 리뷰 댓글을 모읍니다. 도구로 막을 수 있으면 규칙 초안을, 막을 수 없으면 이유를 붙인 금지 목록 항목을 만들어 하나씩 승인받습니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">01</span><h3 data-i18n="b3.p1.h">점검</h3><p data-i18n-html="b3.p1.d_h">문서에 적힌 규칙을 하나씩 보고, 이미 검사로 막고 있는지, 검사로 옮길 수 있는지, 옮길 수 없는지 나눕니다. 판단마다 근거가 된 파일을 함께 적습니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b3.p2.h">적용</h3><p data-i18n="b3.p2.d">사람이 고른 규칙만 팀이 이미 쓰는 lint·아키텍처 테스트 도구의 규칙으로 옮깁니다. 이미 어긴 곳은 따로 묶어 두고 새로 어기는 것만 잡습니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b3.p3.h">교훈</h3><p data-i18n="b3.p3.d">작업 중 바로잡은 실수와 PR 리뷰 댓글을 모아, 막을 수 있으면 검사 규칙으로, 막을 수 없으면 이유를 붙여 금지 목록으로 남깁니다. 하나씩 사람의 승인을 받습니다.</p></li>
     </ol>
-    <p class="verdict rv" data-i18n="b3.v">1.x 는 문서를 7개 영역 점수로 매겼는데, 강제하지 않는 문서를 더 쓰는 것이 점수를 올리는 가장 쉬운 길이어서 2.0 에서 점수를 없앴습니다.</p>
     <a class="repo rv" href="https://github.com/kunsanglee/ai-ready" target="_blank" rel="noopener noreferrer"><span data-i18n="b3.link">GitHub 저장소</span><code>kunsanglee/ai-ready</code><svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a>
   </div>
 </section>
@@ -669,13 +645,10 @@ footer a{color:var(--c2)}
     <p class="kicker rv"><b>04</b><span data-i18n="b4.k">Agent-Friendly Architecture</span></p>
     <h2 id="afa-title" class="rv" data-i18n="b4.t">근처 파일만 보고 고쳐도 깨지지 않게 짠 코드 구조</h2>
     <p class="lead rv d1" data-i18n="b4.l">AI 코딩 에이전트는 요청 한 줄과 근처 파일 몇 개만 보고 일하고, 가까이 있는 코드를 따라 씁니다. 그렇게 고쳐도 전체가 맞게 돌도록 코드 구조와 자동 검사를 짰습니다. Cursor 의 Lauren Tan 이 영상에서 소개한 Dune 프로젝트 문서를 바탕으로 사내 에이전트 코드에 적용했습니다.</p>
-    <ol class="facts">
-      <li class="rv"><p data-i18n="b4.p1">새 외부 연동은 기능 폴더 하나에 목록 한 줄과 필수 파일 몇 개를 더해 붙이고, 세션·시작 코드는 고치지 않도록 했습니다. 연동 9개를 모두 이 틀에 맞췄습니다. 도구 목록처럼 함께 적어야 할 곳을 빠뜨리면 타입 검사나 테스트가 실패합니다.</p></li>
-      <li class="rv"><p data-i18n="b4.p2">기능 폴더는 환경 변수·네트워크·시계를 직접 쓰지 못하고, 시작 코드가 넘겨준 것만 씁니다.</p></li>
-      <li class="rv"><p data-i18n="b4.p3">이런 규칙을 경계 테스트 52개로 옮겼고(2026-10-05 기준), 실패 메시지가 코드를 어디에 둘지 알려 줍니다.</p></li>
-      <li class="rv"><p data-i18n="b4.p4">적용하면서 예외를 파일마다 개수까지 세어 테스트하게 했고, 2026-10-03 에 남은 예외를 모두 없앴습니다. 그 뒤로는 예외를 새로 두면 테스트가 실패합니다.</p></li>
-      <li class="rv"><p data-i18n-html="b4.p5_h">PR 리뷰에서 찾은, 검사를 피해 가는 방법 13가지(<code>eval</code>, <code>globalThis['process']</code> 등)를 테스트 사례로 고정했습니다.</p></li>
-      <li class="rv"><p data-i18n="b4.p6">push 전에 같은 검사를 돌립니다. 결함이 줄었는지는 재지 않았습니다.</p></li>
+    <ol class="points">
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">01</span><h3 data-i18n="b4.p1.h">옆 폴더를 따라 만들면 되게</h3><p data-i18n="b4.p1.d">외부 연동마다 같은 모양의 기능 폴더를 두었습니다. 새 연동은 옆 폴더를 따라 만들면 되고, 세션이나 시작 코드는 고치지 않아도 됩니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b4.p2.h">지켜야 할 규칙은 테스트로</h3><p data-i18n="b4.p2.d">기능 폴더가 환경 변수·네트워크를 직접 쓰지 못하게 하는 것처럼 지켜야 할 경계를 테스트로 만들었습니다. 규칙을 어기면 push 전에 실패합니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b4.p3.h">실패하면 고칠 곳을 알려 주게</h3><p data-i18n="b4.p3.d">테스트가 실패하면 코드를 어디에 둬야 하는지 메시지로 알려 줍니다. 에이전트가 그 메시지를 보고 바로 고칠 수 있게 했습니다.</p></li>
     </ol>
   </div>
 </section>
@@ -684,7 +657,7 @@ footer a{color:var(--c2)}
   <div class="wrap">
     <p class="kicker rv"><b>05</b></p>
     <h2 id="writing-title" class="rv" data-i18n="b5.t">만들면서 판단한 것을 씁니다</h2>
-    <p class="series rv d1" data-i18n="b5.l">1편은 처음 만든 봇 이야기입니다. Claude Code 를 헤드리스 모드로 호출해 iOS·안드로이드·웹·백엔드 저장소의 코드를 읽고 답했습니다. 2편은 15주 운영 기록과, 기능이 늘면서 구조를 다시 짠 과정을 다룹니다.</p>
+    <p class="series rv d1" data-i18n="b5.l">1편은 다른 파트의 코드를 확인하려고 매번 담당자를 찾아야 했던 불편에서 시작해, 사람 대신 에이전트에게 물어볼 수 있게 만든 이야기입니다. 2편은 15주 동안 쓰인 기록을 돌아보고, 확인을 넘어 티켓과 PR 같은 일까지 맡길 수 있게 에이전트를 다시 설계한 이야기입니다.</p>
     <ul class="rows-l">
       <li class="rv"><a class="rowk" hreflang="ko" href="https://medium.com/@gosmdochee/%ED%8C%8C%ED%8A%B8-%EA%B2%BD%EA%B3%84%EB%A5%BC-%EB%84%98%EB%8A%94-%EC%BD%94%EB%93%9C-%EC%A7%88%EB%AC%B8%EC%97%90-%EB%8B%B5%ED%95%98%EB%8A%94-%EC%82%AC%EB%82%B4-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EB%A7%8C%EB%93%A4%EA%B8%B0%EA%B9%8C%EC%A7%80-1%ED%8E%B8-5f566069f38a" target="_blank" rel="noopener noreferrer">
         <span class="kind" data-i18n="b5.p1.k">Medium&nbsp;· 2026.06&nbsp;· 14분&nbsp;분량&nbsp;· 시리즈&nbsp;1편</span>
@@ -702,10 +675,10 @@ footer a{color:var(--c2)}
       <h3 data-i18n="b5.c.t">에이전트 이야기라면 언제든</h3>
       <p data-i18n="b5.c.l">만드는 중인 에이전트가 있다면 들려주세요.</p>
       <ul class="cta" aria-label="연락처" data-i18n-attr="aria-label:ui.links">
-        <li><a class="btn btn-p" href="mailto:gosmdochee@gmail.com">Email</a></li>
-        <li><a class="btn" href="https://www.linkedin.com/in/kunsanglee" target="_blank" rel="noopener noreferrer">LinkedIn<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
-        <li><a class="btn" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
-        <li><a class="btn" href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+        <li><button type="button" class="btn btn-p copy" data-copy="gosmdochee@gmail.com">gosmdochee@gmail.com</button></li>
+        <li><a class="btn" href="https://www.linkedin.com/in/kunsanglee" target="_blank" rel="noopener noreferrer">LinkedIn<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+        <li><a class="btn" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+        <li><a class="btn" href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
       </ul>
     </div>
   </div>
@@ -714,14 +687,10 @@ footer a{color:var(--c2)}
 </div>
 </main>
 
-<footer>
-  <span data-i18n="foot.c">© 2026 이건상</span>
-  <a href="https://github.com/kunsanglee/kunsanglee.github.io" target="_blank" rel="noopener noreferrer"><span data-i18n="foot.src">이 페이지의 소스</span><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a>
-</footer>
 
+<p class="toast" role="status" aria-live="polite"></p>
 <div class="shade" aria-hidden="true"></div>
 
-<p class="hint" aria-hidden="true"><span class="mouse" data-i18n="ui.hint.mouse">마우스를 움직이면 입자가 밀려나고 · 누르면 흩어집니다 · 스크롤하면 넘어갑니다</span><span class="touch" data-i18n="ui.hint.touch">누르면 흩어집니다 · 스크롤하면 넘어갑니다</span><span class="auto" data-i18n="ui.hint.auto">자동으로 넘어가는 중 · 스크롤하면 직접 넘길 수 있습니다</span></p>
 <div id="fps" hidden></div>
 <script>window.__langInit && window.__langInit();</script>
 <script src="assets/site.js" defer></script>

@@ -12,3 +12,30 @@
   }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
   els.forEach(function (el) { if (!el.classList.contains("in")) io.observe(el); });
 })();
+/* 이메일: 메일 앱을 띄우지 않고 주소를 보여 준다. 누르면 주소를 복사하고 잠깐 알린다 */
+(function () {
+  "use strict";
+  var d = document, toast = d.querySelector(".toast"), t = 0;
+  function say(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add("on");
+    clearTimeout(t);
+    t = setTimeout(function () { toast.classList.remove("on"); }, 1800);
+  }
+  function fallback(text) {
+    var a = d.createElement("textarea");
+    a.value = text; a.setAttribute("readonly", ""); a.style.position = "fixed"; a.style.opacity = "0";
+    d.body.appendChild(a); a.select();
+    try { d.execCommand("copy"); } catch (e) {}
+    d.body.removeChild(a);
+  }
+  d.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button.copy");
+    if (!b) return;
+    var text = b.getAttribute("data-copy"), dict = window.__I18N_DICT || {}, L = d.documentElement.lang === "en" ? "en" : "ko";
+    var msg = (dict[L] && dict[L]["ui.copied"]) || "Copied";
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(function () { say(msg); }, function () { fallback(text); say(msg); });
+    else { fallback(text); say(msg); }
+  });
+})();

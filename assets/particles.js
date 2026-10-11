@@ -1488,7 +1488,7 @@ function g9() {
   if (c) {
     const r = settledRect(c, c);
     if (r.height) capTop = r.top;
-    c.querySelectorAll('.cta a').forEach(a => {
+    c.querySelectorAll('.cta .btn').forEach(a => {
       let rr;
       if (a.offsetParent === c) rr = settledRect(c, a);
       else { const b = a.getBoundingClientRect(), cb = c.getBoundingClientRect(), s = settledRect(c, c); rr = { left: b.left - cb.left + s.left, top: b.top - cb.top + s.top, width: b.width, height: b.height }; }
