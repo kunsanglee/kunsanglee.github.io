@@ -2,877 +2,729 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#080b0f">
-<title>이건상 — 백엔드 개발자</title>
-<meta name="description" content="사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
+<meta name="theme-color" content="#0a0807">
+<title>Kunsang Lee — AI 에이전트를 만들고, 그 에이전트가 일하기 좋은 코드 구조를 설계합니다</title>
+<meta name="description" content="이건상 · AI 에이전트를 만들고, 그 에이전트가 일하기 좋은 코드 구조를 설계합니다">
 <link rel="canonical" href="https://kunsanglee.github.io/">
-<meta property="og:title" content="이건상 — 백엔드 개발자">
-<meta property="og:description" content="사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
+<meta property="og:title" content="Kunsang Lee">
+<meta property="og:description" content="이건상 · AI 에이전트를 만들고, 그 에이전트가 일하기 좋은 코드 구조를 설계합니다">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://kunsanglee.github.io/">
-<meta property="og:image" content="https://kunsanglee.github.io/og-image.png">
+<meta property="og:image" content="https://kunsanglee.github.io/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="이건상 — 백엔드 개발자. 사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
+<meta property="og:image:alt" content="입자로 그린 이름 Kunsang Lee">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="이건상 — 백엔드 개발자">
-<meta name="twitter:description" content="사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
-<meta name="twitter:image" content="https://kunsanglee.github.io/og-image.png">
-<meta name="twitter:image:alt" content="이건상 — 백엔드 개발자. 사내 슬랙에서 동료처럼 일하는 AI 에이전트를 만들고 운영합니다">
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB4klEQVR4nGNkwAI+bIn6z0ADIOCzjBFdjJEeFuNzCCM2y6Ujt9HE4qfLvTAcwUQvy9HNhtnJhEsBPRwBAowwl9DDcmzRwcQwwIBpWDlATICd4Wi/A5gmFrCQYgEvFwtDjp8yg5GKAMOj198ZFu95xHDh7ge4PBMTI4OCBBeYpnoIcLEzM2xosGTQUeRjWLD7IcOrDz8ZVteaM1hqCjFQAliIVRjuIMPAyMjIEN91huHP3/8MW0++YPj//z9DaZgaQ1DjCbIdwESsQi9TCYbl+x+DLYeBRXseMZhrCDEI8bLR3gHSopwMd55+QRF78e4Hw5fvfxhkRDhp7wB2FiaGX3/+YYiDxDjYyM9MTMQqfPr2O4M0mk852ZnBwf/kzXfaO+D0zfcMPuYSKGLe5hJgy1+8+0l7B8zd8YDBUkuYIdNXiYGbg5nBTF2QoS5ak2H65nsM//7/p302fPb2B0No80mGnjRdhqpIdYY3H38xzNx6n2HBrodkW06SA0AAVOq5lB9m4GBjZvjx6y8DNQATOZqoZTnZDqAmYKKmYa8//GQwz90PpmmSBgiBv//+k1wmMDEMMGAadYAAtIOA3GmgNYDZBbIbJQro4Qh0O5hgLqGHI7B1zRiRFQxo55QeDsHWPQcArQCt7lpCww0AAAAASUVORK5CYII=">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080b0f'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%23c9d9d4' font-family='sans-serif' font-weight='700'%3E이%3C/text%3E%3C/svg%3E">
-<script>document.documentElement.classList.add("js");</script>
+<meta name="twitter:image" content="https://kunsanglee.github.io/assets/og-image.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0807'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23ffa84d'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23f6ecdf'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" id="font-css" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
+<script>
+/* 첫 언어: ?lang= → 기억한 선택 → 브라우저 언어(ko 로 시작하면 한국어, 아니면 영어). 영어면 본문 끝에서 번역을 넣을 때까지 화면을 감춘다 */
+(function (h) {
+  h.classList.add("js");
+  var q = location.search, L = null, m = /[?&]lang=(ko|en)(?:&|$)/.exec(q);
+  if (m) L = m[1];
+  else { try { var s = localStorage.getItem("lang"); if (s === "ko" || s === "en") L = s; } catch (e) {} }
+  if (!L) L = /^ko/i.test(navigator.language || "") ? "ko" : "en";
+  h.lang = L;
+  if (L === "en") h.classList.add("pre-en");
+  document.addEventListener("DOMContentLoaded", function () { try { if (window.__langInit) window.__langInit(); } finally { h.classList.remove("pre-en"); } });
+  // 움직임 줄이기를 고른 사람에게는 장면마다 마지막 화면을 정지 그림으로 보인다(still)
+  var calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (window.WebGL2RenderingContext && !/[?&]nofx/.test(q)) { h.classList.add("fx", "at0"); if (calm || /[?&]still/.test(q)) h.classList.add("still"); }
+  setTimeout(function () { if (!window.__fxStarted) h.classList.remove("fx", "at0"); }, 6000);
+  // 입자 화면이 뜨기 전에 키보드로 넘기거나 포커스를 옮긴 사람에게는 자동 재생을 시작하지 않는다(particles.js 가 __apTaken 을 읽는다)
+  addEventListener("keydown", function (e) { var t = e.target; if (/^(Arrow(Up|Down)|Page(Up|Down)|Home|End|Escape|Tab)$/.test(e.key) || ((e.key === " " || e.key === "Spacebar") && !(t && t.closest && t.closest("button,input,select,textarea,summary,[contenteditable]")))) window.__apTaken = true; }, true);
+  document.addEventListener("focusin", function (e) { var t = e.target; if (t && t.matches && t.matches(":focus-visible")) window.__apTaken = true; }, true);
+})(document.documentElement);
+</script>
+<script>
+/* Kunsang Lee · 한/영 문자열. 페이지의 모든 글은 이 사전 하나에서 나온다. 키 끝이 _h 이면 HTML 로 넣는다 */
+window.__I18N_DICT = {
+  ko: {
+    'doc.title': 'Kunsang Lee — AI 에이전트를 만들고, 그 에이전트가 일하기 좋은 코드 구조를 설계합니다',
+    'ui.skip': '본문으로 건너뛰기',
+    'ui.newtab': '(새 탭)',
+    'ui.home': 'Kunsang Lee, 맨 위로',
+    'ui.links': '연락처',
+    'ui.lang': '언어',
+    'ui.secnav': '본문 구역',
+    'ui.tabs': '이야기 장면',
+    'ui.hint.mouse': '마우스를 움직이면 입자가 밀려나고 · 누르면 흩어집니다 · 스크롤하면 넘어갑니다',
+    'ui.hint.touch': '누르면 흩어집니다 · 스크롤하면 넘어갑니다',
+    'ui.hint.auto': '자동으로 넘어가는 중 · 스크롤하면 직접 넘길 수 있습니다',
+    'ui.next': '아래에 자세한 내용이 이어집니다',
+
+    'tab.1': 'Kunsang Lee', 'tab.2': '동료 같은 에이전트', 'tab.3': '묻고 찾아 답하기', 'tab.4': '낮 · 대신 받아 답하기',
+    'tab.5': '밤 · 잠든 시간에도', 'tab.6': 'ai-ready', 'tab.7': 'AFA', 'tab.8': '연락',
+
+    's1.t': 'Kunsang Lee',
+    's1.d_h': '<b>이건상</b> · AI 에이전트를 만들고, 그 에이전트가 일하기 좋은 코드 구조를 설계합니다',
+    's2.t': '동료와 같은 에이전트',
+    's2.d': 'Slack 에서 부르면 코드베이스와 데이터베이스를 조회해 근거와 함께 답하고, 티켓과 PR 까지 맡도록 직접 설계했습니다',
+    's3.t': '말뜻을 알아듣고 기억하는 에이전트',
+    's3.d': '평소 말투로 물어도 모델이 뜻을 읽습니다. 에이전트가 듣는 채널의 글을 임베딩으로 쌓아 두고, 필요할 때 뜻이 가까운 지난 대화를 찾아 답에 씁니다',
+    's4.t': '집중은 그대로, 답은 바로',
+    's4.d_h': '담당자가 하던 일을 멈추지 않아도 되도록, 그 사람이 답했을 질문을 에이전트가 먼저 받아 근거와 함께 답하게 했습니다. 15주 동안 질문 절반은 96초 안에 첫 답을 받았습니다',
+    's5.t_h': '담당자가 잠든 시간에도',
+    's5.d_h': '담당자를 기다리지 않아도 답을 받을 수 있게 했습니다. 근무 시간 밖에 올라온 질문 39건도 절반은 99초 안에 첫 답이 달렸습니다',
+    's6.t': '문서로 권하던 규칙을 검사로',
+    's6.d_h': '직접 만든 오픈소스 도구 <b>ai-ready</b> 는 문서로만 권하던 규칙 가운데 막을 수 있는 것을 lint·테스트 같은 검사로 옮깁니다. 리뷰에서 바로잡은 실수도 막을 수 있으면 승인을 거쳐 검사로 옮겨, 같은 지적을 두 번 하지 않아도 됩니다',
+    's7.t': '옆 코드만 따라 해도 맞도록',
+    's7.d_h': '<b>Agent-Friendly Architecture.</b> 외부 연동 9개를 같은 틀의 기능 폴더로 나눠 옆 폴더를 따라 만들면 되게 했고, 하면 안 되는 일은 경계 테스트 52개로 옮겨 push 전에 막습니다',
+    's8.t': '에이전트를 만들고 계신가요?',
+    's8.d': '만들면서 겪은 일을 나누고 싶습니다',
+
+    'nav.b1': 'agent-colleague', 'nav.b2': '15주 기록', 'nav.b3': 'ai-ready', 'nav.b4': '코드 구조', 'nav.b5': '글과 연결',
+
+    'b1.k': '대표 작업 · agent-colleague',
+    'b1.t': 'Slack 에서 일하는 사내 AI 에이전트',
+    'b1.l': '처음 만든 봇을 TypeScript 와 Claude Agent SDK 로 다시 설계했습니다. 비결정론적인 판단은 모델에, 실행해도 되는지 같은 결정론적인 판단은 코드에 맡겼습니다. 여기서는 에이전트에게 무엇을 맡기고 무엇을 막았는지, 코드를 어떻게 고치게 했는지를 적었습니다.',
+    'b1.p1.h': '쓰기는 사람이 답한 뒤에',
+    'b1.p1.d': '티켓 생성 같은 쓰기 도구는 봇이 스레드에 글을 올린 뒤 사람이 답했을 때만 실행되고, 실행 기록을 확인해 같은 요청을 두 번 실행하지 않습니다.',
+    'b1.p2.h': '고친 코드는 리뷰를 거쳐서',
+    'b1.p2.d': '격리된 작업 공간에서 구현하고, 수정 권한이 없는 별도 리뷰 세션이 찾은 문제를 반영한 뒤 봇 전용 브랜치에서만 PR 을 엽니다.',
+    'b1.p3.h': '운영 DB 는 좁게',
+    'b1.p3.d': '개인정보 컬럼을 읽지 못하는 계정으로만 조회하고, 쓰기는 거부하며, 실행 계획으로 비용을 재서 무거운 조회는 사람이 답한 뒤에 실행합니다.',
+
+    'b2.t': '15주 동안의 기록',
+    'b2.s1.n_h': '96<span class="u">초</span>', 'b2.s1.sr': '96초',
+    'b2.s1.l': '질문 절반이 첫 답을 받기까지 걸린 시간. 근무 시간 밖에 올라온 39건은 99초였습니다',
+    'b2.s2.n_h': '<span class="u u0">하루 약</span>30<span class="u">분</span>', 'b2.s2.sr': '하루 약 30분',
+    'b2.s2.l': '업무 질문마다 누군가 하던 일을 멈추고 답했다면 들었을 시간',
+    'b2.note': '2026년 6월 10일~9월 22일, 팀 코드 질문 채널(오류 분석 비율은 오류 알림 채널)의 Slack 스레드를 직접 센 사내 운영 기록입니다. 9월 16일에 에이전트를 다시 설계했고, 기간 대부분(235건 중 211건)은 처음 만든 봇이 답했습니다. 하루 약 30분은 잡담 9건을 뺀 업무 질문 226건에 건당 10분(처리 5분, 원래 일로 돌아오는 데 5분)을 곱해 15주 약 38시간을 내고, 근무일 75일로 나눈 값입니다. 개발자 시간만 셌고 묻는 쪽이 기다린 시간은 넣지 않았습니다. 건당 10분은 잰 값이 아니라 정한 값이고, 226건 모두 누군가 멈추고 답해야 했을 질문으로 보고 계산했습니다. 사람이 스레드에서 이어 말한 것은 109건(46%)이었습니다. 되물음과 정정도 섞여 있고, 답이 맞았는지는 따로 재지 않았습니다. 오류 알림 채널에서는 오류 277개 중 83% 에 첫 분석이 달렸고, 중앙값은 113초였습니다(대부분 재설계 전).',
+
+    'b3.k': 'Open Source · MIT',
+    'b3.t': '리뷰와 문서로 권하던 규칙을 자동 검사로',
+    'b3.l': '에이전트는 문서를 읽고도 규칙을 놓칠 수 있지만, CI 에서 실패하는 lint 규칙은 지나칠 수 없습니다. 문서에만 있는 규칙을 도구로 옮길 수 있는지 따지고, 옮길 수 없는 것만 이유와 함께 문서에 남기도록 돕는 오픈소스 도구를 직접 만들었습니다.',
+    'b3.p1.h': '점검',
+    'b3.p1.d_h': '문서의 규칙 문장마다 이미 강제되는지, 싸게 강제할 수 있는지, 강제할 수 없는지, 코드와 어긋났는지 나누고 근거 파일을 적습니다. CI 가 테스트를 실제로 돌리는지, <code>|| true</code> 처럼 실패를 삼키는 줄이 있는지도 봅니다.',
+    'b3.p2.h': '적용',
+    'b3.p2.d': '사람이 고른 것만 만듭니다. ArchUnit·eslint·ruff 처럼 팀이 이미 쓰는 도구의 규칙 초안으로 옮기고, 이미 어긴 곳은 기준 파일로 묶어 새 위반만 잡게 합니다.',
+    'b3.p3.h': '교훈',
+    'b3.p3.d': '작업 중 바로잡은 실수와 PR 리뷰 댓글을 모읍니다. 도구로 막을 수 있으면 규칙 초안을, 막을 수 없으면 이유를 붙인 금지 목록 항목을 만들어 하나씩 승인받습니다.',
+    'b3.v': '1.x 는 문서를 7개 영역 점수로 매겼는데, 강제하지 않는 문서를 더 쓰는 것이 점수를 올리는 가장 쉬운 길이어서 2.0 에서 점수를 없앴습니다.',
+    'b3.link': 'GitHub 저장소',
+
+    'b4.k': 'Agent-Friendly Architecture',
+    'b4.t': '근처 파일만 보고 고쳐도 깨지지 않게 짠 코드 구조',
+    'b4.l': 'AI 코딩 에이전트는 요청 한 줄과 근처 파일 몇 개만 보고 일하고, 가까이 있는 코드를 따라 씁니다. 그렇게 고쳐도 전체가 맞게 돌도록 코드 구조와 자동 검사를 짰습니다. Cursor 의 Lauren Tan 이 영상에서 소개한 Dune 프로젝트 문서를 바탕으로 사내 에이전트 코드에 적용했습니다.',
+    'b4.p1': '새 외부 연동은 기능 폴더 하나에 목록 한 줄과 필수 파일 몇 개를 더해 붙이고, 세션·시작 코드는 고치지 않도록 했습니다. 연동 9개를 모두 이 틀에 맞췄습니다. 도구 목록처럼 함께 적어야 할 곳을 빠뜨리면 타입 검사나 테스트가 실패합니다.',
+    'b4.p2': '기능 폴더는 환경 변수·네트워크·시계를 직접 쓰지 못하고, 시작 코드가 넘겨준 것만 씁니다.',
+    'b4.p3': '이런 규칙을 경계 테스트 52개로 옮겼고(2026-10-05 기준), 실패 메시지가 코드를 어디에 둘지 알려 줍니다.',
+    'b4.p4': '적용하면서 예외를 파일마다 개수까지 세어 테스트하게 했고, 2026-10-03 에 남은 예외를 모두 없앴습니다. 그 뒤로는 예외를 새로 두면 테스트가 실패합니다.',
+    'b4.p5_h': 'PR 리뷰에서 찾은, 검사를 피해 가는 방법 13가지(<code>eval</code>, <code>globalThis[\'process\']</code> 등)를 테스트 사례로 고정했습니다.',
+    'b4.p6': 'push 전에 같은 검사를 돌립니다. 결함이 줄었는지는 재지 않았습니다.',
+
+    'b5.t': '만들면서 판단한 것을 씁니다',
+    'b5.l': '1편은 처음 만든 봇 이야기입니다. Claude Code 를 헤드리스 모드로 호출해 iOS·안드로이드·웹·백엔드 저장소의 코드를 읽고 답했습니다. 2편은 15주 운영 기록과, 기능이 늘면서 구조를 다시 짠 과정을 다룹니다.',
+    'b5.p1.k': 'Medium\u00a0· 2026.06\u00a0· 14분\u00a0분량\u00a0· 시리즈\u00a01편',
+    'b5.p1.t': '파트 경계를 넘는 코드 질문에 답하는 사내 AI 에이전트를 만들기까지',
+    'b5.p2.k': 'Medium\u00a0· 2026.09\u00a0· 32분\u00a0분량\u00a0· 시리즈\u00a02편',
+    'b5.p2.t': '사내 AI 에이전트를 재설계한 이야기',
+    'b5.ko': '',
+    'b5.c.t': '에이전트 이야기라면 언제든',
+    'b5.c.l': '만드는 중인 에이전트가 있다면 들려주세요.',
+
+    'foot.c': '© 2026 이건상',
+    'foot.src': '이 페이지의 소스'
+  },
+  en: {
+    'doc.title': 'Kunsang Lee — I build AI agents, and design codebases that are easy for them to work in.',
+    'ui.skip': 'Skip to content',
+    'ui.newtab': '(opens in a new tab)',
+    'ui.home': 'Kunsang Lee, back to top',
+    'ui.links': 'Contact',
+    'ui.lang': 'Language',
+    'ui.secnav': 'Sections',
+    'ui.tabs': 'Story scenes',
+    'ui.hint.mouse': 'Move the pointer to push the particles · click to scatter · scroll to continue',
+    'ui.hint.touch': 'Tap to scatter · scroll to continue',
+    'ui.hint.auto': 'Playing on its own · scroll to take over',
+    'ui.next': 'More details below',
+
+    'tab.1': 'Kunsang Lee', 'tab.2': 'A teammate agent', 'tab.3': 'Ask and find', 'tab.4': 'Day · it steps in',
+    'tab.5': 'Night · while asleep', 'tab.6': 'ai-ready', 'tab.7': 'AFA', 'tab.8': 'Contact',
+
+    's1.t': 'Kunsang Lee',
+    's1.d_h': 'I build AI agents, and design codebases that are easy for them to work in.',
+    's2.t': 'An agent that works like a teammate',
+    's2.d': 'Mention it in Slack and it digs through the codebase and database, answers with sources, and can file tickets and open pull requests. I designed it end to end.',
+    's3.t': 'It gets what you mean, and remembers',
+    's3.d': 'Ask the way you\'d ask a colleague, and the model works out what you mean. Messages in the channels it listens to are stored as embeddings, so it can find related past conversations when it answers.',
+    's4.t': 'Focus stays. Answers come fast.',
+    's4.d_h': 'So the <span class="nw">go-to</span> person doesn\'t have to stop what they\'re doing, the agent takes the questions they would have answered and replies with sources. Over 15 weeks, half of all questions got a first reply within 96 seconds.',
+    's5.t_h': 'Even while the <span class="nw">go-to</span> person is asleep',
+    's5.d_h': 'Answers don\'t have to wait for the <span class="nw">go-to</span> person. Of the 39 questions asked before 9 a.m., after 7 p.m., or on weekends, half got a first reply within 99 seconds.',
+    's6.t': 'From written rules to automated checks',
+    's6.d_h': '<b>ai-ready</b>, an open-source tool I built, moves the rules that docs only recommended into checks such as lint rules and tests, wherever they can be enforced. Mistakes corrected in review that a check can catch go the same way once approved, so that comment need not be made twice.',
+    's7.t': 'Built so following the code next door is enough',
+    's7.d_h': '<b>Agent-Friendly Architecture.</b> The 9 external integrations share one folder layout, so a new one can follow the folder next to it, and what must not happen runs as 52 boundary tests that stop it before a push.',
+    's8.t': 'Building agents too?',
+    's8.d': 'Always happy to compare notes on building agents',
+
+    'nav.b1': 'agent-colleague', 'nav.b2': '15 weeks', 'nav.b3': 'ai-ready', 'nav.b4': 'Architecture', 'nav.b5': 'Writing & contact',
+
+    'b1.k': 'Featured · agent-colleague',
+    'b1.t': 'An in-house AI agent that works in Slack',
+    'b1.l': 'I rebuilt my first bot on TypeScript and the Claude Agent SDK. Judgement calls go to the model; deterministic decisions, such as whether an action may run, stay in code. This part covers what the agent is trusted with, what it\'s kept from doing, and how it changes code.',
+    'b1.p1.h': 'Writes wait for a person',
+    'b1.p1.d': 'Actions like filing a ticket run only after the bot posts in the thread and someone replies, and an action log keeps the same request from running twice.',
+    'b1.p2.h': 'Code changes go through review',
+    'b1.p2.d': 'Changes are built in an isolated workspace, checked by a separate read-only review session, and revised with its findings. PRs are opened only from a bot-only branch.',
+    'b1.p3.h': 'Production data, narrowly',
+    'b1.p3.d': 'Queries run under an account that can\'t read personal-data columns, writes are refused, and heavy queries (costed from the query plan) wait for a person\'s reply.',
+
+    'b2.t': 'Fifteen weeks of use',
+    'b2.s1.n_h': '96<span class="u">s</span>', 'b2.s1.sr': '96 s',
+    'b2.s1.l': 'time it took for half of all questions to get a first reply; for the 39 asked outside work hours, 99 s',
+    'b2.s2.n_h': '<span class="u u0">about</span>30<span class="u">min a day</span>', 'b2.s2.sr': 'About 30 min a day',
+    'b2.s2.l': 'the time someone would have spent stopping their own work to answer each work question',
+    'b2.note': 'An internal record from June 10 to September 22, 2026, compiled from Slack threads in the team\'s code-question channel (error-analysis figures come from the alert channel). The agent was redesigned on September 16; most of the period (211 of 235 threads) was answered by the first bot. About 30 minutes a day: 226 work questions (9 small-talk threads removed) × 10 minutes (5 to handle, 5 to get back to work) gives about 38 hours over 15 weeks, divided by 75 working days. Only the developer\'s time is counted, not the asker\'s wait. The 10 minutes is a set figure, not a measurement, and the count assumes all 226 questions would have needed someone to stop and reply. People followed up in 109 threads (46%). These include follow-up questions and corrections; whether the answers were right wasn\'t measured separately. In the error-alert channel, 83% of 277 errors got a first analysis, with a median of 113 s (mostly before the redesign).',
+
+    'b3.k': 'Open Source · MIT',
+    'b3.t': 'From review notes and docs to automated checks',
+    'b3.l': 'An agent can read the docs and still miss a rule, but it can\'t get past a lint rule that fails in CI. I built ai-ready, an open-source tool that works out which documented rules can move into tooling, and leaves in the docs only what can\'t, with the reason.',
+    'b3.p1.h': 'Audit',
+    'b3.p1.d_h': 'Sorts each rule in the docs into already enforced, cheap to enforce, can\'t be enforced, or out of sync with the code, citing the file that shows it. It also checks whether CI really runs the tests and flags lines like <code>|| true</code> that swallow failures.',
+    'b3.p2.h': 'Apply',
+    'b3.p2.d': 'Builds only what a person picks — rule drafts for tools the team already uses, such as ArchUnit, eslint or ruff — and baselines existing violations so only new ones are caught.',
+    'b3.p3.h': 'Lessons',
+    'b3.p3.d': 'Gathers mistakes corrected during work and PR review comments. If a tool can block one, it drafts a rule; if not, an anti-pattern entry with the reason. Each is approved one at a time.',
+    'b3.v': '1.x scored docs across seven areas. The easiest way to raise the score was to write more unenforced docs, so 2.0 dropped the score.',
+    'b3.link': 'GitHub repository',
+
+    'b4.k': '',
+    'b4.t': 'Agent-Friendly Architecture',
+    'b4.l': 'AI coding agents work from a one-line request and a few nearby files, and they copy the code closest to hand. I shaped the code structure and automated checks so the whole system still holds when they work that way. I applied this to our in-house agent, building on the Dune project doc that Lauren Tan of Cursor presented in a video.',
+    'b4.p1': 'A new integration is meant to go in as one feature folder plus a list entry and a few required files, without touching session or startup code; all 9 integrations were brought into this layout. Forget a required entry, such as the tool list, and the type check or tests fail.',
+    'b4.p2': 'Feature folders can\'t reach environment variables, the network or the clock directly; they use only what startup code hands them.',
+    'b4.p3': 'These rules run as 52 boundary tests (as of 2026-10-05), and a failure message says where the code should go.',
+    'b4.p4': 'While applying it, I had exceptions tested per file down to the count, and on 2026-10-03 removed the last of them. Since then, adding one fails a test.',
+    'b4.p5_h': '13 ways around the checks found in pull request review (<code>eval</code>, <code>globalThis[\'process\']</code> and others) are pinned as test cases.',
+    'b4.p6': 'The same checks run before every push. Whether this reduced defects hasn\'t been measured.',
+
+    'b5.t': 'Notes from building it',
+    'b5.l': 'Part 1 is about the first bot, which called Claude Code in headless mode to read code across the iOS, Android, web and backend repos. Part 2 covers fifteen weeks of use and how the structure was rebuilt as features grew.',
+    'b5.p1.k': 'Medium\u00a0· June\u00a02026\u00a0· 14\u00a0min\u00a0read\u00a0· Part\u00a01',
+    'b5.p1.t': 'Building an in-house AI agent that answers code questions across teams',
+    'b5.p2.k': 'Medium\u00a0· September\u00a02026\u00a0· 32\u00a0min\u00a0read\u00a0· Part\u00a02',
+    'b5.p2.t': 'How I redesigned our in-house AI agent',
+    'b5.ko': 'Korean',
+    'b5.c.t': 'Happy to talk agents',
+    'b5.c.l': 'Building one? I\'d love to hear about it.',
+
+    'foot.c': '© 2026 Kunsang Lee',
+    'foot.src': 'Source for this page'
+  }
+};
+/* 언어: 정적 HTML 은 한국어다. 고른 언어의 글을 사전에서 넣고 한/EN 버튼을 붙인다. site.js 를 못 받아도 돈다 */
+(function (d, h) {
+  "use strict";
+  var DICT = window.__I18N_DICT || {};
+  function all(s) { return Array.prototype.slice.call(d.querySelectorAll(s)); }
+  function pressed(L) { all(".lang button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === L ? "true" : "false"); }); }
+  function apply(L) {
+    var T = DICT[L] || {};
+    all("[data-i18n]").forEach(function (el) { var k = el.getAttribute("data-i18n"); if (k in T) el.textContent = T[k]; });
+    all("[data-i18n-html]").forEach(function (el) { var k = el.getAttribute("data-i18n-html"); if (k in T) el.innerHTML = T[k]; });
+    all("[data-i18n-attr]").forEach(function (el) {
+      el.getAttribute("data-i18n-attr").split(";").forEach(function (pair) {
+        var i = pair.indexOf(":");
+        if (i < 0) return;
+        var a = pair.slice(0, i).trim(), k = pair.slice(i + 1).trim();
+        if (k in T) el.setAttribute(a, T[k]);
+      });
+    });
+    if (T["doc.title"]) d.title = T["doc.title"];
+    h.lang = L;
+    pressed(L);
+  }
+  function choose(L) {
+    if (L === h.lang) return;
+    apply(L);
+    try { localStorage.setItem("lang", L); } catch (e) {}
+    // 주소에 ?lang= 이 있으면 그 값도 바꿔, 새로 고쳐도 고른 언어로 열리게 한다
+    if (/[?&]lang=/.test(location.search) && history.replaceState) {
+      history.replaceState(null, "", location.pathname + location.search.replace(/([?&]lang=)(ko|en)/, "$1" + L) + location.hash);
+    }
+    var ev;
+    try { ev = new CustomEvent("fx:lang", { detail: L }); } catch (e) { ev = d.createEvent("CustomEvent"); ev.initCustomEvent("fx:lang", false, false, L); }
+    window.dispatchEvent(ev);
+  }
+  var done = false;
+  // 본문 끝의 인라인 한 줄이 HTML 을 다 읽은 즉시 부른다. DOMContentLoaded 는 defer 스크립트를 기다리므로 예비로만 둔다
+  window.__langInit = function () {
+    if (done) return;
+    done = true;
+    try {
+      if (h.lang === "en") apply("en"); else pressed("ko");
+      all(".lang button").forEach(function (b) { b.addEventListener("click", function () { choose(b.getAttribute("data-lang")); }); });
+    } finally { h.classList.remove("pre-en"); }
+  };
+})(document, document.documentElement);
+</script>
 <style>
-:root {
-  /* runningtier 미네랄 팔레트 — 따뜻한 앰버 대신 옅은 광물색을 강조색으로 */
-  --bg: #080b0f;
-  --bg-card: rgba(16, 23, 35, 0.72);
-  --border: rgba(53, 68, 72, 0.45);
-  --border-strong: #354448;
-  --text: #f1f5f4;
-  --text-muted: #b5c4c5;
-  --text-faint: #8a9a9c;
-  --amber: #c9d9d4;
-  --amber-bright: #ffffff;
-  --amber-dim: rgba(201, 217, 212, 0.1);
-  --mint: #8fcdb9;
-  --mint-dim: rgba(143, 205, 185, 0.08);
-  --mint-border: rgba(143, 205, 185, 0.35);
-  --amber-border: rgba(201, 217, 212, 0.5);
-  --font-sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", Roboto, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
-  --max-width: 1060px;
+:root{
+  --bg:#0a0807;
+  --cream:#f6ecdf;
+  --c2:rgba(246,236,223,.76);
+  --dim:rgba(246,236,223,.54);
+  --faint:rgba(246,236,223,.16);
+  --hair:rgba(246,236,223,.09);
+  --clay:#eb663d;
+  --amber:#ffa84d;
+  --peach:#ffd3a3;
+  --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --edge:clamp(18px,2.8vw,40px);
+  --tabs:58px;
+  --out:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html{background:var(--bg);color:var(--cream);font-family:var(--sans);-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:120px}
+html.pre-en body{visibility:hidden}
+body{margin:0;overflow-x:hidden;word-break:keep-all;overflow-wrap:break-word;line-height:1.65;font-size:16px;font-weight:450;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-tap-highlight-color:transparent}
+html:lang(en) body{word-break:normal}
+a{color:inherit}
+img{max-width:100%;height:auto}
+button{font:inherit;color:inherit}
+h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.035em;line-height:1.18;text-wrap:balance}
+html:lang(en) h1,html:lang(en) h2,html:lang(en) h3{letter-spacing:-.025em}
+p,ul,ol{margin:0}
+::selection{background:rgba(255,168,77,.32);color:#fff}
+:focus-visible{outline:1px solid rgba(246,236,223,.7);outline-offset:3px;border-radius:6px}
+.nw{white-space:nowrap}
+.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+.skip{position:fixed;left:12px;top:-80px;z-index:90;padding:12px 16px;border-radius:10px;background:var(--cream);color:var(--bg);font-weight:700;text-decoration:none}
+.skip:focus{top:12px}
+html:not(.js) .js-only{display:none!important}
+html:not(.fx) .fx-only{display:none!important}
+.fx .nofx-only{display:none!important}
+em{font-style:normal}
+.arw{width:11px;height:11px;flex:none;opacity:.8}
+
+/* 무대 */
+#gl{position:fixed;left:0;top:0;width:100vw;height:100vh;height:100lvh;display:none;z-index:0}
+.fx #gl{display:block}
+/* 입자로 읽히지 않는 작은 표시(이목구비·말풍선 속 줄·글리프)를 그리는 선명한 층 */
+#ov{position:fixed;left:0;top:0;width:100vw;height:100vh;height:100lvh;display:none;z-index:1;pointer-events:none}
+.fx #ov{display:block}
+
+/* 머리: 왼쪽 위 이름과 연락처, 오른쪽 위 언어 전환 */
+.top{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:clamp(14px,3vh,28px) var(--edge) 12px;pointer-events:none;transition:background-color .5s}
+.top a,.top nav,.top button{pointer-events:auto}
+.brand{display:flex;flex-direction:column;gap:4px;min-width:0;text-shadow:0 0 14px rgba(10,8,7,.9),0 0 3px rgba(10,8,7,.9)}
+.mark{align-self:flex-start;font-size:15px;font-weight:800;letter-spacing:-.01em;text-decoration:none;color:var(--cream);min-height:28px;display:inline-flex;align-items:center}
+.links{display:flex;flex-wrap:wrap;gap:0;margin:0 0 0 -8px;padding:0;list-style:none}
+.links a{display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.03em;color:var(--dim);text-decoration:none;transition:color .25s,background-color .25s}
+.links a:hover{color:var(--cream);background:rgba(246,236,223,.06)}
+.lang{display:flex;align-items:center;gap:0;margin:-4px -8px 0 0;text-shadow:0 0 12px rgba(10,8,7,.9)}
+.lang button{appearance:none;-webkit-appearance:none;background:none;border:0;margin:0;cursor:pointer;min-width:40px;min-height:40px;padding:0 9px;border-radius:999px;font-size:12.5px;font-weight:700;letter-spacing:.04em;color:var(--dim);transition:color .25s,background-color .25s}
+.lang button:hover{color:var(--cream)}
+.lang button[aria-pressed="true"]{color:var(--cream);background:rgba(246,236,223,.09)}
+.lang i{font-style:normal;color:var(--faint);font-size:12px}
+.secnav{display:none;margin-left:auto}
+.secnav ul{display:flex;margin:0;padding:0;list-style:none}
+.secnav a{display:inline-flex;align-items:center;min-height:36px;padding:0 11px;font-size:12.5px;font-weight:650;letter-spacing:.04em;color:var(--dim);text-decoration:none;transition:color .2s}
+.secnav a:hover{color:var(--cream)}
+.in-sec .top{padding-bottom:18px;background:linear-gradient(180deg,rgba(10,8,7,1),rgba(10,8,7,1) calc(100% - 16px),rgba(10,8,7,0))}
+.fx .top::before{content:"";position:absolute;left:0;right:0;top:0;bottom:-26px;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(10,8,7,.8),rgba(10,8,7,.56) 55%,rgba(10,8,7,0));transition:opacity .5s}
+.fx.in-sec .top::before{opacity:0}
+html:not(.fx) .top{position:absolute}
+@media (min-width:1180px){.in-sec .secnav{display:block}}
+@media (max-width:640px){
+  html{scroll-padding-top:120px}
+  .top{display:grid;grid-template-columns:1fr auto;column-gap:12px;row-gap:0;align-items:center}
+  .brand{display:contents}
+  .mark{grid-column:1;grid-row:1}
+  .lang{grid-column:2;grid-row:1;margin:0 -8px 0 0}
+  .links{grid-column:1/3;grid-row:2;flex-wrap:nowrap}
+  .secnav{display:none!important}
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* 장면 칸: 입자 없이 읽는 기본 배치 */
+.story{position:relative;z-index:2}
+.scene{position:relative;padding:clamp(100px,14vw,150px) var(--edge) clamp(56px,8vw,90px);border-bottom:1px solid var(--hair)}
+.cap{max-width:780px;margin:0 auto;text-align:center}
+.line{font-size:clamp(26px,3.4vw,42px);font-weight:800;letter-spacing:-.035em;line-height:1.22;color:var(--cream)}
+.cap .sub{margin:14px auto 0;max-width:62ch;font-size:clamp(14.5px,1.15vw,16px);line-height:1.7;color:var(--c2)}
+.cap .sub b,.cap .lede b{font-weight:750;color:var(--cream)}
+.wm{font-size:clamp(64px,13vw,190px);font-weight:800;letter-spacing:-.045em;line-height:1;color:var(--peach)}
+.s1 .lede{margin-top:20px;font-size:clamp(16px,1.5vw,20px);font-weight:600;line-height:1.55;color:var(--c2)}
+.s1{min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center}
+.sig{margin:22px auto 0;font-size:22px;font-weight:760;letter-spacing:-.03em;color:var(--peach)}
+.cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:20px 0 0;padding:0;list-style:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px;padding:0 19px;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:.01em;text-decoration:none;border:1px solid var(--faint);color:var(--cream);background:rgba(10,8,7,.35);transition:border-color .25s,background-color .25s,color .25s}
+.btn:hover{border-color:rgba(246,236,223,.5);background:rgba(246,236,223,.07)}
+.btn-p{background:var(--cream);color:var(--bg);border-color:var(--cream)}
+.btn-p:hover{background:#fff;border-color:#fff}
+.btn .arw{width:12px;height:12px}
+.next{display:inline-flex;align-items:center;gap:8px;min-height:40px;margin-top:12px;font-size:12.5px;font-weight:600;letter-spacing:.03em;color:var(--dim);text-decoration:none}
+.next:hover{color:var(--cream)}
 
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: var(--font-sans);
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.75;
-  letter-spacing: -0.01em;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* 미세 질감 오버레이 */
-body::after {
-  content: "";
-  position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.03;
-  pointer-events: none;
-  z-index: 90;
-}
-
-::selection { background: var(--amber); color: #141816; }
-
-.skip-link {
-  position: absolute; left: -9999px; top: 0;
-  background: var(--amber); color: #141816;
-  padding: 0.6rem 1.2rem; border-radius: 0 0 8px 0; z-index: 100;
-}
-.skip-link:focus { left: 0; }
-.skip-link:focus-visible { outline-color: var(--text); }
-
-.sr-only {
-  position: absolute; width: 1px; height: 1px;
-  padding: 0; margin: -1px; overflow: hidden;
-  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-}
-
-:focus-visible {
-  outline: 2px solid var(--amber);
-  outline-offset: 3px;
-}
-
-/* ── 내비게이션 ─────────────────────────── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  background: rgba(8, 11, 15, 0.55);
-  border-bottom: 1px solid var(--border);
-}
-.nav-inner {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0.85rem 1.5rem;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.nav-logo {
-  font-weight: 400; font-size: 1.15rem; color: #fff;
-  text-decoration: none; letter-spacing: -0.05em;
-}
-.nav-logo span { color: var(--amber); }
-.nav-links { display: flex; gap: 1.75rem; list-style: none; }
-.nav-links a {
-  color: var(--text-muted); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.02em;
-  padding: 0.4rem 0.5rem 3px;
-  border-bottom: 1px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease;
-}
-.nav-links a:hover { color: var(--text); }
-.nav-links a.active { color: var(--text); border-bottom-color: var(--amber); }
-@media (max-width: 640px) {
-  .nav-links { gap: 1.1rem; }
-  .nav-links a { font-size: 0.78rem; }
-  .hero h1 br { display: none; }
-}
-@media (max-width: 360px) {
-  .nav-links { gap: 0.8rem; }
-  .nav-links a { font-size: 0.74rem; }
+/* 장면 칸: 입자와 함께 보는 배치. 칸은 스크롤 길이만 만들고 글은 아래에 고정해 바꿔 끼운다 */
+.fx .scene{height:calc(var(--len) * 100vh);height:calc(var(--len) * 100svh);min-height:0;padding:0;border:0;display:block}
+.fx .cap{position:fixed;left:50%;bottom:calc(var(--tabs) + 8px + env(safe-area-inset-bottom));z-index:3;width:min(780px,calc(100% - 2 * var(--edge)));margin:0;opacity:0;transform:translate(-50%,14px);pointer-events:none;transition:opacity .45s var(--out),transform .7s var(--out);text-shadow:0 0 18px rgba(10,8,7,.95),0 0 4px rgba(10,8,7,.9)}
+.fx .cap.on{opacity:1;transform:translate(-50%,0);pointer-events:auto;transition:opacity .9s var(--out) .25s,transform 1.1s var(--out) .25s}
+/* 지금 장면이 아닌 문구의 링크는 보이지 않으니 키보드 순서에서 뺀다(입자 화면이 뜨기 전에도). 문구의 글은 화면 읽기 프로그램에 남는다 */
+.fx .cap .cta,.fx .cap .next{visibility:hidden;transition:visibility 0s .45s}
+.fx .cap.on .cta,.fx .cap.on .next{visibility:visible;transition-delay:0s}
+.fx .line{font-size:clamp(23px,2.35vw,34px);line-height:1.2}
+.fx .cap .sub{margin-top:10px;font-size:clamp(13.5px,1.02vw,15px);line-height:1.62}
+.fx .wm{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.fx .s1 .lede{margin-top:0;font-size:clamp(15px,1.3vw,18px)}
+.fx .cap .btn{text-shadow:none}
+.fx .cap::before{content:"";position:absolute;inset:-34px -70px -18px;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(10,8,7,.66),rgba(10,8,7,.4) 55%,rgba(10,8,7,0))}
+/* 장면 8: 큰 글자는 그림과 함께 나온다. 입자로 모인 이름은 글 위 빈 곳에 선다 */
+.fx .sig{height:12px;margin:6px auto 0}
+.fx .s8 .cta{margin-top:4px}
+.fx .s8 .next{margin-top:6px}
+/* 장면 8 은 글 뒤 어둠막을 두지 않는다. 연락처 링크를 두른 입자 테두리가 막에 덮여 흐려지기 때문이다. 글 뒤 입자는 셰이더가 이미 흐리게 가린다 */
+.fx .s8 .cap::before{display:none}
+@media (max-width:640px){
+  .fx .line{font-size:22px}
+  .fx .cap .sub{font-size:13.5px;line-height:1.58;margin-top:8px}
+  html:lang(en).fx .cap .sub{font-size:13px}
+  .fx .cap .btn{min-height:42px;padding:0 12px;font-size:12.5px;gap:5px}
+  .fx .s8 .cta{gap:6px;flex-wrap:nowrap}
 }
 
-/* ── 레이아웃 공통 ─────────────────────── */
-main { display: block; }
-section { padding: 5rem 1.5rem; scroll-margin-top: 70px; }
-.wrap { max-width: var(--max-width); margin: 0 auto; }
+/* 장면 번호 탭: 넓으면 이름, 좁으면 번호만 */
+.tabs{position:fixed;left:50%;bottom:env(safe-area-inset-bottom);transform:translateX(-50%);z-index:6;display:none;width:max-content;max-width:calc(100vw - 4px);transition:opacity .5s var(--out)}
+.fx .tabs{display:flex}
+.in-sec .tabs{opacity:0;pointer-events:none}
+.tabs button{appearance:none;-webkit-appearance:none;background:none;border:0;margin:0;color:var(--dim);font:inherit;font-size:11.5px;font-weight:650;letter-spacing:.06em;padding:14px 11px 20px;min-height:48px;min-width:38px;cursor:pointer;position:relative;display:flex;align-items:baseline;justify-content:center;gap:7px;white-space:nowrap;transition:color .35s}
+.tabs .n{font:500 10px/1 var(--mono);letter-spacing:.04em;opacity:.85}
+.tabs .bar{position:absolute;left:11px;right:11px;bottom:12px;height:1px;background:var(--faint);overflow:hidden}
+.tabs .bar i{position:absolute;inset:0;background:var(--cream);transform-origin:0 50%;transform:scaleX(0)}
+.tabs button[aria-current="step"],.tabs button:hover{color:var(--cream)}
+.tabs button:focus-visible{outline:1px solid rgba(246,236,223,.55);outline-offset:-5px;border-radius:6px}
+@media (max-width:1179px){
+  .tabs button{padding:14px 8px 20px;gap:0;flex:0 1 auto;width:38px;min-width:30px}
+  .tabs .t{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .tabs .bar{left:8px;right:8px}
+  .tabs button[aria-current="step"]{flex:0 0 auto;width:auto}
+  .tabs button[aria-current="step"] .t{position:static;width:auto;height:auto;overflow:visible;clip-path:none;margin-left:6px}
+}
+@media (max-width:400px){.tabs button{width:36px;padding-left:6px;padding-right:6px}.tabs .bar{left:6px;right:6px}.tabs button[aria-current="step"] .t{letter-spacing:.03em}}
+/* 360보다 좁으면 이름이 들어갈 자리가 없어 번호만 둔다(이름은 화면 읽기 프로그램에 그대로 남는다) */
+@media (max-width:359px){
+  .tabs button[aria-current="step"]{flex:0 1 auto;width:36px}
+  .tabs button[aria-current="step"] .t{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);margin:0}
+}
+.hint{position:fixed;right:var(--edge);bottom:calc(20px + env(safe-area-inset-bottom));z-index:5;margin:0;font-size:11.5px;font-weight:500;letter-spacing:.04em;color:rgba(246,236,223,.74);pointer-events:none;display:none;transition:opacity .5s}
+.fx .hint{display:block;z-index:21;text-shadow:0 0 14px rgba(10,8,7,.9),0 0 3px rgba(10,8,7,.9)}
+.in-sec .hint{opacity:0}
+.hint .touch{display:none}
+.hint .auto{display:none}
+.autoplay .hint .mouse,.autoplay .hint .touch{display:none}
+.autoplay .hint .auto{display:inline}
+@media (hover:none) and (pointer:coarse){.hint .mouse{display:none}.hint .touch{display:inline}}
+.fx.still .hint{display:none}
+.still .cap,.still .cap.on,.still .cap .cta,.still .cap .next{transition:none}
+/* 안내 문구는 모든 폭에서 언어 단추 아래 오른쪽 위에 둔다. 넓은 화면에서 오른쪽 아래에 두면 EN 장면 탭 줄 끝과 겹쳤다(1680~1847px) */
+.hint{bottom:auto;top:calc(clamp(14px,3vh,28px) + 40px);text-align:right}
+@media (max-width:640px){.fx .hint{display:none}.fx.autoplay .hint{display:block;top:calc(clamp(14px,3vh,28px) + 76px);left:var(--edge);right:auto;text-align:left}}
 
-.kicker {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  font-size: 0.66rem; font-weight: 500; letter-spacing: 0.22em;
-  color: var(--amber); text-transform: uppercase; margin-bottom: 1.3rem;
-}
+.shade{position:fixed;left:0;right:0;bottom:0;height:40vh;z-index:1;pointer-events:none;display:none;background:linear-gradient(180deg,rgba(10,8,7,0),rgba(10,8,7,.5) 55%,rgba(10,8,7,.74));transition:opacity .6s var(--out)}
+.fx .shade{display:block}
+.in-sec .shade,.at-end .shade{opacity:0}
 
-h2 {
-  font-size: clamp(1.8rem, 3.4vw, 2.9rem);
-  font-weight: 300; letter-spacing: -0.045em; line-height: 1.38;
-  margin-bottom: 1.2rem; color: #fff;
-}
-main > section + section { border-top: 1px solid var(--border); }
+/* 이야기 뒤 본문 */
+.after{position:relative;z-index:3;background:linear-gradient(180deg,rgba(10,8,7,0) 0,rgba(10,8,7,.8) 40vh,rgba(10,8,7,.9) 100%)}
+html:not(.fx) .after{background:none}
+/* the last scene's caption is fixed at the bottom; this space keeps the first reading text below it until the page leaves the scenes */
+.fx .after::before{content:"";display:block;height:max(0px,calc(50vh - 40px - clamp(140px,26vh,240px)))}
+@media (max-width:640px){.fx .after::before{height:max(0px,calc(50vh - 170px))}}
+/* while the last scene is on, its caption stays above the reading part's dark gradient */
+.fx.at-end .story{z-index:4}
+.wrap{width:100%;max-width:1160px;margin:0 auto;padding:0 var(--edge)}
+.sec{padding:clamp(80px,10vw,140px) 0 clamp(20px,3vw,40px)}
+.sec:first-child{padding-top:clamp(140px,26vh,240px)}
+@media (max-width:640px){.sec:first-child{padding-top:130px}}
+.kicker{margin:0 0 18px;display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;font-size:11.5px;font-weight:650;letter-spacing:.14em;color:var(--dim)}
+.kicker b{font:500 11px/1 var(--mono);letter-spacing:.06em;color:var(--amber)}
+.kicker::after{content:"";flex:0 0 28px;height:1px;background:var(--faint)}
+.sec h2{font-size:clamp(28px,4vw,50px);color:var(--cream);max-width:24ch}
+html:lang(en) .sec h2{max-width:26ch}
+.lead{margin-top:18px;font-size:clamp(16px,1.3vw,18.5px);line-height:1.78;color:var(--c2);max-width:62ch}
+.sub-h{margin:clamp(34px,4.6vw,56px) 0 0;font-size:11.5px;font-weight:650;letter-spacing:.14em;color:var(--dim)}
+.points{margin:14px 0 0;padding:0;list-style:none;border-top:1px solid var(--hair)}
+.pt3{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:26px 0;border-bottom:1px solid var(--hair)}
+.pt-n{font:500 11.5px/1.8 var(--mono);letter-spacing:.06em;color:var(--amber)}
+.pt3 h3{font-size:clamp(20px,2.2vw,27px);color:var(--cream)}
+.pt3 p{font-size:clamp(15px,1.15vw,16.5px);line-height:1.8;color:var(--c2);max-width:62ch}
+@media (min-width:900px){.pt3{grid-template-columns:72px minmax(0,1fr) minmax(0,1.25fr);gap:28px;align-items:baseline}}
+.facts{margin:14px 0 0;padding:0;list-style:none;border-top:1px solid var(--hair);counter-reset:f}
+.facts li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;padding:20px 0;border-bottom:1px solid var(--hair);font-size:clamp(15px,1.2vw,17px);line-height:1.75;color:var(--c2)}
+.facts li::before{counter-increment:f;content:counter(f,decimal-leading-zero);font:500 11.5px/2.4 var(--mono);letter-spacing:.06em;color:var(--amber)}
+.facts li p{max-width:70ch}
 
-.section-lead {
-  color: var(--text-muted); max-width: 620px; font-size: 1rem; line-height: 1.9;
-}
+/* 15주 기록 */
+.stats{margin:clamp(34px,5vw,60px) 0 0;padding:0;list-style:none;display:grid;grid-template-columns:minmax(0,1fr);gap:30px}
+.st{min-width:0}
+.st-n{display:flex;align-items:baseline;white-space:nowrap;font-size:clamp(56px,9vw,104px);font-weight:820;letter-spacing:-.05em;line-height:.95;font-variant-numeric:tabular-nums;color:var(--cream)}
+.st-n .u{font-size:.32em;font-weight:700;letter-spacing:-.01em;margin:0 .22em 0 .08em;color:var(--amber)}
+.st-n .u:last-child{margin-right:0}
+.st-n .u0{margin-left:0;margin-right:.3em}
+.st-l{margin-top:12px;padding-top:12px;border-top:1px solid var(--hair);font-size:14px;font-weight:600;color:var(--c2);line-height:1.55;max-width:34ch}
+.note{margin-top:clamp(30px,4vw,44px);max-width:76ch;font-size:13.5px;line-height:1.85;color:var(--dim)}
+@media (min-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 40px}.st-l{max-width:40ch}}
 
-/* ── 히어로 ────────────────────────────── */
-.hero {
-  min-height: 100vh;
-  min-height: 100svh;
-  display: flex; align-items: center;
-  position: relative;
-  padding-top: 5rem; padding-bottom: 5rem;
-}
-.hero-inner { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; width: 100%; }
-.hero-eyebrow {
-  font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.2em;
-  margin-bottom: 1.8rem;
-}
-.hero-eyebrow strong { color: #fff; font-weight: 500; }
-.hero h1 {
-  font-size: clamp(2.5rem, 6.2vw, 4.8rem);
-  font-weight: 300; letter-spacing: -0.05em; line-height: 1.25;
-  margin-bottom: 1.6rem; color: #fff;
-  word-break: keep-all;
-}
-.hero h1 .accent { color: var(--mint); }
-.hero-sub {
-  font-size: clamp(1rem, 1.8vw, 1.1rem);
-  color: #eee; line-height: 1.9;
-  margin-bottom: 3rem;
-  word-break: keep-all;
-}
-.live-dot {
-  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-  background: var(--mint); margin-right: 0.5rem;
-  animation: pulse 2s ease-in-out infinite;
-}
-@keyframes pulse { 50% { opacity: 0.35; } }
-.hero-actions { display: flex; gap: 0.9rem; flex-wrap: wrap; }
-.scroll-cue {
-  position: absolute; bottom: 2.4rem; left: 50%; transform: translateX(-50%);
-  width: 1px; height: 44px;
-  background: linear-gradient(to bottom, var(--text-faint), transparent);
-}
-.js .scroll-cue { animation: drop 1.8s ease-in-out infinite; transform-origin: top; }
-@keyframes drop {
-  0%, 100% { opacity: 0.25; transform: translateX(-50%) scaleY(0.6); }
-  50%      { opacity: 1; transform: translateX(-50%) scaleY(1); }
-}
-.btn {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  min-height: 44px; padding: 11px 24px; border-radius: 999px;
-  font-size: 14px; font-weight: 500; text-decoration: none;
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
-}
-.btn-primary {
-  background: #fff; border: 1px solid #fff;
-  color: #252525;
-}
-.btn-primary:hover { background: #edeceb; border-color: #edeceb; }
-.btn-ghost {
-  border: 1px solid var(--amber); color: var(--amber);
-  background: transparent;
-}
-.btn-ghost:hover { color: #141816; background: var(--amber); }
+/* ai-ready */
+.verdict{margin-top:clamp(26px,3.6vw,40px);padding:20px 0 20px 20px;border-left:1px solid var(--amber);max-width:66ch;font-size:clamp(15px,1.2vw,17px);line-height:1.8;color:var(--c2)}
+.repo{display:inline-flex;align-items:center;gap:10px;margin-top:26px;min-height:46px;padding:0 18px;border-radius:999px;border:1px solid var(--faint);text-decoration:none;font-size:14px;font-weight:700;color:var(--cream);transition:border-color .25s,background-color .25s}
+.repo:hover{border-color:rgba(246,236,223,.5);background:rgba(246,236,223,.06)}
+.repo code{font:500 12px/1 var(--mono);letter-spacing:.02em;color:var(--dim)}
+.repo .arw{width:13px;height:13px}
 
-/* ── 미네랄 흐름 배경 (dev.runningtier.com 첫 화면과 동일) ─── */
-.track-flow {
-  position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background:
-    radial-gradient(at 80% 20%, rgb(176, 199, 191), rgba(0, 0, 0, 0) 65%),
-    linear-gradient(130deg, rgb(7, 11, 18), rgb(46, 74, 87));
-}
-.track-flow canvas { width: 100%; height: 100%; display: block; }
-/* 히어로: 위·아래로 어둡게 눌러 글자가 뜨게 */
-.hero::after {
-  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(rgba(8, 11, 15, 0.267), rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(8, 11, 15, 0.91));
-}
-.hero-inner { text-shadow: rgba(8, 11, 15, 0.667) 0 2px 18px; }
-/* 히어로 아래 본문은 91% 어둡게 덮어 흐름이 은은히 비치게 */
-main > section, footer { position: relative; background: rgba(8, 11, 15, 0.91); }
+/* 글 · 연결 */
+.series{margin-top:18px;font-size:clamp(15px,1.2vw,17px);line-height:1.8;color:var(--c2);max-width:66ch}
+.rows-l{margin:clamp(26px,4vw,42px) 0 0;padding:0;list-style:none;border-top:1px solid var(--hair)}
+.rowk{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:8px 18px;align-items:center;padding:24px 0;border-bottom:1px solid var(--hair);text-decoration:none;transition:padding .45s var(--out)}
+.rowk:hover{padding-left:10px}
+/* the kind lines keep each part together (no-break spaces in the text) and wrap only after a dot */
+.rowk .kind{grid-column:1;font-size:11.5px;font-weight:650;letter-spacing:.08em;color:var(--dim)}
+.rowk h3{grid-column:1;font-size:clamp(19px,2.1vw,26px);color:var(--cream)}
+.rowk .ko{display:inline-block;margin-left:10px;padding:2px 8px;border:1px solid var(--faint);border-radius:999px;font-size:11px;font-weight:650;letter-spacing:.06em;color:var(--dim);vertical-align:.25em}
+.rowk .ko:empty{display:none}
+.rowk .arr{grid-column:2;grid-row:1 / span 2;width:42px;height:42px;border-radius:50%;border:1px solid var(--faint);display:grid;place-items:center;transition:transform .45s var(--out),background-color .3s,color .3s,border-color .3s}
+.rowk:hover .arr{transform:translateX(4px);background:var(--cream);color:var(--bg);border-color:var(--cream)}
+.rowk .arr svg{width:17px;height:17px}
+.reach{margin-top:clamp(64px,8vw,110px);padding-top:clamp(34px,4vw,48px);border-top:1px solid var(--hair)}
+.reach h3{font-size:clamp(30px,5vw,64px);letter-spacing:-.045em;color:var(--cream)}
+.reach p{margin-top:14px;font-size:clamp(15px,1.2vw,17px);line-height:1.75;color:var(--c2)}
+.reach .cta{justify-content:flex-start;margin-top:24px}
+#writing{padding-bottom:clamp(90px,12vw,150px)}
+footer{position:relative;z-index:3;padding:22px var(--edge) 30px;border-top:1px solid var(--hair);font-size:12.5px;letter-spacing:.03em;color:var(--dim);display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:space-between;background:var(--bg)}
+footer a{color:var(--c2)}
 
-/* ── 등장 애니메이션 ─────────────────── */
-.js .reveal {
-  opacity: 0; transform: translateY(26px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.js .reveal.visible { opacity: 1; transform: none; }
-.reveal-delay-1 { transition-delay: 0.08s; }
-.reveal-delay-2 { transition-delay: 0.16s; }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-  .js .reveal { opacity: 1; transform: none; }
-}
+/* 나타나기 */
+.rvjs .rv{opacity:0;transform:translateY(24px);transition:opacity 1s var(--out),transform 1.2s var(--out)}
+.rvjs .rv.in{opacity:1;transform:none}
+.rvjs .rv.d1{transition-delay:.08s}.rvjs .rv.d2{transition-delay:.16s}.rvjs .rv.d3{transition-delay:.24s}
+@media (prefers-reduced-motion:reduce){.rvjs .rv{opacity:1;transform:none;transition:none}*{scroll-behavior:auto!important}}
 
-/* ── 대표 사례 ────────────────────────── */
-#featured { padding-top: 7rem; }
-.featured-head { margin-bottom: 3.2rem; }
-
-.case-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.4rem; max-width: 640px; }
-.badge {
-  font-family: var(--font-mono); font-size: 0.72rem;
-  color: var(--text-muted); border: 1px solid var(--border-strong);
-  background: rgba(255, 255, 255, 0.03);
-  padding: 0.28rem 0.7rem; border-radius: 999px;
-}
-.badge.live { color: var(--mint); border-color: var(--mint-border); background: var(--mint-dim); }
-
-.case-problem {
-  color: var(--text-muted); max-width: 640px; margin-bottom: 2.6rem;
-  border-left: 2px solid var(--amber);
-  padding-left: 1.15rem;
-  word-break: keep-all;
-}
-.case-problem strong { color: var(--text); }
-
-/* 슬랙 스레드 목업 — 옅은 광물색은 질문하는 사람, 민트는 에이전트 */
-.case-duo {
-  display: grid; grid-template-columns: minmax(0, 640px) 1fr;
-  gap: 2.5rem; align-items: start;
-}
-@media (max-width: 1100px) { .case-duo { grid-template-columns: 1fr; gap: 1.4rem; } }
-.thread {
-  background: var(--bg-card);
-  border: 1px solid var(--border-strong);
-  border-radius: 4px;
-  overflow: hidden;
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-}
-.thread-head {
-  padding: 0.65rem 1.2rem;
-  font-family: var(--font-mono); font-size: 0.72rem;
-  color: var(--text-faint); letter-spacing: 0.04em;
-  word-break: keep-all;
-  background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid var(--border);
-}
-.msg { padding: 1.05rem 1.3rem 1.15rem; font-size: 0.9rem; line-height: 1.65; }
-.msg + .msg { border-top: 1px solid var(--border); }
-.msg-name {
-  display: flex; align-items: center; gap: 0.5rem;
-  font-weight: 500; font-size: 0.82rem; margin-bottom: 0.35rem;
-}
-.msg-name .avatar {
-  width: 20px; height: 20px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 0.62rem; font-weight: 700; color: #141816;
-}
-.msg-user .msg-name { color: var(--amber); }
-.msg-user .avatar { background: var(--amber); }
-.msg-agent .msg-name { color: var(--mint); }
-.msg-agent .avatar { background: var(--mint); }
-.msg p { color: var(--text); word-break: keep-all; }
-.msg .evidence {
-  display: block;
-  font-family: var(--font-mono); font-size: 0.74rem; line-height: 1.8;
-  color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.03);
-  border-left: 2px solid var(--mint);
-  padding: 0.7rem 0.9rem;
-  margin-top: 0.75rem;
-}
-.msg .evidence b { color: var(--mint); font-weight: 600; }
-.reaction {
-  display: inline-flex; margin-top: 0.65rem;
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-strong);
-  border-radius: 999px; padding: 0.12rem 0.6rem;
-  color: var(--text-muted);
-}
-.case-side {
-  border-top: 1px solid var(--border-strong);
-  padding-top: 1.3rem;
-  font-size: 0.88rem;
-  display: grid; gap: 0.9rem;
-  align-content: start;
-}
-.side-row { display: grid; grid-template-columns: 3.2rem 1fr; gap: 0.8rem; align-items: baseline; }
-.side-label {
-  font-family: var(--font-mono); font-size: 0.72rem;
-  color: var(--amber); letter-spacing: 0.08em;
-}
-.side-row span:last-child { color: var(--text-muted); word-break: keep-all; }
-.side-note { font-size: 0.8rem; color: var(--text-faint); word-break: keep-all; border-top: 1px solid var(--border); padding-top: 0.9rem; margin-top: 0.3rem; }
-.nowrap { white-space: nowrap; }
-
-.pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem 2.5rem; }
-@media (min-width: 648px) and (max-width: 968px) {
-  .pillars { grid-template-columns: repeat(2, 1fr); }
-  .pillar:last-child { grid-column: 1 / -1; }
-}
-.pillar {
-  border-top: 1px solid var(--border-strong);
-  padding-top: 1.4rem;
-  transition: border-color 0.25s ease;
-}
-.pillar:hover { border-top-color: var(--amber); }
-.pillar-icon {
-  color: var(--amber); margin-bottom: 0.8rem;
-  width: 2.4rem; height: 2.4rem; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--amber-dim);
-}
-.pillar h3 { font-size: 1.15rem; font-weight: 500; margin-bottom: 0.55rem; letter-spacing: -0.01em; }
-.pillar p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.68; word-break: keep-all; }
-.pillar p code {
-  font-family: var(--font-mono); font-size: 0.8rem;
-  background: var(--amber-dim); color: var(--amber);
-  padding: 0.08rem 0.36rem; border-radius: 5px;
-}
-
-/* ── 두 개의 저장소 ──────────────────── */
-.impl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; margin-top: 2.8rem; }
-@media (max-width: 760px) { .impl-grid { grid-template-columns: 1fr; } }
-.impl { padding-left: 1.25rem; border-left: 2px solid var(--border-strong); }
-.impl-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.7rem; }
-.impl-lang {
-  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
-  color: var(--text-muted); background: rgba(255, 255, 255, 0.03);
-  padding: 0.22rem 0.62rem; border-radius: 6px;
-}
-.impl h3 { font-size: 1.15rem; font-weight: 500; }
-.impl p { font-size: 0.88rem; color: var(--text-muted); word-break: keep-all; }
-.impl p strong { color: var(--text); font-weight: 600; }
-
-/* ── 다른 작업물 ─────────────────────── */
-#works .works-head {
-  display: flex; justify-content: space-between; align-items: flex-end;
-  gap: 2rem; flex-wrap: wrap; margin-bottom: 3rem;
-}
-#works .works-head .section-lead { max-width: 380px; }
-.work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-@media (max-width: 760px) { .work-grid { grid-template-columns: 1fr; } }
-.work {
-  display: block; text-decoration: none; color: inherit;
-  background: var(--bg-card);
-  border: 1px solid var(--border-strong);
-  border-radius: 4px; padding: 2rem;
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  transition: border-color 0.25s ease;
-}
-.work:hover { border-color: var(--amber-border); }
-.work-kind {
-  font-family: var(--font-mono); font-size: 0.72rem;
-  color: var(--text-faint); letter-spacing: 0.1em; text-transform: uppercase;
-}
-.work h3 { font-size: 1.5rem; font-weight: 400; letter-spacing: -0.02em; margin: 0.55rem 0 0.65rem; }
-.work p { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1.3rem; word-break: keep-all; }
-.work-link {
-  font-size: 0.87rem; font-weight: 500; color: var(--amber);
-  display: inline-flex; align-items: center; gap: 0.35rem;
-}
-.work:hover .work-link { color: var(--amber-bright); }
-
-/* ── 글 ─────────────────────────── */
-.writing-list { margin-top: 3rem; border-top: 1px solid var(--border-strong); list-style: none; }
-.writing-item {
-  display: flex; align-items: center; justify-content: space-between; gap: 1.4rem;
-  border-bottom: 1px solid var(--border);
-  padding: 1.5rem 0.25rem;
-  text-decoration: none; color: inherit;
-  transition: background 0.25s ease;
-}
-a.writing-item:hover { background: rgba(255, 255, 255, 0.015); }
-.writing-meta { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-faint); margin-bottom: 0.4rem; }
-.writing-item h3 { font-size: 1.1rem; font-weight: 400; letter-spacing: -0.01em; line-height: 1.5; word-break: keep-all; }
-.writing-arrow { color: var(--text-faint); flex-shrink: 0; transition: color 0.2s ease; }
-a.writing-item:hover .writing-arrow { color: var(--amber); }
-
-/* ── 마무리 ─────────────────────────── */
-#contact { padding-top: 8rem; padding-bottom: 5rem; text-align: center; }
-#contact .kicker { justify-content: center; }
-#contact h2 { font-size: clamp(2rem, 4.5vw, 3.4rem); }
-#contact .section-lead { margin: 0 auto 2.4rem; }
-.outro-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
-
-footer {
-  border-top: 1px solid var(--border);
-  padding: 2.2rem 1.5rem;
-  text-align: center;
-  color: var(--text-faint); font-size: 0.8rem;
-}
-footer a { color: var(--text-muted); text-decoration: none; }
-footer a:hover { color: var(--text); }
-
-/* ── 인쇄 ─────────────────────────────── */
-@media print {
-  :root {
-    --bg: #fff; --bg-card: #fff;
-    --border: #ddd; --border-strong: #ccc;
-    --text: #111; --text-muted: #444; --text-faint: #666;
-    --amber: #b45309; --amber-dim: rgba(180, 83, 9, 0.08);
-    --mint: #0f766e; --mint-dim: rgba(15, 118, 110, 0.08);
-    --mint-border: rgba(15, 118, 110, 0.4); --amber-border: rgba(180, 83, 9, 0.4);
-  }
-  body { background: #fff; }
-  html { background: #fff; color-scheme: light; }
-  body::after, .scroll-cue, .skip-link, .track-flow, .hero::after { display: none; }
-  main > section, footer { background: none; }
-  main > section + section { border-top: none; }
-  .nav-links a.active { border-bottom-color: transparent; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; overflow-wrap: anywhere; }
-  .writing-item { display: block; }
-  .pillar, .work, .thread, .msg, .impl, .writing-item { break-inside: avoid; }
-  h2 { break-after: avoid; }
-  section { padding-block: 2rem; }
-  #featured { padding-top: 3rem; }
-  #contact { padding-top: 3rem; padding-bottom: 2rem; break-inside: avoid; }
-  .js .reveal { opacity: 1; transform: none; }
-  nav {
-    position: static;
-    background: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-  .hero { min-height: auto; padding-top: 2rem; padding-bottom: 2rem; }
-  .pillar { border-top: none; }
-  .btn-primary {
-    background: none;
-    color: var(--amber);
-    border: 1px solid var(--amber);
-  }
-  .msg-name .avatar { color: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-}
+#fps{position:fixed;right:12px;top:110px;z-index:30;font:11px/1.45 ui-monospace,Menlo,monospace;color:#f6ecdf;pointer-events:none;white-space:pre;text-shadow:0 0 4px #000}
 </style>
 </head>
 <body>
-<div class="track-flow"><canvas aria-hidden="true"></canvas></div>
-<header>
-<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<a class="skip" href="#work" data-i18n="ui.skip">본문으로 건너뛰기</a>
+<canvas id="gl" aria-hidden="true"></canvas>
+<canvas id="ov" aria-hidden="true"></canvas>
 
-<nav aria-label="주요 내비게이션">
-  <div class="nav-inner">
-    <a class="nav-logo" href="#top">이건상<span>.</span></a>
-    <ul class="nav-links">
-      <li><a href="#featured">대표 작업</a></li>
-      <li><a href="#works">작업물</a></li>
-      <li><a href="#writing">글</a></li>
-      <li><a href="#contact">연결</a></li>
+<header class="top" id="top-bar">
+  <div class="brand">
+    <a class="mark" href="#top" aria-label="Kunsang Lee, 맨 위로" data-i18n-attr="aria-label:ui.home">Kunsang Lee</a>
+    <ul class="links" aria-label="연락처" data-i18n-attr="aria-label:ui.links">
+      <li><a href="mailto:gosmdochee@gmail.com">Email</a></li>
+      <li><a href="https://www.linkedin.com/in/kunsanglee" target="_blank" rel="noopener noreferrer">LinkedIn<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+      <li><a href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+      <li><a href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
     </ul>
   </div>
+  <nav class="secnav" aria-label="본문 구역" data-i18n-attr="aria-label:ui.secnav">
+    <ul>
+      <li><a href="#work" data-i18n="nav.b1">agent-colleague</a></li>
+      <li><a href="#record" data-i18n="nav.b2">15주 기록</a></li>
+      <li><a href="#ai-ready" data-i18n="nav.b3">ai-ready</a></li>
+      <li><a href="#afa" data-i18n="nav.b4">코드 구조</a></li>
+      <li><a href="#writing" data-i18n="nav.b5">글과 연결</a></li>
+    </ul>
+  </nav>
+  <div class="lang js-only" role="group" aria-label="언어" data-i18n-attr="aria-label:ui.lang">
+    <button type="button" data-lang="ko" lang="ko" aria-label="한국어" aria-pressed="true">한</button>
+    <i aria-hidden="true">/</i>
+    <button type="button" data-lang="en" lang="en" aria-label="English" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<main id="main">
+<div class="story" id="top">
+
+  <section class="scene s1" data-s="0" style="--len:0.8" aria-labelledby="name">
+    <div class="cap on">
+      <h1 class="wm" id="name">Kunsang Lee</h1>
+      <p class="lede" data-i18n-html="s1.d_h"><b>이건상</b> · AI 에이전트를 만들고, 그 에이전트가 일하기 좋은 코드 구조를 설계합니다</p>
+    </div>
+  </section>
+
+  <section class="scene s2" data-s="1" style="--len:1.2" aria-labelledby="s2-t">
+    <div class="cap">
+      <h2 class="line" id="s2-t" data-i18n="s2.t">동료와 같은 에이전트</h2>
+      <p class="sub" data-i18n="s2.d">Slack 에서 부르면 코드베이스와 데이터베이스를 조회해 근거와 함께 답하고, 티켓과 PR 까지 맡도록 직접 설계했습니다</p>
+    </div>
+  </section>
+
+  <section class="scene s3" data-s="2" style="--len:2.0" aria-labelledby="s3-t">
+    <div class="cap">
+      <h2 class="line" id="s3-t" data-i18n="s3.t">말뜻을 알아듣고 기억하는 에이전트</h2>
+      <p class="sub" data-i18n="s3.d">평소 말투로 물어도 모델이 뜻을 읽습니다. 에이전트가 듣는 채널의 글을 임베딩으로 쌓아 두고, 필요할 때 뜻이 가까운 지난 대화를 찾아 답에 씁니다</p>
+    </div>
+  </section>
+
+  <section class="scene s4" data-s="3" style="--len:1.3" aria-labelledby="s4-t">
+    <div class="cap">
+      <h2 class="line" id="s4-t" data-i18n="s4.t">집중은 그대로, 답은 바로</h2>
+      <p class="sub" data-i18n-html="s4.d_h">담당자가 하던 일을 멈추지 않아도 되도록, 그 사람이 답했을 질문을 에이전트가 먼저 받아 근거와 함께 답하게 했습니다. 15주 동안 질문 절반은 96초 안에 첫 답을 받았습니다</p>
+    </div>
+  </section>
+
+  <section class="scene s5" data-s="4" style="--len:1.6" aria-labelledby="s5-t">
+    <div class="cap">
+      <h2 class="line" id="s5-t" data-i18n-html="s5.t_h">담당자가 잠든 시간에도</h2>
+      <p class="sub" data-i18n-html="s5.d_h">담당자를 기다리지 않아도 답을 받을 수 있게 했습니다. 근무 시간 밖에 올라온 질문 39건도 절반은 99초 안에 첫 답이 달렸습니다</p>
+    </div>
+  </section>
+
+  <section class="scene s6" data-s="5" style="--len:2.25" aria-labelledby="s6-t">
+    <div class="cap">
+      <h2 class="line" id="s6-t" data-i18n="s6.t">문서로 권하던 규칙을 검사로</h2>
+      <p class="sub" data-i18n-html="s6.d_h">직접 만든 오픈소스 도구 <b>ai-ready</b> 는 문서로만 권하던 규칙 가운데 막을 수 있는 것을 lint·테스트 같은 검사로 옮깁니다. 리뷰에서 바로잡은 실수도 막을 수 있으면 승인을 거쳐 검사로 옮겨, 같은 지적을 두 번 하지 않아도 됩니다</p>
+    </div>
+  </section>
+
+  <section class="scene s7" data-s="6" style="--len:2.0" aria-labelledby="s7-t">
+    <div class="cap">
+      <h2 class="line" id="s7-t" data-i18n="s7.t">옆 코드만 따라 해도 맞도록</h2>
+      <p class="sub" data-i18n-html="s7.d_h"><b>Agent-Friendly Architecture.</b> 외부 연동 9개를 같은 틀의 기능 폴더로 나눠 옆 폴더를 따라 만들면 되게 했고, 하면 안 되는 일은 경계 테스트 52개로 옮겨 push 전에 막습니다</p>
+    </div>
+  </section>
+
+  <section class="scene s8" data-s="7" style="--len:0.9" aria-labelledby="s8-t">
+    <div class="cap">
+      <h2 class="line" id="s8-t" data-i18n="s8.t">에이전트를 만들고 계신가요?</h2>
+      <p class="sub" data-i18n="s8.d">만들면서 겪은 일을 나누고 싶습니다</p>
+      <p class="sig" aria-hidden="true"><span class="nofx-only">Kunsang Lee</span></p>
+      <ul class="cta" aria-label="연락처" data-i18n-attr="aria-label:ui.links">
+        <li><a class="btn btn-p" href="mailto:gosmdochee@gmail.com">Email</a></li>
+        <li><a class="btn" href="https://www.linkedin.com/in/kunsanglee" target="_blank" rel="noopener noreferrer">LinkedIn<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+        <li><a class="btn" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+        <li><a class="btn" href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+      </ul>
+      <a class="next" href="#work"><span data-i18n="ui.next">아래에 자세한 내용이 이어집니다</span><span aria-hidden="true">↓</span></a>
+    </div>
+  </section>
+
+</div>
+
+<nav class="tabs" id="tabs" aria-label="이야기 장면" data-i18n-attr="aria-label:ui.tabs">
+  <button type="button" data-i="0" aria-current="step"><span class="n">01</span><span class="t" data-i18n="tab.1">Kunsang Lee</span><span class="bar"><i></i></span></button>
+  <button type="button" data-i="1"><span class="n">02</span><span class="t" data-i18n="tab.2">동료 같은 에이전트</span><span class="bar"><i></i></span></button>
+  <button type="button" data-i="2"><span class="n">03</span><span class="t" data-i18n="tab.3">묻고 찾아 답하기</span><span class="bar"><i></i></span></button>
+  <button type="button" data-i="3"><span class="n">04</span><span class="t" data-i18n="tab.4">낮 · 대신 받아 답하기</span><span class="bar"><i></i></span></button>
+  <button type="button" data-i="4"><span class="n">05</span><span class="t" data-i18n="tab.5">밤 · 잠든 시간에도</span><span class="bar"><i></i></span></button>
+  <button type="button" data-i="5"><span class="n">06</span><span class="t" data-i18n="tab.6">ai-ready</span><span class="bar"><i></i></span></button>
+  <button type="button" data-i="6"><span class="n">07</span><span class="t" data-i18n="tab.7">AFA</span><span class="bar"><i></i></span></button>
+  <button type="button" data-i="7"><span class="n">08</span><span class="t" data-i18n="tab.8">연락</span><span class="bar"><i></i></span></button>
 </nav>
-</header>
 
-<main id="main" tabindex="-1">
-
-<!-- ═══ 히어로 ═══ -->
-<header class="hero" id="top">
-  <div class="hero-inner">
-    <p class="hero-eyebrow"><strong>이건상</strong> · 백엔드 개발자</p>
-    <h1>
-      사내 슬랙에서 동료처럼 일하는<br>
-      <span class="accent">AI 에이전트</span>를 만들고 운영합니다
-    </h1>
-    <p class="hero-sub"><span class="live-dot" aria-hidden="true"></span>지금도 사내에서 답하고 있습니다.</p>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="#featured">대표 작업 보기</a>
-      <a class="btn btn-ghost" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only">(새 탭)</span></a>
-    </div>
-  </div>
-  <div class="scroll-cue" aria-hidden="true"></div>
-</header>
-
-<!-- ═══ 대표 사례 ═══ -->
-<section id="featured" aria-labelledby="featured-heading">
+<div class="after">
+<section class="sec" id="work" aria-labelledby="work-title">
   <div class="wrap">
-    <div class="featured-head reveal">
-      <p class="kicker">대표 작업</p>
-      <h2 id="featured-heading">네 저장소의 코드 질문에, 근거와 함께 답합니다</h2>
-      <p class="section-lead">
-        백엔드·안드로이드·iOS·웹, 네 저장소로 나뉜 회사 코드. 화면이 어떤 API 를 호출하는지 알고 싶으면 늘 다른 파트 개발자를 찾아다녀야 했습니다.
-        그 질문을 사람에게 묻는 대신, 에이전트에게 묻게 만든 것이 이 프로젝트입니다.
-      </p>
-    </div>
-
-    <article class="reveal reveal-delay-1">
-      <div class="case-badges">
-        <span class="badge live">운영 중</span>
-        <span class="badge">Slack</span>
-        <span class="badge">Claude Code Headless</span>
-        <span class="badge">Event Sourcing</span>
-      </div>
-
-      <p class="case-problem">
-        <strong>문제:</strong> 사소한 코드 질문 하나가 늘 다른 파트 개발자의 시간에 의존했습니다.
-        상대가 회의 중이면 묻는 사람도 멈춰 있고, 부담스러워 아예 못 물어보기도 했습니다.
-      </p>
-
-      <div class="case-duo">
-        <div class="thread">
-          <div class="thread-head">옅은 광물색은 사람, 민트는 에이전트</div>
-          <div class="msg msg-user">
-            <div class="msg-name"><span class="avatar" aria-hidden="true">동</span>동료</div>
-            <p>디스커버리 응답의 id 필드, 안드로이드는 Long 으로 iOS 는 Int 로 받고 있어요. 서버는 어떤 타입으로 내려주나요?</p>
-            <span class="reaction" role="img" aria-label="반응 3개">👀 3</span>
-          </div>
-          <div class="msg msg-agent">
-            <div class="msg-name"><span class="avatar" aria-hidden="true">AI</span>에이전트</div>
-            <p>
-              서버는 Long, 즉 64비트 정수로 응답합니다. Int 로 받으면 범위를 넘는 값이 잘릴 수 있습니다.
-            </p>
-            <div class="evidence"><b>근거 추적 경로</b><br>android/…/DiscoveryResponse.kt — <span class="nowrap">id: Long</span><br>ios/…/DiscoveryResponse.swift — <span class="nowrap">id: Int</span><br>api/…/DiscoveryController.kt — <span class="nowrap">응답: Long</span></div>
-          </div>
-        </div>
-        <div class="case-side" role="group" aria-label="운영 사실">
-          <div class="side-row"><span class="side-label">시작</span><span>서버 한 대 없이 Slack Socket Mode 로</span></div>
-          <div class="side-row"><span class="side-label">비용</span><span>내 장비에서 파일럿 0원</span></div>
-          <div class="side-row"><span class="side-label">처리</span><span>동시 3건 · 모래시계·눈 이모지로 상태 표시</span></div>
-          <p class="side-note">위 스레드는 실제 채널 흐름을 재구성한 예시입니다.</p>
-        </div>
-      </div>
-
-      <div class="pillars">
-        <div class="pillar">
-          <div class="pillar-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5l-1.7 3.3-3.3 1.7 1.7-3.3z" fill="currentColor" stroke="none"/></svg>
-          </div>
-          <h3>검색이 아니라 탐색</h3>
-          <p>
-            단어가 들어간 파일 목록을 주는 검색 대신, 사람이 하듯 화면 코드를 열고 함수 호출을 한 단계씩 따라갑니다.
-            답에는 화면 파일에서 호출 지점까지의 <code>근거 경로</code>가 붙어, 묻는 사람이 직접 확인할 수 있습니다.
-          </p>
-        </div>
-        <div class="pillar">
-          <div class="pillar-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
-          </div>
-          <h3>처음부터 막힌 경계</h3>
-          <p>
-            도구는 파일 읽기와 검색만 허용하고 쓰기와 웹 접근은 명시적으로 차단했습니다.
-            자식 프로세스 환경에서 시크릿을 걷어내고, 데이터 조회는 조회문만 허용하고 읽기 전용으로 한 번 더 막는 등
-            여러 겹의 안전장치를 둔 통로로만 열었습니다.
-          </p>
-        </div>
-        <div class="pillar">
-          <div class="pillar-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
-          </div>
-          <h3>틀린 답을 학습으로</h3>
-          <p>
-            스레드에서 에이전트를 태그해 지적하면 그 자리에서 정정하고, 무엇을 왜 틀렸는지 따로 기록합니다.
-            기록은 사람 검수를 거쳐 가이드에 반영되고, 재시작 없이 다음 질문부터 적용됩니다.
-          </p>
-        </div>
-      </div>
-
-      <div class="impl-grid">
-        <div class="impl">
-          <div class="impl-head">
-            <span class="impl-lang">Kotlin</span>
-            <h3>운영본</h3>
-          </div>
-          <p>
-            Spring Boot 위에 채널마다 행위자(actor)를 두어 같은 채널은 직렬로, 다른 채널은 병렬로 처리합니다.
-            모든 메시지는 append-only 이벤트 스트림으로 남기고 채널 상태는 그 재생으로 만듭니다.
-            <strong>launchd 로 실제 사내 운영 중</strong>입니다.
-          </p>
-        </div>
-        <div class="impl">
-          <div class="impl-head">
-            <span class="impl-lang">TypeScript</span>
-            <h3>재구축본</h3>
-          </div>
-          <p>
-            운영본을 TypeScript 로 다시 짜는 이식 프로젝트입니다.
-            이식의 전제가 되는 과거 이벤트 전량 재생 검증과, 넓히면 안 되는 보안 경계의 실행 가능한 명세화부터
-            차근차근 쌓고 있습니다.
-          </p>
-        </div>
-      </div>
-    </article>
+    <p class="kicker rv"><b>01</b><span data-i18n="b1.k">대표 작업 · agent-colleague</span></p>
+    <h2 id="work-title" class="rv" data-i18n="b1.t">Slack 에서 일하는 사내 AI 에이전트</h2>
+    <p class="lead rv d1" data-i18n="b1.l">처음 만든 봇을 TypeScript 와 Claude Agent SDK 로 다시 설계했습니다. 비결정론적인 판단은 모델에, 실행해도 되는지 같은 결정론적인 판단은 코드에 맡겼습니다. 여기서는 에이전트에게 무엇을 맡기고 무엇을 막았는지, 코드를 어떻게 고치게 했는지를 적었습니다.</p>
+    <ol class="points">
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">01</span><h3 data-i18n="b1.p1.h">쓰기는 사람이 답한 뒤에</h3><p data-i18n="b1.p1.d">티켓 생성 같은 쓰기 도구는 봇이 스레드에 글을 올린 뒤 사람이 답했을 때만 실행되고, 실행 기록을 확인해 같은 요청을 두 번 실행하지 않습니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b1.p2.h">고친 코드는 리뷰를 거쳐서</h3><p data-i18n="b1.p2.d">격리된 작업 공간에서 구현하고, 수정 권한이 없는 별도 리뷰 세션이 찾은 문제를 반영한 뒤 봇 전용 브랜치에서만 PR 을 엽니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b1.p3.h">운영 DB 는 좁게</h3><p data-i18n="b1.p3.d">개인정보 컬럼을 읽지 못하는 계정으로만 조회하고, 쓰기는 거부하며, 실행 계획으로 비용을 재서 무거운 조회는 사람이 답한 뒤에 실행합니다.</p></li>
+    </ol>
   </div>
 </section>
 
-<!-- ═══ 다른 작업물 ═══ -->
-<section id="works" aria-labelledby="works-heading">
+<section class="sec" id="record" aria-labelledby="record-title">
   <div class="wrap">
-    <div class="works-head reveal">
-      <div>
-        <p class="kicker">다른 작업물</p>
-        <h2 id="works-heading">에이전트 밖에서 만든 것들</h2>
-      </div>
-      <p class="section-lead">일하는 방식 자체를 도구로 만들어 두려는 습관이 남긴 작업물입니다.</p>
-    </div>
-    <div class="work-grid">
-      <a class="work reveal reveal-delay-1" href="https://github.com/kunsanglee/ai-ready" target="_blank" rel="noopener noreferrer" aria-label="ai-ready 저장소 보기(새 탭)">
-        <span class="work-kind">Open Source · Plugin</span>
-        <h3>ai-ready</h3>
-        <p>
-          감사(audit) → 적용(apply) → 무인 검증을 하나의 Claude Code 플러그인으로 묶은 도구입니다.
-          AI 코딩 도구가 프로젝트 규칙을 준비된 대로 따르게 하는 준비 작업을 자동화합니다.
-        </p>
-        <span class="work-link">저장소 보기
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </a>
-      <a class="work reveal reveal-delay-2" href="https://maeil-mail.kr" target="_blank" rel="noopener noreferrer" aria-label="매일메일 서비스 보기(새 탭)">
-        <span class="work-kind">Service</span>
-        <h3>매일메일</h3>
-        <p>
-          개발자 면접 질문을 매일 메일로 받아 볼 수 있는 서비스입니다.
-          만드는 데 참여했고, 예습·복습 루틴을 만드는 가장 단순한 형태라고 생각합니다.
-        </p>
-        <span class="work-link">서비스 보기
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ Writing ═══ -->
-<section id="writing" aria-labelledby="writing-heading">
-  <div class="wrap">
-    <div class="reveal">
-      <p class="kicker">글</p>
-      <h2 id="writing-heading">만든 것을 글로 정리합니다</h2>
-      <p class="section-lead">성공담보다 판단의 근거를 적으려 노력합니다. 어떤 선택지를 검토했고 왜 골랐는지가 글의 몸통입니다.</p>
-    </div>
-    <ul class="writing-list reveal reveal-delay-1">
-      <li>
-        <a class="writing-item" href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer" aria-label="파트 경계를 넘는 코드 질문에 답하는 사내 AI 에이전트를 만들기까지 — Medium 글 보기(새 탭)">
-          <div>
-            <p class="writing-meta">Medium · 2026.06 · 14분 분량 · 시리즈 1편</p>
-            <h3>파트 경계를 넘는 코드 질문에 답하는 사내 AI 에이전트를 만들기까지</h3>
-          </div>
-          <span class="writing-arrow" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </span>
-        </a>
-      </li>
+    <p class="kicker rv"><b>02</b></p>
+    <h2 id="record-title" class="rv" data-i18n="b2.t">15주 동안의 기록</h2>
+    <ul class="stats">
+      <li class="st rv"><p class="st-n"><span class="sr" data-i18n="b2.s1.sr">96초</span><span aria-hidden="true" data-i18n-html="b2.s1.n_h">96<span class="u">초</span></span></p><p class="st-l" data-i18n="b2.s1.l">질문 절반이 첫 답을 받기까지 걸린 시간. 근무 시간 밖에 올라온 39건은 99초였습니다</p></li>
+      <li class="st rv d1"><p class="st-n"><span class="sr" data-i18n="b2.s2.sr">하루 약 30분</span><span aria-hidden="true" data-i18n-html="b2.s2.n_h"><span class="u u0">하루 약</span>30<span class="u">분</span></span></p><p class="st-l" data-i18n="b2.s2.l">업무 질문마다 누군가 하던 일을 멈추고 답했다면 들었을 시간</p></li>
     </ul>
+    <p class="note rv" data-i18n="b2.note">2026년 6월 10일~9월 22일, 팀 코드 질문 채널(오류 분석 비율은 오류 알림 채널)의 Slack 스레드를 직접 센 사내 운영 기록입니다. 9월 16일에 에이전트를 다시 설계했고, 기간 대부분(235건 중 211건)은 처음 만든 봇이 답했습니다. 하루 약 30분은 잡담 9건을 뺀 업무 질문 226건에 건당 10분(처리 5분, 원래 일로 돌아오는 데 5분)을 곱해 15주 약 38시간을 내고, 근무일 75일로 나눈 값입니다. 개발자 시간만 셌고 묻는 쪽이 기다린 시간은 넣지 않았습니다. 건당 10분은 잰 값이 아니라 정한 값이고, 226건 모두 누군가 멈추고 답해야 했을 질문으로 보고 계산했습니다. 사람이 스레드에서 이어 말한 것은 109건(46%)이었습니다. 되물음과 정정도 섞여 있고, 답이 맞았는지는 따로 재지 않았습니다. 오류 알림 채널에서는 오류 277개 중 83% 에 첫 분석이 달렸고, 중앙값은 113초였습니다(대부분 재설계 전).</p>
   </div>
 </section>
 
-<!-- ═══ 마무리 ═══ -->
-<section id="contact" aria-labelledby="contact-heading">
-  <div class="wrap reveal">
-    <p class="kicker">연결</p>
-    <h2 id="contact-heading">코드가 말하게 하는 개발자</h2>
-    <p class="section-lead">
-      작업물이나 글을 통해 이야기를 나누고 싶다면 언제든 연락 주세요.
-    </p>
-    <div class="outro-links">
-      <a class="btn btn-primary" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only">(새 탭)</span></a>
-      <a class="btn btn-ghost" href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<span class="sr-only">(새 탭)</span></a>
+<section class="sec" id="ai-ready" aria-labelledby="air-title">
+  <div class="wrap">
+    <p class="kicker rv"><b>03</b><span data-i18n="b3.k">Open Source · MIT</span></p>
+    <h2 id="air-title" class="rv" data-i18n="b3.t">리뷰와 문서로 권하던 규칙을 자동 검사로</h2>
+    <p class="lead rv d1" data-i18n="b3.l">에이전트는 문서를 읽고도 규칙을 놓칠 수 있지만, CI 에서 실패하는 lint 규칙은 지나칠 수 없습니다. 문서에만 있는 규칙을 도구로 옮길 수 있는지 따지고, 옮길 수 없는 것만 이유와 함께 문서에 남기도록 돕는 오픈소스 도구를 직접 만들었습니다.</p>
+    <ol class="points">
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">01</span><h3 data-i18n="b3.p1.h">점검</h3><p data-i18n-html="b3.p1.d_h">문서의 규칙 문장마다 이미 강제되는지, 싸게 강제할 수 있는지, 강제할 수 없는지, 코드와 어긋났는지 나누고 근거 파일을 적습니다. CI 가 테스트를 실제로 돌리는지, <code>|| true</code> 처럼 실패를 삼키는 줄이 있는지도 봅니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">02</span><h3 data-i18n="b3.p2.h">적용</h3><p data-i18n="b3.p2.d">사람이 고른 것만 만듭니다. ArchUnit·eslint·ruff 처럼 팀이 이미 쓰는 도구의 규칙 초안으로 옮기고, 이미 어긴 곳은 기준 파일로 묶어 새 위반만 잡게 합니다.</p></li>
+      <li class="pt3 rv"><span class="pt-n" aria-hidden="true">03</span><h3 data-i18n="b3.p3.h">교훈</h3><p data-i18n="b3.p3.d">작업 중 바로잡은 실수와 PR 리뷰 댓글을 모읍니다. 도구로 막을 수 있으면 규칙 초안을, 막을 수 없으면 이유를 붙인 금지 목록 항목을 만들어 하나씩 승인받습니다.</p></li>
+    </ol>
+    <p class="verdict rv" data-i18n="b3.v">1.x 는 문서를 7개 영역 점수로 매겼는데, 강제하지 않는 문서를 더 쓰는 것이 점수를 올리는 가장 쉬운 길이어서 2.0 에서 점수를 없앴습니다.</p>
+    <a class="repo rv" href="https://github.com/kunsanglee/ai-ready" target="_blank" rel="noopener noreferrer"><span data-i18n="b3.link">GitHub 저장소</span><code>kunsanglee/ai-ready</code><svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a>
+  </div>
+</section>
+
+<section class="sec" id="afa" aria-labelledby="afa-title">
+  <div class="wrap">
+    <p class="kicker rv"><b>04</b><span data-i18n="b4.k">Agent-Friendly Architecture</span></p>
+    <h2 id="afa-title" class="rv" data-i18n="b4.t">근처 파일만 보고 고쳐도 깨지지 않게 짠 코드 구조</h2>
+    <p class="lead rv d1" data-i18n="b4.l">AI 코딩 에이전트는 요청 한 줄과 근처 파일 몇 개만 보고 일하고, 가까이 있는 코드를 따라 씁니다. 그렇게 고쳐도 전체가 맞게 돌도록 코드 구조와 자동 검사를 짰습니다. Cursor 의 Lauren Tan 이 영상에서 소개한 Dune 프로젝트 문서를 바탕으로 사내 에이전트 코드에 적용했습니다.</p>
+    <ol class="facts">
+      <li class="rv"><p data-i18n="b4.p1">새 외부 연동은 기능 폴더 하나에 목록 한 줄과 필수 파일 몇 개를 더해 붙이고, 세션·시작 코드는 고치지 않도록 했습니다. 연동 9개를 모두 이 틀에 맞췄습니다. 도구 목록처럼 함께 적어야 할 곳을 빠뜨리면 타입 검사나 테스트가 실패합니다.</p></li>
+      <li class="rv"><p data-i18n="b4.p2">기능 폴더는 환경 변수·네트워크·시계를 직접 쓰지 못하고, 시작 코드가 넘겨준 것만 씁니다.</p></li>
+      <li class="rv"><p data-i18n="b4.p3">이런 규칙을 경계 테스트 52개로 옮겼고(2026-10-05 기준), 실패 메시지가 코드를 어디에 둘지 알려 줍니다.</p></li>
+      <li class="rv"><p data-i18n="b4.p4">적용하면서 예외를 파일마다 개수까지 세어 테스트하게 했고, 2026-10-03 에 남은 예외를 모두 없앴습니다. 그 뒤로는 예외를 새로 두면 테스트가 실패합니다.</p></li>
+      <li class="rv"><p data-i18n-html="b4.p5_h">PR 리뷰에서 찾은, 검사를 피해 가는 방법 13가지(<code>eval</code>, <code>globalThis['process']</code> 등)를 테스트 사례로 고정했습니다.</p></li>
+      <li class="rv"><p data-i18n="b4.p6">push 전에 같은 검사를 돌립니다. 결함이 줄었는지는 재지 않았습니다.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec" id="writing" aria-labelledby="writing-title">
+  <div class="wrap">
+    <p class="kicker rv"><b>05</b></p>
+    <h2 id="writing-title" class="rv" data-i18n="b5.t">만들면서 판단한 것을 씁니다</h2>
+    <p class="series rv d1" data-i18n="b5.l">1편은 처음 만든 봇 이야기입니다. Claude Code 를 헤드리스 모드로 호출해 iOS·안드로이드·웹·백엔드 저장소의 코드를 읽고 답했습니다. 2편은 15주 운영 기록과, 기능이 늘면서 구조를 다시 짠 과정을 다룹니다.</p>
+    <ul class="rows-l">
+      <li class="rv"><a class="rowk" hreflang="ko" href="https://medium.com/@gosmdochee/%ED%8C%8C%ED%8A%B8-%EA%B2%BD%EA%B3%84%EB%A5%BC-%EB%84%98%EB%8A%94-%EC%BD%94%EB%93%9C-%EC%A7%88%EB%AC%B8%EC%97%90-%EB%8B%B5%ED%95%98%EB%8A%94-%EC%82%AC%EB%82%B4-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EB%A7%8C%EB%93%A4%EA%B8%B0%EA%B9%8C%EC%A7%80-1%ED%8E%B8-5f566069f38a" target="_blank" rel="noopener noreferrer">
+        <span class="kind" data-i18n="b5.p1.k">Medium&nbsp;· 2026.06&nbsp;· 14분&nbsp;분량&nbsp;· 시리즈&nbsp;1편</span>
+        <h3><span data-i18n="b5.p1.t">파트 경계를 넘는 코드 질문에 답하는 사내 AI 에이전트를 만들기까지</span><span class="ko" data-i18n="b5.ko"></span></h3>
+        <span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="sr" data-i18n="ui.newtab">(새 탭)</span>
+      </a></li>
+      <li class="rv d1"><a class="rowk" hreflang="ko" href="https://medium.com/@gosmdochee/%EC%82%AC%EB%82%B4-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EC%9E%AC%EC%84%A4%EA%B3%84%ED%95%9C-%EC%9D%B4%EC%95%BC%EA%B8%B0-2%ED%8E%B8-9f76459b6b5a" target="_blank" rel="noopener noreferrer">
+        <span class="kind" data-i18n="b5.p2.k">Medium&nbsp;· 2026.09&nbsp;· 32분&nbsp;분량&nbsp;· 시리즈&nbsp;2편</span>
+        <h3><span data-i18n="b5.p2.t">사내 AI 에이전트를 재설계한 이야기</span><span class="ko" data-i18n="b5.ko"></span></h3>
+        <span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="sr" data-i18n="ui.newtab">(새 탭)</span>
+      </a></li>
+    </ul>
+
+    <div class="reach rv" id="contact">
+      <h3 data-i18n="b5.c.t">에이전트 이야기라면 언제든</h3>
+      <p data-i18n="b5.c.l">만드는 중인 에이전트가 있다면 들려주세요.</p>
+      <ul class="cta" aria-label="연락처" data-i18n-attr="aria-label:ui.links">
+        <li><a class="btn btn-p" href="mailto:gosmdochee@gmail.com">Email</a></li>
+        <li><a class="btn" href="https://www.linkedin.com/in/kunsanglee" target="_blank" rel="noopener noreferrer">LinkedIn<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+        <li><a class="btn" href="https://github.com/kunsanglee" target="_blank" rel="noopener noreferrer">GitHub<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+        <li><a class="btn" href="https://medium.com/@gosmdochee" target="_blank" rel="noopener noreferrer">Medium<svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a></li>
+      </ul>
     </div>
   </div>
 </section>
 
+</div>
 </main>
 
-<footer id="site-footer">
-  © 2026 이건상 · <a href="https://github.com/kunsanglee/kunsanglee.github.io" target="_blank" rel="noopener noreferrer">이 페이지의 소스<span class="sr-only">(새 탭)</span></a>
+<footer>
+  <span data-i18n="foot.c">© 2026 이건상</span>
+  <a href="https://github.com/kunsanglee/kunsanglee.github.io" target="_blank" rel="noopener noreferrer"><span data-i18n="foot.src">이 페이지의 소스</span><span class="sr" data-i18n="ui.newtab">(새 탭)</span></a>
 </footer>
 
-<script>
-(function () {
-  var mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var targets = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+<div class="shade" aria-hidden="true"></div>
 
-  function revealAll() {
-    targets.forEach(function (el) { el.classList.add("visible"); });
-  }
-
-  if (!("IntersectionObserver" in window) || mq.matches) {
-    revealAll();
-  } else {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          io.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0, rootMargin: "0px 0px -15% 0px" });
-    targets.forEach(function (el) { io.observe(el); });
-
-    try {
-      mq.addEventListener("change", function (e) {
-        if (e.matches) { io.disconnect(); revealAll(); }
-      });
-    } catch (err) {
-      if (mq.addListener) {
-        mq.addListener(function (e) {
-          if (e.matches) { io.disconnect(); revealAll(); }
-        });
-      }
-    }
-  }
-
-  var navMap = {};
-  document.querySelectorAll(".nav-links a").forEach(function (a) {
-    var id = a.getAttribute("href").slice(1);
-    navMap[id] = a;
-  });
-  function clearActive() {
-    Object.keys(navMap).forEach(function (id) {
-      navMap[id].classList.remove("active");
-      navMap[id].removeAttribute("aria-current");
-    });
-  }
-
-  if ("IntersectionObserver" in window) {
-    var spy = new IntersectionObserver(function (entries) {
-      /* 밴드(뷰포트 40~45%)에 걸친 대상 중 문서에서 가장 아래인 것을 활성화한다.
-         contact 가 마지막 섹션이라 바닥에서도 이 경로로 "연결"이 활성된다. */
-      var hit = null;
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        if (!hit || (hit.compareDocumentPosition(entry.target) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-          hit = entry.target;
-        }
-      });
-      if (!hit) return;
-      /* 높은 창에서 바닥에 닿으면 contact 가 밴드에 못 미치므로 바닥 판정이 최종 결정자가 된다 */
-      if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1) {
-        hit = document.getElementById("contact");
-      }
-      clearActive();
-      var link = navMap[hit.id];
-      if (link) {
-        link.classList.add("active");
-        link.setAttribute("aria-current", "location");
-      }
-      /* 히어로(#top)가 밴드에 걸치면 활성 없음 */
-    }, { rootMargin: "-40% 0px -55% 0px", threshold: 0 });
-    Object.keys(navMap).forEach(function (id) {
-      var s = document.getElementById(id);
-      if (s) spy.observe(s);
-    });
-    var hero = document.getElementById("top");
-    if (hero) spy.observe(hero);
-
-    /* 높은 창에서 contact 가 밴드에 못 닿는 환경용 바닥 판정 — 정확한 바닥에서만 개입한다 */
-    window.addEventListener("scroll", function () {
-      if (navMap.contact &&
-          window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1) {
-        clearActive();
-        navMap.contact.classList.add("active");
-        navMap.contact.setAttribute("aria-current", "location");
-      }
-    }, { passive: true });
-  }
-})();
-</script>
-<script>
-/* 미네랄 흐름 배경 — dev.runningtier.com 의 WebGL 셰이더와 그리기 루프를 그대로 옮긴 것 */
-(function () {
-  var canvas = document.querySelector('.track-flow canvas');
-  if (!canvas) return;
-  var FRAG = 'precision highp float;\n' +
-    'uniform vec2 res,mouse;uniform float time;\n' +
-    'const vec3 dark=vec3(.027,.045,.07),mid=vec3(.18,.29,.34),bright=vec3(.69,.78,.75);\n' +
-    'float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}\n' +
-    'float field(vec2 q){return sin(q.x*1.6+q.y*.8+sin(q.y*1.25-time*.12)*1.5)+.52*sin(q.y*1.8-q.x*.45+time*.08);}\n' +
-    'void main(){vec2 uv=gl_FragCoord.xy/res;vec2 q=(uv-.5)*vec2(res.x/res.y,1.)*2.5;\n' +
-    'vec2 m=(mouse-.5)*vec2(res.x/res.y,1.)*2.5;vec2 d=q-m;float touch=exp(-dot(d,d)*1.3);\n' +
-    'q+=d*touch*.48;q+=vec2(sin(time*.07),cos(time*.06))*.19;\n' +
-    'float f=field(q);float edge=sin(f*2.1+q.x*.35);float light=smoothstep(-.4,.9,edge);\n' +
-    'vec3 col=mix(dark,mid,smoothstep(-.95,.2,edge));col=mix(col,bright,pow(light,3.)*.83);\n' +
-    'float rim=exp(-pow((edge-.72)*12.,2.));col+=bright*rim*.095;\n' +
-    'col+=(hash(gl_FragCoord.xy)-.5)*.04;col*=1.-.2*length(uv-.5);gl_FragColor=vec4(col,1.);}';
-  var gl = canvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'low-power' });
-  if (!gl) return;
-  var shaders = [], prog = gl.createProgram(), buf = gl.createBuffer();
-  function free() { shaders.forEach(function (s) { gl.deleteShader(s); }); gl.deleteBuffer(buf); gl.deleteProgram(prog); }
-  try {
-    if (!prog || !buf) throw new Error('GPU allocation');
-    var srcs = [[gl.VERTEX_SHADER, 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}'], [gl.FRAGMENT_SHADER, FRAG]];
-    for (var i = 0; i < srcs.length; i++) {
-      var sh = gl.createShader(srcs[i][0]);
-      if (!sh) throw new Error('Shader allocation');
-      shaders.push(sh); gl.shaderSource(sh, srcs[i][1]); gl.compileShader(sh);
-      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error('Shader compilation');
-      gl.attachShader(prog, sh);
-    }
-    gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error('Shader linking');
-    gl.useProgram(prog); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
-    var loc = gl.getAttribLocation(prog, 'p');
-    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  } catch (e) { free(); return; }
-  var uRes = gl.getUniformLocation(prog, 'res'), uMouse = gl.getUniformLocation(prog, 'mouse'), uTime = gl.getUniformLocation(prog, 'time');
-  var mq = matchMedia('(prefers-reduced-motion: reduce)');
-  var motion = !mq.matches, visible = true, lost = false, raf = 0, last = 0, t = 0, mouse = [0.5, 0.5], target = [0.5, 0.5];
-  function draw() {
-    if (lost) return;
-    gl.uniform2f(uRes, canvas.width, canvas.height); gl.uniform2f(uMouse, mouse[0], mouse[1]); gl.uniform1f(uTime, t);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-  }
-  function tick(now) {
-    raf = 0;
-    if (!(motion && visible && !document.hidden && !lost)) return;
-    if (now - last >= 32) {
-      t += Math.min((now - last) / 1000, 0.05); last = now;
-      mouse = mouse.map(function (v, k) { return v + (target[k] - v) * 0.09; });
-      draw();
-    }
-    raf = requestAnimationFrame(tick);
-  }
-  function restart() {
-    cancelAnimationFrame(raf); raf = 0;
-    if (motion && visible && !document.hidden && !lost) { last = performance.now(); raf = requestAnimationFrame(tick); }
-  }
-  function resize() {
-    var r = canvas.getBoundingClientRect();
-    if (!r.width || !r.height) return;
-    var dpr = Math.min(devicePixelRatio, 1.5, 1500 / r.width);
-    canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
-    gl.viewport(0, 0, canvas.width, canvas.height); draw();
-  }
-  window.addEventListener('pointermove', function (e) {
-    var r = canvas.getBoundingClientRect();
-    target = [(e.clientX - r.left) / r.width, 1 - (e.clientY - r.top) / r.height];
-  }, { passive: true });
-  mq.addEventListener('change', function () { motion = !mq.matches; restart(); });
-  document.addEventListener('visibilitychange', restart);
-  canvas.addEventListener('webglcontextlost', function () { lost = true; canvas.style.visibility = 'hidden'; restart(); });
-  new IntersectionObserver(function (en) { visible = en[0].isIntersecting; restart(); }).observe(canvas);
-  new ResizeObserver(resize).observe(canvas);
-  resize(); restart();
-})();
-</script>
+<p class="hint" aria-hidden="true"><span class="mouse" data-i18n="ui.hint.mouse">마우스를 움직이면 입자가 밀려나고 · 누르면 흩어집니다 · 스크롤하면 넘어갑니다</span><span class="touch" data-i18n="ui.hint.touch">누르면 흩어집니다 · 스크롤하면 넘어갑니다</span><span class="auto" data-i18n="ui.hint.auto">자동으로 넘어가는 중 · 스크롤하면 직접 넘길 수 있습니다</span></p>
+<div id="fps" hidden></div>
+<script>window.__langInit && window.__langInit();</script>
+<script src="assets/site.js" defer></script>
+<script src="assets/particles.js" defer></script>
 </body>
 </html>
