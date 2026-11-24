@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0807">
+<title>Building an in-house AI agent that answers code questions across teams — Kunsang Lee</title>
+<meta name="description" content="How I built a Slack agent that answers code questions across four teams&#x27; repositories: exploration over search, a zero-cost pilot, read-only data access, and a review loop for wrong answers.">
+<meta name="author" content="Kunsang Lee">
+<link rel="canonical" href="https://kunsanglee.github.io/writing/part-1/">
+<link rel="alternate" hreflang="ko" href="https://medium.com/p/5f566069f38a">
+<link rel="alternate" hreflang="en" href="https://kunsanglee.github.io/writing/part-1/">
+<meta property="og:title" content="Building an in-house AI agent that answers code questions across teams">
+<meta property="og:description" content="How I built a Slack agent that answers code questions across four teams&#x27; repositories: exploration over search, a zero-cost pilot, read-only data access, and a review loop for wrong answers.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://kunsanglee.github.io/writing/part-1/">
+<meta property="og:image" content="https://kunsanglee.github.io/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The name Kunsang Lee drawn in particles">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://kunsanglee.github.io/assets/og-image.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0807'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23ffa84d'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23f6ecdf'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/writing/article.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <a class="mark" href="/?lang=en">Kunsang Lee</a>
+  <nav aria-label="Site"><a href="/?lang=en#writing">Writing</a><a href="/?lang=en#work">agent-colleague</a></nav>
+</header>
+<main id="main" tabindex="-1">
+<article>
+<header class="head">
+  <p class="kicker">Part 1 of 2 · <time datetime="2026-06">June 2026</time></p>
+  <h1>Building an in-house AI agent that answers code questions across teams</h1>
+  <p class="meta">By Kunsang Lee. Translated from the <a href="https://medium.com/p/5f566069f38a" hreflang="ko" rel="noopener">Korean original on Medium</a>; it describes the system as it was at the time of writing.</p>
+</header>
+<div class="prose">
+<p>Hi, I’m Kunsang Lee, a backend developer at Ratel &amp; Partners, where I work on Cre8orclub, a creator-matching platform. Our service is split across four teams (backend, Android, iOS, and web), each with its own repository. This post is about an in-house AI agent that answers, immediately and right in Slack, the code questions that cross those team boundaries. Part 1 covers the annoyance it started from, why I chose agentic exploration over search, how I got a pilot running at zero cost without a single server, and the loop that feeds wrong answers back into the agent. I’ll report actual results in Part 2, after watching it for a while.</p>
+<figure class="capture"><a href="/writing/img/p1-channel-guide.png" aria-label="Open full-size image: The usage guide people see when they join the channel"><img src="/writing/img/p1-channel-guide.png" width="1400" height="418" alt="The usage guide people see when they join the channel (Slack screenshot, in Korean)" loading="lazy" decoding="async"></a><figcaption>The usage guide people see when they join the channel. Post a
+question and the agent explores the code in all four repositories to
+answer it; if the answer is wrong, you can mention the agent and correct
+it.</figcaption></figure>
+
+<h2 id="every-time-i-needed-to-check-another-teams-code-i-had-to-find-a-person">Every time I needed to check another team’s code, I had to find a person</h2>
+<p>As a backend developer, when I needed to know which API a given screen calls, I asked an Android or iOS developer or dug through unfamiliar client code myself. It was the same in the other direction. A client developer who wanted to know why a value came back the way it did had to find a backend developer.</p>
+<p>The questions themselves were small. The problem was that they always depended on another team’s developer having time. If that person was in a meeting, the answer came after the meeting, and the person asking was stuck until then. Asking also felt like an imposition, and the smaller the question, the more people hesitated.</p>
+<p>So was there a way to check the code in a repository without asking anyone?</p>
+<h2 id="i-chose-exploration-over-search">I chose exploration over search</h2>
+<p>I started by weighing three options. The first was a commercial code search product such as Sourcegraph. These do multi-repository search and go-to-definition well, but they charge per user, which was too much to pay just to search four repositories. The second was embedding search, which turns the meaning of code into numbers and finds similar pieces. I ruled it out even though I knew there are ways to re-index only the files that changed. As I’ll explain below, I wanted each question to be able to pick the branch it looks at, and that would have meant maintaining a separate index per branch. I judged that the maintenance cost would outweigh what search gave us. The third was querying the repository host’s API directly, but a single question triggered dozens of searches and file reads, which hit the rate limit.</p>
+<p>What I chose instead was to have an AI agent explore the repositories directly on local clones. It narrows down candidates with grep, opens and reads files, and follows the path from a screen to the call site, the way a person looks for code. The clones act as a cache for exploration: when a question comes in, the agent syncs the repositories and then explores. When questions pile up, syncs are batched at five-minute intervals, so answers are effectively based on the latest code.</p>
+<p>I didn’t build this agent from scratch. I run Claude Code, a coding agent that runs in the terminal, in headless mode, where a single command asks a question and gets an answer back with no interactive screen. I allowed only file reading and search as tools, and explicitly blocked file writes and web access. From the start, the agent had no path to modify code or send it anywhere. There is exactly one exception, a tool for querying data, which I cover separately below.</p>
+<p>The difference between search and exploration matters here. Search just returns a list of files containing the word “login.” Exploration opens the screen code, sees which function it calls and which API that leads to, and follows the evidence one step at a time, as a person would. When the agent says “this screen calls this API,” the answer comes with the path from the screen file to the call site. The person asking can click through and check it. And if you follow up in the answer thread, the agent takes the next question with the previous exchange still in context, so a check that takes more than one round can continue in the same place.</p>
+<div class="omitted" role="note"><p><span class="tag">Screenshot not reproduced here</span> Android was receiving the <code>id</code> field of the discovery
+response as a Long and iOS as an Int. When the person asking corrected
+the field name, the agent re-checked the code and revised its answer,
+and went on to point out, with file paths as evidence, that the server
+can send a negative Long and that values beyond the Int range could be
+truncated on iOS. A string search could not have produced this; it is
+the result of tracing.</p></div>
+
+<p>So where could this run, if I had no server for it?</p>
+<h2 id="i-ran-the-pilot-at-zero-cost-without-a-server">I ran the pilot at zero cost, without a server</h2>
+<p>The agent has to receive Slack messages and answer them, so it needs a process that is always up somewhere. Normally you’d start by setting up a dedicated server for that. I didn’t, because this was a proof of concept whose usefulness hadn’t been shown yet. I decided up front on two stages: in stage one, run it on my own machine at no extra cost and test it; in stage two, if answer quality and user feedback were good enough, move it to the organization’s infrastructure.</p>
+<p>Running on a personal machine left one problem to solve. A Slack bot usually needs a public address so that Slack can reach your server from outside. Instead, I had the agent open the connection to Slack first and receive messages over that connection. Slack officially supports this under the name Socket Mode. It works on a personal machine with no public address, and it removes the security burden of opening a port to the internet.</p>
+<p>AI calls went through the Claude subscription I was already using. This also didn’t create a new route for company code to reach an external model. The team already uses the same tool in day-to-day development, so it stays within what had already been agreed.</p>
+<p>There are limits, of course. Because the agent holds the connection, the connection drops when my machine sleeps, and questions that arrive in the meantime are missed. So I keep the machine from sleeping to keep the agent up. I knew from the start that a personal machine was not a foundation that would last.</p>
+<p>At first, with a single personal machine, questions were handled one at a time in sequence. Now it takes up to three at once. While a question waits its turn the agent marks the message with an hourglass emoji, and when it starts reading, with an eyes emoji. Each answer has a ten-minute time limit. I’ve been calling these answers immediate; more precisely, they arrive faster than waiting for someone’s meeting to end.</p>
+<p>I didn’t want to decide by feel when it was time to move to stage two. So for every question the agent logs cost, elapsed time, and token usage, and totals them in a weekly report. You may wonder what “cost” means on a subscription: the tool I run it with returns, for each answer, what the same usage would have cost under pay-as-you-go pricing. The sum of those figures is the expected cost of running on the organization’s infrastructure, so it becomes the basis for the migration decision.</p>
+<div class="omitted" role="note"><p><span class="tag">Screenshot not reproduced here</span> One command in the channel shows the last seven days’ question count,
+participants, response times, cost, and tokens. Seeing which questions
+come up most also gives me material for improving the agent.</p></div>
+
+<p>I also added ways to save cost. That pay-as-you-go equivalent grows with every file the AI opens and reads, so messages that aren’t code questions never start an expensive exploration in the first place. Small talk and thank-yous are filtered out first by Haiku, a lightweight model, and messages such as announcements that mention a person are blocked before any model is called.</p>
+<p>With cost under control, accuracy was next. If you hand an agent four entire repositories, where should it start reading?</p>
+<h2 id="i-made-the-agent-read-less-and-find-the-right-thing">I made the agent read less and find the right thing</h2>
+<p>Each repository is structured differently, and there are traps where the name people use for a screen doesn’t match the name in the code. For example, what users call the home screen is sometimes a different module in the code. Left alone, the agent answers with some unrelated place that merely has a similar name.</p>
+<p>So I worked on narrowing the search space. I set up four things: an entry-point document per repository, a dictionary linking the screen names people use to code locations, a glossary linking the domain terms people use to concepts in the code, and an index that gathers the client repositories’ API calls in one place. The index is regenerated automatically on every sync. Traps like the one above are written into the screen-name dictionary ahead of time so the same mistake isn’t repeated. Instead of searching everything, the agent starts from these curated entry points. Accuracy improved when I narrowed the search space rather than widened it.</p>
+<p>Even so, sometimes the question itself is ambiguous: the same name refers to several features, and the question alone doesn’t say which. In that case, instead of guessing, the agent asks one clarifying question, offering the most likely interpretation as its recommendation. When the reply comes, it answers under that interpretation right away; it doesn’t keep asking until everything is agreed. When the ambiguity isn’t worth a question but the reading could still go more than one way, the agent states in one line which interpretation it answered under.</p>
+<div class="omitted" role="note"><p><span class="tag">Screenshot not reproduced here</span> For the ambiguous question “Why aren’t notifications coming?”, the
+agent asked a clarifying question with the most likely interpretation as
+its recommendation, and when the person picked option 2 it answered with
+candidate causes in priority order. I’ve left in the part where the
+short reply “2” was caught by the small-talk filter twice and only got
+through on the third try.</p></div>
+
+<p>I also let each question say which version of the code it should be answered from. By default the agent looks at each team’s development integration branch. If you need the code that is live in production, you add a line saying so, and for an in-progress branch that hasn’t been merged yet, you name the team and the branch and the agent fetches that branch to answer. This lets a single line describe situations where teams are at different stages, such as a feature the backend has already deployed while iOS is still developing it. There is only one clone of each repository, so once questions run concurrently, those that need different branches could collide. So questions that only read the default branch run concurrently, while questions that need to switch branches, and repository syncs, are made to run alone for that time. Afterwards the clone is put back on the default branch, so concurrent questions always read the same baseline.</p>
+<p>Just as important as finding the right code was who the answer was for. For a developer, code paths and technical terms are the evidence; for a product planner or a designer, the same answer gets in the way. So the agent changes its vocabulary depending on the asker’s job. It tells developers, product planners, and designers apart by the role shown in their Slack display name. Developers get code-centric answers; everyone else gets the conclusion first in everyday language, with file paths collected at the end for reference. If it can’t tell who is asking, everyday language is the default. Either way, the evidence comes from the code.</p>
+<p>But can every question be answered just by exploring code well?</p>
+<h2 id="when-code-couldnt-answer-i-let-it-look-at-the-data">When code couldn’t answer, I let it look at the data</h2>
+<p>A question like “what does the actual distribution of this value look like?” can’t be answered from code alone. In fact, requests like this were common before the agent existed. Planners asked developers to run data queries, or wanted to know the table structure: which information is stored and managed under which fields. Client developers, while developing or testing, asked backend developers to check how the data they had just created was actually stored. Like code questions, all of these depended on someone who could answer having the time.</p>
+<p>If this had been about modifying data, deleting it, or changing its structure, I wouldn’t have allowed it. But I judged that read-only queries save everyone’s time when they don’t go through a person. So I gave the agent direct query access, limited to the development database, and granted it as cautiously as I could.</p>
+<p>You might ask whether it’s fine to give an agent database access, even to a development database. I didn’t give the agent a shell. It can use only one query-only tool that I built beforehand, and that tool has several layers of safeguards.</p>
+<ul>
+<li>It is pinned to the development database, which rules out any path to production.</li>
+<li>It allows only read queries and rejects writes and schema changes.</li>
+<li>The database itself enforces read-only access as a second barrier.</li>
+<li>Query time and the number of result rows are capped.</li>
+</ul>
+<p>The password never appears in command arguments or logs; the connection is made automatically with credentials registered on the machine in advance. There is also a rule not to query columns holding personally identifiable information, such as email, phone number, or real name. Looking up a member by nickname to check their account status doesn’t fall under this rule.</p>
+<p>Of course, it is a development database, so its data doesn’t match the real distribution in production. What this tool can answer is the shape and combinations in which data is stored; questions that need production figures are still out of scope. When the agent answers from data, it also states in one line that the figures come from development.</p>
+<div class="omitted" role="note"><p><span class="tag">Screenshot not reproduced here</span> An answer that found a member by nickname, checked the account
+status, and then counted that member’s posts by type, split by whether
+they were deleted. This is a question you can’t answer from code and can
+only answer by looking at the data that is actually there; the agent
+answered it by querying the development database read-only.</p></div>
+
+<p>Because the agent was now answering from data, and this is an area where allowing the wrong thing becomes an incident, I put the most effort into verification. I turned it on only after confirming, one by one, that writes, schema changes, attempts to send several statements at once, and writes hidden inside a read query were all rejected.</p>
+<figure class="capture"><a href="/writing/img/p1-drop-refusal.png" aria-label="Open full-size image: The agent refusing a request to drop tables"><img src="/writing/img/p1-drop-refusal.png" width="1400" height="242" alt="The agent refusing a request to drop tables (Slack screenshot, in Korean)" loading="lazy" decoding="async"></a><figcaption>A destructive request like “drop all the tables” is refused by the
+agent at the first step. It replies that it works read-only, and the
+query tool itself lets only read queries through.</figcaption></figure>
+
+<p>Even with all of this in place, the agent gets answers wrong. What then?</p>
+<h2 id="i-added-a-loop-that-feeds-wrong-answers-back-into-the-agent">I added a loop that feeds wrong answers back into the agent</h2>
+<p>I didn’t want to stop at building the tool. I wanted the agent to get more accurate as question data accumulated. So every question and answer is logged, and the thumbs-up and thumbs-down emoji reactions on answers are collected as ratings. Each time a set number of questions accumulates, the system automatically generates statistics by question type, candidate FAQs, draft handling guides, and candidate glossary entries.</p>
+<p>There is one safeguard here that matters most: these drafts are not applied to the agent’s knowledge automatically. Wrong answers that pile up unverified would contaminate every later answer. Human review is the quality gate.</p>
+<p>“The agent’s knowledge” here doesn’t mean retraining the model. It means Markdown documents such as the screen-name dictionary, the glossary, and the question-type guides mentioned above. The agent reads these documents fresh for every question and merges them into its instructions, so once a reviewed guide is added to the documents, it applies from the next question on, without a restart.</p>
+<p>The glossary grows through the agent itself. If, while answering, it confirms a new name-to-code mapping in the code, it leaves an invisible note at the end of its answer. Those notes accumulate as drafts and go into the glossary through the same human review. The principle that unreviewed drafts are not trusted applies here too.</p>
+<p>The strongest signal was a correction written by a person. When an answer is wrong and someone mentions the agent in that thread and writes “it’s not this, it’s that,” the agent re-checks the code on the spot and gives a corrected answer, and at the same time records separately what it got wrong and why. That record becomes a correction candidate that is handled first the next time drafts are generated. The answer is corrected immediately and the correction is kept, in one step. A written correction was a far more precise signal than a single thumbs-up or thumbs-down. The ID type thread shown earlier is a case of this correction at work: when the person asking corrected the field name, the agent re-checked the code right there and revised its answer, and the case was also added to the question-type guide as a new type.</p>
+<p>So that I don’t lose track of which feedback led to which improvement, I keep a separate improvement log that records problem, cause, fix, and effect in one place. Incidents during operation go in the same format. Once, the weekly statistics report carried over a “notify everyone” marker that had been in an old question, and simply posting the report sent a notification to the whole channel. The cause and fix are written in that document so we don’t fall into the same trap again.</p>
+<h2 id="im-still-watching-for-results">I’m still watching for results</h2>
+<p>Those are the mechanisms I set up in Part 1. Did they work? I don’t know yet. The pilot hasn’t been running long, and to say anything meaningful about results I need to watch, over time, what people actually ask, how often, and whether the answers helped.</p>
+<p>That’s why this post makes no claims that time was saved or productivity went up. What I have decided is what to watch: how many people actually use it, the ratio of thumbs-up to thumbs-down, which types of questions recur, and whether that data makes the agent more accurate. Once those numbers accumulate, I’ll also be able to say with numbers whether it’s time to move to the organization’s infrastructure.</p>
+<p>What I’m hoping for is clear: that checks that used to take up another team’s developer’s time become questions to the agent, and that people stop hesitating over small questions.</p>
+<h2 id="part-2-will-have-the-data">Part 2 will have the data</h2>
+<p>In Part 2, I plan to write about how the metrics I set out above actually turned out, and where the agent got stuck. A story about building a tool isn’t finished when the tool is built; it’s finished after people have used it.</p>
+<p>My other work and writing are collected at <a href="https://kunsanglee.github.io/">kunsanglee.github.io</a>.</p>
+
+</div>
+</article>
+<nav class="pager" aria-label="Series">
+  <a href="/writing/part-2/"><span class="k">Part 2</span><span class="t">How I redesigned our in-house AI agent</span></a>
+  <a href="/?lang=en"><span class="k">Home</span><span class="t">Kunsang Lee</span></a>
+</nav>
+</main>
+<footer class="foot"><p>© Kunsang Lee · <a href="/?lang=en">kunsanglee.github.io</a> · <a href="https://github.com/kunsanglee">GitHub</a></p></footer>
+</body>
+</html>

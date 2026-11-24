@@ -1,0 +1,95 @@
+<svg id="fig-ag-before-after" viewBox="-2 -2 680 387" width="1360" height="774" role="img" aria-labelledby="fig-ag-before-after-title fig-ag-before-after-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-before-after-title">Before and after the redesign: from rules that interpret approval to a policy check just before execution</title>
+<desc id="fig-ag-before-after-desc">Before the redesign, the Part 1 agent kept task stages in a table and moved to the next stage only when a fixed approval phrase arrived. Each added flow added stages and branches with it. After the redesign, the model reads what people mean and calls a tool; the policy function looks only at session facts and, for production DB queries, the estimated cost, and decides allow or deny. On a deny, it returns the reason to the model.</desc>
+<defs><marker id="fig-ag-before-after-ah-allow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e7d4f"/></marker><marker id="fig-ag-before-after-ah-deny" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b23a32"/></marker><marker id="fig-ag-before-after-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker><marker id="fig-ag-before-after-ah-model" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4fbb"/></marker><marker id="fig-ag-before-after-ah-store" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5b6577"/></marker></defs>
+<style>#fig-ag-before-after text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
+#fig-ag-before-after .hd{font-size:12px;font-weight:700;fill:#0f172a}
+#fig-ag-before-after .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-before-after .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-before-after .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-before-after .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-before-after .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-before-after .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-before-after .lg{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-before-after .vl{font-size:11px;font-weight:600;fill:#334155}</style>
+<rect x="-2" y="-2" width="680" height="387" fill="#ffffff"/>
+<path d="M104,66 L127,66" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-before-after-ah-grey)"/>
+<path d="M320,66 L343,66" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-before-after-ah-grey)"/>
+<path d="M504,66 L527,66" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-before-after-ah-grey)"/>
+<line x1="0" y1="142" x2="676" y2="142" stroke="#e2e8f0" stroke-width="1"/>
+<path d="M104,214 L127,214" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-before-after-ah-grey)"/>
+<path d="M296,202 L359,202" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-before-after-ah-model)"/>
+<path d="M360,228 L297,228" fill="none" stroke="#b23a32" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-before-after-ah-deny)"/>
+<text class="lb" x="328" y="244" text-anchor="middle" style="fill:#9a2f28">deny reason</text>
+<path d="M520,194 L551,194" fill="none" stroke="#2e7d4f" stroke-width="1" marker-end="url(#fig-ag-before-after-ah-allow)"/>
+<path d="M520,234 L551,234" fill="none" stroke="#b23a32" stroke-width="1" marker-end="url(#fig-ag-before-after-ah-deny)"/>
+<path d="M380,268 L380,251" fill="none" stroke="#5b6577" stroke-width="1" marker-end="url(#fig-ag-before-after-ah-store)"/>
+<path d="M488,268 L488,251" fill="none" stroke="#5b6577" stroke-width="1" marker-end="url(#fig-ag-before-after-ah-store)"/>
+<text class="hd" x="0" y="12">Before</text>
+<text class="hs" x="45" y="12">Part 1 agent: code managed the task stages</text>
+<rect x="0" y="26" width="104" height="80" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="10" y="45" style="fill:#8a5300">Person's post</text>
+<text class="sb" x="10" y="60">thread reply</text>
+<rect x="128" y="26" width="192" height="80" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="nm" x="138" y="45" style="fill:#3d4554">Task stages (state machine)</text>
+<text class="sb" x="138" y="60">awaiting approval →</text>
+<text class="sb" x="138" y="75">in progress → done;</text>
+<text class="sb" x="138" y="90">accepted wording set per stage</text>
+<rect x="344" y="26" width="160" height="80" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="354" y="45" style="fill:#0f172a">Phrase match (regex)</text>
+<text class="sb" x="354" y="60">counted as approval only</text>
+<text class="sb" x="354" y="75">when the exact phrase</text>
+<text class="sb" x="354" y="90">“approve &lt;code&gt;” was sent</text>
+<rect x="528" y="26" width="148" height="80" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="538" y="45" style="fill:#0f172a">Next stage</text>
+<text class="sb" x="538" y="60">set to in progress</text>
+<text class="sb" x="0" y="128">Each added flow (tickets, code work) added stages and branches with it</text>
+<text class="hd" x="0" y="164">After</text>
+<text class="hs" x="37" y="164">September 2026 redesign: code decides only whether a tool may run</text>
+<rect x="0" y="178" width="104" height="72" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="10" y="197" style="fill:#8a5300">Person's post</text>
+<text class="sb" x="10" y="212">thread reply</text>
+<rect x="128" y="178" width="168" height="72" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="138" y="197" style="fill:#5a3fa6">Judges meaning (model)</text>
+<text class="sb" x="138" y="212">reads whether it is an</text>
+<text class="sb" x="138" y="227">approval or a revision,</text>
+<text class="sb" x="138" y="242">then calls a tool</text>
+<rect x="361" y="179" width="158" height="70" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="nm" x="370" y="197" style="fill:#0b5e4f">Policy function</text>
+<text class="mn" x="510" y="197" text-anchor="end" style="fill:#0b5e4f">decide()</text>
+<text class="sb" x="370" y="212">from tool, arguments and</text>
+<text class="sb" x="370" y="227">session facts:</text>
+<text class="sb" x="370" y="242">allow or deny</text>
+<rect x="552" y="178" width="124" height="32" rx="6" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
+<text class="nm" x="562" y="199" style="fill:#25663f">Allow → run</text>
+<rect x="552" y="218" width="124" height="32" rx="6" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="nm" x="562" y="239" style="fill:#9a2f28">Deny</text>
+<rect x="192" y="268" width="200" height="76" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="nm" x="202" y="287" style="fill:#3d4554">Session facts</text>
+<text class="sb" x="202" y="302">who posted where and when,</text>
+<text class="sb" x="202" y="317">whether the agent posted it,</text>
+<text class="sb" x="202" y="332">execution record</text>
+<rect x="408" y="268" width="268" height="91" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="nm" x="418" y="287" style="fill:#3d4554">Estimated cost · production DB only</text>
+<text class="sb" x="418" y="302">Measured from the query plan (EXPLAIN).</text>
+<text class="sb" x="418" y="317">Light: run. Heavy: run only if a person's</text>
+<text class="sb" x="418" y="332">reply or 👍 reaction comes after</text>
+<text class="sb" x="418" y="347">the agent's post. Not measurable: deny.</text>
+<line x1="0" y1="365" x2="676" y2="365" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="0" y="368" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="18" y="378">People, Slack</text>
+<rect x="90" y="368" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="108" y="378">Model</text>
+<rect x="150" y="368" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="168" y="378">Bot code</text>
+<rect x="221" y="368" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="239" y="378">Policy, checks</text>
+<rect x="314" y="368" width="12" height="12" rx="2" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="lg" x="332" y="378">Storage</text>
+<rect x="380" y="368" width="12" height="12" rx="2" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
+<text class="lg" x="398" y="378">Allow, run</text>
+<rect x="456" y="368" width="12" height="12" rx="2" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="lg" x="474" y="378">Deny</text>
+<line x1="511" y1="374" x2="535" y2="374" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="lg" x="541" y="378">deny reason returned</text>
+</svg>

@@ -1,0 +1,83 @@
+<svg id="fig-ag-sdk" viewBox="-2 -2 680 404" width="1360" height="808" role="img" aria-labelledby="fig-ag-sdk-title fig-ag-sdk-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-sdk-title">Where the bot code meets the Claude Agent SDK</title>
+<desc id="fig-ag-sdk-desc">One thread session runs one SDK query(). The bot code passes the run options, decides in a hook whether to allow each tool the model calls, runs the bot-only tools in an MCP server inside the bot process, records the session ID and usage from the message stream, and feeds the next post into the same input queue or continues with resume. The loop of reading, calling tools, and deciding again is run by the SDK.</desc>
+<defs><marker id="fig-ag-sdk-ah-bot" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1c2433"/></marker><marker id="fig-ag-sdk-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker><marker id="fig-ag-sdk-ah-policy" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0f7a66"/></marker></defs>
+<style>#fig-ag-sdk text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
+#fig-ag-sdk .hd{font-size:12px;font-weight:700;fill:#0f172a}
+#fig-ag-sdk .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-sdk .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-sdk .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-sdk .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-sdk .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-sdk .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-sdk .lg{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-sdk .vl{font-size:11px;font-weight:600;fill:#334155}</style>
+<rect x="-2" y="-2" width="680" height="404" fill="#ffffff"/>
+<line x1="110" y1="40" x2="110" y2="372" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="470" y1="40" x2="470" y2="372" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+<rect x="60" y="112" width="616" height="166" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="60" y="112" width="40" height="18" rx="2" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text class="lb" x="80" y="125" text-anchor="middle">loop</text>
+<text class="ss" x="486" y="125">SDK repeats until the turn ends</text>
+<path d="M110,84 L465,84" fill="none" stroke="#1c2433" stroke-width="1" marker-end="url(#fig-ag-sdk-ah-bot)"/>
+<rect x="162" y="65" width="256" height="14" fill="#ffffff"/>
+<text class="lb" x="290" y="76" text-anchor="middle">① Run options: tool list, instructions, session ID, sandbox</text>
+<rect x="204" y="90" width="171" height="14" fill="#ffffff"/>
+<text class="mn" x="290" y="101" text-anchor="middle">query({ prompt, options })</text>
+<path d="M465,152 L111,152" fill="none" stroke="#1c2433" stroke-width="1" marker-end="url(#fig-ag-sdk-ah-bot)"/>
+<rect x="200" y="133" width="179" height="14" fill="#f8fafc"/>
+<text class="lb" x="290" y="144" text-anchor="middle">② On every tool call: may this tool run?</text>
+<rect x="195" y="158" width="190" height="14" fill="#f8fafc"/>
+<text class="mn" x="290" y="169" text-anchor="middle">hooks.PreToolUse · canUseTool</text>
+<path d="M110,198 L465,198" fill="none" stroke="#0f7a66" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-sdk-ah-policy)"/>
+<rect x="227" y="177" width="126" height="14" fill="#f8fafc"/>
+<text class="lb" x="290" y="188" text-anchor="middle" style="fill:#0b5e4f">allow or deny (with reason)</text>
+<path d="M465,232 L111,232" fill="none" stroke="#1c2433" stroke-width="1" marker-end="url(#fig-ag-sdk-ah-bot)"/>
+<rect x="178" y="213" width="223" height="14" fill="#f8fafc"/>
+<text class="lb" x="290" y="224" text-anchor="middle">③ Bot-only tools: post reply, ticket, PR, DB query</text>
+<rect x="198" y="238" width="183" height="14" fill="#f8fafc"/>
+<text class="mn" x="290" y="249" text-anchor="middle">mcpServers · strictMcpConfig</text>
+<path d="M110,272 L465,272" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-sdk-ah-grey)"/>
+<rect x="117" y="253" width="67" height="14" fill="#f8fafc"/>
+<text class="lb" x="120" y="264">result or error</text>
+<path d="M465,308 L111,308" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-sdk-ah-grey)"/>
+<rect x="159" y="289" width="262" height="14" fill="#ffffff"/>
+<text class="lb" x="290" y="300" text-anchor="middle">④ Message stream: store session ID, record usage per turn</text>
+<path d="M110,344 L465,344" fill="none" stroke="#1c2433" stroke-width="1" marker-end="url(#fig-ag-sdk-ah-bot)"/>
+<rect x="164" y="325" width="251" height="14" fill="#ffffff"/>
+<text class="lb" x="290" y="336" text-anchor="middle">⑤ Next post: same input queue if still running; if ended,</text>
+<rect x="268" y="350" width="44" height="14" fill="#ffffff"/>
+<text class="mn" x="290" y="361" text-anchor="middle">resume</text>
+<line x1="0" y1="382" x2="676" y2="382" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="30" y="0" width="160" height="40" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="110" y="17" text-anchor="middle" style="fill:#0f172a">Bot code</text>
+<text class="mn" x="110" y="32" text-anchor="middle">agent-colleague</text>
+<rect x="390" y="0" width="160" height="40" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="1"/>
+<text class="nm" x="470" y="17" text-anchor="middle" style="fill:#334155">Claude Agent SDK</text>
+<text class="sb" x="470" y="32" text-anchor="middle">CLI as a child process</text>
+<rect x="466" y="80" width="8" height="280" fill="#f1f5f9" stroke="#64748b" stroke-width="1"/>
+<text class="nm" x="488" y="82" style="fill:#5a3fa6">Model call</text>
+<text class="ss" x="488" y="97">via subscription sign-in</text>
+<text class="nm" x="488" y="152" style="fill:#334155">Runs built-in tools</text>
+<text class="ss" x="488" y="167">file reading, search, shell</text>
+<text class="ss" x="488" y="182">(+ exploration subagent)</text>
+<text class="ss" x="488" y="197">inside the sandbox</text>
+<text class="ss" x="488" y="232">sent to the MCP server</text>
+<text class="ss" x="488" y="247">inside the bot process</text>
+<text class="ss" x="488" y="300">runs the next turn with the</text>
+<text class="ss" x="488" y="315">earlier conversation in context;</text>
+<text class="ss" x="488" y="336">can also start from a copy of</text>
+<text class="ss" x="488" y="351">a channel session's history (fork)</text>
+<rect x="0" y="385" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="18" y="395">Bot code</text>
+<rect x="71" y="385" width="12" height="12" rx="2" fill="#f1f5f9" stroke="#64748b" stroke-width="1"/>
+<text class="lg" x="89" y="395">SDK (runs the CLI)</text>
+<rect x="184" y="385" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="202" y="395">Model call (text colour)</text>
+<rect x="317" y="385" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="335" y="395">Policy, checks</text>
+<line x1="410" y1="391" x2="434" y2="391" stroke="#94a3b8" stroke-width="1"/>
+<text class="lg" x="440" y="395">call</text>
+<line x1="469" y1="391" x2="493" y2="391" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="lg" x="499" y="395">return</text>
+</svg>

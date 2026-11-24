@@ -1,0 +1,89 @@
+<svg id="fig-ag-autofix" viewBox="-2 -2 680 312" width="1360" height="624" role="img" aria-labelledby="fig-ag-autofix-title fig-ag-autofix-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-autofix-title">How an error alert goes through analysis, a fix PR, and deployment to the staging server</title>
+<desc id="fig-ag-autofix-desc">When a Sentry alert is posted, one session is created per issue and the cause analysis is posted in the thread. If the repository is not one where automatic fixes are allowed, it stops at the analysis. If it is, the model finds the commit that caused the error, a code session opens a fix PR, the fix commit is cherry-picked onto the deploy branch, and when all development builds succeed it is deployed on to the staging server. The deploy tool does not accept the production server.</desc>
+<defs><marker id="fig-ag-autofix-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker><marker id="fig-ag-autofix-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker><marker id="fig-ag-autofix-ah-policy" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0f7a66"/></marker></defs>
+<style>#fig-ag-autofix text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
+#fig-ag-autofix .hd{font-size:12px;font-weight:700;fill:#0f172a}
+#fig-ag-autofix .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-autofix .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-autofix .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-autofix .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-autofix .mn{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-autofix .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-autofix .lg{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-autofix .vl{font-size:11px;font-weight:600;fill:#334155}</style>
+<rect x="-2" y="-2" width="680" height="312" fill="#ffffff"/>
+<path d="M112,36 L131,36" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-autofix-ah-grey)"/>
+<path d="M244,36 L263,36" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-autofix-ah-grey)"/>
+<path d="M376,36 L399,36" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-autofix-ah-grey)"/>
+<path d="M512,36 L539,36" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-autofix-ah-grey)"/>
+<rect x="516" y="19" width="18" height="14" fill="#ffffff"/>
+<text class="ss" x="525" y="30" text-anchor="middle">No</text>
+<path d="M456,72 L456,90 A6,6 0 0 1 450,96 L79,96 A6,6 0 0 0 73,102 L73,111" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-autofix-ah-policy)"/>
+<rect x="461" y="77" width="24" height="14" fill="#ffffff"/>
+<text class="ss" x="464" y="88" fill="#0b5e4f">Yes</text>
+<rect x="84" y="76" width="360" height="14" fill="#ffffff"/>
+<text class="ss" x="264" y="87" text-anchor="middle" fill="#0b5e4f">policy function checks only the execution record, not a person's reply</text>
+<path d="M146,158 L165,158" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-autofix-ah-grey)"/>
+<path d="M312,158 L331,158" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-autofix-ah-grey)"/>
+<path d="M478,158 L497,158" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-autofix-ah-grey)"/>
+<line x1="0" y1="290" x2="676" y2="290" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="0" y="0" width="112" height="72" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="10" y="19" fill="#8a5300">1 Sentry alert</text>
+<text class="ss" x="10" y="34">posted by another</text>
+<text class="ss" x="10" y="49">bot in the alert</text>
+<text class="ss" x="10" y="64">channel</text>
+<rect x="132" y="0" width="112" height="72" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="142" y="19" fill="#0f172a">2 One session</text>
+<text class="nm" x="142" y="34" fill="#0f172a">per issue</text>
+<text class="ss" x="142" y="49">repeat in 30 min:</text>
+<text class="ss" x="142" y="64">logged only</text>
+<rect x="264" y="0" width="112" height="72" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="274" y="19" fill="#5a3fa6">3 Cause analysis</text>
+<text class="ss" x="274" y="34">reads the code,</text>
+<text class="ss" x="274" y="49">posts in the thread</text>
+<path d="M456,0 L512,36 L456,72 L400,36 Z" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="nm" x="456" y="32" text-anchor="middle" fill="#0b5e4f">4 Autofix</text>
+<text class="ss" x="456" y="46" text-anchor="middle">allowed repo?</text>
+<rect x="540" y="0" width="136" height="72" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="550" y="19" fill="#0f172a">Stops at analysis</text>
+<text class="ss" x="550" y="33">fixing is left to a person</text>
+<text class="ss" x="550" y="47">empty allowlist: every</text>
+<text class="ss" x="550" y="61">alert ends up here</text>
+<rect x="0" y="112" width="146" height="92" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="10" y="131" fill="#5a3fa6">5 Causing commit</text>
+<text class="ss" x="10" y="146">traces back to the commit</text>
+<text class="ss" x="10" y="160">that caused it and the</text>
+<text class="ss" x="10" y="174">branch it came in on</text>
+<rect x="166" y="112" width="146" height="92" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="176" y="131" fill="#5a3fa6">6 Fix PR</text>
+<text class="ss" x="176" y="146">a code session fixes it;</text>
+<text class="ss" x="176" y="160">the causing commit's</text>
+<text class="ss" x="176" y="174">author is the reviewer</text>
+<rect x="332" y="112" width="146" height="92" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="342" y="131" fill="#0f172a">7 Deploy branch</text>
+<text class="ss" x="342" y="146">fix commit is put on it</text>
+<text class="ss" x="342" y="160">(cherry-pick) and pushed;</text>
+<text class="ss" x="342" y="174">stops on a conflict</text>
+<rect x="498" y="112" width="178" height="92" rx="6" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
+<text class="nm" x="508" y="131" fill="#25663f">8 Development → staging</text>
+<text class="ss" x="508" y="146">when all development builds</text>
+<text class="ss" x="508" y="160">succeed, deploys to staging;</text>
+<text class="ss" x="508" y="174">the result is posted once</text>
+<rect x="0" y="220" width="676" height="58" rx="6" fill="#fbeceb" stroke="#b23a32" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="nm" x="10" y="239" fill="#9a2f28">The production server is not a deploy target</text>
+<text class="ss" x="10" y="254">the deploy tool accepts only the development and staging servers as targets</text>
+<text class="ss" x="10" y="269">a fix reaches production in the next regular release or in a hotfix a person decides on</text>
+<rect x="0" y="293" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="18" y="303">People, Slack</text>
+<rect x="102" y="293" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="120" y="303">Bot code</text>
+<rect x="179" y="293" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="197" y="303">Model</text>
+<rect x="241" y="293" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="259" y="303">Policy, checks</text>
+<rect x="348" y="293" width="12" height="12" rx="2" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
+<text class="lg" x="366" y="303">Allow, run</text>
+<rect x="435" y="293" width="12" height="12" rx="2" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="lg" x="453" y="303">Deny</text>
+</svg>

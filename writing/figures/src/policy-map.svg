@@ -1,0 +1,108 @@
+<svg id="fig-ag-policy-map" viewBox="-2 -2 680 514" width="1360" height="1028" role="img" aria-labelledby="fig-ag-policy-map-title fig-ag-policy-map-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-policy-map-title">What the policy function looks at and what it decides</title>
+<desc id="fig-ag-policy-map-desc">The policy function receives only the tool and its arguments, the order of posts in the thread, the estimated cost for the production DB, who started the session, and settings; it does not receive the content of what people wrote. Read tools are allowed; write tools are allowed only when all three conditions pass. Ticket deletion is denied outside allowed projects. For code fixes and deploys, in a session started by an error alert and in an allowed repository, only the execution record is checked. For the DB: development and staging reads are allowed, their writes need the three conditions, production writes are denied, and production reads are judged by cost.</desc>
+<defs><marker id="fig-ag-policy-map-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker><marker id="fig-ag-policy-map-ah-policy" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0f7a66"/></marker></defs>
+<style>#fig-ag-policy-map text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
+#fig-ag-policy-map .hd{font-size:12px;font-weight:700;fill:#0f172a}
+#fig-ag-policy-map .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-policy-map .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-policy-map .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-policy-map .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-policy-map .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-policy-map .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-policy-map .lg{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-policy-map .vl{font-size:11px;font-weight:600;fill:#334155}</style>
+<rect x="-2" y="-2" width="680" height="514" fill="#ffffff"/>
+<path d="M100,198 L100,221" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-policy-map-ah-grey)"/>
+<path d="M200,262 L219,262" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-policy-map-ah-policy)"/>
+<rect x="220" y="0" width="456" height="375" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<line x1="221" y1="28" x2="675" y2="28" stroke="#e2e8f0" stroke-width="1"/>
+<line x1="221" y1="88" x2="675" y2="88" stroke="#e2e8f0" stroke-width="1"/>
+<line x1="221" y1="163" x2="675" y2="163" stroke="#e2e8f0" stroke-width="1"/>
+<line x1="221" y1="215" x2="675" y2="215" stroke="#e2e8f0" stroke-width="1"/>
+<line x1="221" y1="275" x2="675" y2="275" stroke="#e2e8f0" stroke-width="1"/>
+<line x1="0" y1="492" x2="676" y2="492" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="0" y="0" width="200" height="198" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="10" y="19" style="fill:#0f172a">What it receives</text>
+<text class="ss" x="10" y="36">① tool and arguments</text>
+<text class="ss" x="10" y="51">② order of posts in the thread:</text>
+<text class="ss" x="24" y="66">time of the agent's last post,</text>
+<text class="ss" x="24" y="81">time of a person's last reply,</text>
+<text class="ss" x="24" y="96">record of executed requests</text>
+<text class="ss" x="10" y="111">③ production DB estimated cost</text>
+<text class="ss" x="10" y="126">④ who started the session</text>
+<text class="ss" x="24" y="141">(a person or an error alert)</text>
+<text class="ss" x="10" y="156">⑤ settings: projects that allow</text>
+<text class="ss" x="24" y="171">deletion, auto-fix repositories,</text>
+<text class="ss" x="24" y="186">cost limit</text>
+<rect x="1" y="223" width="198" height="78" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="nm" x="10" y="241" style="fill:#0b5e4f">Policy function</text>
+<text class="mn" x="190" y="241" text-anchor="end" style="fill:#0b5e4f">decide()</text>
+<text class="sb" x="10" y="256">allow or deny;</text>
+<text class="sb" x="10" y="271">on a deny, the reason goes</text>
+<text class="sb" x="10" y="286">back to the model</text>
+<rect x="0" y="318" width="200" height="46" rx="6" fill="#fbeceb" stroke="#b23a32" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="nm" x="10" y="336" style="fill:#9a2f28">What it doesn't receive</text>
+<text class="sb" x="10" y="351">the content of people's posts</text>
+<text class="hs" x="232" y="18">Tool kind</text>
+<text class="hs" x="420" y="18">Condition</text>
+<text class="hs" x="629" y="18" text-anchor="middle">Decision</text>
+<text class="nm" x="232" y="46">Read</text>
+<text class="ss" x="232" y="62">look up tickets, PRs, Sentry;</text>
+<text class="ss" x="232" y="77">past conversations; Slack replies</text>
+<text class="ss" x="420" y="46">always</text>
+<rect x="584" y="33" width="90" height="18" rx="4" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
+<text class="lb" x="629" y="46" text-anchor="middle" style="fill:#25663f">allow</text>
+<text class="nm" x="232" y="106">Write</text>
+<text class="ss" x="232" y="122">create, edit, comment on tickets;</text>
+<text class="ss" x="232" y="137">comment on, edit, merge PRs;</text>
+<text class="ss" x="232" y="152">cross-review; cancel code work</text>
+<text class="ss" x="420" y="106">always</text>
+<rect x="584" y="93" width="90" height="18" rx="4" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="629" y="106" text-anchor="middle" style="fill:#0b5e4f">three conditions</text>
+<text class="nm" x="232" y="181">Ticket deletion</text>
+<text class="ss" x="420" y="181">outside allowed projects</text>
+<rect x="584" y="168" width="90" height="18" rx="4" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="lb" x="629" y="181" text-anchor="middle" style="fill:#9a2f28">deny</text>
+<text class="ss" x="420" y="203">in an allowed project</text>
+<rect x="584" y="190" width="90" height="18" rx="4" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="629" y="203" text-anchor="middle" style="fill:#0b5e4f">three conditions</text>
+<text class="nm" x="232" y="233">Code fixes and deploys</text>
+<text class="ss" x="232" y="249">start code work, update deploy</text>
+<text class="ss" x="232" y="264">branch, deploy to dev and staging</text>
+<text class="ss" x="420" y="233">alert session, allowed repo</text>
+<rect x="584" y="220" width="90" height="18" rx="4" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="629" y="233" text-anchor="middle" style="fill:#0b5e4f">condition 3 only</text>
+<text class="ss" x="420" y="255">otherwise</text>
+<rect x="584" y="242" width="90" height="18" rx="4" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="629" y="255" text-anchor="middle" style="fill:#0b5e4f">three conditions</text>
+<text class="nm" x="232" y="293">DB queries</text>
+<text class="ss" x="232" y="309">development, staging,</text>
+<text class="ss" x="232" y="324">production DB</text>
+<text class="ss" x="420" y="293">development, staging: read</text>
+<rect x="584" y="280" width="90" height="18" rx="4" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
+<text class="lb" x="629" y="293" text-anchor="middle" style="fill:#25663f">allow</text>
+<text class="ss" x="420" y="315">development, staging: write</text>
+<rect x="584" y="302" width="90" height="18" rx="4" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="629" y="315" text-anchor="middle" style="fill:#0b5e4f">three conditions</text>
+<text class="ss" x="420" y="337">production: write</text>
+<rect x="584" y="324" width="90" height="18" rx="4" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="lb" x="629" y="337" text-anchor="middle" style="fill:#9a2f28">deny</text>
+<text class="ss" x="420" y="359">production: read</text>
+<rect x="584" y="346" width="90" height="18" rx="4" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="629" y="359" text-anchor="middle" style="fill:#0b5e4f">judged by cost</text>
+<rect x="0" y="391" width="676" height="91" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="nm" x="10" y="410" style="fill:#0b5e4f">The three conditions (all must pass to allow)</text>
+<text class="ss" x="10" y="426">1  The agent has posted in this thread</text>
+<text class="ss" x="10" y="441">2  A person has replied after the agent's last post</text>
+<text class="ss" x="10" y="456">3  There is no execution record for the same tool with the same arguments</text>
+<text class="ss" x="10" y="472">Even after a PR merge is allowed, the code checks once more for change requests and the number of approvals</text>
+<rect x="0" y="495" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="18" y="505">Bot code</text>
+<rect x="71" y="495" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="89" y="505">Policy, checks</text>
+<rect x="164" y="495" width="12" height="12" rx="2" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
+<text class="lg" x="182" y="505">Allow, run</text>
+<rect x="240" y="495" width="12" height="12" rx="2" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="lg" x="258" y="505">Deny</text>
+</svg>

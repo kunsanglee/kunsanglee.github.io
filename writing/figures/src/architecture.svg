@@ -1,0 +1,121 @@
+<svg id="fig-ag-architecture" viewBox="-2 -2 680 488" width="1360" height="976" role="img" aria-labelledby="fig-ag-architecture-title fig-ag-architecture-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-architecture-title">Overall architecture of the agent</title>
+<desc id="fig-ag-architecture-desc">One agent session per Slack thread. Inside the bot host, a single Node process, event intake receives Slack events and the dispatcher sends them, in order, to a thread session or a channel session. A thread session is one Claude Agent SDK session per thread. Each tool call is checked just before it runs by the tool policy, a pure function that returns allow or deny. The session uses bot-only tools (post reply, DB query, ticket, PR; tools not on the list are denied), which call the external services: the service DB for development, staging and production, Sentry, the issue tracker, code hosting, and embedding. Replies are posted back to Slack. The dispatcher writes history and channel post text to the bot storage tables in a bot-only PostgreSQL; the tools write execution records and usage there and search past conversations. The thread session reads read-only repository clones. Every 5 seconds the embedding job turns posts without a vector into vectors and stores them.</desc>
+<defs><marker id="fig-ag-architecture-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker><marker id="fig-ag-architecture-ah-model" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4fbb"/></marker></defs>
+<style>#fig-ag-architecture text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
+#fig-ag-architecture .hd{font-size:12px;font-weight:700;fill:#0f172a}
+#fig-ag-architecture .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-architecture .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-architecture .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-architecture .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-architecture .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-architecture .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-architecture .lg{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-architecture .vl{font-size:11px;font-weight:600;fill:#334155}</style>
+<rect x="-2" y="-2" width="680" height="488" fill="#ffffff"/>
+<defs><marker id="fig-ag-architecture-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker><marker id="fig-ag-architecture-ah-external" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5bb7"/></marker><marker id="fig-ag-architecture-ah-policy" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0f7a66"/></marker></defs>
+<text class="hs" x="0" y="12">One agent session per Slack thread. The model handles meaning; the code handles permissions</text>
+<rect x="62" y="40" width="502" height="400" rx="6" fill="#fbfcfd" stroke="#cbd5e1" stroke-width="1"/>
+<text class="lb" x="72" y="56">Bot host (one Node process)</text>
+<path d="M505,138 L505,34 A6,6 0 0 0 499,28 L34,28 A6,6 0 0 0 28,34 L28,149" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-human)"/>
+<rect x="240" y="21" width="50" height="14" fill="#ffffff"/>
+<text class="lb" x="265" y="32" text-anchor="middle" style="fill:#8a5300">post reply</text>
+<path d="M56,174 L69,174" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-grey)"/>
+<path d="M156,174 L169,174" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-grey)"/>
+<path d="M262,174 L308,174" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-grey)"/>
+<text class="lb" x="285" y="167" text-anchor="middle">in order</text>
+<path d="M410,174 L453,174" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-grey)"/>
+<text class="lb" x="432" y="167" text-anchor="middle">tool use</text>
+<path d="M556,160 L571,160" fill="none" stroke="#2f5bb7" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-external)"/>
+<text class="lb" x="563" y="132" text-anchor="middle" style="fill:#244a99">external call</text>
+<path d="M340,138 L340,111" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-grey)"/>
+<text class="lb" x="334" y="128" text-anchor="end">tool call</text>
+<path d="M378,110 L378,137" fill="none" stroke="#0f7a66" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-architecture-ah-policy)"/>
+<text class="lb" x="384" y="128" style="fill:#0b5e4f">allow or deny</text>
+<path d="M216,210 L216,245" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-grey)"/>
+<text class="lb" x="210" y="232" text-anchor="end">history, channel post text</text>
+<path d="M359,210 L359,245" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-grey)"/>
+<text class="lb" x="365" y="232">read only</text>
+<path d="M505,210 L505,316 A6,6 0 0 1 499,322 L263,322" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-grey)"/>
+<rect x="270" y="307" width="230" height="14" fill="#fbfcfd"/>
+<text class="lb" x="385" y="318" text-anchor="middle">execution records, usage, past-conversation search</text>
+<path d="M100,334 L100,371" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-grey)"/>
+<text class="lb" x="106" y="357">posts without vectors</text>
+<path d="M216,372 L216,335" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-grey)"/>
+<text class="lb" x="222" y="357">store vectors</text>
+<path d="M262,400 L618,400 A6,6 0 0 0 624,394 L624,321" fill="none" stroke="#2f5bb7" stroke-width="1" marker-end="url(#fig-ag-architecture-ah-external)"/>
+<rect x="382" y="385" width="77" height="14" fill="#fbfcfd"/>
+<text class="lb" x="420" y="396" text-anchor="middle" style="fill:#244a99">posts to vectors</text>
+<rect x="0" y="150" width="56" height="48" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="28" y="170" text-anchor="middle" style="fill:#8a5300">Slack</text>
+<text class="ss" x="28" y="185" text-anchor="middle">bot app</text>
+<rect x="70" y="138" width="86" height="72" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="113" y="160" text-anchor="middle" style="fill:#0f172a">Event intake</text>
+<text class="ss" x="113" y="176" text-anchor="middle">receives and</text>
+<text class="ss" x="113" y="190" text-anchor="middle">sorts Slack events</text>
+<rect x="170" y="138" width="92" height="72" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="216" y="160" text-anchor="middle" style="fill:#0f172a">Dispatcher</text>
+<text class="ss" x="216" y="176" text-anchor="middle">sends to a thread</text>
+<text class="ss" x="216" y="190" text-anchor="middle">or channel session</text>
+<rect x="309" y="139" width="100" height="70" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="2"/>
+<text class="nm" x="359" y="160" text-anchor="middle" style="fill:#5a3fa6">Thread session</text>
+<text class="ss" x="359" y="176" text-anchor="middle">one per thread</text>
+<text class="ss" x="359" y="190" text-anchor="middle">Claude Agent SDK</text>
+<rect x="454" y="138" width="102" height="72" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="505" y="156" text-anchor="middle" style="fill:#0f172a">Bot-only tools</text>
+<text class="ss" x="505" y="171" text-anchor="middle">post reply, DB query,</text>
+<text class="ss" x="505" y="185" text-anchor="middle">ticket, PR; tools not</text>
+<text class="ss" x="505" y="199" text-anchor="middle">on the list are denied</text>
+<rect x="295" y="49" width="128" height="60" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="nm" x="359" y="67" text-anchor="middle" style="fill:#0b5e4f">Tool policy</text>
+<text class="ss" x="359" y="82" text-anchor="middle">check just before</text>
+<text class="ss" x="359" y="96" text-anchor="middle">a tool call · pure function</text>
+<rect x="70" y="246" width="192" height="88" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="nm" x="166" y="264" text-anchor="middle" style="fill:#3d4554">Bot storage tables</text>
+<text class="ss" x="166" y="280" text-anchor="middle">bot-only PostgreSQL</text>
+<text class="ss" x="166" y="294" text-anchor="middle">conversation history, sessions,</text>
+<text class="ss" x="166" y="308" text-anchor="middle">execution records, channel sessions,</text>
+<text class="ss" x="166" y="322" text-anchor="middle">usage, channel conversations, etc.</text>
+<rect x="296" y="246" width="126" height="48" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="nm" x="359" y="266" text-anchor="middle" style="fill:#3d4554">Repository clones</text>
+<text class="ss" x="359" y="281" text-anchor="middle">read-only</text>
+<rect x="70" y="372" width="192" height="56" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="166" y="392" text-anchor="middle" style="fill:#0f172a">Embedding job</text>
+<text class="ss" x="166" y="408" text-anchor="middle">every 5 s, turns posts without</text>
+<text class="ss" x="166" y="421" text-anchor="middle">a vector into vectors</text>
+<rect x="572" y="140" width="104" height="180" rx="6" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="nm" x="624" y="159" text-anchor="middle" style="fill:#244a99">External services</text>
+<line x1="580" y1="168" x2="668" y2="168" stroke="#c9d6ee" stroke-width="1"/>
+<line x1="580" y1="218" x2="668" y2="218" stroke="#c9d6ee" stroke-width="1"/>
+<line x1="580" y1="242" x2="668" y2="242" stroke="#c9d6ee" stroke-width="1"/>
+<line x1="580" y1="266" x2="668" y2="266" stroke="#c9d6ee" stroke-width="1"/>
+<line x1="580" y1="290" x2="668" y2="290" stroke="#c9d6ee" stroke-width="1"/>
+<text class="ss" x="624" y="184" text-anchor="middle">Service DB</text>
+<text class="ss" x="624" y="198" text-anchor="middle">development,</text>
+<text class="ss" x="624" y="211" text-anchor="middle">staging, production</text>
+<text class="ss" x="624" y="234" text-anchor="middle">Sentry</text>
+<text class="ss" x="624" y="258" text-anchor="middle">Issue tracker</text>
+<text class="ss" x="624" y="282" text-anchor="middle">Code hosting</text>
+<text class="ss" x="624" y="309" text-anchor="middle">Embedding</text>
+<line x1="0" y1="450" x2="676" y2="450" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="0" y="453" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="18" y="463">People, Slack, input</text>
+<rect x="116" y="453" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="134" y="463">Bot code, ordinary step</text>
+<rect x="248" y="453" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="266" y="463">Model, LLM session</text>
+<rect x="364" y="453" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="382" y="463">Policy, check, enforcement</text>
+<rect x="512" y="453" width="12" height="12" rx="2" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="lg" x="530" y="463">Storage (DB, tables, clones)</text>
+<rect x="0" y="469" width="12" height="12" rx="2" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="lg" x="18" y="479">External service, external call</text>
+<line x1="157" y1="475" x2="181" y2="475" stroke="#94a3b8" stroke-width="1"/>
+<text class="lg" x="187" y="479">call inside the bot</text>
+<line x1="277" y1="475" x2="301" y2="475" stroke="#2f5bb7" stroke-width="1"/>
+<text class="lg" x="307" y="479">external call</text>
+<line x1="372" y1="475" x2="396" y2="475" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="402" y="479">reply posted to Slack</text>
+<line x1="506" y1="475" x2="530" y2="475" stroke="#0f7a66" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="lg" x="536" y="479">policy decision</text>
+</svg>

@@ -1,0 +1,96 @@
+<svg id="fig-ag-afa" viewBox="-2 -2 680 394" width="1360" height="788" role="img" aria-labelledby="fig-ag-afa-title fig-ag-afa-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-afa-title">What coding agents tend to do, and the mechanisms that keep the structure intact</title>
+<desc id="fig-ag-afa-desc">A table pairing five habits of coding agents with the mechanism set up for each and the check that fails when it is broken. Copying nearby code: a capability-folder layout that is right when copied. Adding to existing files: a new folder plus one line in the list. Shortcuts to a passing build: import direction rules. Not deleting code: the old folder emptied and pinned empty. Building what was requested: the tool owner table and empty exception lists. capabilities.test.ts, boundaries.test.ts and typecheck fail on a violation.</desc>
+<defs><marker id="fig-ag-afa-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker><marker id="fig-ag-afa-ah-policy" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0f7a66"/></marker></defs>
+<style>#fig-ag-afa text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
+#fig-ag-afa .hd{font-size:12px;font-weight:700;fill:#0f172a}
+#fig-ag-afa .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-afa .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-afa .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-afa .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-afa .mn{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-afa .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-afa .lg{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-afa .vl{font-size:11px;font-weight:600;fill:#334155}</style>
+<rect x="-2" y="-2" width="680" height="394" fill="#ffffff"/>
+<line x1="0" y1="38" x2="676" y2="38" stroke="#e2e8f0" stroke-width="1"/>
+<path d="M176,76 L195,76" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-afa-ah-grey)"/>
+<path d="M452,76 L471,76" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-afa-ah-policy)"/>
+<path d="M176,140 L195,140" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-afa-ah-grey)"/>
+<path d="M452,140 L471,140" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-afa-ah-policy)"/>
+<path d="M176,204 L195,204" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-afa-ah-grey)"/>
+<path d="M452,204 L471,204" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-afa-ah-policy)"/>
+<path d="M176,268 L195,268" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-afa-ah-grey)"/>
+<path d="M452,268 L471,268" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-afa-ah-policy)"/>
+<path d="M176,332 L195,332" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-afa-ah-grey)"/>
+<path d="M452,332 L471,332" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-afa-ah-policy)"/>
+<line x1="0" y1="372" x2="676" y2="372" stroke="#e2e8f0" stroke-width="1"/>
+<text class="hd" x="0" y="12">(a) Agent habits</text>
+<text class="hs" x="0" y="28">the five from the Dune document</text>
+<text class="hd" x="196" y="12">(b) Mechanisms</text>
+<text class="hs" x="196" y="28">as applied in agent-colleague</text>
+<text class="hd" x="472" y="12">(c) Checks that fail if broken</text>
+<text class="hs" x="472" y="28">tests and type checking</text>
+<rect x="0" y="48" width="176" height="56" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="10" y="69" fill="#5a3fa6">01 Copy nearby code</text>
+<text class="nm" x="10" y="85">that already works</text>
+<rect x="196" y="48" width="256" height="56" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="206" y="65" fill="#0f172a">A shape that's right when copied</text>
+<text class="ss" x="206" y="80">one capability folder each, same layout</text>
+<text class="mn" x="206" y="95">client·config·tools·index·testing</text>
+<rect x="472" y="48" width="204" height="56" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="mn" x="482" y="65" fill="#0b5e4f" font-weight="500">capabilities.test.ts</text>
+<text class="ss" x="482" y="80">imports from outside own folder,</text>
+<text class="ss" x="482" y="95">core and lib; global fetch</text>
+<rect x="0" y="112" width="176" height="56" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="10" y="133" fill="#5a3fa6">02 Add to existing files</text>
+<text class="nm" x="10" y="149">instead of new ones</text>
+<rect x="196" y="112" width="256" height="56" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="206" y="129" fill="#0f172a">New folder + one line in the list</text>
+<text class="ss" x="206" y="144">no per-service branches in shared files</text>
+<text class="mn" x="206" y="159">capabilities/index.ts</text>
+<rect x="472" y="112" width="204" height="56" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="mn" x="482" y="129" fill="#0b5e4f" font-weight="500">capabilities.test.ts</text>
+<text class="ss" x="482" y="144">folder missing from the list,</text>
+<text class="ss" x="482" y="159">list entry with no folder</text>
+<rect x="0" y="176" width="176" height="56" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="10" y="197" fill="#5a3fa6">03 Pick the fastest way</text>
+<text class="nm" x="10" y="213">to get the build to pass</text>
+<rect x="196" y="176" width="256" height="56" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="206" y="193" fill="#0f172a">Import rules that block shortcuts</text>
+<text class="ss" x="206" y="208">folder imports in allowed directions only;</text>
+<text class="ss" x="206" y="223">HTTP clients only in capability folders</text>
+<rect x="472" y="176" width="204" height="56" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="mn" x="482" y="193" fill="#0b5e4f" font-weight="500">boundaries.test.ts</text>
+<text class="ss" x="482" y="208">import in a forbidden direction,</text>
+<text class="ss" x="482" y="223">HTTP client outside capabilities/</text>
+<rect x="0" y="240" width="176" height="56" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="10" y="261" fill="#5a3fa6">04 Leave code in place if</text>
+<text class="nm" x="10" y="277">unsure where it's used</text>
+<rect x="196" y="240" width="256" height="56" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="206" y="257" fill="#0f172a">Old folder emptied and kept empty</text>
+<text class="ss" x="206" y="272">old files moved into capability folders;</text>
+<text class="ss" x="206" y="287">src/tools/ pinned as an empty folder</text>
+<rect x="472" y="240" width="204" height="56" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="mn" x="482" y="257" fill="#0b5e4f" font-weight="500">boundaries.test.ts</text>
+<text class="ss" x="482" y="272">any file appearing in src/tools/</text>
+<rect x="0" y="304" width="176" height="56" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="10" y="325" fill="#5a3fa6">05 Build what was asked,</text>
+<text class="nm" x="10" y="341">even against system rules</text>
+<rect x="196" y="304" width="256" height="56" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="206" y="321" fill="#0f172a">Off-rule code doesn't even compile</text>
+<text class="ss" x="206" y="336">tools listed with owner in TOOL_OWNER;</text>
+<text class="ss" x="206" y="351">all six exception lists are empty</text>
+<rect x="472" y="304" width="204" height="56" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="mn" x="482" y="321" fill="#0b5e4f" font-weight="500">npm run typecheck</text>
+<text class="ss" x="482" y="336">tool missing from TOOL_OWNER</text>
+<text class="ss" x="482" y="351">(exceptions: boundaries.test.ts)</text>
+<rect x="0" y="375" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="18" y="385">Model</text>
+<rect x="62" y="375" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="80" y="385">Bot code</text>
+<rect x="139" y="375" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="157" y="385">Policy, checks</text>
+<line x1="246" y1="381" x2="270" y2="381" stroke="#94a3b8" stroke-width="1"/>
+<text class="lg" x="276" y="385">mechanism matched to the habit → check that fails if broken</text>
+</svg>

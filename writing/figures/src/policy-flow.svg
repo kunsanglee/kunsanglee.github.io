@@ -1,0 +1,90 @@
+<svg id="fig-ag-policy-flow" viewBox="-2 -2 680 460" width="1360" height="920" role="img" aria-labelledby="fig-ag-policy-flow-title fig-ag-policy-flow-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-policy-flow-title">How “make a ticket for this” gets executed</title>
+<desc id="fig-ag-policy-flow-desc">A person asks for a ticket and the model calls the create-ticket tool straight away; because the agent has not posted in the thread, the policy function denies it and returns the reason: post a draft first. The model posts a draft, the person replies, and the model calls the same tool again; the policy function does not look at what the reply says and allows the call after checking only the order of posts and the execution record. The bot code creates the ticket in the issue tracker and writes an execution record once the call finishes, and the model posts the ticket link in the thread.</desc>
+<defs><marker id="fig-ag-policy-flow-ah-bot" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1c2433"/></marker><marker id="fig-ag-policy-flow-ah-deny" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b23a32"/></marker><marker id="fig-ag-policy-flow-ah-external" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5bb7"/></marker><marker id="fig-ag-policy-flow-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker><marker id="fig-ag-policy-flow-ah-model" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4fbb"/></marker></defs>
+<style>#fig-ag-policy-flow text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
+#fig-ag-policy-flow .hd{font-size:12px;font-weight:700;fill:#0f172a}
+#fig-ag-policy-flow .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-policy-flow .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-policy-flow .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-policy-flow .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-policy-flow .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-policy-flow .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-policy-flow .lg{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-policy-flow .vl{font-size:11px;font-weight:600;fill:#334155}</style>
+<rect x="-2" y="-2" width="680" height="460" fill="#ffffff"/>
+<line x1="60" y1="40" x2="60" y2="430" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="240" y1="40" x2="240" y2="430" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="440" y1="40" x2="440" y2="430" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="620" y1="40" x2="620" y2="430" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+<path d="M60,70 L239,70" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-human)"/>
+<rect x="65" y="51" width="117" height="14" fill="#ffffff"/>
+<text class="lb" x="68" y="62">① “Make a ticket for this”</text>
+<path d="M240,96 L439,96" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-model)"/>
+<rect x="245" y="77" width="133" height="14" fill="#ffffff"/>
+<text class="lb" x="248" y="88">② calls the create-ticket tool</text>
+<path d="M440,122 L241,122" fill="none" stroke="#b23a32" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-policy-flow-ah-deny)"/>
+<rect x="245" y="103" width="123" height="14" fill="#ffffff"/>
+<text class="lb" x="248" y="114" style="fill:#9a2f28">③ deny: “post a draft first”</text>
+<path d="M240,148 L61,148" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-human)"/>
+<rect x="65" y="129" width="110" height="14" fill="#ffffff"/>
+<text class="lb" x="68" y="140">④ posts the ticket draft</text>
+<path d="M60,174 L239,174" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-human)"/>
+<rect x="65" y="155" width="121" height="14" fill="#ffffff"/>
+<text class="lb" x="68" y="166">⑤ “Looks good, go ahead”</text>
+<path d="M240,212 L439,212" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-model)"/>
+<rect x="245" y="193" width="125" height="14" fill="#ffffff"/>
+<text class="lb" x="248" y="204">⑥ calls the same tool again</text>
+<path d="M440,318 L619,318" fill="none" stroke="#2f5bb7" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-external)"/>
+<rect x="445" y="299" width="94" height="14" fill="#ffffff"/>
+<text class="lb" x="448" y="310" style="fill:#244a99">⑦ creates the ticket</text>
+<path d="M620,344 L441,344" fill="none" stroke="#2f5bb7" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-policy-flow-ah-external)"/>
+<rect x="536" y="325" width="79" height="14" fill="#ffffff"/>
+<text class="lb" x="612" y="336" text-anchor="end" style="fill:#244a99">⑧ ticket number</text>
+<path d="M440,394 L241,394" fill="none" stroke="#1c2433" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-policy-flow-ah-bot)"/>
+<rect x="245" y="375" width="126" height="14" fill="#ffffff"/>
+<text class="lb" x="248" y="386">ticket number to the model</text>
+<path d="M240,420 L61,420" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-human)"/>
+<rect x="65" y="401" width="104" height="14" fill="#ffffff"/>
+<text class="lb" x="68" y="412">⑨ posts the ticket link</text>
+<line x1="0" y1="438" x2="676" y2="438" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="0" y="0" width="120" height="40" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="60" y="17" text-anchor="middle" style="fill:#8a5300">Slack thread</text>
+<text class="sb" x="60" y="32" text-anchor="middle">people and the agent</text>
+<rect x="180" y="0" width="120" height="40" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="240" y="17" text-anchor="middle" style="fill:#5a3fa6">Model</text>
+<text class="sb" x="240" y="32" text-anchor="middle">reads the meaning</text>
+<rect x="360" y="0" width="160" height="40" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="440" y="17" text-anchor="middle" style="fill:#0f172a">Bot code</text>
+<text class="sb" x="440" y="32" text-anchor="middle">checks policy, then runs tool</text>
+<rect x="560" y="0" width="116" height="40" rx="6" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="nm" x="618" y="17" text-anchor="middle" style="fill:#244a99">Issue tracker</text>
+<text class="sb" x="618" y="32" text-anchor="middle">external system</text>
+<text class="ss" x="450" y="118" style="fill:#9a2f28">no post by the agent yet</text>
+<text class="ss" x="68" y="190" style="fill:#5a3fa6">the model reads it as approval</text>
+<rect x="453" y="197" width="158" height="96" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="nm" x="460" y="215" style="fill:#0b5e4f">Policy function</text>
+<text class="ss" x="460" y="229">checks only the order:</text>
+<text class="ss" x="460" y="243">1 agent posted in this thread</text>
+<text class="ss" x="460" y="257">2 a person replied after it</text>
+<text class="ss" x="460" y="271">3 no record of the same call</text>
+<text class="lb" x="460" y="285">allow · reply content not read</text>
+<rect x="372" y="352" width="136" height="24" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="lb" x="440" y="368" text-anchor="middle" style="fill:#3d4554">one execution record</text>
+<rect x="0" y="441" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="18" y="451">People, Slack</text>
+<rect x="88" y="441" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="106" y="451">Model</text>
+<rect x="146" y="441" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="164" y="451">Bot code</text>
+<rect x="215" y="441" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="233" y="451">Policy, checks</text>
+<rect x="306" y="441" width="12" height="12" rx="2" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="lg" x="324" y="451">External services</text>
+<rect x="410" y="441" width="12" height="12" rx="2" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="lg" x="428" y="451">Storage</text>
+<rect x="474" y="441" width="12" height="12" rx="2" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="lg" x="492" y="451">Deny</text>
+<line x1="527" y1="447" x2="551" y2="447" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="lg" x="557" y="451">returned</text>
+</svg>

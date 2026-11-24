@@ -1,0 +1,85 @@
+<svg id="fig-ag-package" viewBox="-2 -2 680 392" width="1360" height="784" role="img" aria-labelledby="fig-ag-package-title fig-ag-package-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-package-title">Most modules import only core, and core imports nothing</title>
+<desc id="fig-ag-package-desc">Only the composition root (src/main.ts, src/host.ts) creates environment variables, PostgreSQL, Slack, the Agent SDK, fetch, and timers. Imports between modules are allowed only in the directions listed in the boundary test's table, and most modules import only the interfaces and types in src/core. The other allowed directions are session to slack and report, capabilities to lib, and main to every module. The 9 external integrations sit under capabilities, one folder per service: 5 have tools the model calls and 4 are used only by the bot code. core imports no other folder.</desc>
+<defs><marker id="fig-ag-package-ah-bot" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1c2433"/></marker></defs>
+<style>#fig-ag-package text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
+#fig-ag-package .hd{font-size:12px;font-weight:700;fill:#0f172a}
+#fig-ag-package .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-package .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-package .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-package .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-package .mn{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-package .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-package .lg{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-package .vl{font-size:11px;font-weight:600;fill:#334155}</style>
+<rect x="-2" y="-2" width="680" height="392" fill="#ffffff"/>
+<rect x="0" y="0" width="452" height="356" rx="8" fill="#fbfcfd" stroke="#cbd5e1" stroke-width="1"/>
+<path d="M452,178 L511,178" fill="none" stroke="#1c2433" stroke-width="1" marker-end="url(#fig-ag-package-ah-bot)"/>
+<rect x="460" y="159" width="44" height="14" fill="#ffffff"/>
+<text class="mn" x="482" y="170" text-anchor="middle">import</text>
+<line x1="0" y1="370" x2="676" y2="370" stroke="#e2e8f0" stroke-width="1"/>
+<text class="hs" x="12" y="18">Composition root + 10 modules</text>
+<rect x="13" y="29" width="426" height="68" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="2"/>
+<text class="nm" x="22" y="47" fill="#0f172a">Composition root</text>
+<text class="mn" x="22" y="64">src/main.ts   src/host.ts</text>
+<text class="ss" x="22" y="81">env, PostgreSQL, Slack, SDK, fetch and timers are created only here</text>
+<text class="ss" x="430" y="47" text-anchor="end">scripts/ is outside the checks</text>
+<text class="hs" x="12" y="120">10 modules (under src/)</text>
+<rect x="12" y="130" width="136" height="40" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="mn" x="22" y="146" fill="#8a5300" font-weight="500">slack/</text>
+<text class="ss" x="22" y="161">Slack events in and out</text>
+<rect x="158" y="130" width="136" height="40" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="mn" x="168" y="146" fill="#0f172a" font-weight="500">session/</text>
+<text class="ss" x="168" y="161">thread sessions, tools</text>
+<rect x="304" y="130" width="136" height="40" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="mn" x="314" y="146" fill="#3d4554" font-weight="500">store/</text>
+<text class="ss" x="314" y="161">PostgreSQL tables</text>
+<rect x="12" y="176" width="136" height="40" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="mn" x="22" y="192" fill="#0b5e4f" font-weight="500">policy/</text>
+<text class="ss" x="22" y="207">allow/deny for tool calls</text>
+<rect x="158" y="176" width="136" height="40" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="mn" x="168" y="192" fill="#0f172a" font-weight="500">report/</text>
+<text class="ss" x="168" y="207">daily usage report</text>
+<rect x="304" y="176" width="136" height="40" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="mn" x="314" y="192" fill="#0f172a" font-weight="500">vacation/</text>
+<text class="ss" x="314" y="207">vacation briefing</text>
+<rect x="12" y="222" width="136" height="40" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="mn" x="22" y="238" fill="#3d4554" font-weight="500">repos/</text>
+<text class="ss" x="22" y="253">read-only clones</text>
+<rect x="158" y="222" width="136" height="40" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="mn" x="168" y="238" fill="#0f172a" font-weight="500">workspace/</text>
+<text class="ss" x="168" y="253">worktrees for code work</text>
+<rect x="304" y="222" width="136" height="40" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="mn" x="314" y="238" fill="#0f172a" font-weight="500">lib/</text>
+<text class="ss" x="314" y="253">HTTP and DB helpers</text>
+<rect x="12" y="270" width="428" height="74" rx="6" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="mn" x="22" y="289" fill="#244a99" font-weight="500">capabilities/</text>
+<text class="ss" x="22" y="304">9 external integrations, one folder per service</text>
+<text class="ss" x="22" y="319">5 with tools the model calls:  db · bitbucket · jenkins · jira · sentry</text>
+<text class="ss" x="22" y="334">4 used only by bot code:  calendar · embedding · ktlint · slack-files</text>
+<rect x="513" y="73" width="162" height="210" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="mn" x="522" y="91" fill="#0b5e4f" font-weight="500">src/core/</text>
+<text class="ss" x="522" y="110">contracts all folders keep</text>
+<text class="ss" x="522" y="129">(interfaces and types)</text>
+<text class="mn" x="522" y="148">ports.ts</text>
+<text class="ss" x="522" y="167">storage, Slack, DB ports</text>
+<text class="mn" x="522" y="186">tools.ts</text>
+<text class="ss" x="522" y="205">tool names, kinds, owners</text>
+<text class="ss" x="522" y="224">core imports from</text>
+<text class="ss" x="522" y="243">no other folder</text>
+<text class="mn" x="522" y="262">IMPORT_GRAPH  core: []</text>
+<text class="lb" x="513" y="304" fill="#0f172a">Other allowed directions</text>
+<text class="mn" x="513" y="320">session → slack, report</text>
+<text class="mn" x="513" y="335">capabilities → lib</text>
+<text class="mn" x="513" y="350">main → all modules</text>
+<rect x="0" y="373" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="18" y="383">People, Slack</text>
+<rect x="102" y="373" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="120" y="383">Bot code</text>
+<rect x="179" y="373" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="197" y="383">Policy, checks</text>
+<rect x="286" y="373" width="12" height="12" rx="2" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="lg" x="304" y="383">External services</text>
+<rect x="407" y="373" width="12" height="12" rx="2" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="lg" x="425" y="383">Storage</text>
+</svg>
