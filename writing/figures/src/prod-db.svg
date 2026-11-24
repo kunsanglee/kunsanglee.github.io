@@ -1,85 +1,93 @@
-<svg id="fig-ag-prod-db" viewBox="-2 -2 680 318" width="1360" height="636" role="img" aria-labelledby="fig-ag-prod-db-title fig-ag-prod-db-desc" xmlns="http://www.w3.org/2000/svg">
-<title id="fig-ag-prod-db-title">How a production database query gets executed</title>
-<desc id="fig-ag-prod-db-desc">When the model calls the production database query tool, write requests are denied. For reads, the bot code measures the estimated cost from the query plan (EXPLAIN) just before the call, and denies the query if the cost cannot be measured. If the estimated cost is at or under the limit (10,000 by default) the query runs right away; if it is over, it runs only when a person has replied or added an approval reaction after the bot's last post. Otherwise it is denied and the reason is returned to the model, which tells the thread, gets an answer, and calls again.</desc>
-<defs><marker id="fig-ag-prod-db-ah-allow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e7d4f"/></marker><marker id="fig-ag-prod-db-ah-deny" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b23a32"/></marker><marker id="fig-ag-prod-db-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker><marker id="fig-ag-prod-db-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker></defs>
+<svg id="fig-ag-prod-db" viewBox="-2 -2 680 678" width="1360" height="1356" role="img" aria-labelledby="fig-ag-prod-db-title fig-ag-prod-db-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-prod-db-title">For a production DB query, the bot code weighs it before it runs</title>
+<desc id="fig-ag-prod-db-desc">The model calls the production DB query tool db_query. A write request is denied: the production DB is read-only. For a read, the bot code measures the estimated cost with EXPLAIN in a hook just before the call; if the cost cannot be measured the call is denied. If the estimated cost is at or under the limit (default 10,000) the query runs without asking a person. If it is over, it runs only when a person has replied or added a thumbs-up or check reaction after the agent's post; otherwise it is denied, the reason is returned to the model, and the model tells the thread, gets an answer, and calls again.</desc>
+<defs><marker id="fig-ag-prod-db-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker><marker id="fig-ag-prod-db-ah-model" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4fbb"/></marker><marker id="fig-ag-prod-db-ah-bot" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1c2433"/></marker><marker id="fig-ag-prod-db-ah-policy" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0f7a66"/></marker><marker id="fig-ag-prod-db-ah-ext" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5bb7"/></marker><marker id="fig-ag-prod-db-ah-store" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5b6577"/></marker><marker id="fig-ag-prod-db-ah-deny" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b23a32"/></marker><marker id="fig-ag-prod-db-ah-allow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e7d4f"/></marker><marker id="fig-ag-prod-db-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker></defs>
 <style>#fig-ag-prod-db text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
 #fig-ag-prod-db .hd{font-size:12px;font-weight:700;fill:#0f172a}
 #fig-ag-prod-db .hs{font-size:11px;font-weight:500;fill:#64748b}
 #fig-ag-prod-db .nm{font-size:12px;font-weight:600;fill:#0f172a}
 #fig-ag-prod-db .sb{font-size:11px;font-weight:400;fill:#475569}
 #fig-ag-prod-db .ss{font-size:10.5px;font-weight:400;fill:#475569}
-#fig-ag-prod-db .mn{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-prod-db .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
 #fig-ag-prod-db .lb{font-size:10.5px;font-weight:500;fill:#475569}
-#fig-ag-prod-db .lg{font-size:10.5px;font-weight:500;fill:#475569}
-#fig-ag-prod-db .vl{font-size:11px;font-weight:600;fill:#334155}</style>
-<rect x="-2" y="-2" width="680" height="318" fill="#ffffff"/>
-<path d="M104,50 L123,50" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-grey)"/>
-<path d="M196,50 L239,50" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-grey)"/>
-<rect x="201" y="33" width="34" height="14" fill="#ffffff"/>
-<text class="ss" x="218" y="44" text-anchor="middle">No</text>
-<path d="M368,50 L391,50" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-grey)"/>
-<path d="M488,50 L535,50" fill="none" stroke="#2e7d4f" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-allow)"/>
-<rect x="501" y="33" width="22" height="14" fill="#ffffff"/>
-<text class="ss" x="512" y="44" text-anchor="middle" fill="#25663f">Yes</text>
-<path d="M160,80 L160,123" fill="none" stroke="#b23a32" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-deny)"/>
-<rect x="165" y="93" width="24" height="14" fill="#ffffff"/>
-<text class="ss" x="168" y="104" fill="#9a2f28">Yes</text>
-<path d="M304,80 L304,123" fill="none" stroke="#b23a32" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-deny)"/>
-<rect x="309" y="93" width="72" height="14" fill="#ffffff"/>
-<text class="ss" x="312" y="104" fill="#9a2f28">can't measure</text>
-<path d="M440,80 L440,115" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-grey)"/>
-<rect x="445" y="93" width="78" height="14" fill="#ffffff"/>
-<text class="ss" x="448" y="104">No, over limit</text>
-<path d="M512,150 L600,150 A6,6 0 0 0 606,144 L606,81" fill="none" stroke="#2e7d4f" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-allow)"/>
-<rect x="541" y="133" width="22" height="14" fill="#ffffff"/>
-<text class="ss" x="552" y="144" text-anchor="middle" fill="#25663f">Yes</text>
-<path d="M440,184 L440,211" fill="none" stroke="#b23a32" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-deny)"/>
-<rect x="445" y="189" width="34" height="14" fill="#ffffff"/>
-<text class="ss" x="448" y="200" fill="#9a2f28">No</text>
-<path d="M380,248 L58,248 A6,6 0 0 1 52,242 L52,81" fill="none" stroke="#b26b00" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-prod-db-ah-human)"/>
-<rect x="92" y="231" width="248" height="14" fill="#ffffff"/>
-<text class="ss" x="216" y="242" text-anchor="middle" fill="#8a5300">posts in the thread, gets an answer, calls again</text>
-<line x1="0" y1="296" x2="676" y2="296" stroke="#e2e8f0" stroke-width="1"/>
-<rect x="0" y="20" width="104" height="60" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
-<text class="nm" x="52" y="39" text-anchor="middle" fill="#5a3fa6">Model calls</text>
-<text class="mn" x="52" y="54" text-anchor="middle">db_query</text>
-<text class="sb" x="52" y="69" text-anchor="middle">on production DB</text>
-<path d="M160,20 L196,50 L160,80 L124,50 Z" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
-<text class="nm" x="160" y="54" text-anchor="middle" fill="#0b5e4f">Write?</text>
-<rect x="241" y="21" width="126" height="58" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
-<text class="nm" x="304" y="39" text-anchor="middle" fill="#0b5e4f">Estimate the cost</text>
-<text class="sb" x="304" y="54" text-anchor="middle">query plan (EXPLAIN)</text>
-<text class="sb" x="304" y="69" text-anchor="middle">bot code, before run</text>
-<path d="M440,20 L488,50 L440,80 L392,50 Z" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
-<text class="nm" x="440" y="54" text-anchor="middle" fill="#0b5e4f">≤ limit?</text>
-<text class="ss" x="440" y="12" text-anchor="middle">limit: 10,000 by default</text>
-<rect x="536" y="20" width="140" height="60" rx="6" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
-<text class="nm" x="606" y="46" text-anchor="middle" fill="#25663f">Run</text>
-<text class="sb" x="606" y="61" text-anchor="middle">result to the model</text>
-<rect x="96" y="124" width="128" height="66" rx="6" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
-<text class="nm" x="160" y="143" text-anchor="middle" fill="#9a2f28">Deny</text>
-<text class="sb" x="160" y="158" text-anchor="middle">writes: development</text>
-<rect x="248" y="124" width="112" height="66" rx="6" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
-<text class="nm" x="304" y="143" text-anchor="middle" fill="#9a2f28">Deny</text>
-<text class="sb" x="304" y="158" text-anchor="middle">cost could not</text>
-<path d="M440,116 L512,150 L440,184 L368,150 Z" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
-<text class="nm" x="440" y="147" text-anchor="middle" fill="#0b5e4f">Human reply?</text>
-<text class="ss" x="440" y="162" text-anchor="middle">reply, 👍 or ✅</text>
-<rect x="380" y="212" width="296" height="66" rx="6" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
-<text class="nm" x="390" y="231" fill="#9a2f28">Deny, and return the reason to the model</text>
-<text class="ss" x="390" y="246">model posts the estimated cost, row count and limit</text>
-<text class="ss" x="390" y="261">in the thread, then retries after a reply, 👍 or ✅</text>
-<text class="sb" x="160" y="173" text-anchor="middle">and staging DBs only</text>
-<text class="sb" x="304" y="173" text-anchor="middle">be measured</text>
-<text class="ss" x="676" y="181" text-anchor="end">counted only after the bot's last post</text>
-<rect x="0" y="299" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
-<text class="lg" x="18" y="309">Model</text>
-<rect x="62" y="299" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
-<text class="lg" x="80" y="309">Policy, checks</text>
-<rect x="169" y="299" width="12" height="12" rx="2" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
-<text class="lg" x="187" y="309">Allow, run</text>
-<rect x="256" y="299" width="12" height="12" rx="2" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
-<text class="lg" x="274" y="309">Deny</text>
-<rect x="314" y="299" width="12" height="12" rx="2" fill="#ffffff" stroke="#b26b00" stroke-width="1" stroke-dasharray="4 4"/>
-<text class="lg" x="332" y="309">Path that waits for a person's answer</text>
+#fig-ag-prod-db .lg{font-size:10.5px;font-weight:500;fill:#475569}</style>
+<rect x="-2" y="-2" width="680" height="678" fill="#ffffff"/>
+<path d="M230,44 L230,59" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-grey)"/>
+<path d="M370,92 L439,92" fill="none" stroke="#b23a32" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-deny)"/>
+<rect x="392" y="75" width="25" height="14" fill="#ffffff"/>
+<text class="ss" x="404" y="86" text-anchor="middle" style="fill:#9a2f28">Yes</text>
+<path d="M230,124 L230,151" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-grey)"/>
+<rect x="235" y="130" width="19" height="14" fill="#ffffff"/>
+<text class="ss" x="238" y="141">No</text>
+<path d="M370,188 L439,188" fill="none" stroke="#b23a32" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-deny)"/>
+<rect x="391" y="171" width="27" height="14" fill="#ffffff"/>
+<text class="ss" x="404" y="182" text-anchor="middle" style="fill:#9a2f28">fails</text>
+<path d="M230,224 L230,241" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-grey)"/>
+<path d="M370,274 L439,274" fill="none" stroke="#2e7d4f" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-allow)"/>
+<rect x="392" y="257" width="25" height="14" fill="#ffffff"/>
+<text class="ss" x="404" y="268" text-anchor="middle" style="fill:#25663f">Yes</text>
+<path d="M230,306 L230,331" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-grey)"/>
+<rect x="235" y="311" width="89" height="14" fill="#ffffff"/>
+<text class="ss" x="238" y="322">No, over the limit</text>
+<path d="M370,366 L552,366 A6,6 0 0 0 558,360 L558,303" fill="none" stroke="#2e7d4f" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-allow)"/>
+<rect x="392" y="349" width="25" height="14" fill="#ffffff"/>
+<text class="ss" x="404" y="360" text-anchor="middle" style="fill:#25663f">Yes</text>
+<path d="M230,400 L230,421" fill="none" stroke="#b23a32" stroke-width="1" marker-end="url(#fig-ag-prod-db-ah-deny)"/>
+<rect x="235" y="403" width="19" height="14" fill="#ffffff"/>
+<text class="ss" x="238" y="414" style="fill:#9a2f28">No</text>
+<path d="M230,494 L230,504 A6,6 0 0 1 224,510 L16,510 A6,6 0 0 1 10,504 L10,28 A6,6 0 0 1 16,22 L89,22" fill="none" stroke="#b26b00" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-prod-db-ah-human)"/>
+<line x1="0" y1="537" x2="676" y2="537" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="90" y="0" width="280" height="44" rx="22" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="230" y="18" text-anchor="middle" style="fill:#5a3fa6">The model calls the production DB query tool</text>
+<text class="mn" x="230" y="32" text-anchor="middle">db_query(target: PROD, sql, write)</text>
+<path d="M230,60 L370,92 L230,124 L90,92 Z" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="nm" x="230" y="96" text-anchor="middle" style="fill:#0b5e4f">Is it a write request?</text>
+<rect x="440" y="58" width="236" height="68" rx="6" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="nm" x="450" y="76" style="fill:#9a2f28">Deny</text>
+<text class="ss" x="450" y="89">the production DB is read-only;</text>
+<text class="ss" x="450" y="102">writes go only to the development</text>
+<text class="ss" x="450" y="115">and staging DBs</text>
+<rect x="91" y="153" width="278" height="70" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="nm" x="102" y="170" style="fill:#0b5e4f">Estimates the cost with EXPLAIN</text>
+<text class="ss" x="102" y="183">the bot code, in a hook just before the call,</text>
+<text class="ss" x="102" y="196">queries only the query plan; the model doesn't</text>
+<text class="ss" x="102" y="209">call it, and it isn't posted in the thread</text>
+<rect x="440" y="152" width="236" height="72" rx="6" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="nm" x="450" y="170" style="fill:#9a2f28">Deny</text>
+<text class="ss" x="450" y="183">the cost could not be checked;</text>
+<text class="ss" x="450" y="196">fix the query, or</text>
+<text class="ss" x="450" y="209">tell a person</text>
+<path d="M230,242 L370,274 L230,306 L90,274 Z" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="nm" x="230" y="273" text-anchor="middle" style="fill:#0b5e4f">Estimated cost ≤ limit?</text>
+<text class="ss" x="230" y="287" text-anchor="middle">default 10,000</text>
+<rect x="440" y="246" width="236" height="56" rx="6" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
+<text class="nm" x="450" y="264" style="fill:#25663f">Run</text>
+<text class="ss" x="450" y="277">at or under the limit,</text>
+<text class="ss" x="450" y="290">no person is asked</text>
+<path d="M230,332 L370,366 L230,400 L90,366 Z" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="nm" x="230" y="365" text-anchor="middle" style="fill:#0b5e4f">Reaction after agent's post?</text>
+<text class="ss" x="230" y="380" text-anchor="middle">a person's reply, 👍 or ✅</text>
+<rect x="90" y="422" width="586" height="72" rx="6" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="nm" x="102" y="440" style="fill:#9a2f28">Denies, and returns the reason to the model</text>
+<text class="ss" x="102" y="453">“This query is heavy (estimated cost, row count, whether it is a Seq Scan, the allowed limit).</text>
+<text class="ss" x="102" y="466">Post this in the thread to tell a person,</text>
+<text class="ss" x="102" y="479">and try again after a person replies or adds 👍.”</text>
+<text class="ss" x="24" y="524" style="fill:#8a5300">tells the thread, gets an answer, then calls again</text>
+<rect x="0" y="540" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="18" y="550">People, Slack</text>
+<rect x="103" y="540" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="121" y="550">Model</text>
+<rect x="168" y="540" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="186" y="550">Policy, checks</text>
+<rect x="276" y="540" width="12" height="12" rx="2" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="lg" x="294" y="550">Deny</text>
+<rect x="336" y="540" width="12" height="12" rx="2" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
+<text class="lg" x="354" y="550">Allow, run</text>
+<text class="ss" x="0" y="572"><tspan font-weight="600" fill="#0f172a">Limit.</tspan> <tspan class="mn">DB_QUERY_PROD_EXPLAIN_COST_MAX</tspan>, default 10,000. As a person's reaction, only a reply, 👍 or ✅ that comes after the</text>
+<text class="ss" x="0" y="586">agent's post is counted; its content is not read.</text>
+<text class="ss" x="0" y="606"><tspan font-weight="600" fill="#0f172a">Personal-information columns.</tspan> The production DB account the agent uses has no permission to query personal-information columns</text>
+<text class="ss" x="0" y="620">(blocked through the account's permissions, in consultation with the infrastructure team). Even a query that passes every check above</text>
+<text class="ss" x="0" y="634">cannot read those columns.</text>
+<text class="ss" x="0" y="654">This heavy production DB query is the only place where an approval emoji (👍, ✅) is counted as an answer. Other write tools are allowed</text>
+<text class="ss" x="0" y="668">only when a person answers in writing.</text>
 </svg>

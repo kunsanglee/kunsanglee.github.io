@@ -58,12 +58,11 @@ h1{margin:0;font-size:clamp(1.875rem,5.2vw,2.875rem);font-weight:800;letter-spac
 .prose figure.diagram a{background:#fff;padding:clamp(8px,2vw,20px)}
 .prose figure.capture{max-width:var(--measure)}
 .prose figure img{width:100%}
-.prose figcaption,.omitted p{font-size:.875rem;line-height:1.6;color:var(--dim)}
+.prose figcaption{font-size:.875rem;line-height:1.6;color:var(--dim)}
 .prose figcaption{max-width:var(--measure);margin:12px auto 0}
-.omitted{max-width:var(--measure);margin:2em auto;padding:14px 16px;border:1px dashed rgba(246,236,223,.3);border-radius:10px}
-.omitted p{margin:0}
+.prose figcaption .zoom{display:none}
+@media (max-width:40rem){.prose figcaption .zoom{display:inline}}
 
-.omitted .tag{display:block;margin-bottom:4px;font:600 .8125rem/1.4 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--dim)}
 
 /* Tables scroll inside their own box on narrow screens; the page never scrolls sideways. */
 .tablewrap{max-width:var(--measure);margin:1em auto 1.8em;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--faint);border-radius:10px;background:var(--panel)}

@@ -1,76 +1,68 @@
-<svg id="fig-ag-channel-session" viewBox="-2 -2 960 326" width="1920" height="652" role="img" aria-labelledby="fig-ag-channel-session-title fig-ag-channel-session-desc" xmlns="http://www.w3.org/2000/svg">
+<svg id="fig-ag-channel-session" viewBox="-2 -2 680 346" width="1360" height="692" role="img" aria-labelledby="fig-ag-channel-session-title fig-ag-channel-session-desc" xmlns="http://www.w3.org/2000/svg">
 <title id="fig-ag-channel-session-title">How a channel session picks which posts to answer</title>
 <desc id="fig-ag-channel-session-desc">When a top-level post appears in a channel where auto-reply is allowed, the channel session (one per channel) reads it and decides only whether to reply; it does not speak in Slack directly. If it decides not to reply, the post is skipped and only that turn’s cost is recorded. If it decides to reply, a thread session is created that inherits the channel conversation read so far, and it replies in the thread. The thread session looks up past conversations in the database when needed, by meaning, time, or thread; the database stores every channel post, overwrites edits, only flags deletions, and keeps an embedding vector per post. When the channel has been quiet for a while or a day passes, the channel session is replaced with a new one and what came before does not carry over.</desc>
-<defs><marker id="fig-ag-channel-session-ah-allow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e7d4f"/></marker><marker id="fig-ag-channel-session-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker></defs>
+<defs><marker id="fig-ag-channel-session-ah-allow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e7d4f"/></marker><marker id="fig-ag-channel-session-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker><marker id="fig-ag-channel-session-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker></defs>
 <style>#fig-ag-channel-session text{font-family:'Pretendard',sans-serif}
-#fig-ag-channel-session .tt{font-size:18px;font-weight:700;fill:#0f172a}
-#fig-ag-channel-session .st{font-size:12px;font-weight:400;fill:#334155}
-#fig-ag-channel-session .hd{font-size:12px;font-weight:700;fill:#0f172a}
-#fig-ag-channel-session .hs{font-size:11px;font-weight:500;fill:#64748b}
 #fig-ag-channel-session .nm{font-size:12px;font-weight:600;fill:#0f172a}
 #fig-ag-channel-session .qt{font-size:11px;font-weight:600;fill:#0f172a}
-#fig-ag-channel-session .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-channel-session .hs{font-size:11px;font-weight:500;fill:#64748b}
 #fig-ag-channel-session .ss{font-size:10.5px;font-weight:400;fill:#475569}
 #fig-ag-channel-session .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:400;fill:#334155}
 #fig-ag-channel-session .lb{font-size:10.5px;font-weight:500;fill:#475569}
-#fig-ag-channel-session .lg{font-size:10.5px;font-weight:500;fill:#475569}
-#fig-ag-channel-session .vl{font-size:11px;font-weight:600;fill:#334155}</style>
-<rect x="-2" y="-2" width="960" height="326" fill="#ffffff"/>
-<text class="hs" x="0" y="10">Channel session</text>
-<text class="tt" x="0" y="34">How a channel session picks which posts to answer</text>
-<text class="st" x="0" y="54">The channel session only decides whether to reply; the thread session writes the reply</text>
-<path d="M184,122 L205,122" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-channel-session-ah-grey)"/>
-<path d="M418,122 L439,122" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-channel-session-ah-grey)"/>
-<path d="M572,122 L623,122" fill="none" stroke="#2e7d4f" stroke-width="1" marker-end="url(#fig-ag-channel-session-ah-allow)"/>
-<path d="M812,122 L833,122" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-channel-session-ah-grey)"/>
-<path d="M506,162 L506,211" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-channel-session-ah-grey)"/>
-<line x1="312" y1="160" x2="312" y2="200" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
-<line x1="718" y1="156" x2="718" y2="216" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
-<text class="lb" x="597" y="115" text-anchor="middle" fill="#25663f">Replies</text>
-<text class="lb" x="514" y="190">Doesn’t reply</text>
-<text class="lb" x="726" y="182">Looked up when needed</text>
-<text class="lb" x="726" y="196">(meaning, time, thread)</text>
-<rect x="0" y="98" width="184" height="48" rx="24" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
-<text class="nm" x="92" y="119" text-anchor="middle" fill="#8a5300">A top-level post appears</text>
-<text class="ss" x="92" y="134" text-anchor="middle">Channel with auto-reply allowed</text>
-<rect x="206" y="84" width="212" height="76" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="2"/>
-<text class="nm" x="312" y="103" text-anchor="middle" fill="#5a3fa6">Channel session (one per channel)</text>
-<text class="ss" x="312" y="120" text-anchor="middle">Reads the post and decides only</text>
-<text class="ss" x="312" y="134" text-anchor="middle">whether to reply</text>
-<text class="ss" x="312" y="148" text-anchor="middle">Doesn’t speak in Slack directly</text>
-<polygon points="506,82 572,122 506,162 440,122" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
-<text class="nm" x="506" y="126" text-anchor="middle">Reply to this post?</text>
-<rect x="624" y="88" width="188" height="68" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
-<text class="nm" x="718" y="108" text-anchor="middle" fill="#5a3fa6">Creates a thread session</text>
-<text class="ss" x="718" y="125" text-anchor="middle">Inherits the channel conversation</text>
-<text class="ss" x="718" y="139" text-anchor="middle">read up to that point</text>
-<rect x="834" y="104" width="122" height="36" rx="18" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
-<text class="nm" x="895" y="126" text-anchor="middle" fill="#8a5300">Reply in the thread</text>
-<rect x="420" y="212" width="172" height="48" rx="24" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
-<text class="nm" x="506" y="233" text-anchor="middle">Skips it</text>
-<text class="ss" x="506" y="248" text-anchor="middle">Records only this turn’s cost</text>
-<rect x="206" y="200" width="198" height="62" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
-<text class="ss" x="218" y="218">Quiet for a while, or a day passes:</text>
-<text class="ss" x="218" y="232">replaced with a new session.</text>
-<text class="ss" x="218" y="246">What came before doesn’t carry over</text>
-<rect x="604" y="216" width="228" height="76" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
-<text class="nm" x="718" y="235" text-anchor="middle" fill="#3d4554">Past conversations (DB)</text>
-<text class="ss" x="718" y="252" text-anchor="middle">Stores every channel post</text>
-<text class="ss" x="718" y="266" text-anchor="middle">Edits overwrite; deletions are only flagged</text>
-<text class="ss" x="718" y="280" text-anchor="middle">An embedding vector for each post</text>
-<line x1="0" y1="302" x2="956" y2="302" stroke="#e2e8f0" stroke-width="1"/>
-<rect x="0" y="307" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
-<text class="lg" x="18" y="317">Person, Slack, input</text>
-<rect x="136" y="307" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
-<text class="lg" x="154" y="317">Model, LLM session</text>
-<rect x="266" y="307" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
-<text class="lg" x="284" y="317">Bot code, ordinary step</text>
-<rect x="416" y="307" width="12" height="12" rx="2" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
-<text class="lg" x="434" y="317">Storage (DB, table, clone)</text>
-<rect x="580" y="307" width="12" height="12" rx="2" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
-<text class="lg" x="598" y="317">Allowed, passed, done</text>
-<polygon points="728,313 735,307 742,313 735,319" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
-<text class="lg" x="748" y="317">Decision</text>
-<rect x="808" y="307" width="20" height="12" rx="2" fill="#ffffff" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
-<text class="lg" x="834" y="317">Note</text>
+#fig-ag-channel-session .lg{font-size:10.5px;font-weight:500;fill:#475569}</style>
+<rect x="-2" y="-2" width="680" height="346" fill="#ffffff"/>
+<path d="M106,48 L106,75" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-channel-session-ah-grey)"/>
+<path d="M212,114 L249,114" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-channel-session-ah-grey)"/>
+<path d="M382,114 L469,114" fill="none" stroke="#2e7d4f" stroke-width="1" marker-end="url(#fig-ag-channel-session-ah-allow)"/>
+<path d="M564,80 L564,43" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-channel-session-ah-human)"/>
+<path d="M316,154 L316,203" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-channel-session-ah-grey)"/>
+<line x1="106" y1="152" x2="106" y2="192" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+<path d="M564,148 L564,207" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-channel-session-ah-grey)"/>
+<text class="lb" x="426" y="107" text-anchor="middle" fill="#25663f">Replies</text>
+<text class="lb" x="324" y="182">Doesn’t reply</text>
+<text class="lb" x="556" y="174" text-anchor="end">Looked up when needed</text>
+<text class="lb" x="556" y="188" text-anchor="end">(meaning, time, thread)</text>
+<rect x="14" y="0" width="184" height="48" rx="24" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="106" y="21" text-anchor="middle" fill="#8a5300">A top-level post appears</text>
+<text class="ss" x="106" y="36" text-anchor="middle">Channel with auto-reply allowed</text>
+<rect x="0" y="76" width="212" height="76" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="2"/>
+<text class="nm" x="106" y="95" text-anchor="middle" fill="#5a3fa6">Channel session (one per channel)</text>
+<text class="ss" x="106" y="112" text-anchor="middle">Reads the post and decides only</text>
+<text class="ss" x="106" y="126" text-anchor="middle">whether to reply</text>
+<text class="ss" x="106" y="140" text-anchor="middle">Doesn’t speak in Slack directly</text>
+<polygon points="316,74 382,114 316,154 250,114" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="316" y="118" text-anchor="middle">Reply to this post?</text>
+<rect x="470" y="80" width="188" height="68" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="564" y="100" text-anchor="middle" fill="#5a3fa6">Creates a thread session</text>
+<text class="ss" x="564" y="117" text-anchor="middle">Inherits the channel conversation</text>
+<text class="ss" x="564" y="131" text-anchor="middle">read up to that point</text>
+<rect x="503" y="6" width="122" height="36" rx="18" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="564" y="28" text-anchor="middle" fill="#8a5300">Reply in the thread</text>
+<rect x="230" y="204" width="172" height="48" rx="24" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="316" y="225" text-anchor="middle">Skips it</text>
+<text class="ss" x="316" y="240" text-anchor="middle">Records only this turn’s cost</text>
+<rect x="0" y="192" width="200" height="62" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="ss" x="12" y="210">Quiet for a while, or a day passes:</text>
+<text class="ss" x="12" y="224">replaced with a new session.</text>
+<text class="ss" x="12" y="238">What came before doesn’t carry over</text>
+<rect x="458" y="208" width="212" height="76" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="nm" x="564" y="227" text-anchor="middle" fill="#3d4554">Past conversations (DB)</text>
+<text class="ss" x="564" y="244" text-anchor="middle">Stores every channel post</text>
+<text class="ss" x="564" y="258" text-anchor="middle">Edits overwrite; deletions are only flagged</text>
+<text class="ss" x="564" y="272" text-anchor="middle">An embedding vector for each post</text>
+<line x1="0" y1="298" x2="676" y2="298" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="0" y="303" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="18" y="313">Person, Slack, input</text>
+<rect x="136" y="303" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="154" y="313">Model, LLM session</text>
+<rect x="266" y="303" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="284" y="313">Bot code, ordinary step</text>
+<rect x="416" y="303" width="12" height="12" rx="2" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="lg" x="434" y="313">Storage (DB, table, clone)</text>
+<rect x="0" y="323" width="12" height="12" rx="2" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
+<text class="lg" x="18" y="333">Allowed, passed, done</text>
+<polygon points="150,329 157,323 164,329 157,335" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="170" y="333">Decision</text>
+<rect x="266" y="323" width="20" height="12" rx="2" fill="#ffffff" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="lg" x="292" y="333">Note</text>
 </svg>

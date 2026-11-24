@@ -36,7 +36,7 @@
 <header class="head">
   <p class="kicker">Part 1 of 2 · <time datetime="2026-06">June 2026</time></p>
   <h1>Building an in-house AI agent that answers code questions across teams</h1>
-  <p class="meta">By Kunsang Lee. Translated from the <a href="https://medium.com/p/5f566069f38a" hreflang="ko" rel="noopener">Korean original on Medium</a>; it describes the system as it was at the time of writing.</p>
+  <p class="meta">By Kunsang Lee. Translated from the <a href="https://medium.com/p/5f566069f38a" hreflang="ko" rel="noopener">Korean original on Medium</a>; it describes the system and my role as they were at the time of writing. I left the company in November 2026.</p>
 </header>
 <div class="prose">
 <p>Hi, I’m Kunsang Lee, a backend developer at Ratel &amp; Partners, where I work on Cre8orclub, a creator-matching platform. Our service is split across four teams (backend, Android, iOS, and web), each with its own repository. This post is about an in-house AI agent that answers, immediately and right in Slack, the code questions that cross those team boundaries. Part 1 covers the annoyance it started from, why I chose agentic exploration over search, how I got a pilot running at zero cost without a single server, and the loop that feeds wrong answers back into the agent. I’ll report actual results in Part 2, after watching it for a while.</p>
@@ -93,7 +93,7 @@ through on the third try.</figcaption></figure>
 <h2 id="when-code-couldnt-answer-i-let-it-look-at-the-data">When code couldn’t answer, I let it look at the data</h2>
 <p>A question like “what does the actual distribution of this value look like?” can’t be answered from code alone. In fact, requests like this were common before the agent existed. Planners asked developers to run data queries, or wanted to know the table structure: which information is stored and managed under which fields. Client developers, while developing or testing, asked backend developers to check how the data they had just created was actually stored. Like code questions, all of these depended on someone who could answer having the time.</p>
 <p>If this had been about modifying data, deleting it, or changing its structure, I wouldn’t have allowed it. But I judged that read-only queries save everyone’s time when they don’t go through a person. So I gave the agent direct query access, limited to the development database, and granted it as cautiously as I could.</p>
-<p>You might ask whether it’s fine to give an agent database access, even to a development database. I didn’t give the agent a shell. It can use only one query-only tool that I built beforehand, and that tool has several layers of safeguards.</p>
+<p>You might ask whether it’s fine to give an agent database access, even to a development database. I didn’t give the agent a shell. It can use only a query-only tool built beforehand, and that tool has several layers of safeguards.</p>
 <ul>
 <li>It is pinned to the development database, which rules out any path to production.</li>
 <li>It allows only read queries and rejects writes and schema changes.</li>

@@ -1,108 +1,116 @@
-<svg id="fig-ag-code-session" viewBox="-2 -2 680 350" width="1360" height="700" role="img" aria-labelledby="fig-ag-code-session-title fig-ag-code-session-desc" xmlns="http://www.w3.org/2000/svg">
+<svg id="fig-ag-code-session" viewBox="-2 -2 680 904" width="1360" height="1808" role="img" aria-labelledby="fig-ag-code-session-title fig-ag-code-session-desc" xmlns="http://www.w3.org/2000/svg">
 <title id="fig-ag-code-session-title">How “fix it and open a PR” is handled</title>
-<desc id="fig-ag-code-session-desc">The code-change flow drawn in three lanes: the Slack thread, the bot code outside the sandbox, and the model sessions inside the sandbox. When the policy function allows the start, the job is queued. The bot code creates a workspace (worktree), the implementation session changes the code, and a fresh review session that knows nothing about the implementation reads only the instructions and the diff. If it finds problems, the implementation session resumes and addresses them. Commit, push and PR are done by the bot code, only to agent/ branches, and a merge runs only when a person asks, after the conditions are checked again.</desc>
-<defs><marker id="fig-ag-code-session-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker><marker id="fig-ag-code-session-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker><marker id="fig-ag-code-session-ah-model" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4fbb"/></marker></defs>
+<desc id="fig-ag-code-session-desc">Three columns: the Slack thread, the bot code outside the sandbox, and the model sessions inside the sandbox. 1 A person asks; the model posts a draft and a person replies. 2 The policy function allows the start. 3 The bot code creates a worktree. 4 An implementation session changes the code. 5 A fresh review session reads only the instructions and the diff. 6 If there are problems the implementation session resumes. 7 The bot code commits, pushes and opens the PR on agent/ branches only. 8 The result is posted in the thread. 9 A merge runs only when a person asks and a person, not the agent's account, has approved.</desc>
+<defs><marker id="fig-ag-code-session-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker><marker id="fig-ag-code-session-ah-model" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4fbb"/></marker><marker id="fig-ag-code-session-ah-bot" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1c2433"/></marker><marker id="fig-ag-code-session-ah-policy" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0f7a66"/></marker><marker id="fig-ag-code-session-ah-ext" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5bb7"/></marker><marker id="fig-ag-code-session-ah-store" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5b6577"/></marker><marker id="fig-ag-code-session-ah-deny" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b23a32"/></marker><marker id="fig-ag-code-session-ah-allow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e7d4f"/></marker><marker id="fig-ag-code-session-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker></defs>
 <style>#fig-ag-code-session text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
 #fig-ag-code-session .hd{font-size:12px;font-weight:700;fill:#0f172a}
 #fig-ag-code-session .hs{font-size:11px;font-weight:500;fill:#64748b}
 #fig-ag-code-session .nm{font-size:12px;font-weight:600;fill:#0f172a}
 #fig-ag-code-session .sb{font-size:11px;font-weight:400;fill:#475569}
 #fig-ag-code-session .ss{font-size:10.5px;font-weight:400;fill:#475569}
-#fig-ag-code-session .mn{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-code-session .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
 #fig-ag-code-session .lb{font-size:10.5px;font-weight:500;fill:#475569}
-#fig-ag-code-session .lg{font-size:10.5px;font-weight:500;fill:#475569}
-#fig-ag-code-session .vl{font-size:11px;font-weight:600;fill:#334155}</style>
-<rect x="-2" y="-2" width="680" height="350" fill="#ffffff"/>
-<rect x="0" y="0" width="676" height="80" rx="6" fill="#fbfcfd" stroke="#e2e8f0" stroke-width="1"/>
-<text class="lb" x="10" y="15" fill="#8a5300">Slack thread</text>
-<rect x="0" y="86" width="676" height="110" rx="6" fill="#fbfcfd" stroke="#e2e8f0" stroke-width="1"/>
-<text class="lb" x="80" y="101" fill="#0f172a">Bot code · outside the sandbox</text>
-<rect x="0" y="204" width="676" height="112" rx="6" fill="#fbfcfd" stroke="#0f7a66" stroke-width="1" stroke-dasharray="4 4"/>
-<text class="lb" x="10" y="219" fill="#0b5e4f">Inside the sandbox · model sessions</text>
-<path d="M70,72 L70,107" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-human)"/>
-<path d="M121,149 L139,149" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-grey)"/>
-<path d="M202,190 L202,227" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-grey)"/>
-<path d="M264,269 L279,269" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-model)"/>
-<path d="M404,269 L419,269" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-model)"/>
-<path d="M482,228 L482,191" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-model)"/>
-<path d="M482,108 L482,52 A6,6 0 0 1 488,46 L559,46" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-grey)"/>
-<path d="M618,72 L618,107" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-human)"/>
-<rect x="544" y="82" width="71" height="14" fill="#ffffff"/>
-<text class="ss" x="612" y="93" text-anchor="end" fill="#8a5300">asks to merge</text>
-<line x1="0" y1="328" x2="676" y2="328" stroke="#e2e8f0" stroke-width="1"/>
-<rect x="8" y="20" width="168" height="52" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
-<text class="nm" x="18" y="37" fill="#8a5300">1 Person's request</text>
-<text class="ss" x="18" y="51">“Fix it and open a PR”</text>
-<text class="ss" x="18" y="65">a person replies to the draft</text>
-<rect x="560" y="20" width="116" height="52" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
-<text class="nm" x="570" y="37" fill="#8a5300">8 Result posted</text>
-<text class="ss" x="570" y="51">PR link and</text>
-<text class="ss" x="570" y="65">review summary</text>
-<rect x="9" y="109" width="110" height="80" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
-<text class="nm" x="18" y="126" fill="#0b5e4f">2 Policy function</text>
-<text class="ss" x="18" y="141">allows the start;</text>
-<text class="ss" x="18" y="155">queues the job and</text>
-<text class="ss" x="18" y="169">returns right away</text>
-<rect x="140" y="108" width="124" height="82" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
-<text class="nm" x="150" y="126" fill="#0f172a">3 Workspace</text>
-<text class="ss" x="150" y="141">creates a worktree,</text>
-<text class="mn" x="150" y="155">agent/ branch</text>
-<text class="ss" x="150" y="169">from the base branch</text>
-<rect x="420" y="108" width="124" height="82" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
-<text class="nm" x="430" y="126" fill="#0f172a">7 Commit, push, PR</text>
-<text class="ss" x="430" y="141">by bot code; push only</text>
-<text class="mn" x="430" y="155">agent/</text>
-<text class="ss" x="430" y="169">(bot-only) branches,</text>
-<text class="ss" x="430" y="183">PRs only from them</text>
-<rect x="560" y="108" width="116" height="82" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
-<text class="nm" x="570" y="126" fill="#0b5e4f">9 Merge</text>
-<text class="ss" x="570" y="141">if a person asks;</text>
-<text class="ss" x="570" y="155">rechecks PR state,</text>
-<text class="ss" x="570" y="169">change requests,</text>
-<rect x="140" y="228" width="124" height="82" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
-<rect x="280" y="228" width="124" height="82" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
-<text class="nm" x="290" y="246" fill="#5a3fa6">5 Review session</text>
-<text class="ss" x="290" y="261">fresh; sees only the</text>
-<text class="ss" x="290" y="275">instructions and diff</text>
-<text class="ss" x="290" y="289">no Edit or Write</text>
-<text class="ss" x="290" y="303">(has Bash)</text>
-<rect x="420" y="228" width="124" height="82" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
-<text class="lb" x="10" y="244" fill="#0b5e4f">Sandbox rules</text>
-<text class="ss" x="10" y="260">file writes: worktree</text>
-<text class="ss" x="10" y="274">and Gradle home only</text>
-<text class="ss" x="10" y="288">network: allowlist only</text>
-<text class="ss" x="10" y="302">turning it off: denied</text>
-<text class="lb" x="276" y="122" fill="#0f172a">Outside-sandbox checks</text>
-<text class="ss" x="276" y="137">won't start if an env name</text>
-<text class="ss" x="276" y="151">has TOKEN, SECRET, KEY</text>
-<text class="ss" x="276" y="165">or PASSWORD</text>
-<text class="ss" x="276" y="182">ktlint checksum verified</text>
-<text class="ss" x="570" y="183">approval count</text>
-<text class="nm" x="150" y="246" fill="#5a3fa6">4 Implementation</text>
-<text class="nm" x="150" y="261" fill="#5a3fa6">session</text>
-<text class="ss" x="150" y="276">edits in the worktree</text>
-<text class="mn" x="150" y="290">Read·Edit·Write</text>
-<text class="mn" x="150" y="304">Grep·Glob·Bash</text>
-<text class="nm" x="430" y="246" fill="#5a3fa6">6 Implementation</text>
-<text class="nm" x="430" y="261" fill="#5a3fa6">session resumes</text>
-<text class="ss" x="430" y="276">picked up via resume;</text>
-<text class="ss" x="430" y="290">addresses problems</text>
-<text class="ss" x="430" y="304">if there are any</text>
-<text class="lb" x="556" y="228" fill="#0b5e4f">Limits</text>
-<text class="ss" x="556" y="241">shared by the 3 stages</text>
-<text class="ss" x="556" y="254">default 300 turns, $20</text>
-<text class="ss" x="556" y="267">review: up to 1/3 of</text>
-<text class="ss" x="556" y="280">the remaining cost</text>
-<text class="ss" x="556" y="293">if hit: commit is</text>
-<text class="ss" x="556" y="306">marked incomplete</text>
-<rect x="0" y="331" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
-<text class="lg" x="18" y="341">People, Slack</text>
-<rect x="102" y="331" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
-<text class="lg" x="120" y="341">Bot code</text>
-<rect x="179" y="331" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
-<text class="lg" x="197" y="341">Model</text>
-<rect x="241" y="331" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
-<text class="lg" x="259" y="341">Policy, checks</text>
-<rect x="348" y="331" width="12" height="12" rx="2" fill="#fbfcfd" stroke="#0f7a66" stroke-width="1" stroke-dasharray="4 4"/>
-<text class="lg" x="366" y="341">Sandbox boundary</text>
+#fig-ag-code-session .lg{font-size:10.5px;font-weight:500;fill:#475569}</style>
+<rect x="-2" y="-2" width="680" height="904" fill="#ffffff"/>
+<line x1="158" y1="0" x2="158" y2="872" stroke="#cbd5e1" stroke-width="1"/>
+<line x1="0" y1="22" x2="416" y2="22" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="432" y="0" width="244" height="690" rx="8" fill="#fbfcfd" stroke="#0f7a66" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="442" y1="24" x2="666" y2="24" stroke="#e2e8f0" stroke-width="1"/>
+<path d="M150,60 L285,60 A6,6 0 0 1 291,66 L291,119" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-grey)"/>
+<path d="M291,218 L291,235" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-grey)"/>
+<path d="M416,264 L548,264 A6,6 0 0 1 554,270 L554,299" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-grey)"/>
+<path d="M554,370 L554,385" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-model)"/>
+<path d="M554,472 L554,503" fill="none" stroke="#6b4fbb" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-code-session-ah-model)"/>
+<path d="M440,534 L297,534 A6,6 0 0 0 291,540 L291,585" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-grey)"/>
+<path d="M166,615 L81,615 A6,6 0 0 0 75,621 L75,667" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-human)"/>
+<path d="M150,711 L285,711 A6,6 0 0 1 291,717 L291,767" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-code-session-ah-grey)"/>
+<line x1="0" y1="879" x2="676" y2="879" stroke="#e2e8f0" stroke-width="1"/>
+<text class="lb" x="0" y="14" style="fill:#8a5300">Slack thread</text>
+<text class="lb" x="166" y="14" style="fill:#0f172a">Bot code (outside the sandbox)</text>
+<text class="lb" x="442" y="16" style="fill:#0b5e4f">Inside the sandbox (model sessions)</text>
+<text class="lb" x="442" y="40" style="fill:#0b5e4f"><tspan font-weight="600" fill="#0f172a">Sandbox rules (same for all three sessions)</tspan></text>
+<text class="ss" x="442" y="55">– file writes only to two places: the worktree</text>
+<text class="ss" x="451" y="68">and the Gradle home</text>
+<text class="ss" x="442" y="81">– Read, Edit, Write on paths outside the</text>
+<text class="ss" x="451" y="94">working folder are denied</text>
+<text class="ss" x="442" y="107">– network only to domains on the allowlist;</text>
+<text class="ss" x="451" y="120">the list is empty by default</text>
+<text class="mn" x="451" y="134">(strictAllowlist)</text>
+<text class="ss" x="442" y="147">– options that turn the sandbox off are denied:</text>
+<text class="mn" x="451" y="161">allowUnsandboxedCommands: false,</text>
+<text class="ss" x="451" y="174">and Bash's <tspan class="mn">dangerouslyDisableSandbox</tspan></text>
+<text class="ss" x="451" y="187">input is denied too</text>
+<rect x="0" y="32" width="150" height="72" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="10" y="50" style="fill:#8a5300">1 A person's request</text>
+<text class="ss" x="10" y="63">“Fix it and open a PR”</text>
+<text class="ss" x="10" y="76">the model posts a draft</text>
+<text class="ss" x="10" y="89">and a person replies</text>
+<rect x="167" y="121" width="248" height="96" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="nm" x="178" y="138" style="fill:#0b5e4f">2 Policy function allows the start</text>
+<text class="ss" x="178" y="151">agent's draft → a person's reply →</text>
+<text class="ss" x="178" y="164">no execution record of the same request</text>
+<text class="ss" x="178" y="177">the model judges what the reply means;</text>
+<text class="ss" x="178" y="190">the code looks only at the order of posts</text>
+<text class="ss" x="178" y="203" style="fill:#64748b">the job is queued and the call returns at once</text>
+<rect x="166" y="236" width="250" height="56" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="178" y="254">3 Creates the workspace (worktree)</text>
+<text class="ss" x="178" y="267">first checks that it has the <tspan class="mn">agent/</tspan> prefix,</text>
+<text class="ss" x="178" y="280">then creates it fresh from the base branch</text>
+<text class="lb" x="166" y="330"><tspan font-weight="600" fill="#0f172a">Checks done outside the sandbox</tspan></text>
+<text class="ss" x="166" y="345">– does not start if the child process env has a</text>
+<text class="ss" x="175" y="358">name like TOKEN, SECRET, KEY or PASSWORD</text>
+<text class="ss" x="166" y="371">– the ktlint binary is downloaded by the bot</text>
+<text class="ss" x="175" y="384">code, which verifies its sha256 checksum</text>
+<rect x="440" y="300" width="228" height="70" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="450" y="318" style="fill:#5a3fa6">4 Implementation session</text>
+<text class="ss" x="450" y="331">changes the code inside the worktree</text>
+<text class="mn" x="450" y="345">Read, Edit, Write,</text>
+<text class="mn" x="450" y="359">Grep, Glob, Bash</text>
+<rect x="440" y="386" width="228" height="86" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="450" y="404" style="fill:#5a3fa6">5 Review session (a fresh session)</text>
+<text class="ss" x="450" y="417">doesn't know how the implementation went;</text>
+<text class="ss" x="450" y="430">receives only the instructions and the</text>
+<text class="ss" x="450" y="443">change (diff); has no editing tools</text>
+<text class="mn" x="450" y="457">Read, Grep, Glob, Bash</text>
+<text class="ss" x="562" y="491">if there are problems</text>
+<rect x="440" y="504" width="228" height="60" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="450" y="522" style="fill:#5a3fa6">6 Implementation session resumes</text>
+<text class="ss" x="450" y="535">addresses the problems; why things were</text>
+<text class="ss" x="450" y="548">changed need not be explained again</text>
+<text class="lb" x="442" y="584" style="fill:#0b5e4f"><tspan font-weight="600" fill="#0f172a">Limits (shared by the three sessions)</tspan></text>
+<text class="ss" x="442" y="599">– the turn and cost limits (default 300 turns,</text>
+<text class="ss" x="451" y="612">$20) are shared by the three stages</text>
+<text class="ss" x="442" y="625">– review gets up to 1/3 of the remaining cost</text>
+<text class="ss" x="442" y="638">– when a limit is hit, the next stage is skipped</text>
+<text class="ss" x="451" y="651">and the commit and PR title are marked</text>
+<text class="ss" x="451" y="664">incomplete</text>
+<rect x="166" y="586" width="250" height="58" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="178" y="604">7 Commit, push, PR creation</text>
+<text class="ss" x="178" y="617">push and PR only on <tspan class="mn">agent/</tspan> branches;</text>
+<text class="ss" x="178" y="630">merge is not called</text>
+<rect x="0" y="668" width="150" height="86" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="10" y="686" style="fill:#8a5300">8 Result to the thread</text>
+<text class="ss" x="10" y="699">PR link and review result;</text>
+<text class="ss" x="10" y="712">the bot code feeds them</text>
+<text class="ss" x="10" y="725">to the session and the</text>
+<text class="ss" x="10" y="738">model posts them</text>
+<rect x="167" y="769" width="248" height="96" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="nm" x="178" y="786" style="fill:#0b5e4f">9 Merge only when a person asks</text>
+<text class="ss" x="178" y="799">must pass the order check and have an approval</text>
+<text class="ss" x="178" y="812">from a person, not from the agent's account;</text>
+<text class="ss" x="178" y="825">the agent account's approvals are not counted</text>
+<text class="ss" x="178" y="838" style="fill:#9a2f28">denied if change requests remain</text>
+<text class="ss" x="178" y="851" style="fill:#9a2f28">or the PR is a draft</text>
+<rect x="0" y="882" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="18" y="892">People, Slack</text>
+<rect x="103" y="882" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="121" y="892">Bot code</text>
+<rect x="182" y="882" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="200" y="892">Policy, checks</text>
+<rect x="290" y="882" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="308" y="892">Model</text>
+<rect x="355" y="882" width="12" height="12" rx="2" fill="#fbfcfd" stroke="#0f7a66" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="lg" x="373" y="892">Sandbox boundary</text>
+<rect x="483" y="882" width="12" height="12" rx="2" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="lg" x="501" y="892">Deny</text>
 </svg>

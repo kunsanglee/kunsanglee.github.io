@@ -1,6 +1,6 @@
-<svg id="fig-ag-policy-flow" viewBox="-2 -2 680 460" width="1360" height="920" role="img" aria-labelledby="fig-ag-policy-flow-title fig-ag-policy-flow-desc" xmlns="http://www.w3.org/2000/svg">
-<title id="fig-ag-policy-flow-title">How “make a ticket for this” gets executed</title>
-<desc id="fig-ag-policy-flow-desc">A person asks for a ticket and the model calls the create-ticket tool straight away; because the agent has not posted in the thread, the policy function denies it and returns the reason: post a draft first. The model posts a draft, the person replies, and the model calls the same tool again; the policy function does not look at what the reply says and allows the call after checking only the order of posts and the execution record. The bot code creates the ticket in the issue tracker and writes an execution record once the call finishes, and the model posts the ticket link in the thread.</desc>
+<svg id="fig-ag-policy-flow" viewBox="-2 -2 680 667" width="1360" height="1334" role="img" aria-labelledby="fig-ag-policy-flow-title fig-ag-policy-flow-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-policy-flow-title">How “make a ticket” gets executed</title>
+<desc id="fig-ag-policy-flow-desc">A person asks in the Slack thread for a ticket. The model reads that as wanting a ticket and calls the create-ticket tool. The policy function sees no post by the agent and denies, telling the model to post the draft in the thread first. The agent posts the ticket draft; Slack replies are allowed with no conditions. The person replies “Looks good, go ahead”; the model reads the reply as approval and calls the same tool again. The policy function checks that the agent has posted in this thread, that a person's reply follows the draft, and that there is no execution record of the same request, without reading the reply, and allows. The ticket is created in the issue tracker and one execution record is written; the ticket number comes back, and the agent posts the ticket link in the thread.</desc>
 <defs><marker id="fig-ag-policy-flow-ah-bot" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1c2433"/></marker><marker id="fig-ag-policy-flow-ah-deny" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b23a32"/></marker><marker id="fig-ag-policy-flow-ah-external" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5bb7"/></marker><marker id="fig-ag-policy-flow-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker><marker id="fig-ag-policy-flow-ah-model" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4fbb"/></marker></defs>
 <style>#fig-ag-policy-flow text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
 #fig-ag-policy-flow .hd{font-size:12px;font-weight:700;fill:#0f172a}
@@ -12,79 +12,91 @@
 #fig-ag-policy-flow .lb{font-size:10.5px;font-weight:500;fill:#475569}
 #fig-ag-policy-flow .lg{font-size:10.5px;font-weight:500;fill:#475569}
 #fig-ag-policy-flow .vl{font-size:11px;font-weight:600;fill:#334155}</style>
-<rect x="-2" y="-2" width="680" height="460" fill="#ffffff"/>
-<line x1="60" y1="40" x2="60" y2="430" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
-<line x1="240" y1="40" x2="240" y2="430" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
-<line x1="440" y1="40" x2="440" y2="430" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
-<line x1="620" y1="40" x2="620" y2="430" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+<rect x="-2" y="-2" width="680" height="667" fill="#ffffff"/>
+<defs><marker id="fig-ag-policy-flow-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker></defs>
+<line x1="60" y1="40" x2="60" y2="576" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="240" y1="40" x2="240" y2="576" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="440" y1="40" x2="440" y2="576" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="620" y1="40" x2="620" y2="576" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
 <path d="M60,70 L239,70" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-human)"/>
-<rect x="65" y="51" width="117" height="14" fill="#ffffff"/>
-<text class="lb" x="68" y="62">① “Make a ticket for this”</text>
-<path d="M240,96 L439,96" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-model)"/>
-<rect x="245" y="77" width="133" height="14" fill="#ffffff"/>
-<text class="lb" x="248" y="88">② calls the create-ticket tool</text>
-<path d="M440,122 L241,122" fill="none" stroke="#b23a32" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-policy-flow-ah-deny)"/>
-<rect x="245" y="103" width="123" height="14" fill="#ffffff"/>
-<text class="lb" x="248" y="114" style="fill:#9a2f28">③ deny: “post a draft first”</text>
-<path d="M240,148 L61,148" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-human)"/>
-<rect x="65" y="129" width="110" height="14" fill="#ffffff"/>
-<text class="lb" x="68" y="140">④ posts the ticket draft</text>
-<path d="M60,174 L239,174" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-human)"/>
-<rect x="65" y="155" width="121" height="14" fill="#ffffff"/>
-<text class="lb" x="68" y="166">⑤ “Looks good, go ahead”</text>
-<path d="M240,212 L439,212" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-model)"/>
-<rect x="245" y="193" width="125" height="14" fill="#ffffff"/>
-<text class="lb" x="248" y="204">⑥ calls the same tool again</text>
-<path d="M440,318 L619,318" fill="none" stroke="#2f5bb7" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-external)"/>
-<rect x="445" y="299" width="94" height="14" fill="#ffffff"/>
-<text class="lb" x="448" y="310" style="fill:#244a99">⑦ creates the ticket</text>
-<path d="M620,344 L441,344" fill="none" stroke="#2f5bb7" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-policy-flow-ah-external)"/>
-<rect x="536" y="325" width="79" height="14" fill="#ffffff"/>
-<text class="lb" x="612" y="336" text-anchor="end" style="fill:#244a99">⑧ ticket number</text>
-<path d="M440,394 L241,394" fill="none" stroke="#1c2433" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-policy-flow-ah-bot)"/>
-<rect x="245" y="375" width="126" height="14" fill="#ffffff"/>
-<text class="lb" x="248" y="386">ticket number to the model</text>
-<path d="M240,420 L61,420" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-human)"/>
-<rect x="65" y="401" width="104" height="14" fill="#ffffff"/>
-<text class="lb" x="68" y="412">⑨ posts the ticket link</text>
-<line x1="0" y1="438" x2="676" y2="438" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="65" y="51" width="166" height="14" fill="#ffffff"/>
+<text class="lb" x="68" y="62">① Person: “Make a ticket for this”</text>
+<rect x="176" y="80" width="128" height="24" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lb" x="240" y="96" text-anchor="middle" style="fill:#5a3fa6">means: create a ticket</text>
+<path d="M240,130 L439,130" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-model)"/>
+<rect x="245" y="111" width="143" height="14" fill="#ffffff"/>
+<text class="lb" x="248" y="122">② calls the create-ticket tool</text>
+<rect x="372" y="140" width="136" height="38" rx="6" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="ss" x="440" y="156" text-anchor="middle">no post by the agent</text>
+<text class="nm" x="440" y="171" text-anchor="middle" style="fill:#9a2f28">Deny</text>
+<rect x="245" y="179" width="147" height="14" fill="#ffffff"/>
+<text class="lb" x="248" y="190" style="fill:#9a2f28">③ Deny: “post the draft in the</text>
+<rect x="245" y="193" width="64" height="14" fill="#ffffff"/>
+<text class="lb" x="248" y="204" style="fill:#9a2f28">thread first”</text>
+<path d="M440,214 L241,214" fill="none" stroke="#b23a32" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-policy-flow-ah-deny)"/>
+<path d="M240,246 L61,246" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-human)"/>
+<rect x="65" y="227" width="152" height="14" fill="#ffffff"/>
+<text class="lb" x="68" y="238">④ Agent: posts the ticket draft</text>
+<rect x="65" y="249" width="121" height="14" fill="#ffffff"/>
+<text class="ss" x="68" y="260">Slack replies are allowed</text>
+<rect x="65" y="262" width="92" height="14" fill="#ffffff"/>
+<text class="ss" x="68" y="273">with no conditions</text>
+<path d="M60,302 L239,302" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-human)"/>
+<rect x="65" y="283" width="172" height="14" fill="#ffffff"/>
+<text class="lb" x="68" y="294">⑤ Person: “Looks good, go ahead”</text>
+<rect x="152" y="312" width="176" height="38" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lb" x="240" y="328" text-anchor="middle" style="fill:#5a3fa6">reads the reply as approval</text>
+<text class="ss" x="240" y="342" text-anchor="middle">whether it is one is the model's call</text>
+<path d="M240,376 L439,376" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-model)"/>
+<rect x="245" y="357" width="136" height="14" fill="#ffffff"/>
+<text class="lb" x="248" y="368">⑥ calls the same tool again</text>
+<rect x="325" y="387" width="230" height="94" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="ss" x="336" y="405">✓  the agent has posted in this thread</text>
+<text class="ss" x="336" y="420">✓  a person's reply follows the draft</text>
+<text class="ss" x="336" y="435">✓  no execution record of the same request</text>
+<text class="ss" x="336" y="452">the content of the reply is not read</text>
+<text class="nm" x="440" y="471" text-anchor="middle" style="fill:#25663f">Allow</text>
+<path d="M440,510 L619,510" fill="none" stroke="#2f5bb7" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-external)"/>
+<rect x="445" y="491" width="102" height="14" fill="#ffffff"/>
+<text class="lb" x="448" y="502" style="fill:#244a99">⑦ creates the ticket</text>
+<rect x="445" y="513" width="137" height="14" fill="#ffffff"/>
+<text class="ss" x="448" y="524">writes one execution record</text>
+<path d="M620,546 L241,546" fill="none" stroke="#2f5bb7" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-policy-flow-ah-external)"/>
+<rect x="445" y="527" width="84" height="14" fill="#ffffff"/>
+<text class="lb" x="448" y="538" style="fill:#244a99">⑧ ticket number</text>
+<path d="M240,568 L61,568" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-human)"/>
+<rect x="65" y="549" width="145" height="14" fill="#ffffff"/>
+<text class="lb" x="68" y="560">⑨ Agent: posts the ticket link</text>
 <rect x="0" y="0" width="120" height="40" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
 <text class="nm" x="60" y="17" text-anchor="middle" style="fill:#8a5300">Slack thread</text>
-<text class="sb" x="60" y="32" text-anchor="middle">people and the agent</text>
+<text class="sb" x="60" y="32" text-anchor="middle">people and agent posts</text>
 <rect x="180" y="0" width="120" height="40" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
 <text class="nm" x="240" y="17" text-anchor="middle" style="fill:#5a3fa6">Model</text>
 <text class="sb" x="240" y="32" text-anchor="middle">reads the meaning</text>
-<rect x="360" y="0" width="160" height="40" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
-<text class="nm" x="440" y="17" text-anchor="middle" style="fill:#0f172a">Bot code</text>
-<text class="sb" x="440" y="32" text-anchor="middle">checks policy, then runs tool</text>
+<rect x="369" y="1" width="142" height="38" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="nm" x="440" y="17" text-anchor="middle" style="fill:#0b5e4f">Policy function</text>
+<text class="sb" x="440" y="32" text-anchor="middle">code; looks only at order</text>
 <rect x="560" y="0" width="116" height="40" rx="6" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
 <text class="nm" x="618" y="17" text-anchor="middle" style="fill:#244a99">Issue tracker</text>
 <text class="sb" x="618" y="32" text-anchor="middle">external system</text>
-<text class="ss" x="450" y="118" style="fill:#9a2f28">no post by the agent yet</text>
-<text class="ss" x="68" y="190" style="fill:#5a3fa6">the model reads it as approval</text>
-<rect x="453" y="197" width="158" height="96" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
-<text class="nm" x="460" y="215" style="fill:#0b5e4f">Policy function</text>
-<text class="ss" x="460" y="229">checks only the order:</text>
-<text class="ss" x="460" y="243">1 agent posted in this thread</text>
-<text class="ss" x="460" y="257">2 a person replied after it</text>
-<text class="ss" x="460" y="271">3 no record of the same call</text>
-<text class="lb" x="460" y="285">allow · reply content not read</text>
-<rect x="372" y="352" width="136" height="24" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
-<text class="lb" x="440" y="368" text-anchor="middle" style="fill:#3d4554">one execution record</text>
-<rect x="0" y="441" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
-<text class="lg" x="18" y="451">People, Slack</text>
-<rect x="88" y="441" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
-<text class="lg" x="106" y="451">Model</text>
-<rect x="146" y="441" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
-<text class="lg" x="164" y="451">Bot code</text>
-<rect x="215" y="441" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
-<text class="lg" x="233" y="451">Policy, checks</text>
-<rect x="306" y="441" width="12" height="12" rx="2" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
-<text class="lg" x="324" y="451">External services</text>
-<rect x="410" y="441" width="12" height="12" rx="2" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
-<text class="lg" x="428" y="451">Storage</text>
-<rect x="474" y="441" width="12" height="12" rx="2" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
-<text class="lg" x="492" y="451">Deny</text>
-<line x1="527" y1="447" x2="551" y2="447" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
-<text class="lg" x="557" y="451">returned</text>
+<line x1="0" y1="586" x2="676" y2="586" stroke="#e2e8f0" stroke-width="1"/>
+<path d="M0,596 L27,596" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-policy-flow-ah-grey)"/>
+<text class="lg" x="34" y="600">call, post</text>
+<path d="M91,596 L118,596" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#fig-ag-policy-flow-ah-grey)"/>
+<text class="lg" x="125" y="600">returned</text>
+<rect x="181" y="590" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="199" y="600">People, Slack, input</text>
+<rect x="307" y="590" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="325" y="600">Model, LLM session</text>
+<rect x="434" y="590" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="452" y="600">Policy, check, enforcement</text>
+<rect x="0" y="606" width="12" height="12" rx="2" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="lg" x="18" y="616">External service, external call</text>
+<rect x="172" y="606" width="12" height="12" rx="2" fill="#fbeceb" stroke="#b23a32" stroke-width="1"/>
+<text class="lg" x="190" y="616">Deny, failure, forbidden</text>
+<rect x="315" y="606" width="12" height="12" rx="2" fill="#edf6f0" stroke="#2e7d4f" stroke-width="1"/>
+<text class="lg" x="333" y="616">Allow, pass, done</text>
+<line x1="0" y1="628" x2="676" y2="628" stroke="#e2e8f0" stroke-width="1"/>
+<text class="sb" x="0" y="645">The policy function does not look at the content of what people wrote.</text>
+<text class="sb" x="0" y="660">If the same request comes again, it is denied when an execution record exists.</text>
 </svg>
