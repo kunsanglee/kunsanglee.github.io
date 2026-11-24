@@ -71,9 +71,9 @@
 <text class="sb" x="140" y="374">execution record</text>
 <rect x="342" y="310" width="322" height="78" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
 <text class="nm" x="352" y="329" style="fill:#0b5e4f">Estimated cost</text>
-<text class="sb" x="352" y="344">measured with EXPLAIN before a production DB query;</text>
-<text class="sb" x="352" y="359">over the limit: runs only after a person's reply, 👍 or ✅;</text>
-<text class="sb" x="352" y="374">not measurable: deny</text>
+<text class="sb" x="352" y="344">before a production DB query runs,</text>
+<text class="sb" x="352" y="359">measured with EXPLAIN;</text>
+<text class="sb" x="352" y="374">over the limit: deny</text>
 <text class="sb" x="12" y="407"><tspan style="font-weight:700;fill:#0f172a">Approval.</tspan> The code checks only whether a person's reply follows the agent's post in the thread.</text>
 <text class="sb" x="12" y="422">It does not read the reply, and it denies if an execution record for the same request already exists</text>
 <text class="sb" x="12" y="439"><tspan style="font-weight:700;fill:#0f172a">New tools.</tspan> One line in the tool table: name and category (read, order-dependent write, alert-session write, input-dependent, …)</text>
