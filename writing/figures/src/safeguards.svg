@@ -1,0 +1,75 @@
+<svg id="fig-ag-safeguards" viewBox="-2 -2 680 444" width="1360" height="888" role="img" aria-labelledby="fig-ag-safeguards-title fig-ag-safeguards-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-safeguards-title">Six safeguards</title>
+<desc id="fig-ag-safeguards-desc">A table of the six safeguards a model’s tool call passes through, what each restricts, and where it is applied. 01 Tool policy: draft, then a person’s reply, then a duplicate-execution check, plus file path limits, shell command checks, and production DB query cost; applied as a check just before the tool call, looking only at order and scope, not at meaning. 02 Sandbox: writes only inside the working folder and network only to the allowlist; applied by the SDK sandbox. 03 Tool isolation: only tools the bot code defines are attached and code sessions get no extra tools. 04 Settings isolation: the operator’s personal settings are not read. Both 03 and 04 are applied through session options. 05 Allowed hosts: the list of domains a code session can connect to, with code hosting reached only by the bot code; applied through configuration values. 06 Branch limits: push only to bot-only branches and the deploy branch, PRs only from bot-only branches; applied in bot code.</desc>
+<defs><marker id="fig-ag-safeguards-ah-model" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4fbb"/></marker></defs>
+<style>#fig-ag-safeguards text{font-family:'Pretendard',sans-serif}
+#fig-ag-safeguards .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-safeguards .qt{font-size:11px;font-weight:600;fill:#0f172a}
+#fig-ag-safeguards .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-safeguards .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-safeguards .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:400;fill:#334155}
+#fig-ag-safeguards .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-safeguards .lg{font-size:10.5px;font-weight:500;fill:#475569}</style>
+<rect x="-2" y="-2" width="680" height="444" fill="#ffffff"/>
+<rect x="0" y="0" width="118" height="26" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lb" x="59" y="17" text-anchor="middle" fill="#5a3fa6">The model’s tool call</text>
+<path d="M59,26 L59,67" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-safeguards-ah-model)"/>
+<text class="hs" x="150" y="58">What it restricts</text>
+<text class="hs" x="588" y="58" text-anchor="middle">Where it is applied</text>
+<text class="ss" x="676" y="12" text-anchor="end" fill="#0b5e4f">Doesn’t look at meaning,</text>
+<text class="ss" x="676" y="26" text-anchor="end" fill="#0b5e4f">only at order and scope</text>
+<line x1="664" y1="32" x2="664" y2="67" stroke="#0f7a66" stroke-width="1"/>
+<rect x="0" y="68" width="676" height="296" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<line x1="0" y1="172" x2="676" y2="172" stroke="#cbd5e1" stroke-width="1"/>
+<line x1="0" y1="220" x2="500" y2="220" stroke="#cbd5e1" stroke-width="1"/>
+<line x1="0" y1="268" x2="676" y2="268" stroke="#cbd5e1" stroke-width="1"/>
+<line x1="0" y1="316" x2="676" y2="316" stroke="#cbd5e1" stroke-width="1"/>
+<line x1="500" y1="124" x2="500" y2="364" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="0" y="68" width="676" height="56" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<line x1="500" y1="69" x2="500" y2="123" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="12" y="100">01</text>
+<text class="nm" x="38" y="100" fill="#0b5e4f">Tool policy</text>
+<text class="ss" x="150" y="92">Draft → a person’s reply → duplicate-execution check</text>
+<text class="ss" x="150" y="107">File path limits, shell command checks, production DB query cost</text>
+<text class="lb" x="12" y="152">02</text>
+<text class="nm" x="38" y="152">Sandbox</text>
+<text class="ss" x="150" y="152">Writes only inside the working folder; network only to the allowlist</text>
+<text class="lb" x="12" y="200">03</text>
+<text class="nm" x="38" y="200">Tool isolation</text>
+<text class="ss" x="150" y="192">Only tools the bot code defines are attached;</text>
+<text class="ss" x="150" y="207">code sessions get no extra tools</text>
+<text class="lb" x="12" y="248">04</text>
+<text class="nm" x="38" y="248">Settings isolation</text>
+<text class="ss" x="150" y="248">The operator’s personal settings are not read</text>
+<text class="lb" x="12" y="296">05</text>
+<text class="nm" x="38" y="296">Allowed hosts</text>
+<text class="ss" x="150" y="288">List of domains a code session can connect to.</text>
+<text class="ss" x="150" y="303">Only the bot code connects to code hosting</text>
+<text class="lb" x="12" y="344">06</text>
+<text class="nm" x="38" y="344">Branch limits</text>
+<text class="ss" x="150" y="336"><tspan class="mn">push</tspan> only to bot-only branches and the deploy branch;</text>
+<text class="ss" x="150" y="351">PRs only from bot-only branches</text>
+<rect x="510" y="86" width="156" height="20" rx="4" fill="#ffffff" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="588" y="100" text-anchor="middle" fill="#0b5e4f">Check just before the tool call</text>
+<rect x="546" y="138" width="84" height="20" rx="4" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="lb" x="588" y="152" text-anchor="middle" fill="#244a99">SDK sandbox</text>
+<rect x="540" y="210" width="96" height="20" rx="4" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lb" x="588" y="224" text-anchor="middle" fill="#5a3fa6">Session options</text>
+<rect x="528" y="282" width="120" height="20" rx="4" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lb" x="588" y="296" text-anchor="middle" fill="#0f172a">Configuration values</text>
+<rect x="556" y="330" width="64" height="20" rx="4" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lb" x="588" y="344" text-anchor="middle" fill="#0f172a">Bot code</text>
+<line x1="0" y1="378" x2="676" y2="378" stroke="#e2e8f0" stroke-width="1"/>
+<text class="lg" x="0" y="393">Legend</text>
+<rect x="50" y="383" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="68" y="393">Model, LLM session</text>
+<rect x="178" y="383" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="196" y="393">Policy, check, enforcement</text>
+<rect x="344" y="383" width="12" height="12" rx="2" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="lg" x="362" y="393">External service, external call</text>
+<rect x="530" y="383" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="548" y="393">Bot code, ordinary step</text>
+<rect x="51" y="404" width="22" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="lg" x="80" y="414">Thick border: where the code decides</text>
+<text class="lg" x="50" y="434">Right-column color: where that safeguard is applied (session options are shared by 03 and 04)</text>
+</svg>

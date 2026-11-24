@@ -1,0 +1,93 @@
+<svg id="fig-ag-requests" viewBox="-2 -2 680 610" width="1360" height="1220" role="img" aria-labelledby="fig-ag-requests-title fig-ag-requests-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-requests-title">What you can ask the agent to do</title>
+<desc id="fig-ag-requests-desc">Two inputs reach the agent: a person’s request, and Sentry alerts, which the agent analyzes without being mentioned and, in designated repositories, fixes, opens a PR for, and deploys to the development and staging servers. The agent works on six targets: multiple code repositories (reads code and answers with file path and line numbers), databases in development, staging, and production (queries and uploads CSV; production is read-only and heavy queries show the execution plan first; writes go to development and staging), the issue tracker (finds, creates, edits tickets), a workspace and PR (fixes in an isolated workspace, another session reviews, then opens a PR), open PRs (finds, reads, comments, fixes, merges), and channel conversation history (finds posts with similar meaning). Items marked “Draft first” are posted as a draft and executed only after a person replies.</desc>
+<defs><marker id="fig-ag-requests-ah-external" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5bb7"/></marker><marker id="fig-ag-requests-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker><marker id="fig-ag-requests-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker></defs>
+<style>#fig-ag-requests text{font-family:'Pretendard',sans-serif}
+#fig-ag-requests .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-requests .qt{font-size:11px;font-weight:600;fill:#0f172a}
+#fig-ag-requests .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-requests .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-requests .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:400;fill:#334155}
+#fig-ag-requests .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-requests .lg{font-size:10.5px;font-weight:500;fill:#475569}</style>
+<rect x="-2" y="-2" width="680" height="610" fill="#ffffff"/>
+<path d="M258,14 L283,14" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-requests-ah-grey)"/>
+<path d="M258,84 L283,84" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-requests-ah-grey)"/>
+<path d="M258,236 L283,236" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-requests-ah-grey)"/>
+<path d="M258,320 L283,320" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-requests-ah-grey)"/>
+<path d="M258,404 L283,404" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-requests-ah-grey)"/>
+<path d="M258,488 L283,488" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-requests-ah-grey)"/>
+<path d="M168,196 L191,196" fill="none" stroke="#b26b00" stroke-width="1" marker-end="url(#fig-ag-requests-ah-human)"/>
+<path d="M168,250 L191,250" fill="none" stroke="#2f5bb7" stroke-width="1" marker-end="url(#fig-ag-requests-ah-external)"/>
+<rect x="0" y="178" width="168" height="36" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="12" y="200" fill="#8a5300">When a person asks</text>
+<rect x="0" y="232" width="168" height="176" rx="6" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="nm" x="12" y="250" fill="#244a99">Sentry alerts</text>
+<text class="ss" x="12" y="266">When one is posted to a</text>
+<text class="ss" x="12" y="280">channel, it analyzes the</text>
+<text class="ss" x="12" y="294">cause and replies in the</text>
+<text class="ss" x="12" y="308">thread, without being</text>
+<text class="ss" x="12" y="322">mentioned.</text>
+<text class="ss" x="12" y="340">In designated repositories</text>
+<text class="ss" x="12" y="354">it fixes the problem,</text>
+<text class="ss" x="12" y="368">opens a PR, and deploys to</text>
+<text class="ss" x="12" y="382">the development and</text>
+<text class="ss" x="12" y="396">staging servers.</text>
+<rect x="192" y="0" width="66" height="548" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="2"/>
+<text class="nm" x="225" y="278" text-anchor="middle" fill="#5a3fa6">Agent</text>
+<rect x="284" y="0" width="392" height="60" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="nm" x="296" y="18" fill="#3d4554">Multiple code repositories</text>
+<text class="qt" x="296" y="34">“Which API does this screen call?”</text>
+<text class="ss" x="296" y="49">Reads the code and answers with the source file path and line numbers</text>
+<rect x="284" y="70" width="392" height="142" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="nm" x="296" y="88" fill="#3d4554">Databases (development, staging, production)</text>
+<text class="qt" x="296" y="104">“Why is this member’s status like this?”</text>
+<text class="ss" x="296" y="119">Runs the query and, when the result has rows, uploads it</text>
+<text class="ss" x="296" y="133">as a CSV file along with a summary</text>
+<text class="ss" x="296" y="151">The production DB is read-only.</text>
+<text class="ss" x="296" y="165">For a heavy query it shows the execution plan first</text>
+<rect x="604" y="153" width="62" height="16" rx="3" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="635" y="165" text-anchor="middle" fill="#0b5e4f">Draft first</text>
+<text class="qt" x="296" y="185">“Change some test data for me”</text>
+<text class="ss" x="296" y="200">Writes to the development and staging DBs</text>
+<rect x="604" y="188" width="62" height="16" rx="3" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="635" y="200" text-anchor="middle" fill="#0b5e4f">Draft first</text>
+<rect x="284" y="222" width="392" height="74" rx="6" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="nm" x="296" y="240" fill="#244a99">Issue tracker</text>
+<text class="qt" x="296" y="256">“Make a ticket for this”</text>
+<text class="ss" x="296" y="271">Finds, creates, and edits tickets</text>
+<text class="ss" x="296" y="285">Also comments, status changes, assignees, ticket links</text>
+<rect x="604" y="273" width="62" height="16" rx="3" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="635" y="285" text-anchor="middle" fill="#0b5e4f">Draft first</text>
+<rect x="284" y="306" width="392" height="74" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="296" y="324" fill="#0f172a">Workspace and PR</text>
+<text class="qt" x="296" y="340">“Fix it and open a PR”</text>
+<text class="ss" x="296" y="355">Makes the fix in an isolated workspace; another session</text>
+<text class="ss" x="296" y="369">reviews it, the review is applied, and the PR is opened</text>
+<rect x="284" y="390" width="392" height="74" rx="6" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="nm" x="296" y="408" fill="#244a99">Open PRs</text>
+<text class="qt" x="296" y="424">“What happened with that PR?”</text>
+<text class="ss" x="296" y="439">Finds and reads PRs, comments on them, and fixes them</text>
+<text class="ss" x="296" y="453">Merges them</text>
+<rect x="604" y="441" width="62" height="16" rx="3" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="635" y="453" text-anchor="middle" fill="#0b5e4f">Draft first</text>
+<rect x="284" y="474" width="392" height="74" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="nm" x="296" y="492" fill="#3d4554">Channel conversation history</text>
+<text class="qt" x="296" y="508">“What did we decide to do about that last month?”</text>
+<text class="ss" x="296" y="523">Finds posts with similar meaning in the conversations</text>
+<text class="ss" x="296" y="537">stored from the channels, and answers</text>
+<line x1="0" y1="560" x2="676" y2="560" stroke="#e2e8f0" stroke-width="1"/>
+<rect x="0" y="565" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="18" y="575">Person, Slack, input</text>
+<rect x="136" y="565" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="154" y="575">Model, LLM session</text>
+<rect x="266" y="565" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="284" y="575">Bot code, ordinary step</text>
+<rect x="416" y="565" width="12" height="12" rx="2" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="lg" x="434" y="575">External service, external call</text>
+<rect x="0" y="587" width="12" height="12" rx="2" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="lg" x="18" y="597">Storage (DB, table, clone)</text>
+<rect x="170" y="585" width="62" height="16" rx="3" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lb" x="201" y="597" text-anchor="middle" fill="#0b5e4f">Draft first</text>
+<text class="lg" x="240" y="597">Policy, check, enforcement: posts what it will do first, runs after a person replies</text>
+</svg>

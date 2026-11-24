@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0807">
+<title>How I redesigned our in-house AI agent — Kunsang Lee</title>
+<meta name="description" content="Fifteen weeks of usage numbers for our in-house Slack agent, and the redesign that followed: the model judges meaning, code decides what may run.">
+<meta name="author" content="Kunsang Lee">
+<link rel="canonical" href="https://kunsanglee.github.io/writing/part-2/">
+<meta property="og:title" content="How I redesigned our in-house AI agent">
+<meta property="og:description" content="Fifteen weeks of usage numbers for our in-house Slack agent, and the redesign that followed: the model judges meaning, code decides what may run.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://kunsanglee.github.io/writing/part-2/">
+<meta property="og:image" content="https://kunsanglee.github.io/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The name Kunsang Lee drawn in particles">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://kunsanglee.github.io/assets/og-image.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0807'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23ffa84d'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23f6ecdf'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></noscript>
+<link rel="stylesheet" href="/writing/article.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <a class="mark" href="/?lang=en">Kunsang Lee</a>
+  <nav aria-label="Site"><a href="/?lang=en#writing">Writing</a><a href="/?lang=en#work">agent-colleague</a></nav>
+</header>
+<main id="main" tabindex="-1">
+<article>
+<header class="head">
+  <p class="kicker">Part 2 of 2 · <time datetime="2026-09">September 2026</time> · updated October 2026</p>
+  <h1>How I redesigned our in-house AI agent</h1>
+  <p class="meta">By Kunsang Lee. Translated from the <a href="https://medium.com/p/9f76459b6b5a" hreflang="ko" rel="noopener">Korean original on Medium</a>; it describes the system and my role as they were at the time of writing. I left the company in November 2026.</p>
+</header>
+<div class="prose">
+<p>I’m a backend developer on this team, and I was one of the people who used to get the “can you check this?” questions from other teams. In Part 1, I built an agent that answers those questions in Slack, and said I would watch the results over time.</p>
+<p>I put that agent in our code-question channel and watched it for 15 weeks. In that time it answered 235 threads, 216 of them asked by 11 colleagues. More than half of the colleagues’ questions came from non-developer roles such as product planning. Across all 235, the median time to first answer was 96 seconds, and questions posted outside working hours were also answered in a median of 99 seconds. In this post I’ll show those numbers, and then describe how I changed the structure again after looking at them.</p>
+<h2 id="i-counted-how-much-it-was-used-over-three-months">I counted how much it was used over three months</h2>
+<p>For the 15 weeks from mid-June to late September, I counted the threads the agent answered in our code-question channel myself, directly in Slack.</p>
+<div class="tablewrap" role="region" tabindex="0" aria-labelledby="t1"><table><caption id="t1"><strong>Usage over 15 weeks</strong></caption>
+<tbody>
+<tr><th scope="row">Question threads the agent answered</th>
+<td>235</td>
+</tr>
+<tr><th scope="row">Colleagues who asked</th>
+<td>11 people, 216 threads</td>
+</tr>
+<tr><th scope="row">First question to first answer</th>
+<td>median 96 s; 90% within 4.3 min</td>
+</tr>
+<tr><th scope="row">Threads where a person followed up</th>
+<td>109 (46%)</td>
+</tr>
+</tbody>
+</table></div>
+<p>The roles of the people asking show where the agent was used.</p>
+<div class="tablewrap" role="region" tabindex="0" aria-labelledby="t2"><table><caption id="t2"><strong>Share of questions by role</strong></caption>
+<thead>
+<tr>
+<th scope="col">Role</th>
+<th scope="col">Share</th>
+</tr>
+</thead>
+<tbody>
+<tr><th scope="row">Non-developer roles such as product planning</th>
+<td>53%</td>
+</tr>
+<tr><th scope="row">Client developers (iOS, Android)</th>
+<td>28%</td>
+</tr>
+<tr><th scope="row">Backend developers</th>
+<td>19%</td>
+</tr>
+</tbody>
+</table></div>
+<p>Counting only the 216 threads from the 11 colleagues, the share from product planning and other non-developer roles rises to 58%. Of the 235 threads, 78 asked about another team’s code, and the questions fell into three broad types.</p>
+<ul>
+<li>Questions checking actual figures in production data</li>
+<li>Questions about how policies such as account deletion or blocking are reflected in the data</li>
+<li>Questions about which API a given screen calls, and under what conditions</li>
+</ul>
+<p>All three used to require going to the developer responsible. The “checks across team boundaries” I hoped for in Part 1 were picked up by product planning earlier, and more heavily, than by developers.</p>
+<p>A person followed up in 46% of threads, but that includes clarifying questions and corrections as well as further questions. There is still no separate mechanism for measuring whether answers were right.</p>
+<p>I calculated cost from six weeks of usage records left by the Part 1 agent. An answer cost $0.84 on average, which is low compared with the roughly 10 minutes of developer time a question takes even when a person answers right away (the calculation is below).</p>
+<p>The annoyance I described in Part 1 was that an answer only came when the person who knew it was there. If that person was in a meeting, away from their desk, or off work and asleep, the person asking had to wait. Now half of the people asking get an answer with supporting file paths within two minutes, and that held for questions posted outside working hours too.</p>
+<div class="tablewrap" role="region" tabindex="0" aria-labelledby="t3"><table><caption id="t3"><strong>Questions and time to first answer, by time asked</strong></caption>
+<thead>
+<tr>
+<th scope="col">Time asked</th>
+<th scope="col">Threads</th>
+<th scope="col">Time to first answer (median)</th>
+</tr>
+</thead>
+<tbody>
+<tr><th scope="row">Weekdays, working hours (9:00–19:00)</th>
+<td>196</td>
+<td>96 s</td>
+</tr>
+<tr><th scope="row">Weekdays before 9:00 or after 19:00, and weekends</th>
+<td>39 (17%)</td>
+<td>99 s</td>
+</tr>
+<tr class="sub"><th scope="row">of which weekends</th>
+<td>6</td>
+<td></td>
+</tr>
+<tr class="sub"><th scope="row">of which 22:00–7:00</th>
+<td>6</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>When a request for production data came in at 1:30 a.m. on a Sunday in mid-August, the agent posted its first answer in under a minute. All the Slack captures in this section are answers from the Part 1 agent, before the switch to the new structure on September 16, and in each one I’ve kept only the start of the answer and masked the rest.</p>
+<figure class="capture"><a href="/writing/img/p2-2am-answer.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Answer posted one minute after a 2 a.m. question"><img src="/writing/img/p2-2am-answer.png" width="860" height="365" alt="Answer posted one minute after a 2 a.m. question (Slack screenshot, in Korean)" loading="lazy" decoding="async"></a><figcaption>An answer posted one minute after a 2 a.m. question in June about how
+two APIs differ.</figcaption></figure>
+
+<p>There were only a handful of threads a week through July, then the count rose to around 30 a week from the second week of August. That coincides with when the planning team started asking the agent about production figures, screens, and policies.</p>
+<figure class="diagram"><a href="/writing/figures/weekly.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Weekly question threads, mid-June to late September"><img src="/writing/figures/weekly.png" width="1360" height="460" alt="Weekly question threads, mid-June to late September" loading="lazy" decoding="async"></a><figcaption>Weekly question threads, mid-June to late September: the 235 threads
+the agent answered in the code-question channel, counted by week. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<p>In the first week after the switch to the new structure on September 16, there were 24 threads and the median time to first answer was 51 seconds, but that sample is small.</p>
+<p>The agent also answers error alerts without being asked. When Sentry, an error-tracking service, posts an error from the development, staging, or production servers to a channel, the agent analyzes the cause and replies in that alert’s thread without anyone mentioning it. If the same error alert comes again within 30 minutes of the last analysis, the agent doesn’t rerun the analysis and only logs it; if it comes later than that, the session that did the first analysis picks it up again. Over the same 15 weeks there were 284 alerts, or 277 when grouped by error.</p>
+<div class="tablewrap" role="region" tabindex="0" aria-labelledby="t4"><table><caption id="t4"><strong>Analysis by where the error occurred</strong></caption>
+<thead>
+<tr>
+<th scope="col">Where the error occurred</th>
+<th scope="col">Errors</th>
+<th scope="col">Errors that got an analysis</th>
+<th scope="col">Time to first analysis (median)</th>
+</tr>
+</thead>
+<tbody>
+<tr><th scope="row">Development server</th>
+<td>163</td>
+<td>136</td>
+<td>118 s</td>
+</tr>
+<tr><th scope="row">Staging server</th>
+<td>84</td>
+<td>71</td>
+<td>105 s</td>
+</tr>
+<tr><th scope="row">Production server</th>
+<td>30</td>
+<td>24</td>
+<td>68 s</td>
+</tr>
+<tr><th scope="row"><strong>Total</strong></th>
+<td><strong>277</strong></td>
+<td><strong>231 (83%)</strong></td>
+<td><strong>113 s</strong></td>
+</tr>
+</tbody>
+</table></div>
+<div class="tablewrap" role="region" tabindex="0" aria-labelledby="t5"><table><caption id="t5"><strong>Analysis by time of first alert</strong> (the 231 errors that got an analysis, split by the time of the first alert)</caption>
+<thead>
+<tr>
+<th scope="col">Time of first alert</th>
+<th scope="col">Errors</th>
+<th scope="col">Time to first analysis (median)</th>
+</tr>
+</thead>
+<tbody>
+<tr><th scope="row">Weekdays, working hours (9:00–19:00)</th>
+<td>182</td>
+<td>114 s</td>
+</tr>
+<tr><th scope="row">Weekdays before 9:00 or after 19:00, and weekends</th>
+<td>49 (21%)</td>
+<td>106 s</td>
+</tr>
+<tr class="sub"><th scope="row">of which weekends</th>
+<td>14</td>
+<td></td>
+</tr>
+<tr class="sub"><th scope="row">of which 22:00–7:00</th>
+<td>22</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>When only people were watching, analysis started once someone looked at the alert. Now half of the analyses are posted in the thread within two minutes of the alert.</p>
+<h3 id="about-38-hours-of-developer-time-if-people-had-answered-right-away">About 38 hours of developer time, if people had answered right away</h3>
+<p>Say a product planner asks, “How many members have no thumbnail, excluding those who deleted their accounts?” To answer right away, a developer has to stop what they’re doing, write and run the SQL with an AI coding tool, and tidy up the result, which takes around 5 minutes. Then it takes another 5 minutes to get back to the original task and regain focus.</p>
+<p>If a client developer asks, “Could I see an example response for this API?”, it takes a backend developer 5 minutes to check. If the question is “What are all the conditions under which a new-message push is sent?”, someone spends 5 minutes opening the code and working out the conditions. Either way, the 5 minutes to get back to the original task come on top.</p>
+<p>With an AI coding tool such as Claude Code, checks like these usually finish within a few minutes, so I put handling time at 5 minutes on average. I read each question and sorted the 235 threads by type, with the result below.</p>
+<div class="tablewrap" role="region" tabindex="0" aria-labelledby="t6"><table><caption id="t6"><strong>Question types</strong></caption>
+<thead>
+<tr>
+<th scope="col">Type</th>
+<th scope="col">Threads</th>
+<th scope="col">Scenario</th>
+</tr>
+</thead>
+<tbody>
+<tr><th scope="row">Data lookup</th>
+<td>69</td>
+<td>A product planner asks for a member count; a developer writes and runs SQL and writes up the result</td>
+</tr>
+<tr><th scope="row">Behavior and policy checks</th>
+<td>71</td>
+<td>“All the conditions under which a new-message push is sent?”: someone opens the code, works out the conditions, and explains</td>
+</tr>
+<tr><th scope="row">Questions about another team’s code</th>
+<td>78</td>
+<td>A client developer asks for an example API response; a backend developer checks and answers</td>
+</tr>
+<tr><th scope="row">Causes of errors and outages</th>
+<td>8</td>
+<td>“404 in production, fine on the development server”: compare the branches’ code and auth configuration</td>
+</tr>
+<tr><th scope="row">Other (commands, small talk)</th>
+<td>9</td>
+<td>Excluded</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="capture"><a href="/writing/img/p2-push-conditions.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Answer to &quot;all the conditions for a new-message push&quot;"><img src="/writing/img/p2-push-conditions.png" width="860" height="300" alt="Answer to &quot;all the conditions for a new-message push&quot; (Slack screenshot, in Korean)" loading="lazy" decoding="async"></a><figcaption>An answer posted two minutes after a question (12:08 p.m.) asking for
+“all the conditions under which a new-message push is sent.” It worked
+through the server’s sending conditions step by step and listed the code
+locations it used as evidence.</figcaption></figure>
+
+<p>I assumed a developer answered all 226 threads (excluding “Other”) the moment they came in, and put the time per thread at about 10 minutes: 5 to handle it and 5 to get back to work. 226 threads times 10 minutes is about 38 hours, or about 5 working days. Dividing 38 hours by the 75 working days in 15 weeks gives about 30 minutes a day, and half of that, about 19 hours, is time spent getting back to the interrupted task.</p>
+<p>This number is an estimate built on assumptions, not a measurement. The 5 minutes of handling and 5 minutes of recovery are on the short side, and I left out the time the asker spent waiting, because that varies by person and situation. In the other direction, assuming a developer would have answered all 226 right away may overstate it, so please read this number only as a sense of scale.</p>
+<figure class="capture"><a href="/writing/img/p2-retry-button.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Answer about a retry button on portfolio upload failure"><img src="/writing/img/p2-retry-button.png" width="860" height="335" alt="Answer about a retry button on portfolio upload failure (Slack screenshot, in Korean)" loading="lazy" decoding="async"></a><figcaption>An answer posted one minute after “If a portfolio upload fails, do we
+show a [Retry] button?” It began by correcting that it’s a Snackbar, not
+a Toast, and found the retry limit (3 attempts) in the code.</figcaption></figure>
+
+<figure class="capture"><a href="/writing/img/p2-unread-badge.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Answer about differing unread badges on iOS and Android"><img src="/writing/img/p2-unread-badge.png" width="860" height="375" alt="Answer about differing unread badges on iOS and Android (Slack screenshot, in Korean)" loading="lazy" decoding="async"></a><figcaption>An answer posted one minute after a question about why the unread
+badge differs between iOS and Android (9+ versus 999+). It compared the
+two apps’ code, explained that each app truncates the number itself, and
+noted that the code alone can’t settle whether the difference is
+intentional.</figcaption></figure>
+
+<figure class="capture"><a href="/writing/img/p2-prod-404.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Answer about an API that returns 404 only in production"><img src="/writing/img/p2-prod-404.png" width="860" height="325" alt="Answer about an API that returns 404 only in production (Slack screenshot, in Korean)" loading="lazy" decoding="async"></a><figcaption>An answer posted two minutes after a question about an API that
+returns 404 only in production. It confirmed that the code and auth
+configuration were the same on both branches, ruled out a code
+difference as the cause, and pointed to the deployed version and the
+routing in front of the server as the next places to check.</figcaption></figure>
+
+<h2 id="i-let-people-hand-off-do-this-not-just-check-this">I let people hand off “do this,” not just “check this”</h2>
+<p>The original agent only answered what it was asked. Watching the team use it, I came to think that if the agent were a real teammate in Slack, there would be more to ask of it than checks. If you’d asked a colleague “Which API does this screen call?”, you might follow up with “Then could you make a ticket for this?” After “Why is this value like this?”, you could hand over “Fix it and open a PR.”</p>
+<p>The team hadn’t asked for these features, but I thought a colleague should be able to take requests like these, so I added ticket and PR creation and production data queries one at a time.</p>
+<p>Here is what you can now ask for in a thread.</p>
+<figure class="diagram"><a href="/writing/figures/requests.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: What you can ask the agent to do"><img src="/writing/figures/requests.png" width="1360" height="1220" alt="What you can ask the agent to do" loading="lazy" decoding="async"></a><figcaption>What you can ask the agent to do. Ask for something like this, and
+here is what the agent does and where. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<p>Of these, database writes were added later as a follow-on, and search over past conversations was added to find things that were said outside the thread.</p>
+<p>But as I added these features to the Part 1 agent one by one, more and more code went into tracking how far a conversation had got. Each task had stages in the database such as “awaiting approval → in progress → done,” and code defined what could be said at each stage (a state machine). Approval was accepted only when the user sent the exact phrase <code>approve &lt;code&gt;</code> that the agent had given them; for anything else, the model picked between cancel and revise and wrote that down, and the code read that line and moved the stage. Every time a flow was added, such as creating tickets from a planning draft, code work, or account linking, the stages and branches in the code grew with it.</p>
+<p>Looking back, the roles had been reversed. Understanding what people mean is what the model does best, and the code was doing that job. Meanwhile, limits that absolutely had to hold were only written down as prompt instructions. The model follows instructions most of the time, but “most of the time” is no guarantee of “always.”</p>
+<p>So I changed the principle. The model judges what people mean; the code decides what may be executed. The code doesn’t try to work out whether what a person wrote is an approval. It keeps only facts such as who posted where and when, and whether the agent posted a given message. Whether a tool may run is decided from those facts alone.</p>
+<figure class="diagram"><a href="/writing/figures/before-after.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Before and after: from code holding the stages to code deciding only whether to execute"><img src="/writing/figures/before-after.png" width="1360" height="1100" alt="Before and after: from code holding the stages to code deciding only whether to execute" loading="lazy" decoding="async"></a><figcaption>From a structure where code held the stages to one where code decides
+only whether to execute. Reading what people mean is handed to the
+model; the code only rules on whether a tool may run. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<h2 id="i-redesigned-it-as-one-session-per-thread">I redesigned it as one session per thread</h2>
+<p>The goal of the redesign was for the agent to feel like one more colleague on the team. With a colleague, you carry on a conversation casually in a thread, and when someone posts in a channel without addressing anyone, whoever knows the answer replies first. I wanted people to be able to treat the agent the same way. So in a thread where a conversation has started, the agent understands follow-ups without a mention, and in channels it replies to posts that weren’t addressed to it, if it can help.</p>
+<p>There was one more reason to put the agent in Slack as a colleague. With a tool like Claude Code, each developer can have a model read the repositories on their own machine and find out for themselves how iOS, Android, web, and backend each implement something. For looking things up while developing alone, that’s enough. But to discuss the result with someone else, you have to carry what you asked and what you got back over to Slack and explain it again.</p>
+<p>When you ask the agent in a channel, the question and answer are in the thread from the start. Anyone in the channel can read along right there and follow up directly, so nobody has to re-explain the context. I saw more value in the team being able to see the questions and answers together.</p>
+<p>I attached one Claude Agent SDK session to each Slack thread. The Claude Agent SDK is Anthropic’s library for calling Claude Code from inside your own program; it runs the loop of reading files, searching, calling tools, looking at the results, and deciding again. A session is a running conversation with the model that keeps the earlier exchange in context. In this post I’ll call the session attached to a thread a thread session. A thread session reads everything that arrives in its thread (what people say, other bots’ posts, reactions, and edits), and the model decides whether to reply and what to do.</p>
+<p>My bot code does three things.</p>
+<ul>
+<li>When a session starts, it decides which tools to give it.</li>
+<li>Every time the model calls a tool, it decides whether to allow it.</li>
+<li>From what comes back, it records the session ID and usage.</li>
+</ul>
+<figure class="diagram"><a href="/writing/figures/sdk.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Where the bot code meets the Claude Agent SDK"><img src="/writing/figures/sdk.png" width="1360" height="1220" alt="Where the bot code meets the Claude Agent SDK" loading="lazy" decoding="async"></a><figcaption>Where the bot code meets the Claude Agent SDK. The SDK runs the loop
+and the bot code decides what is allowed; one thread session runs one
+<code>query()</code>, and the two meet in five places. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<p>There were five design decisions.</p>
+<h3 id="the-unit-of-conversation-is-the-thread">The unit of conversation is the thread</h3>
+<p>The team was already keeping one topic to one thread. Rather than invent a new unit of conversation, I used the thread as it was. The bot code stores each thread paired with its session ID in the database, and feeds posts arriving in the same thread into that session in order. Within one thread only one request runs at a time, so there’s no separate ordering to manage, and when the agent is restarted, the bot code continues the conversation from the stored session ID.</p>
+<p>A thread session starts with a channel post that mentions the agent, and later posts in that thread are read by the same thread session even without a mention. I cover auto-reply, where the agent answers posts that weren’t addressed to it, separately below.</p>
+<figure class="diagram"><a href="/writing/figures/architecture.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Overall architecture of the agent"><img src="/writing/figures/architecture.png" width="1360" height="972" alt="Overall architecture of the agent" loading="lazy" decoding="async"></a><figcaption>Overall architecture of the agent. One agent session per Slack
+thread; the model handles meaning and the code handles permissions. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<p>Slack can’t render Markdown tables as tables, so the agent answers with lists instead, and converts formatting such as bold to Slack’s own style before posting.</p>
+<h3 id="the-model-judges-meaning-the-code-decides-whether-to-execute">The model judges meaning; the code decides whether to execute</h3>
+<p>When the model calls a tool, a policy function checks the call just before it actually runs. The policy function is the code that decides whether a tool may run, and it looks at the following.</p>
+<ul>
+<li>The tool the model is trying to call, and its arguments. For example, “create ticket” with the ticket’s title and body.</li>
+<li>The order of events in this thread: whether the agent has posted in the thread, whether a person has replied after the agent’s last post, and whether the same request has already been executed.</li>
+<li>For a production database query, the estimated cost, measured in advance from the query plan.</li>
+<li>Whether the session was started by a person or by an error alert.</li>
+<li>Settings such as which projects allow deletion and which repositories allow automatic fixes.</li>
+</ul>
+<p>What people said is not passed to the policy function. From this information it returns only allow or deny, with the reason; it doesn’t call any external system. Because it doesn’t look at the conversation’s content, the same sequence of events always produces the same result, and it can be tested without a real Slack or database.</p>
+<p>Tools are divided into read tools and write tools, and the conditions for running them differ by kind. Apart from the tool that posts replies to Slack, write tools (such as the ones that create a ticket or comment on a PR) run only when all three of the conditions below are met. The one exception is automatically fixing an error alert, which I describe separately below.</p>
+<ol>
+<li>The agent has posted a draft in this thread.</li>
+<li>A person has approved that draft in a reply.</li>
+<li>There is no execution record showing that the same request has already been handled.</li>
+</ol>
+<p>The code checks condition 3; conditions 1 and 2 are shared between the model and the code. The model decides what to post as a draft and whether a reply is an approval. If the reply is “Looks good, go ahead,” the model calls the tool; if it’s “Just change the title,” it revises the draft and posts it again; if it’s “No,” it doesn’t call the tool. The code doesn’t look at what the posts say. It checks only whether the agent has posted in this thread and whether there is a reply from a person after that last post. This way, even if the model tries to execute on its own without a reply, it is blocked.</p>
+<p>The figure below gathers how the policy function decides for each kind of tool. Ticket deletion and PR merges add one more check on top of the three conditions, and for database queries the decision depends on which database it is and whether it’s a read or a write.</p>
+<figure class="diagram"><a href="/writing/figures/policy-map.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: What the policy function looks at and what it decides"><img src="/writing/figures/policy-map.png" width="1360" height="1868" alt="What the policy function looks at and what it decides" loading="lazy" decoding="async"></a><figcaption>What the policy function looks at and what it decides. The code
+computes it once each time the model calls a tool; the same input always
+gives the same answer, and it calls nothing external. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<p>If the model tries to create a ticket straight away on the first message of a new thread, the policy function blocks it at condition 1 and returns the reason to the model. The model then posts a draft in the thread, and runs the tool once a person approves it in a reply. In a thread where conversation has already gone back and forth, the code only checks whether a person has spoken after the agent’s last post, so whether to show a draft first is up to the model, following its instructions. The bot code writes one execution record for every action that affected an external system, and checks those records so that a restart or retry doesn’t create the same ticket twice.</p>
+<figure class="diagram"><a href="/writing/figures/policy-flow.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: How &quot;make a ticket for this&quot; gets executed"><img src="/writing/figures/policy-flow.png" width="1360" height="1334" alt="How &quot;make a ticket for this&quot; gets executed" loading="lazy" decoding="async"></a><figcaption>How “make a ticket for this” gets executed. The model reads the
+meaning; whether it may run is decided by the policy function, looking
+only at the order. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<p>I used the same approach for production database queries. In Part 1 the agent could query only the development database. Production data has columns designated as personal information, and I wanted to prevent the agent from reading those values and posting them in chat. This time, in consultation with the infrastructure team, the database account the agent uses was set up so that it cannot query personal-information columns at all, and on top of that I allowed production queries.</p>
+<p>For the production database, the bot code looks not at meaning but at the query’s estimated cost. Write requests are denied by the policy function on the spot. For reads, the cost is measured from the query plan before execution, and a light query runs right away. A heavy one runs only if, after the agent’s last post, a person has written something or added a 👍. On the first message of a new thread, the model first posts the estimated cost and row count in the thread and waits for a person’s answer. A query whose cost couldn’t be measured is denied, because there’s no basis for treating it as light.</p>
+<p>Now, when someone wants a production figure, they don’t have to ask a developer to run the query for them.</p>
+<figure class="diagram"><a href="/writing/figures/prod-db.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: How a production database query gets executed"><img src="/writing/figures/prod-db.png" width="1360" height="1356" alt="How a production database query gets executed" loading="lazy" decoding="async"></a><figcaption>How a production database query gets executed. Heavy queries are not
+blocked by instructions: just before the tool call, the bot code
+measures the estimated cost and decides whether to allow it. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<h3 id="code-that-connects-to-external-systems-lives-in-one-place">Code that connects to external systems lives in one place</h3>
+<p>I split the code into four parts.</p>
+<ul>
+<li><strong>Core (<code>src/core</code>):</strong> holds the contracts all the code keeps. The interfaces for external connections such as the storage tables, Slack, and the database are here, along with the list of tool names. Core imports from no other folder.</li>
+<li><strong>Composition root (<code>main.ts</code>, <code>host.ts</code>):</strong> the entry files that run when the agent starts. Objects that connect to external systems (Slack, the database, the model SDK, environment variables, timers) are created only here, and passed to the rest of the code in the shape of core’s interfaces.</li>
+<li><strong>Modules (10 folders under <code>src</code>):</strong> divide up what the bot code does, such as sessions, tool policy, storage tables, and the code workspace. They don’t create external connection objects themselves and use only what the composition root passes in.</li>
+<li><strong>Capability folders (9 folders under <code>src/capabilities</code>):</strong> under <code>capabilities</code>, which is one of the modules, each external service is attached as one folder. The HTTP clients and tools that call services like Jira and Sentry are here, and they receive even the <code>fetch</code> they use for requests, and the timeouts, from the composition root.</li>
+</ul>
+<p>Divided this way, the composition root and the modules all import core, and core depends on nothing. In Spring terms, the composition root does by hand, in code and with no container, the constructor injection a DI container would do. Modules correspond to services that receive only interfaces, and capability folders to external API adapters. In tests, in-memory implementations are injected in place of the composition root to check session flows and policy. If a module imports a forbidden package, or imports another module against the set direction, a test fails.</p>
+<figure class="diagram"><a href="/writing/figures/package.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Folders and dependency direction in agent-colleague"><img src="/writing/figures/package.png" width="1360" height="1684" alt="Folders and dependency direction in agent-colleague" loading="lazy" decoding="async"></a><figcaption>Folders and dependency direction in agent-colleague. Every folder
+sees only core’s interfaces, and the actual connections are made by the
+composition root. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<p>Like external connections, tools can only be attached if they are on a fixed list. The built-in tools a thread session uses are fixed as file reading, search, shell, and a subagent it delegates code exploration to; beyond those, only tools the bot code itself defines are attached.</p>
+<figure class="diagram"><a href="/writing/figures/safeguards.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Six safeguards"><img src="/writing/figures/safeguards.png" width="1360" height="888" alt="Six safeguards" loading="lazy" decoding="async"></a><figcaption>Six safeguards. The model judges meaning; the code decides what may
+be done. A call that passes one safeguard is checked again by the
+next. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<h3 id="the-structure-holds-up-even-when-a-coding-agent-changes-it">The structure holds up even when a coding agent changes it</h3>
+<p>Most of this repository’s code was also written by directing a coding agent. Of 149 commits excluding merge commits, 143 (as of early October) list Claude as a co-author. So I had to care as much about what the coding agent editing this repository could change as about what the model running inside the agent could do.</p>
+<p>Coding agents usually work like this.</p>
+<ul>
+<li>They copy code nearby that already works.</li>
+<li>They add code to an existing file rather than creating a new one.</li>
+<li>They pick the fastest way to get the build to pass.</li>
+<li>They leave code in place, rather than delete it, when they don’t know where it’s used.</li>
+<li>They build what was requested even when it conflicts with rules the system must keep.</li>
+</ul>
+<p>These five come from the “Agent-friendly architecture” document of the Dune project, which Lauren Tan of Cursor introduced in a video. Telling a coding agent to be careful doesn’t change these habits much, so I structured the code so that the result is right even when a coding agent works this way. I made following the set pattern the easiest path, and made the build or tests fail when there is a forbidden dependency. New features were added as new files, not as branches in shared files. The external-connection rule above comes from the same thinking.</p>
+<figure class="diagram"><a href="/writing/figures/afa.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: What agents tend to do, and the mechanisms that keep the structure intact anyway"><img src="/writing/figures/afa.png" width="1360" height="1120" alt="What agents tend to do, and the mechanisms that keep the structure intact anyway" loading="lazy" decoding="async"></a><figcaption>What agents tend to do, and the mechanisms that keep the structure
+intact anyway. Instead of writing “fix this habit” in a document, I made
+a shape that is right even when the habit is followed, or made a check
+fail when it is broken. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<p>Here is how I applied it to agent-colleague.</p>
+<ul>
+<li><p>For the 9 integrations (Jira, Sentry, DB, Bitbucket, Jenkins, the embedding server, ktlint, calendar, and Slack file download), each has one capability folder holding its client, configuration, and tests. Integrations that expose tools for the model keep those tools in the same folder, and a new integration is attached by creating one folder and adding one line to the capability list. Of the bot’s 33 tools, 23 are in these folders.</p></li>
+<li><p>Rules aren’t left as documentation only; I turned them into tests that fail when a rule is broken. If capability folders import each other, a module is imported against the set direction, or an HTTP client is used outside a capability folder, a test fails.</p></li>
+<li><p>Each tool’s name and kind, and the capability or module that registers it, are listed in a table in a single file. A tool that isn’t in the table doesn’t compile, so a coding agent can’t add a tool on the side that skips the policy check.</p></li>
+<li><p>The rules have no exceptions. At first I kept an exception list, with counts, for code that seemed to have to live outside the composition root, such as a session timer or Slack file download. But the tests only checked the counts, so deleting one allowed timer and adding a new one passed, because the count was the same. After seeing this, I removed every exception. Timers and the SDK tool-server function are now passed in by the composition root, Slack file download moved into a capability folder, and casts that bypassed type checking were replaced with runtime value checks.</p>
+<p>Today every exception list is empty, so using even one timer outside the composition root fails a test. Merely writing the name <code>setTimeout</code> fails, using <code>AbortSignal.timeout</code> to put a timeout on an HTTP request fails, and putting an entry back into an exception list fails too.</p></li>
+<li><p>I emptied the folder where integration code used to live under the old approach, and made a test fail if a file ever reappears there. This is to stop a coding agent from copying leftover old code and spreading the same problem.</p></li>
+</ul>
+<h3 id="code-changes-are-split-between-an-implementation-session-and-a-review-session">Code changes are split between an implementation session and a review session</h3>
+<p>“Fix it and open a PR” is handled by a session that changes code (a code session), which works in the following order.</p>
+<ol>
+<li>The bot code creates an isolated temporary workspace.</li>
+<li>An implementation session changes the code.</li>
+<li>A fresh review session, which knows nothing about how the implementation went, reads only the instructions and the diff and writes down problems.</li>
+<li>If there are problems, the implementation session picks up again and addresses them.</li>
+</ol>
+<p>The review session is separate so that the side that made the change isn’t the one giving its own work a favorable review. The review session gets no file-editing tools (Edit, Write), only reading, search, and shell. The three stages share one budget of model turns and cost.</p>
+<p>Push and merge are constrained. Pushes go only to bot-only branches and the deploy branch, and PRs are opened only from bot-only branches. Merges happen only when a person asks, and only when a person, not a bot, has approved. The requester gets the PR link and a review summary in the thread, and from there it follows the usual code review flow.</p>
+<figure class="diagram"><a href="/writing/figures/code-session.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: How &quot;fix it and open a PR&quot; is handled"><img src="/writing/figures/code-session.png" width="1360" height="1808" alt="How &quot;fix it and open a PR&quot; is handled" loading="lazy" decoding="async"></a><figcaption>How “fix it and open a PR” is handled. The model only changes and
+reviews code inside the sandbox; the workspace, push and PR are handled
+by the bot code outside it. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<p>Every shell command a code session runs executes inside the SDK’s sandbox. The sandbox is a restriction mechanism provided by the operating system: it limits which files a process and its child processes can read and write, and which network destinations they can reach. I used it because the bot code can’t screen in advance everything a shell command might do.</p>
+<p>In a code session, the model composes and runs shell commands itself. Running the build and tests also executes the repository’s build scripts and dependency code, and text telling the model to run a command could be mixed into a code comment or issue body it reads. With the operating system restricting file and network scope regardless of what the command is, the model can’t change files outside the working folder or send company information off the machine, even if it makes a mistake or follows a bad instruction.</p>
+<p>Even when the model runs builds and tests in the shell, the only two places it can write files are the working folder and the build cache folder. Network traffic goes only to addresses on an allowlist, and the allowlist is empty by default. The option that lets the model run a command with the sandbox off is disabled, and if any environment variable passed to a code session has a name that looks like a token or password, the bot code won’t start the job. The thread session’s shell runs in the same sandbox, with no network access at all.</p>
+<p>Once network and file writes were blocked, the build wouldn’t run. In the first trial run, Gradle couldn’t write its cache to the home folder outside the working folder, and didn’t run at all. I created a dedicated Gradle home folder and allowed writes to it, and let it borrow, read-only, the dependencies already downloaded on the machine it runs on. The model is told to try an offline build first.</p>
+<p>The Kotlin lint check (ktlint) couldn’t be run through Gradle, because the sandbox blocked the internal communication of the worker processes Gradle starts. Instead, the bot code, outside the sandbox, downloads in advance the ktlint binary of the version the repository uses, verifies its checksum, and tells the model the path to that binary. Pushing and creating the PR are also done by the bot code, not the model, after the session ends, so the repository server’s address is not on the allowlist.</p>
+<p>Some restrictions weren’t in the original design and were added after I found problems during a one-day trial in the team channel. Instructions written in a personal settings file on my machine, where the agent runs, got mixed into the agent’s instructions, and connection details for external tools registered on my machine ended up in a code session’s conversation log. The same day, I changed sessions so they don’t read personal settings or external tool information.</p>
+<p>Error alerts are handled with the same code session. When a Sentry alert is posted to the alert channel, the bot code creates one session per issue, and the model analyzes the cause and posts it in the thread. In designated backend repositories, it skips conditions 1 and 2 of the three above and goes on to fix the problem without waiting for a person’s answer. The fix proceeds in this order.</p>
+<ol>
+<li>Find the commit that caused it and the branch that commit came in on.</li>
+<li>Fix the code with a code session.</li>
+<li>Open a PR with the author of the commit that caused it as reviewer.</li>
+<li>Put the fix commit on the deploy branch.</li>
+<li>Deploy to the development and staging servers.</li>
+</ol>
+<p>Errors that occur in production follow the same steps. However, the deploy tool only accepts the development and staging servers as targets in the first place, so nothing reaches production; the fix gets there in the next regular release or in a hotfix a person decides on.</p>
+<p>Which repositories may be fixed without a person’s answer is decided by the policy function, a pure function. If the repository-list setting is emptied, nothing is fixed in any repository without a person’s answer, so if something goes wrong, automatic fixes can be stopped with one setting. And because the cause analysis is already attached when the alert appears, a developer doesn’t have to start by reading the stack trace.</p>
+<figure class="diagram"><a href="/writing/figures/autofix.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: How a Sentry alert is analyzed and fixed"><img src="/writing/figures/autofix.png" width="1360" height="1348" alt="How a Sentry alert is analyzed and fixed" loading="lazy" decoding="async"></a><figcaption>How a Sentry alert is analyzed and fixed. Only in repositories where
+automatic fixes are allowed does it proceed without waiting for a
+person’s answer; emptying the allowlist stops every alert at the
+analysis. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<h2 id="i-added-a-session-that-watches-the-channel-and-search-over-past-conversations">I added a session that watches the channel, and search over past conversations</h2>
+<p>With one session per thread in place, one problem remained: a thread session can’t know what was said outside its thread. “That deploy from earlier” is usually outside the thread.</p>
+<h3 id="channel-sessions">Channel sessions</h3>
+<p>I chose between two approaches. The first is to attach the channel’s last few dozen posts when a session starts. It’s simple, but it cuts off at however many posts are attached, so it can’t answer about anything beyond that. The second is to keep, for each channel, a session that continuously reads the conversation (a channel session). It costs more, because the model is called for every post, but the conversation the channel session has read can be handed to a thread as is. Only the second approach solves the problem above, so I chose channel sessions.</p>
+<p>Each channel where auto-reply is allowed has one channel session, and every time a top-level post (a new post in the channel, not a thread reply) appears, it reads the post and decides. The only thing a channel session decides is whether to reply to that post. The only tool it has is “enter this thread,” so it cannot speak in Slack directly.</p>
+<p>If it decides to reply, the bot code creates a new thread session that inherits the channel session’s conversation history as is, and that thread session writes the reply. When the channel has been quiet for a while, or a day has passed, the channel session is replaced with a new one, and what came before doesn’t carry over to the new channel session.</p>
+<figure class="diagram"><a href="/writing/figures/channel-session.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: How a channel session picks which posts to answer"><img src="/writing/figures/channel-session.png" width="1360" height="692" alt="How a channel session picks which posts to answer" loading="lazy" decoding="async"></a><figcaption>How a channel session picks which posts to answer. The channel
+session only decides whether to reply; the thread session writes the
+reply. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<h3 id="finding-past-conversations-by-meaning">Finding past conversations by meaning</h3>
+<p>When a session is replaced, the model forgets what came before, so the agent needed a way to look up past conversations. The bot code stores every post in the channels the agent listens to in the database, including those that weren’t addressed to the agent. When a post is edited, it’s overwritten; when it’s deleted, only a deleted flag is set; and by default old posts aren’t removed, because this table exists to find a decision made six months ago.</p>
+<p>The model looks through the stored conversations only when it judges it necessary, and when it does, it finds posts with similar meaning using embedding vectors. An embedding vector is a post’s meaning turned into a list of numbers. I compared two other approaches as well: a knowledge graph is strong at following relationships but wasn’t a fit for finding posts with similar meaning, and exact-text search can’t connect “timeout” with “I’m not getting a response,” so I ended up choosing embeddings.</p>
+<p>The decision in Part 1 to leave embeddings out of code search stands. Code changes from branch to branch, so indexes would have to be maintained separately, but a conversation hardly changes once it’s posted. Embeddings are used only for conversations.</p>
+<p>The bot code uses EmbeddingGemma 2, an embedding model released by Google, to turn each post into a vector of 768 numbers. The model is loaded in an embedding server that runs on the same Mac as the bot, and that server accepts requests only from within that Mac. The vectors are stored and searched in the PostgreSQL the agent was already using, with the pgvector extension added, so there’s no separate vector database.</p>
+<figure class="diagram"><a href="/writing/figures/embedding.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: Storing channel posts as vectors and finding them by meaning when needed"><img src="/writing/figures/embedding.png" width="1360" height="1332" alt="Storing channel posts as vectors and finding them by meaning when needed" loading="lazy" decoding="async"></a><figcaption>Channel posts are stored as vectors and found by meaning when needed.
+Storing is done continuously by code, without the model; finding is done
+only when the model judges it necessary. <span class="zoom">Tap the figure to open it full size.</span></figcaption></figure>
+
+<p>Storing and retrieving run separately. The storing side doesn’t call the model and runs in this order.</p>
+<ol>
+<li>When a post appears in a channel the agent listens to, the bot code saves the original text in the channel-conversation table in PostgreSQL.</li>
+<li>Every 5 seconds, the bot code’s embedding job collects posts that don’t have a vector yet, a few dozen at a time.</li>
+<li>It sends them to the embedding server on the same Mac.</li>
+<li>It saves the returned vectors in the vector column of the same rows.</li>
+</ol>
+<p>Posts under 10 characters, like “yep,” are skipped, because they end up vaguely close to any query. A reply like “That’s tomorrow morning” doesn’t say what it’s answering on its own, so each reply is embedded with two things prepended: the first 200 characters of the parent post and the first 200 characters of the reply immediately before it. The preceding reply is included because a reply like “OK, let’s go with that” responds to the reply just before it more than to the parent post. Deleted posts and replies under 10 characters are not prepended.</p>
+<p>When a post changes, its vector is rebuilt. If someone edits a post, the bot code overwrites the original text and clears both that post’s vector and the vectors of replies that were built with that post prepended. The embedding job picks the cleared posts up again on its next pass. Deleted posts keep their row but are flagged as deleted and excluded from both search and embedding. The original Sentry alert posts that another bot puts in the alert channel aren’t embedded, because many similar-looking posts would pile up and could crowd out other search results. The analysis replies attached to those alerts are embedded, so they can serve questions like “Have we analyzed this error before?”</p>
+<p>On the retrieving side, the model decides. For example, when the question “What did we decide about the release cadence last month?” arrives in a thread, it goes like this.</p>
+<ol>
+<li>The model judges that this question can’t be answered from the current thread alone and chooses the search terms itself. Here that would be something like “release cadence decision,” and the model calls the past-conversation search tool with it.</li>
+<li>The tool sends that query to the same embedding server used when storing posts and turns it into a vector of 768 numbers. It has to be made with the same model and the same length as the stored vectors to be comparable. The embedding server prepends a different short phrase to queries than to posts being stored; the model was trained to tell queries and documents apart that way.</li>
+<li>The tool queries PostgreSQL with that vector. pgvector measures the distance between the stored posts’ vectors and the query vector and returns 20 posts, closest first, that is, most similar in meaning. By default it searches the current channel, and when needed, all channels the agent listens to. Even when searching all channels, the alert channel is excluded and is searched only when the model names it explicitly. Each post comes with the first 300 characters of its body, the time it was written, and the thread it belongs to, and for a reply, the first 80 characters of the parent post as well.</li>
+<li>The 20 are candidates, and the model picks the ones that match the question. If the post it picks is a single reply from the middle of a thread, the surrounding context is missing, so the model can call the tool once more, naming that thread, to read the whole thread.</li>
+<li>The model answers on the basis of the conversations it found.</li>
+</ol>
+<p>I didn’t preload the stored conversations into the prompt for every question. Most questions don’t need past conversations, and preloading would spend that many more tokens on every one.</p>
+<p>At first I used OpenAI’s text-embedding-3-small and paid per use. In a 30-day period measured while still on OpenAI, 1,111 posts were embedded across the 8 channels the agent listens to, an average of 37 a day; at about 450,000 tokens a month (measured before prepending the preceding reply), the cost was under one cent (at $0.02 per million tokens).</p>
+<p>In October I changed the model. Building vectors meant sending the original text of internal company Slack conversations to the OpenAI API as well, separately from Claude, which writes the answers. I didn’t think it was right to add one more place where internal conversations were sent. EmbeddingGemma 2 can be downloaded as model files and run directly, and its Apache 2.0 license allows use for company work, so I decided to run it on the Mac the bot runs on. Now, when vectors are built, the original conversation text doesn’t leave that Mac.</p>
+<p>In the move, I set it to read only the first 1,024 tokens of each post, as this model counts them (about 1,800 Korean characters). Anything beyond that isn’t reflected in the vector; of the 2,265 posts in the production database, 2.5% were that long. The 2,156 existing vectors were rebuilt in about six and a half minutes with no failures, and the embedding server used about 1.9 GB of memory normally and about 3.4 GB at peak. I haven’t yet compared how search results differ from when I was using OpenAI.</p>
+<h3 id="replying-first-to-posts-that-werent-addressed-to-the-agent">Replying first to posts that weren’t addressed to the agent</h3>
+<p>I added auto-reply for the goal described earlier. A good share of the questions posted in a channel can be answered by looking at code or data, and for those, getting an answer right away matters more than who gives it. As described above, the person asking had to wait until the person who knew the answer came back. To cut that waiting time, even for questions that aren’t important or urgent, I had the agent reply to posts that weren’t addressed to it when it can help.</p>
+<p>Which posts it steps into is decided jointly by code and model. The code passes to the channel session only posts that meet all of the following.</p>
+<ul>
+<li>It was posted in a channel where auto-reply is allowed. DMs are not passed on.</li>
+<li>It is a top-level post, not a thread reply.</li>
+<li>A person wrote it. Posts from other bots or apps are not passed on.</li>
+<li>It doesn’t mention the agent. A post that mentions the agent skips the channel session and goes straight to a thread session. A post that tags another person or team is passed on as is.</li>
+<li>It isn’t in a thread the agent has already entered.</li>
+</ul>
+<p>There is also one condition for stopping. The code counts the top-level posts that have gone by since the agent last entered a thread in that channel. If the agent doesn’t enter again before that count reaches a set number, the channel session stops judging. When the agent enters a new thread in that channel, the count starts over.</p>
+<p>Whether to reply to a post it has been passed is up to the model. The instructions give the criterion (reply if the agent can help) together with when to stay quiet: when people are talking among themselves and haven’t asked the agent, when something already answered is asked again with no new information, and when the message is wrapping up a conversation. They also say that in a thread it has entered, the agent reads later posts even without a mention, but must not reply to something said to another person.</p>
+<p>The criteria for staying quiet went in on the first day of the new structure. That day I found the agent could butt into replies people were exchanging with each other, and I fixed the instructions and restarted it right away. When something bothered the team in use, I tried to fix it the same day wherever possible.</p>
+<p>Calling the model for every post raises an obvious cost question. I looked at it too and judged the cost manageable, for three reasons.</p>
+<ul>
+<li>Fewer posts go to the model than you’d think. Posts that mention the agent and posts in threads the agent has entered go to thread sessions; top-level posts written by people in channels where auto-reply is allowed go to the channel session. The rest aren’t sent to the model at all and are only stored for past-conversation search.</li>
+<li>Model prices came down. Opus 5.5, which the agent uses now, is cheaper than Opus 5: the base input price per million tokens went from $5 to $4, and cache reads from $0.50 to $0.20.</li>
+<li>Instead of paying per use with an API key, the agent signs in with a Claude subscription account and calls the model within that plan’s usage. The same volume on pay-as-you-go API pricing would have added up to a fair amount, but as it is, model usage costs nothing beyond the subscription fee. The channel-session costs given in dollars below are also what the tokens used would come to at API list prices.</li>
+</ul>
+<p>That doesn’t make tokens free. The subscription has usage limits too, so when usage gets close to the limit, the bot code stops new code jobs first. Even so, compared with the 10 minutes per question assumed earlier, I judged that the benefit of the agent answering first, like a colleague, outweighs spending this many tokens.</p>
+<p>I also put a few cost-saving measures in place. As in the conditions above, only top-level posts written by people are passed to the channel session, and the stopping condition is there for the same reason. When handing off to a thread, the channel conversation isn’t summarized and re-sent; the thread session inherits the channel session’s history as is. The same session history can’t be written from two places at once, so the bot code starts the thread session right after the channel turn ends. At that point, the prefix the channel session just sent is still in the model provider’s prompt cache, so that part is billed at a tenth or less of the base input price.</p>
+<p>I measured the actual cost too. In all 4 cases where it stepped in, the prefix sent by the channel session was read from cache: the whole prefix in 3 cases and part of it in 1. The input cost of the thread sessions’ first requests was about 30% lower, summed over the 4, than it would have been on a cache miss. That said, the inherited channel conversations were short, at 6,000 to 7,000 tokens. The first request also carries the extra cost of writing to the cache, for the first time, the 10,000 to 17,000 tokens newly added for the thread session, so the saving came to about $0.20 across the 4.</p>
+<p>The bot code records cost per turn, along with whether the turn was one where the agent stepped in, and every morning posts yesterday’s and the last 7 days’ totals to an admin channel.</p>
+<p>There’s an example from late September where the agent actually stepped in. When a post went up asking the app team to wire up the API for the Lounge share feature, the agent replied first, a minute and a half later. The post tagged the app team, but the model judged it could help and replied. The agent found, in the iOS and Android code, how the existing share feature records history and where that call was missing for Lounge sharing, and wrote it up. It also pointed out that the same call was missing from project sharing in the same menu.</p>
+<figure class="capture"><a href="/writing/img/p2-auto-reply-app-team.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: The agent&#x27;s reply to an integration request that tagged the app team"><img src="/writing/img/p2-auto-reply-app-team.png" width="824" height="1015" alt="The agent&#x27;s reply to an integration request that tagged the app team (Slack screenshot, in Korean)" loading="lazy" decoding="async"></a><figcaption>The reply the agent posted first, a minute and a half after an
+integration request that tagged the app team</figcaption></figure>
+
+<p>There was also feedback that it was a nuisance. In the product development channel a colleague posted “The version going out this time is 3.2.0, right?”, and within 30 seconds the agent replied that, based on the version setting in the app code, it looked like 3.1.1.</p>
+<figure class="capture"><a href="/writing/img/p2-version-question.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: The agent replying first to a version question that wasn&#x27;t addressed to it"><img src="/writing/img/p2-version-question.png" width="824" height="577" alt="The agent replying first to a version question that wasn&#x27;t addressed to it (Slack screenshot, in Korean)" loading="lazy" decoding="async"></a><figcaption>The agent replying first to a version question that wasn’t addressed
+to it</figcaption></figure>
+
+<p>When the colleague followed up that they were asking because the server needed to branch its response by version, the agent went on to post a summary of where the server code reads the app version and what to watch out for. The colleague then said, “Won’t this burn through tokens? And tokens aside, it feels like the conversation is getting really cluttered.”</p>
+<figure class="capture"><a href="/writing/img/p2-clutter-feedback.png" target="_blank" rel="noopener" aria-label="Open full-size image in a new tab: The colleague&#x27;s reply raising cost and clutter"><img src="/writing/img/p2-clutter-feedback.png" width="824" height="576" alt="The colleague&#x27;s reply raising cost and clutter (Slack screenshot, in Korean)" loading="lazy" decoding="async"></a><figcaption>The colleague’s reply, after the agent posted its follow-up summary,
+worrying about cost and about the conversation getting cluttered</figcaption></figure>
+
+<p>The next version to ship is the app team’s call, so what the colleague wanted was confirmation from the app owner, not an answer found in the code.</p>
+<p>It was one person’s feedback, but it came from a colleague who shares the channel and found it bothersome, so for now I’ve emptied the auto-reply channel list and turned the feature off. The agent still replies to posts that mention it and in threads it has already entered. Looking back, even when a question could be answered from the code, the person asking sometimes wanted confirmation from a specific person, and it was hard for the model to tell that difference from instructions alone.</p>
+<h2 id="wrapping-up">Wrapping up</h2>
+<p>I estimate the questions the agent took on over 15 weeks at about 38 hours of developer time, on the assumption of an immediate response. In this redesign, what I cared about more than the number of questions was the range of work that can be handed to the agent. Because what may be executed is written down as code in the policy function, work that used to need a person to carry it out (creating tickets, changing code, querying the production database, responding to errors) can now be handed to the agent too. And because the new structure was built on that split from the start, with the model judging meaning and the code deciding execution, the code that manages conversation flow didn’t grow as features were added. On the other hand, auto-reply, where the final call on whether to step in was left to the model, is turned off for now because a colleague in the same channel found it bothersome.</p>
+<p>It has been less than three weeks since the switch to the new structure, so I haven’t counted how much these features were used. Going forward, I plan to watch what the team actually hands over and add to the policy, one at a time, the things that are safe to hand over.</p>
+
+</div>
+</article>
+<nav class="pager" aria-label="Series">
+  <a href="/writing/part-1/"><span class="k">Part 1</span><span class="t">Building an in-house AI agent that answers code questions across teams</span></a>
+  <a href="/?lang=en"><span class="k">Home</span><span class="t">Kunsang Lee</span></a>
+</nav>
+</main>
+<footer class="foot"><p>© Kunsang Lee · <a href="/?lang=en">kunsanglee.github.io</a> · <a href="https://github.com/kunsanglee">GitHub</a></p></footer>
+</body>
+</html>

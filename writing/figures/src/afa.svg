@@ -1,0 +1,114 @@
+<svg id="fig-ag-afa" viewBox="-2 -2 680 560" width="1360" height="1120" role="img" aria-labelledby="fig-ag-afa-title fig-ag-afa-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-afa-title">What agents tend to do, and the mechanisms that keep the structure from breaking anyway</title>
+<desc id="fig-ag-afa-desc">Three columns pair five habits of coding agents (from the Dune document) with the mechanism agent-colleague set up for each and the check that fails when it is broken. Copying nearby code: a capability-folder shape that is right when copied. Adding to existing files: a new folder plus one line in the list. Fastest way to a passing build: import rules. Not deleting code: the old folder emptied and pinned empty. Building what was requested: the tool owner table and empty exception lists. capabilities.test.ts covers rows 1 and 2, boundaries.test.ts rows 3 to 5, and npm run typecheck row 5.</desc>
+<defs><marker id="fig-ag-afa-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker><marker id="fig-ag-afa-ah-model" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4fbb"/></marker><marker id="fig-ag-afa-ah-bot" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1c2433"/></marker><marker id="fig-ag-afa-ah-policy" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0f7a66"/></marker><marker id="fig-ag-afa-ah-ext" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5bb7"/></marker><marker id="fig-ag-afa-ah-store" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5b6577"/></marker><marker id="fig-ag-afa-ah-deny" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b23a32"/></marker><marker id="fig-ag-afa-ah-allow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e7d4f"/></marker><marker id="fig-ag-afa-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker></defs>
+<style>#fig-ag-afa text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
+#fig-ag-afa .hd{font-size:12px;font-weight:700;fill:#0f172a}
+#fig-ag-afa .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-afa .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-afa .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-afa .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-afa .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-afa .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-afa .lg{font-size:10.5px;font-weight:500;fill:#475569}</style>
+<rect x="-2" y="-2" width="680" height="560" fill="#ffffff"/>
+<line x1="0" y1="38" x2="676" y2="38" stroke="#e2e8f0" stroke-width="1"/>
+<path d="M150,92 L169,92" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-afa-ah-grey)"/>
+<path d="M150,177 L169,177" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-afa-ah-grey)"/>
+<path d="M150,258 L169,258" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-afa-ah-grey)"/>
+<path d="M150,346 L169,346" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-afa-ah-grey)"/>
+<path d="M150,442 L169,442" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-afa-ah-grey)"/>
+<path d="M444,92 L463,92" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-afa-ah-policy)"/>
+<path d="M444,177 L463,177" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-afa-ah-policy)"/>
+<path d="M444,258 L463,258" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-afa-ah-policy)"/>
+<path d="M444,346 L463,346" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-afa-ah-policy)"/>
+<path d="M444,418 L463,418" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-afa-ah-policy)"/>
+<path d="M444,466 L463,466" fill="none" stroke="#0f7a66" stroke-width="1" marker-end="url(#fig-ag-afa-ah-policy)"/>
+<line x1="0" y1="501" x2="676" y2="501" stroke="#e2e8f0" stroke-width="1"/>
+<text class="hd" x="0" y="12">(a) Agent habits</text>
+<text class="hs" x="0" y="26">five from the Dune document</text>
+<text class="hd" x="170" y="12">(b) Mechanisms in agent-colleague</text>
+<text class="hs" x="170" y="26">how this project applies them</text>
+<text class="hd" x="464" y="12">(c) Checks that fail if broken</text>
+<text class="hs" x="464" y="26">tests and type checking</text>
+<rect x="0" y="48" width="150" height="88" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="10" y="81" style="fill:#5a3fa6">01</text>
+<text class="nm" x="10" y="96">Copy nearby code</text>
+<text class="nm" x="10" y="111">that already works</text>
+<rect x="170" y="48" width="274" height="88" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="180" y="65">A shape that is right when copied</text>
+<text class="ss" x="180" y="78">each external integration goes in one capability</text>
+<text class="ss" x="180" y="91">folder; folders with tools share one file layout,</text>
+<text class="ss" x="180" y="104">so copying the folder next door keeps the rules</text>
+<text class="mn" x="180" y="118">client, config, tools, index, testing</text>
+<rect x="0" y="144" width="150" height="66" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="10" y="166" style="fill:#5a3fa6">02</text>
+<text class="nm" x="10" y="181">Add to an existing file</text>
+<text class="nm" x="10" y="196">rather than create one</text>
+<rect x="170" y="144" width="274" height="66" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="180" y="161">New integration: new folder + one line</text>
+<text class="ss" x="180" y="174">no per-service branch in a shared file; make</text>
+<text class="ss" x="180" y="187">a folder and add one line to the list</text>
+<text class="mn" x="180" y="201">capabilities/index.ts</text>
+<rect x="0" y="218" width="150" height="80" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="10" y="247" style="fill:#5a3fa6">03</text>
+<text class="nm" x="10" y="262">Pick the fastest way</text>
+<text class="nm" x="10" y="277">to make the build pass</text>
+<rect x="170" y="218" width="274" height="80" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="180" y="235">Import rules that block shortcuts</text>
+<text class="ss" x="180" y="248">imports between folders only in allowed</text>
+<text class="ss" x="180" y="261">directions; HTTP clients for external services</text>
+<text class="ss" x="180" y="274">are kept only in capability folders</text>
+<rect x="0" y="306" width="150" height="80" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="10" y="327" style="fill:#5a3fa6">04</text>
+<text class="nm" x="10" y="342">Leave code in place</text>
+<text class="nm" x="10" y="357">when unsure where</text>
+<text class="nm" x="10" y="372">it is used</text>
+<rect x="170" y="306" width="274" height="80" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="180" y="323">Old-style folder emptied, kept empty</text>
+<text class="ss" x="180" y="336">all former integration files moved to capability</text>
+<text class="ss" x="180" y="349">folders; its list of production files is pinned</text>
+<text class="ss" x="180" y="362">to an empty list</text>
+<text class="mn" x="180" y="376">src/tools/</text>
+<rect x="0" y="394" width="150" height="96" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="10" y="423" style="fill:#5a3fa6">05</text>
+<text class="nm" x="10" y="438">Build what was asked</text>
+<text class="nm" x="10" y="453">even when it conflicts</text>
+<text class="nm" x="10" y="468">with the system's rules</text>
+<rect x="170" y="394" width="274" height="96" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="180" y="411">Off-rule code doesn't even compile</text>
+<text class="ss" x="180" y="424">tools are written in a table with their owner</text>
+<text class="mn" x="180" y="438">core/tools.ts TOOL_OWNER</text>
+<text class="ss" x="180" y="451">every exception list outside the composition</text>
+<text class="ss" x="180" y="464">root is emptied: timers, casts, HTTP clients,</text>
+<text class="ss" x="180" y="477">SDK value imports, imports from outside src</text>
+<rect x="464" y="48" width="212" height="162" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="mn" x="474" y="94" style="fill:#0b5e4f">capabilities.test.ts</text>
+<text class="ss" x="474" y="111"><tspan font-weight="600" fill="#0f172a">01</tspan> imports from outside own folder,</text>
+<text class="ss" x="493" y="124">core and lib; the global fetch</text>
+<text class="ss" x="474" y="137"><tspan font-weight="600" fill="#0f172a">02</tspan> a folder missing from the list, or</text>
+<text class="ss" x="493" y="150">a list entry with no folder</text>
+<rect x="465" y="219" width="210" height="214" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="mn" x="474" y="272" style="fill:#0b5e4f">boundaries.test.ts</text>
+<text class="ss" x="474" y="289"><tspan font-weight="600" fill="#0f172a">03</tspan> import in a forbidden direction,</text>
+<text class="ss" x="493" y="302">HTTP client outside a capability</text>
+<text class="ss" x="493" y="315">folder</text>
+<text class="ss" x="474" y="328"><tspan font-weight="600" fill="#0f172a">04</tspan> a file appears in <tspan class="mn">src/tools/</tspan></text>
+<text class="ss" x="474" y="341"><tspan font-weight="600" fill="#0f172a">05</tspan> all six exception lists are empty;</text>
+<text class="ss" x="493" y="354">a violating file fails, no exceptions</text>
+<rect x="464" y="442" width="212" height="48" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="mn" x="474" y="461" style="fill:#0b5e4f">npm run typecheck</text>
+<text class="ss" x="474" y="474"><tspan font-weight="600" fill="#0f172a">05</tspan> a tool not in the <tspan class="mn">TOOL_OWNER</tspan> table</text>
+<rect x="0" y="504" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="18" y="514">Model</text>
+<rect x="65" y="504" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="83" y="514">Bot code</text>
+<rect x="144" y="504" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="162" y="514">Policy, checks</text>
+<line x1="252" y1="510" x2="276" y2="510" stroke="#94a3b8" stroke-width="1"/>
+<text class="lg" x="282" y="514">mechanism matched to the habit</text>
+<line x1="464" y1="510" x2="488" y2="510" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="494" y="514">check that fails if broken</text>
+<text class="ss" x="0" y="536">Source: the five habits in (a) are taken from the Agent-friendly architecture document of the Dune project. The mechanisms in (b) and the</text>
+<text class="ss" x="0" y="550">checks in (c) were built in agent-colleague, and pairing habits with mechanisms row by row is also how this project applied them.</text>
+</svg>

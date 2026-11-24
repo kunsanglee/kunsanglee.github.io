@@ -1,0 +1,106 @@
+<svg id="fig-ag-package" viewBox="-2 -2 680 842" width="1360" height="1684" role="img" aria-labelledby="fig-ag-package-title fig-ag-package-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-package-title">Every folder sees only core's interfaces</title>
+<desc id="fig-ag-package-desc">The composition root (src/main.ts, src/host.ts) is the only place that creates env, PostgreSQL, Slack, the Agent SDK, fetch and child processes; scripts/ is outside the checks. Ten modules sit under src/: slack, session, store, policy, report, vacation, repos, workspace, capabilities and lib. capabilities holds 9 external-service integration folders, 5 with tools the model calls and 4 used only by bot code. One arrow means the composition root and all ten modules import src/core, and core imports no other folder.</desc>
+<defs><marker id="fig-ag-package-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker><marker id="fig-ag-package-ah-model" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4fbb"/></marker><marker id="fig-ag-package-ah-bot" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1c2433"/></marker><marker id="fig-ag-package-ah-policy" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0f7a66"/></marker><marker id="fig-ag-package-ah-ext" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5bb7"/></marker><marker id="fig-ag-package-ah-store" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5b6577"/></marker><marker id="fig-ag-package-ah-deny" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b23a32"/></marker><marker id="fig-ag-package-ah-allow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e7d4f"/></marker><marker id="fig-ag-package-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker></defs>
+<style>#fig-ag-package text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
+#fig-ag-package .hd{font-size:12px;font-weight:700;fill:#0f172a}
+#fig-ag-package .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-package .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-package .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-package .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-package .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-package .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-package .lg{font-size:10.5px;font-weight:500;fill:#475569}</style>
+<rect x="-2" y="-2" width="680" height="842" fill="#ffffff"/>
+<rect x="0" y="0" width="676" height="524" rx="8" fill="#fbfcfd" stroke="#1c2433" stroke-width="1"/>
+<path d="M338,524 L338,563" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-package-ah-grey)"/>
+<line x1="0" y1="701" x2="676" y2="701" stroke="#e2e8f0" stroke-width="1"/>
+<text class="lb" x="12" y="18" style="fill:#0f172a">Composition root + 10 modules</text>
+<rect x="13" y="29" width="650" height="136" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="2"/>
+<text class="nm" x="24" y="47">Composition root</text>
+<text class="ss" x="24" y="60">the only place that creates env, PostgreSQL, Slack, the Agent SDK, fetch and child processes</text>
+<rect x="24" y="72" width="232" height="84" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="mn" x="34" y="90"><tspan font-weight="600" fill="#0f172a">src/main.ts</tspan></text>
+<text class="ss" x="34" y="103">creates every folder's objects and</text>
+<text class="ss" x="34" y="116">connects them to each other</text>
+<text class="ss" x="34" y="129">reads env, connects Slack, creates</text>
+<text class="ss" x="34" y="142">capability folders, starts sessions</text>
+<rect x="266" y="72" width="196" height="84" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="mn" x="276" y="90"><tspan font-weight="600" fill="#0f172a">src/host.ts</tspan></text>
+<text class="ss" x="276" y="103">wraps PostgreSQL, git and</text>
+<text class="ss" x="276" y="116">child processes in the shape</text>
+<text class="ss" x="276" y="129">of core's ports</text>
+<rect x="472" y="72" width="180" height="84" rx="6" fill="#ffffff" stroke="#5b6577" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="mn" x="482" y="90"><tspan font-weight="600" fill="#0f172a">scripts/</tspan></text>
+<text class="mn" x="482" y="104">migrate, smoke</text>
+<text class="ss" x="482" y="117">outside the checks</text>
+<text class="ss" x="482" y="130">fails if src imports</text>
+<text class="ss" x="482" y="143">from here</text>
+<rect x="12" y="176" width="652" height="338" rx="6" fill="#fbfcfd" stroke="#e2e8f0" stroke-width="1"/>
+<text class="nm" x="24" y="195">10 modules</text>
+<text class="ss" x="96" y="195">(folders under <tspan class="mn">src/</tspan>)</text>
+<rect x="24" y="204" width="304" height="40" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="mn" x="34" y="220" style="fill:#8a5300"><tspan font-weight="600" fill="#0f172a">slack/</tspan></text>
+<text class="ss" x="34" y="233">receives and sends Slack events</text>
+<rect x="348" y="204" width="304" height="40" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="mn" x="358" y="220" style="fill:#5a3fa6"><tspan font-weight="600" fill="#0f172a">session/</tspan></text>
+<text class="ss" x="358" y="233">thread sessions, dispatcher, agent tools</text>
+<rect x="24" y="250" width="304" height="40" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="mn" x="34" y="266" style="fill:#3d4554"><tspan font-weight="600" fill="#0f172a">store/</tspan></text>
+<text class="ss" x="34" y="279">PostgreSQL tables (conversations, execution records, etc.)</text>
+<rect x="348" y="250" width="304" height="40" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="mn" x="358" y="266" style="fill:#0b5e4f"><tspan font-weight="600" fill="#0f172a">policy/</tspan></text>
+<text class="ss" x="358" y="279">decides whether a tool may run (pure functions)</text>
+<rect x="24" y="296" width="304" height="40" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="mn" x="34" y="312" style="fill:#0f172a"><tspan font-weight="600" fill="#0f172a">report/</tspan></text>
+<text class="ss" x="34" y="325">usage table, once a day</text>
+<rect x="348" y="296" width="304" height="40" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="mn" x="358" y="312" style="fill:#0f172a"><tspan font-weight="600" fill="#0f172a">vacation/</tspan></text>
+<text class="ss" x="358" y="325">vacation briefing</text>
+<rect x="24" y="342" width="304" height="54" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="mn" x="34" y="358" style="fill:#3d4554"><tspan font-weight="600" fill="#0f172a">repos/</tspan></text>
+<text class="ss" x="34" y="371">read-only clones, read when looking for an answer</text>
+<rect x="348" y="342" width="304" height="54" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="mn" x="358" y="358" style="fill:#0f172a"><tspan font-weight="600" fill="#0f172a">workspace/</tspan></text>
+<text class="ss" x="358" y="371">temporary worktrees for code work,</text>
+<text class="ss" x="358" y="384">sandboxed sessions, push</text>
+<rect x="24" y="402" width="420" height="102" rx="6" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="mn" x="34" y="418" style="fill:#244a99"><tspan font-weight="600" fill="#0f172a">capabilities/</tspan></text>
+<text class="ss" x="34" y="431">9 integration folders for external services</text>
+<text class="lb" x="34" y="448"><tspan font-weight="600" fill="#0f172a">5 integrations with tools the model calls</tspan></text>
+<text class="mn" x="34" y="462">db, bitbucket, jenkins, jira, sentry</text>
+<text class="lb" x="34" y="479"><tspan font-weight="600" fill="#0f172a">4 integrations used only by bot code</tspan></text>
+<text class="mn" x="34" y="493">calendar, embedding, ktlint, slack-files</text>
+<rect x="454" y="402" width="198" height="102" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="mn" x="464" y="418"><tspan font-weight="600" fill="#0f172a">lib/</tspan></text>
+<text class="ss" x="464" y="431">HTTP and DB helpers</text>
+<text class="ss" x="464" y="444">used by capability folders</text>
+<text class="lb" x="348" y="548">all of them import core</text>
+<rect x="1" y="565" width="674" height="124" rx="6" fill="#e8f4f1" stroke="#0f7a66" stroke-width="2"/>
+<text class="mn" x="12" y="582" style="fill:#0b5e4f"><tspan font-weight="600" fill="#0f172a">src/core/</tspan></text>
+<text class="ss" x="12" y="595">the contracts every folder keeps (interfaces and types)</text>
+<text class="ss" x="12" y="611"><tspan class="mn"><tspan font-weight="600" fill="#0f172a">ports.ts</tspan></tspan> port interfaces (storage tables, Slack, DB, repositories, workspace ...)</text>
+<text class="ss" x="12" y="624"><tspan class="mn"><tspan font-weight="600" fill="#0f172a">tools.ts</tspan></tspan> table of tool names, kinds and owners</text>
+<rect x="12" y="640" width="652" height="40" rx="6" fill="#ffffff" stroke="#0f7a66" stroke-width="1"/>
+<text class="ss" x="22" y="656"><tspan font-weight="600" fill="#0f172a">core imports no other folder at all</tspan> (<tspan class="mn">core: [ ]</tspan> in <tspan class="mn">IMPORT_GRAPH</tspan>)</text>
+<text class="ss" x="22" y="669">from packages it takes only Agent SDK types</text>
+<rect x="0" y="704" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="18" y="714">People, Slack</text>
+<rect x="103" y="704" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="121" y="714">Model</text>
+<rect x="168" y="704" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="186" y="714">Bot code</text>
+<rect x="247" y="704" width="12" height="12" rx="2" fill="#e8f4f1" stroke="#0f7a66" stroke-width="1"/>
+<text class="lg" x="265" y="714">Policy, checks</text>
+<rect x="355" y="704" width="12" height="12" rx="2" fill="#eef3fb" stroke="#2f5bb7" stroke-width="1"/>
+<text class="lg" x="373" y="714">External services</text>
+<rect x="478" y="704" width="12" height="12" rx="2" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="lg" x="496" y="714">Storage</text>
+<text class="ss" x="0" y="736">The single arrow means that <tspan class="mn">src/main.ts</tspan>, <tspan class="mn">src/host.ts</tspan> and all 10 modules import core. <tspan class="mn">scripts/</tspan> is outside the checks.</text>
+<text class="ss" x="0" y="756">Imports between modules work only in the directions written in the <tspan class="mn">IMPORT_GRAPH</tspan> table of <tspan class="mn">src/core/boundaries.test.ts</tspan> (for example</text>
+<text class="ss" x="0" y="770">session → slack, session → report, capabilities → lib, main.ts → every module). Adding a direction that is not in the table (for example</text>
+<text class="ss" x="0" y="784">policy → store) fails the test, and so does a direction left in the table that the code does not use.</text>
+<text class="ss" x="0" y="804">The same test fails if a file outside the composition root uses process, timers or the global fetch, or imports pg, Slack or the SDK as</text>
+<text class="ss" x="0" y="818">values. The composition root creates the PostgreSQL connection, the Slack client and the capability folders' clients and passes them on</text>
+<text class="ss" x="0" y="832">in the shape of the interfaces in <tspan class="mn">src/core/ports.ts</tspan>, so the other folders can be tested without a real DB or Slack.</text>
+</svg>

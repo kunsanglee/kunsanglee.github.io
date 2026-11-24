@@ -1,0 +1,126 @@
+<svg id="fig-ag-embedding" viewBox="-2 -2 680 666" width="1360" height="1332" role="img" aria-labelledby="fig-ag-embedding-title fig-ag-embedding-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig-ag-embedding-title">Channel posts are stored as vectors and found by meaning when needed</title>
+<desc id="fig-ag-embedding-desc">Storing: every post in a channel the agent listens to is saved in the channel-conversation table in PostgreSQL; every 5 seconds the embedding job reads posts with no vector, a few dozen at a time, sends them to the embedding server on the same Mac (EmbeddingGemma 2), and saves the returned 768-number vectors in the same rows. Retrieving: when the model in a thread session judges it needs something said outside the thread, it calls channel_history with search terms; the embedding server turns the query into a vector, the table returns the 20 closest posts (40 at most), the model picks the matching ones and answers in the thread.</desc>
+<defs><marker id="fig-ag-embedding-ah-human" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b26b00"/></marker><marker id="fig-ag-embedding-ah-model" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4fbb"/></marker><marker id="fig-ag-embedding-ah-bot" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1c2433"/></marker><marker id="fig-ag-embedding-ah-policy" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0f7a66"/></marker><marker id="fig-ag-embedding-ah-ext" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5bb7"/></marker><marker id="fig-ag-embedding-ah-store" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5b6577"/></marker><marker id="fig-ag-embedding-ah-deny" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b23a32"/></marker><marker id="fig-ag-embedding-ah-allow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e7d4f"/></marker><marker id="fig-ag-embedding-ah-grey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/></marker></defs>
+<style>#fig-ag-embedding text{font-family:'Pretendard','Noto Emoji GT',sans-serif}
+#fig-ag-embedding .hd{font-size:12px;font-weight:700;fill:#0f172a}
+#fig-ag-embedding .hs{font-size:11px;font-weight:500;fill:#64748b}
+#fig-ag-embedding .nm{font-size:12px;font-weight:600;fill:#0f172a}
+#fig-ag-embedding .sb{font-size:11px;font-weight:400;fill:#475569}
+#fig-ag-embedding .ss{font-size:10.5px;font-weight:400;fill:#475569}
+#fig-ag-embedding .mn{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:400;fill:#334155}
+#fig-ag-embedding .lb{font-size:10.5px;font-weight:500;fill:#475569}
+#fig-ag-embedding .lg{font-size:10.5px;font-weight:500;fill:#475569}</style>
+<rect x="-2" y="-2" width="680" height="666" fill="#ffffff"/>
+<rect x="0" y="0" width="676" height="236" rx="8" fill="#fbfcfd" stroke="#e2e8f0" stroke-width="1"/>
+<path d="M160,82 L195,82" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-embedding-ah-grey)"/>
+<rect x="163" y="65" width="30" height="14" fill="#ffffff"/>
+<text class="ss" x="178" y="76" text-anchor="middle">save</text>
+<path d="M392,64 L451,64" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-embedding-ah-grey)"/>
+<rect x="406" y="47" width="33" height="14" fill="#ffffff"/>
+<text class="ss" x="422" y="58" text-anchor="middle">posts</text>
+<path d="M452,100 L393,100" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-embedding-ah-grey)"/>
+<path d="M530,132 L530,163" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-embedding-ah-grey)"/>
+<rect x="494" y="140" width="33" height="14" fill="#ffffff"/>
+<text class="ss" x="524" y="151" text-anchor="end">posts</text>
+<path d="M586,164 L586,133" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-embedding-ah-grey)"/>
+<rect x="590" y="140" width="43" height="14" fill="#ffffff"/>
+<text class="ss" x="593" y="151">vectors</text>
+<rect x="0" y="248" width="676" height="260" rx="8" fill="#fbfcfd" stroke="#e2e8f0" stroke-width="1"/>
+<path d="M160,323 L195,323" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-embedding-ah-grey)"/>
+<path d="M392,323 L451,323" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-embedding-ah-grey)"/>
+<path d="M558,366 L558,395" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-embedding-ah-grey)"/>
+<rect x="563" y="374" width="37" height="14" fill="#ffffff"/>
+<text class="ss" x="566" y="385">vector</text>
+<path d="M452,448 L393,448" fill="none" stroke="#94a3b8" stroke-width="1" marker-end="url(#fig-ag-embedding-ah-grey)"/>
+<rect x="392" y="431" width="60" height="14" fill="#ffffff"/>
+<text class="ss" x="422" y="442" text-anchor="middle">candidates</text>
+<path d="M196,448 L161,448" fill="none" stroke="#6b4fbb" stroke-width="1" marker-end="url(#fig-ag-embedding-ah-model)"/>
+<line x1="0" y1="519" x2="676" y2="519" stroke="#e2e8f0" stroke-width="1"/>
+<text class="hd" x="12" y="19">Storing</text>
+<text class="hs" x="66" y="19">whenever a post appears in a channel the agent listens to; the model is not called</text>
+<rect x="12" y="32" width="148" height="100" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="22" y="50" style="fill:#8a5300">1 Channel posts</text>
+<text class="ss" x="22" y="63">everything is stored,</text>
+<text class="ss" x="22" y="76">including posts not</text>
+<text class="ss" x="22" y="89">addressed to the agent,</text>
+<text class="ss" x="22" y="102">and replies</text>
+<text class="ss" x="22" y="115">DMs are not stored</text>
+<rect x="196" y="32" width="196" height="100" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="nm" x="206" y="50" style="fill:#3d4554">2 Channel-conversation table</text>
+<text class="mn" x="206" y="64">PostgreSQL</text>
+<text class="ss" x="206" y="77">stores the original text</text>
+<text class="ss" x="206" y="90">an edit clears the vector</text>
+<text class="ss" x="206" y="103">a delete only sets a flag</text>
+<text class="ss" x="206" y="116">nothing is removed by default</text>
+<text class="ss" x="422" y="115" text-anchor="middle">vectors</text>
+<rect x="453" y="33" width="210" height="98" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="2"/>
+<text class="nm" x="463" y="50">3 Embedding job</text>
+<text class="ss" x="463" y="63">every 5 s, reads posts with no vector,</text>
+<text class="ss" x="463" y="76">a few dozen at a time</text>
+<text class="ss" x="463" y="89">skips posts under 10 characters</text>
+<text class="ss" x="463" y="102">a reply gets the first 200 chars each of</text>
+<text class="ss" x="463" y="115">its parent post and the previous reply</text>
+<rect x="452" y="164" width="212" height="62" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="463" y="182">4 Embedding server (same Mac)</text>
+<text class="mn" x="463" y="196">EmbeddingGemma 2</text>
+<text class="ss" x="463" y="209">turns a post into 768 numbers (a vector)</text>
+<text class="ss" x="12" y="172">The embedding job (3) reads posts that have no vector from 2, sends them</text>
+<text class="ss" x="12" y="185">to 4, and saves the returned vectors in the vector column of the same rows in 2.</text>
+<text class="ss" x="12" y="198">pgvector extension, cosine-distance index</text>
+<text class="ss" x="12" y="211">Original Sentry alert posts in the alert channel are not turned into vectors.</text>
+<text class="hd" x="12" y="267">Retrieving</text>
+<text class="hs" x="82" y="267">only when the model in a thread session judges it needs something from outside the thread</text>
+<rect x="12" y="280" width="148" height="86" rx="6" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="nm" x="22" y="298" style="fill:#8a5300">1 A person's question</text>
+<text class="ss" x="22" y="311">“What did we decide</text>
+<text class="ss" x="22" y="324">about the release</text>
+<text class="ss" x="22" y="337">cadence last month?”</text>
+<rect x="197" y="281" width="194" height="84" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="2"/>
+<text class="nm" x="207" y="298" style="fill:#5a3fa6">2 Model</text>
+<text class="mn" x="207" y="312">channel_history</text>
+<text class="ss" x="207" y="325">chooses the search terms itself:</text>
+<text class="ss" x="207" y="338">“release cadence decision”</text>
+<text class="ss" x="207" y="351">a read tool, so the policy allows it</text>
+<rect x="452" y="280" width="212" height="86" rx="6" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="nm" x="462" y="298">3 Embedding server (same Mac)</text>
+<text class="mn" x="462" y="312">EmbeddingGemma 2</text>
+<text class="ss" x="462" y="325">the search terms too become a vector</text>
+<text class="ss" x="462" y="338">of the same length (768), made by</text>
+<text class="ss" x="462" y="351">the same model</text>
+<rect x="452" y="396" width="212" height="104" rx="6" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="nm" x="462" y="414" style="fill:#3d4554">4 Channel-conversation table</text>
+<text class="ss" x="462" y="427">20 posts closest in meaning by vector</text>
+<text class="ss" x="462" y="440">distance, 40 at most</text>
+<text class="ss" x="462" y="453">by default the current channel</text>
+<text class="ss" x="462" y="466">per post: the first 300 chars of the</text>
+<text class="ss" x="462" y="479">body, time, thread, and the first 80</text>
+<text class="ss" x="462" y="492">chars of the parent post</text>
+<rect x="196" y="396" width="196" height="104" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="206" y="414" style="fill:#5a3fa6">5 Model</text>
+<text class="ss" x="206" y="427">picks the matching posts from the</text>
+<text class="ss" x="206" y="440">candidates the tool returned</text>
+<text class="ss" x="206" y="453">if one is a lone reply, it can call</text>
+<text class="ss" x="206" y="466">once more for that thread and</text>
+<text class="ss" x="206" y="479">read all of it</text>
+<rect x="12" y="396" width="148" height="104" rx="6" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="nm" x="22" y="414" style="fill:#5a3fa6">6 Answer</text>
+<text class="ss" x="22" y="427">answers in the thread</text>
+<text class="ss" x="22" y="440">on the basis of the</text>
+<text class="ss" x="22" y="453">conversations it found</text>
+<rect x="0" y="522" width="12" height="12" rx="2" fill="#fdf6ea" stroke="#b26b00" stroke-width="1"/>
+<text class="lg" x="18" y="532">People, Slack</text>
+<rect x="103" y="522" width="12" height="12" rx="2" fill="#f3f0fa" stroke="#6b4fbb" stroke-width="1"/>
+<text class="lg" x="121" y="532">Model</text>
+<rect x="168" y="522" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c2433" stroke-width="1"/>
+<text class="lg" x="186" y="532">Bot code</text>
+<rect x="247" y="522" width="12" height="12" rx="2" fill="#f1f3f6" stroke="#5b6577" stroke-width="1"/>
+<text class="lg" x="265" y="532">Storage</text>
+<text class="ss" x="0" y="554">The model in 2 and 5 is the same thread session. One call of the search tool goes through 3 and 4 and returns the result (the candidates)</text>
+<text class="ss" x="0" y="568">to the model.</text>
+<text class="ss" x="0" y="588">Stored conversations are not put into the prompt in advance. Most questions don't need past conversations, so preloading would spend</text>
+<text class="ss" x="0" y="602">that many more tokens on every question.</text>
+<text class="ss" x="0" y="622">If no embedding server address is configured, no vectors are built and the search tool works only by reading in time order and by reading</text>
+<text class="ss" x="0" y="636">a thread.</text>
+<text class="ss" x="0" y="656">When the server can't be reached, search still answers in time order, and vector building pauses for a while and then retries.</text>
+</svg>
